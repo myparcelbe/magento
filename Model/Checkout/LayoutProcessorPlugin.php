@@ -7,24 +7,24 @@
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelnl
+ * https://github.com/myparcelbe
  *
  * @author      Reindert Vetter <reindert@myparcel.nl>
  * @copyright   2010-2017 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelnl/magento
+ * @link        https://github.com/myparcelbe/magento
  * @since       File available since Release 0.1.0
  */
 
-namespace MyParcelNL\Magento\Model\Checkout;
+namespace MyParcelBE\Magento\Model\Checkout;
 
 
-use MyParcelNL\Magento\Model\Quote\Checkout;
+use MyParcelBE\Magento\Model\Quote\Checkout;
 
 class LayoutProcessorPlugin
 {
     /**
-     * @var \MyParcelNL\Magento\Model\Quote\Checkout
+     * @var \MyParcelBE\Magento\Model\Quote\Checkout
      */
     private $settings;
 

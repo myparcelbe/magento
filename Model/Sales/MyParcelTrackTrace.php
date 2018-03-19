@@ -3,25 +3,25 @@
  * An object with the track and trace data
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelnl
+ * https://github.com/myparcelbe
  *
  * @author      Reindert Vetter <reindert@myparcel.nl>
  * @copyright   2010-2017 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelnl/magento
+ * @link        https://github.com/myparcelbe/magento
  * @since       File available since Release v0.1.0
  */
 
-namespace MyParcelNL\Magento\Model\Sales;
+namespace MyParcelBE\Magento\Model\Sales;
 
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\ObjectManager;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Sales\Model\Order;
-use MyParcelNL\Magento\Model\Source\DefaultOptions;
-use MyParcelNL\Sdk\src\Model\MyParcelCustomsItem;
-use MyParcelNL\Sdk\src\Model\Repository\MyParcelConsignmentRepository;
-use MyParcelNL\Magento\Helper\Data;
+use MyParcelBE\Magento\Model\Source\DefaultOptions;
+use MyParcelBE\Sdk\src\Model\MyParcelCustomsItem;
+use MyParcelBE\Sdk\src\Model\Repository\MyParcelConsignmentRepository;
+use MyParcelBE\Magento\Helper\Data;
 
 class MyParcelTrackTrace extends MyParcelConsignmentRepository
 {
@@ -29,7 +29,7 @@ class MyParcelTrackTrace extends MyParcelConsignmentRepository
      * Track title showing in Magento
      */
     const MYPARCEL_TRACK_TITLE = 'MyParcel';
-    const MYPARCEL_CARRIER_CODE = 'myparcelnl';
+    const MYPARCEL_CARRIER_CODE = 'myparcelbe';
 
     /**
      * @var ObjectManagerInterface
@@ -42,7 +42,7 @@ class MyParcelTrackTrace extends MyParcelConsignmentRepository
     protected $messageManager;
 
     /**
-     * @var \MyParcelNL\Magento\Model\Source\DefaultOptions
+     * @var \MyParcelBE\Magento\Model\Source\DefaultOptions
      */
     private static $defaultOptions;
 

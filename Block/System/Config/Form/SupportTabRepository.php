@@ -7,16 +7,16 @@
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelnl
+ * https://github.com/myparcelbe
  *
  * @author      Reindert Vetter <reindert@myparcel.nl>
  * @copyright   2010-2017 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelnl/magento
+ * @link        https://github.com/myparcelbe/magento
  * @since       File available since Release 0.1.0
  */
 
-namespace MyParcelNL\Magento\Block\System\Config\Form;
+namespace MyParcelBE\Magento\Block\System\Config\Form;
 
 class SupportTabRepository extends \Magento\Sales\Block\Adminhtml\Order\AbstractOrder
 {/**
@@ -24,7 +24,7 @@ class SupportTabRepository extends \Magento\Sales\Block\Adminhtml\Order\Abstract
      */
     protected $moduleList;
     /**
-     * @var \MyParcelNL\Magento\Helper\Data
+     * @var \MyParcelBE\Magento\Helper\Data
      */
     private $helper;
 
@@ -40,7 +40,7 @@ class SupportTabRepository extends \Magento\Sales\Block\Adminhtml\Order\Abstract
         \Magento\Backend\Block\Template\Context $context,
         \Magento\Framework\Registry $registry,
         \Magento\Sales\Helper\Admin $adminHelper,
-        \MyParcelNL\Magento\Helper\Data $helper,
+        \MyParcelBE\Magento\Helper\Data $helper,
         array $data = []
     ) {
         parent::__construct($context, $registry, $adminHelper, $data);
@@ -54,7 +54,7 @@ class SupportTabRepository extends \Magento\Sales\Block\Adminhtml\Order\Abstract
      */
     public function getCssUrl()
     {
-        $cssUrl = $this->_assetRepo->createAsset('MyParcelNL_Magento::css/config/support_tab/style.css')->getUrl();
+        $cssUrl = $this->_assetRepo->createAsset('MyParcelBE_Magento::css/config/support_tab/style.css')->getUrl();
 
         return $cssUrl;
     }

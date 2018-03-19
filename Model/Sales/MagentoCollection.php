@@ -1,31 +1,31 @@
 <?php
 /**
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelnl
+ * https://github.com/myparcelbe
  *
  * @author      Reindert Vetter <reindert@myparcel.nl>
  * @copyright   2010-2017 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelnl/magento
+ * @link        https://github.com/myparcelbe/magento
  * @since       File available since Release v0.1.0
  */
 
-namespace MyParcelNL\Magento\Model\Sales;
+namespace MyParcelBE\Magento\Model\Sales;
 
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Sales\Model\Order;
-use MyParcelNL\magento\Model\Order\Email\Sender\TrackSender;
-use MyParcelNL\Sdk\src\Helper\MyParcelCollection;
-use MyParcelNL\Sdk\src\Model\Repository\MyParcelConsignmentRepository;
+use MyParcelBE\magento\Model\Order\Email\Sender\TrackSender;
+use MyParcelBE\Sdk\src\Helper\MyParcelCollection;
+use MyParcelBE\Sdk\src\Model\Repository\MyParcelConsignmentRepository;
 
 /**
  * Class MagentoOrderCollection
  *
- * @package MyParcelNL\Magento\Model\Sales
+ * @package MyParcelBE\Magento\Model\Sales
  */
 class MagentoCollection implements MagentoCollectionInterface
 {
-    const PATH_HELPER_DATA = 'MyParcelNL\Magento\Helper\Data';
+    const PATH_HELPER_DATA = 'MyParcelBE\Magento\Helper\Data';
     const PATH_MODEL_ORDER = '\Magento\Sales\Model\ResourceModel\Order\Collection';
     const PATH_MODEL_SHIPMENT = '\Magento\Sales\Model\ResourceModel\Order\Shipment\Collection';
     const PATH_ORDER_GRID = '\Magento\Sales\Model\ResourceModel\Order\Grid\Collection';
@@ -71,7 +71,7 @@ class MagentoCollection implements MagentoCollectionInterface
     protected $messageManager;
 
     /**
-     * @var \MyParcelNL\Magento\Helper\Data
+     * @var \MyParcelBE\Magento\Helper\Data
      */
     protected $helper;
 
@@ -103,7 +103,7 @@ class MagentoCollection implements MagentoCollectionInterface
 
         $this->objectManager = $objectManagerInterface;
         $this->request = $request;
-        $this->trackSender = $this->objectManager->get('MyParcelNL\Magento\Model\Order\Email\Sender\TrackSender');
+        $this->trackSender = $this->objectManager->get('MyParcelBE\Magento\Model\Order\Email\Sender\TrackSender');
 
         $this->helper = $objectManagerInterface->create(self::PATH_HELPER_DATA);
         $this->modelTrack = $objectManagerInterface->create(self::PATH_ORDER_TRACK);
