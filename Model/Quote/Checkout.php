@@ -6,10 +6,10 @@
  * Time: 14:51
  */
 
-namespace MyParcelNL\Magento\Model\Quote;
+namespace MyParcelBE\Magento\Model\Quote;
 
 
-use MyParcelNL\Magento\Model\Sales\Repository\PackageRepository;
+use MyParcelBE\Magento\Model\Sales\Repository\PackageRepository;
 
 class Checkout
 {
@@ -19,7 +19,7 @@ class Checkout
     private $data = [];
 
     /**
-     * @var \MyParcelNL\Magento\Helper\Checkout
+     * @var \MyParcelBE\Magento\Helper\Checkout
      */
     private $helper;
 
@@ -41,13 +41,13 @@ class Checkout
      * Checkout constructor.
      * @param \Magento\Checkout\Model\Session $session
      * @param \Magento\Checkout\Model\Cart $cart
-     * @param \MyParcelNL\Magento\Helper\Checkout $helper
+     * @param \MyParcelBE\Magento\Helper\Checkout $helper
      * @param PackageRepository $package
      */
     public function __construct(
         \Magento\Checkout\Model\Session $session,
         \Magento\Checkout\Model\Cart $cart,
-        \MyParcelNL\Magento\Helper\Checkout $helper,
+        \MyParcelBE\Magento\Helper\Checkout $helper,
         PackageRepository $package
     ) {
         $this->helper = $helper;

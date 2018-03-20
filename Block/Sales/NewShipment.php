@@ -3,19 +3,19 @@
  * The class to provide functions for new_shipment.phtml
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelnl
+ * https://github.com/myparcelbe
  *
  * @author      Reindert Vetter <reindert@myparcel.nl>
  * @copyright   2010-2017 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelnl/magento
+ * @link        https://github.com/myparcelbe/magento
  * @since       File available since Release v0.1.0
  */
 
-namespace MyParcelNL\Magento\Block\Sales;
+namespace MyParcelBE\Magento\Block\Sales;
 
 use Magento\Sales\Block\Adminhtml\Items\AbstractItems;
-use MyParcelNL\Magento\Model\Source\DefaultOptions;
+use MyParcelBE\Magento\Model\Source\DefaultOptions;
 use Magento\Framework\App\ObjectManager;
 
 class NewShipment extends AbstractItems
@@ -31,7 +31,7 @@ class NewShipment extends AbstractItems
     private $objectManager;
 
     /**
-     * @var \MyParcelNL\Magento\Model\Source\DefaultOptions
+     * @var \MyParcelBE\Magento\Model\Source\DefaultOptions
      */
     private $defaultOptions;
 
@@ -55,7 +55,7 @@ class NewShipment extends AbstractItems
 
         $this->defaultOptions = new DefaultOptions(
             $this->order,
-            $this->objectManager->get('\MyParcelNL\Magento\Helper\Data')
+            $this->objectManager->get('\MyParcelBE\Magento\Helper\Data')
         );
 
         parent::__construct($context, $stockRegistry, $stockConfiguration, $registry);

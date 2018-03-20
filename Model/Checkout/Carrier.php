@@ -7,16 +7,16 @@
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelnl
+ * https://github.com/myparcelbe
  *
  * @author      Reindert Vetter <reindert@myparcel.nl>
  * @copyright   2010-2017 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelnl/magento
+ * @link        https://github.com/myparcelbe/magento
  * @since       File available since Release 0.1.0
  */
 
-namespace MyParcelNL\Magento\Model\Checkout;
+namespace MyParcelBE\Magento\Model\Checkout;
 
 use Magento\Quote\Model\Quote\Address\RateResult\Error;
 use Magento\Quote\Model\Quote\Address\RateRequest;
@@ -26,9 +26,9 @@ use Magento\Shipping\Model\Rate\Result;
 use Magento\Shipping\Model\Simplexml\Element;
 use Magento\Ups\Helper\Config;
 use Magento\Framework\Xml\Security;
-use MyParcelNL\Magento\Helper\Checkout;
-use MyParcelNL\Magento\Helper\Data;
-use MyParcelNL\Magento\Model\Sales\Repository\PackageRepository;
+use MyParcelBE\Magento\Helper\Checkout;
+use MyParcelBE\Magento\Helper\Data;
+use MyParcelBE\Magento\Model\Sales\Repository\PackageRepository;
 
 class Carrier extends AbstractCarrierOnline implements CarrierInterface
 {
