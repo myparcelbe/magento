@@ -6,10 +6,10 @@ define(
         'Magento_Customer/js/model/customer',
         'Magento_Checkout/js/checkout-data',
         'jquery',
-        'myparcelnl_options_template',
-        'myparcelnl_options_css-dynamic',
-        'MyParcelNL_Magento/js/lib/moment.min',
-        'myparcelnl_lib_myparcel'
+        'myparcelbe_options_template',
+        'myparcelbe_options_css-dynamic',
+        'MyParcelBE_Magento/js/lib/moment.min',
+        'myparcelbe_lib_myparcel'
     ],
     function(mageUrl, uiComponent, quote, customer, checkoutData,jQuery, optionsHtml, cssDynamic, moment) {
         'use strict';

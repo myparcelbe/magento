@@ -8,22 +8,22 @@
  * - Update html barcode in order
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelnl
+ * https://github.com/myparcelbe
  *
  * @author      Reindert Vetter <reindert@myparcel.nl>
  * @copyright   2010-2017 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelnl/magento
+ * @link        https://github.com/myparcelbe/magento
  * @since       File available since Release v0.1.0
  */
 
-namespace MyParcelNL\Magento\Cron;
+namespace MyParcelBE\Magento\Cron;
 
 use Magento\Framework\App\ObjectManager;
 use Magento\Sales\Api\Data\ShipmentTrackInterface;
 use Magento\Sales\Model\Order;
-use MyParcelNL\Magento\Model\Sales\MagentoOrderCollection;
-use MyParcelNL\Magento\Model\Sales\MyParcelTrackTrace;
+use MyParcelBE\Magento\Model\Sales\MagentoOrderCollection;
+use MyParcelBE\Magento\Model\Sales\MyParcelTrackTrace;
 
 class UpdateStatus
 {
@@ -35,7 +35,7 @@ class UpdateStatus
     private $objectManager;
 
     /**
-     * @var \MyParcelNL\Magento\Helper\Data
+     * @var \MyParcelBE\Magento\Helper\Data
      */
     private $helper;
 

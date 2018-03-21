@@ -5,29 +5,29 @@
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelnl
+ * https://github.com/myparcelbe
  *
  * @author      Reindert Vetter <reindert@myparcel.nl>
  * @copyright   2010-2016 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelnl/magento
+ * @link        https://github.com/myparcelbe/magento
  * @since       File available since Release v0.1.0
  */
 
-namespace MyParcelNL\Magento\Helper;
+namespace MyParcelBE\Magento\Helper;
 
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Module\ModuleListInterface;
 use Magento\Store\Model\ScopeInterface;
-use MyParcelNL\Sdk\src\Services\CheckApiKeyService;
+use MyParcelBE\Sdk\src\Services\CheckApiKeyService;
 
 class Data extends AbstractHelper
 {
-    const MODULE_NAME = 'MyParcelNL_Magento';
-    const XML_PATH_GENERAL = 'myparcelnl_magento_general/';
-    const XML_PATH_STANDARD = 'myparcelnl_magento_standard/';
-    const XML_PATH_CHECKOUT = 'myparcelnl_magento_checkout/';
+    const MODULE_NAME = 'MyParcelBE_Magento';
+    const XML_PATH_GENERAL = 'myparcelbe_magento_general/';
+    const XML_PATH_STANDARD = 'myparcelbe_magento_standard/';
+    const XML_PATH_CHECKOUT = 'myparcelbe_magento_checkout/';
 
     /**
      * @var ModuleListInterface

@@ -1,6 +1,6 @@
 <?php
 
-namespace MyParcelNL\Magento\Setup;
+namespace MyParcelBE\Magento\Setup;
 
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
 use Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
@@ -69,7 +69,7 @@ class UpgradeData implements UpgradeDataInterface
                     'label' => 'Fit in Mailbox',
                     'input' => 'select',
                     'class' => '',
-                    'source' => 'MyParcelNL\Magento\Model\Source\FitInMailboxOptions',
+                    'source' => 'MyParcelBE\Magento\Model\Source\FitInMailboxOptions',
                     'global' => \Magento\Catalog\Model\ResourceModel\Eav\Attribute::SCOPE_GLOBAL,
                     'visible' => true,
                     'required' => false,

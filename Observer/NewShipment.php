@@ -3,23 +3,23 @@
  * Set MyParcel options to new track
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelnl
+ * https://github.com/myparcelbe
  *
  * @author      Reindert Vetter <reindert@myparcel.nl>
  * @copyright   2010-2017 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelnl/magento
+ * @link        https://github.com/myparcelbe/magento
  * @since       File available since Release v0.1.0
  */
 
-namespace MyParcelNL\Magento\Observer;
+namespace MyParcelBE\Magento\Observer;
 
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Sales\Model\Order\Shipment;
-use MyParcelNL\Magento\Model\Sales\MagentoOrderCollection;
-use MyParcelNL\Magento\Model\Sales\MyParcelTrackTrace;
+use MyParcelBE\Magento\Model\Sales\MagentoOrderCollection;
+use MyParcelBE\Magento\Model\Sales\MyParcelTrackTrace;
 
 class NewShipment implements ObserverInterface
 {
@@ -44,7 +44,7 @@ class NewShipment implements ObserverInterface
     private $orderCollection;
 
     /**
-     * @var \MyParcelNL\Magento\Helper\Data
+     * @var \MyParcelBE\Magento\Helper\Data
      */
     private $helper;
 
@@ -56,7 +56,7 @@ class NewShipment implements ObserverInterface
         $this->objectManager = ObjectManager::getInstance();
         $this->request = $this->objectManager->get('Magento\Framework\App\RequestInterface');
         $this->orderCollection = new MagentoOrderCollection($this->objectManager, $this->request);
-        $this->helper = $this->objectManager->get('MyParcelNL\Magento\Helper\Data');
+        $this->helper = $this->objectManager->get('MyParcelBE\Magento\Helper\Data');
         $this->modelTrack = $this->objectManager->create('Magento\Sales\Model\Order\Shipment\Track');
     }
 
