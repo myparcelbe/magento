@@ -111,27 +111,5 @@
                 require(['prototype'], function(){Fieldset.applyCollapse('myparcelbe_magento_version');});
             </script>
         </div>
-        <div class="section-config active">
-            <div class="entry-edit-head admin__collapsible-block">
-                <a id="myparcelbe_magento_progress-head" href="#myparcelbe_magento_progress-link" onclick="Fieldset.toggleCollapse('myparcelbe_magento_progress'); return false;" class="open"><?= __('MyParcel progress');?></a>
-            </div>
-            <input id="myparcelbe_magento_progress-state" name="config_state[myparcelbe_magento_progress]" type="hidden" value="1">
-            <fieldset class="config admin__collapsible-block" id="myparcelbe_magento_progress">
-                <p>Wil je weten waar ze de komende tijd mee bezig zijn? Hieronder vind je de planning voor Magento 2. Heb je zelf suggesties of ideeën? Ze zijn altijd welkom. Op die manier blijven we samen de extensie verbeteren.</p>
-                <div class="mypa_columns"></div>
-
-            </fieldset>
-            <script type="text/javascript">
-                require(['prototype'], function(){Fieldset.applyCollapse('myparcelbe_magento_progress');});
-            </script>
-        </div>
     </div>
 </div>
-
-<script type="text/x-magento-init">
-   {
-       ".mypa_columns": {
-           "myparcelbe_supporttab": {}
-        }
-   }
-</script>
