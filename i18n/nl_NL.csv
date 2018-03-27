@@ -35,8 +35,6 @@ Paper type,Print oriëntatie
 Select a standard orientation for printing labels.,Selecteer een standaard print ori&euml;ntatie voor het printen van labels.
 Default shipping options,Standaard verzendinstellingen
 "Fill in your preferences for a shipment. These settings will only apply for the mass actions in the order grid. When creating a single shipment, these settings can be changed manually. These settings will activate based on the order total amount.","Vul hier uw standaard voorkeuren in voor uw verzendopties. Deze instellingen worden als default op al uw zendingen toegepast, indien van toepassing. Deze opties zijn later, per zending, uiteraard nog wel aan te passen tijdens het verwerken."
-Automate 'Home address only',Automatiseer 'Alleen huisadres'
-'Home address only' operates above a certain order total amount,'Alleen huisadres' wordt geactiveerd als het totaal bedrag meer is dan bovenstaande bedrag
 Automate 'Signature on receipt',Automatiseer 'Handtekening voor ontvangst'
 'Signature on receipt' operates above a certain order total amount,'Handtekening voor ontvangst' wordt geactiveerd als het totaal bedrag meer is dan bovenstaande bedrag
 Automate 'Return if no answer',Automatiseer 'Retour bij niet aanwezig'
@@ -104,7 +102,6 @@ Full changelog,Volledige release notes
 Installation and configuration instructions,Installatie en configuratie handleiding
 MyParcel progress, MyParcel vooruitgang
 MyParcel backoffice,MyParcel backoffice
-delivery/signature_and_only_recipient_title,Niet bij de buren bezorgen + handtekening voor ontvangst
 morning/title,Ochtendlevering
 morning_signature/title,Ochtendlevering + handtekening voor ontvangst
 pickup_express/title,Ophalen bij een PostNL locatie (extra vroeg ophalen)
@@ -131,10 +128,6 @@ Color for selected items,Kleur voor geselecteerde items
 Methods,Verzendmethode
 The extra myparcel options are added to this shipping method,De extra myparcel opties worden bij deze verzendmethode toegevoegd.
 Delivery titel,Bezorg titel
-Home address only, Alleen huisadres
-Deliver the package only at address of the intended recipient.,Lever het pakket alleen aan het adres van de beoogde ontvanger.
-Home address only titel,Alleen huisadres titel
-Home address only fee,Alleen huisadres prijs
 This will be added to the regular shipping price,Dit zal bij de normale verzendkosten worden opgeteld
 Signature on receipt,Handtekening voor ontvangst
 Signature on receipt title, Handtekening voor ontvangst titel

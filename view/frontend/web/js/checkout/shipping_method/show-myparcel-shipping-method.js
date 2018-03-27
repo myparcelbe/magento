@@ -148,7 +148,7 @@ define(
         }
 
         function _hideRadios() {
-            jQuery("td[id^='label_method_signature'],td[id^='label_method_mailbox'],td[id^='label_method_pickup'],td[id^='label_method_evening'],td[id^='label_method_only_recipient'],td[id^='label_method_morning']").parent().hide();
+            jQuery("td[id^='label_method_signature'],td[id^='label_method_mailbox'],td[id^='label_method_pickup'],td[id^='label_method_evening'],td[id^='label_method_morning']").parent().hide();
         }
 
         function _getCcIsLocal() {
@@ -217,15 +217,12 @@ define(
                     pickup: data.pickup.fee,
                     pickup_express: data.pickup_express.fee,
                     signed: data.delivery.signature_fee,
-                    only_recipient: data.delivery.only_recipient_fee,
-                    combi_options: data.delivery.signature_and_only_recipient_fee,
                     mailbox: data.mailbox.fee,
                 },
                 base_url: 'https://api.myparcel.nl/delivery_options',
                 text:
                     {
                         signed: data.delivery.signature_title,
-                        only_recipient: data.delivery.only_recipient_title
                     }
             };
 
@@ -278,16 +275,10 @@ define(
                     myparcel.showDays();
                     break;
                 case "standard":
-                    if (json.options.signature && json.options.only_recipient) {
-                        _checkMethod('input[value=' + myparcel_method_alias + '_signature_only_recip' + ']');
+                    if (json.options.signature) {
+                        _checkMethod('input[value=' + myparcel_method_alias + '_signature' + ']');
                     } else {
-                        if (json.options.signature) {
-                            _checkMethod('input[value=' + myparcel_method_alias + '_signature' + ']');
-                        } else if (json.options.only_recipient) {
-                            _checkMethod('input[value=' + myparcel_method_alias + '_only_recipient' + ']');
-                        } else {
-                            _checkMethod('input[value=' + myparcel_method_alias + '_' + window.mypa.data.general.parent_method + ']');
-                        }
+                        _checkMethod('input[value=' + myparcel_method_alias + '_' + window.mypa.data.general.parent_method + ']');
                     }
                     myparcel.showDays();
                     break;
