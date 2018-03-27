@@ -82,7 +82,6 @@ class MagentoCollection implements MagentoCollectionInterface
         'positions' => null,
         'signature' => null,
         'return' => null,
-        'large_format' => null,
         'insurance' => null,
     ];
 

@@ -51,7 +51,7 @@ class DefaultOptions
     /**
      * Get default of the option
      *
-     * @param $option 'signature'|'return'|'large_format'
+     * @param $option 'signature'|'return'
      *
      * @return bool
      */
