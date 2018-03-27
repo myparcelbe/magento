@@ -37,8 +37,6 @@ Default shipping options,Standaard verzendinstellingen
 "Fill in your preferences for a shipment. These settings will only apply for the mass actions in the order grid. When creating a single shipment, these settings can be changed manually. These settings will activate based on the order total amount.","Vul hier uw standaard voorkeuren in voor uw verzendopties. Deze instellingen worden als default op al uw zendingen toegepast, indien van toepassing. Deze opties zijn later, per zending, uiteraard nog wel aan te passen tijdens het verwerken."
 Automate 'Signature on receipt',Automatiseer 'Handtekening voor ontvangst'
 'Signature on receipt' operates above a certain order total amount,'Handtekening voor ontvangst' wordt geactiveerd als het totaal bedrag meer is dan bovenstaande bedrag
-Automate 'Return if no answer',Automatiseer 'Retour bij niet aanwezig'
-'Return if no answer' operates above a certain order total amount,'Retour bij niet aanwezig' wordt geactiveerd als het totaal bedrag meer is dan bovenstaande bedrag
 Automate 'Large format',Automatiseer 'Groot pakket'
 'Large format' operates above a certain order total amount,'Groot pakket' wordt geactiveerd als het totaal bedrag meer is dan bovenstaande bedrag
 Automate 'Insurance € 50',Automatiseer 'Verzekerd tot € 50'
@@ -57,7 +55,6 @@ Mailbox,Brievenbuspakje
 Letter,Ongefrankeerd
 Home address only,Alleen huisadres
 Signature on receipt,Handtekening voor ontvangst
-Return if no answer,Retour bij niet aanwezig
 Large package,Groot pakket
 Insured up to:,Verzekeren tot:
 Download package label,Download pakket label
