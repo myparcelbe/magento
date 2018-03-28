@@ -309,14 +309,7 @@ input:checked ~ label.mypa-row-title span.mypa-highlight {
     float: right;
     font-weight: 800;
 }
-.mypa-combination-price {
-    padding: 2px 0 2px 0;
-}
-.mypa-combination-price.mypa-combination-price-active {
-}
-.mypa-combination-price > .mypa-price {
-    margin: 21px 0 0 0;
-}
+
 input:checked ~ .mypa-price,
 input:checked ~ label span.mypa-price,
 input:checked ~ span span.mypa-price,

@@ -62,7 +62,7 @@ class NewShipment extends AbstractItems
     }
 
     /**
-     * @param $option 'only_recipient'|'signature'|'return'|'large_format'
+     * @param $option 'signature'|'return'
      *
      * @return bool
      */

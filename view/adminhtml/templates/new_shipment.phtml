@@ -29,18 +29,6 @@
         </div>
     </div>
 <?php if ($block->getCountry() == 'NL'): ?>
-    <div class="field choice admin__field admin__field-option field-mypa_only_recipient mypa_package-toggle mypa-option-toggle" style="<?=$block->getPackageType() !== 2 ?: 'display:none';?>">
-        <input id="mypa_only_recipient"
-               class="admin__control-checkbox"
-               name="mypa_only_recipient"
-               value="1"
-               type="checkbox"
-                <?= $block->getDefaultOption('only_recipient') == true ? 'checked="checked"' : '';?>
-        />
-        <label class="admin__field-label"
-               for="mypa_only_recipient">
-            <span><?=__('Home address only') ?></span></label>
-    </div>
     <div class="field choice admin__field admin__field-option field-mypa_signature mypa_package-toggle mypa-option-toggle" style="<?=$block->getPackageType() === 1 ?: 'display:none';?>">
         <input id="mypa_signature"
                class="admin__control-checkbox"
@@ -53,30 +41,6 @@
                for="mypa_signature">
             <span><?=__('Signature on receipt') ?></span></label>
     </div>
-    <div class="field choice admin__field admin__field-option field-mypa_return mypa_package-toggle mypa-option-toggle" style="<?=$block->getPackageType() === 1 ?: 'display:none';?>">
-        <input id="mypa_return"
-               class="admin__control-checkbox"
-               name="mypa_return"
-               value="1"
-               type="checkbox"
-               <?= $block->getDefaultOption('return') == true ? 'checked="checked"' : '';?>
-        />
-        <label class="admin__field-label"
-               for="mypa_return">
-            <span><?=__('Return if no answer') ?></span></label>
-    </div>
-    <div class="field choice admin__field admin__field-option field-mypa_large_format mypa_package-toggle mypa-option-toggle" style="<?=$block->getPackageType() === 1 ?: 'display:none';?>">
-        <input id="mypa_large_format"
-               class="admin__control-checkbox"
-               name="mypa_large_format"
-               value="1"
-               type="checkbox"
-               <?= $block->getDefaultOption('large_format') == true ? 'checked="checked"' : '';?>
-        />
-        <label class="admin__field-label"
-               for="mypa_large_format">
-            <span><?=__('Large package') ?></span></label>
-    </div>
     <div class="field choice admin__field admin__field-option field-mypa_insurance mypa_package-toggle mypa-option-toggle" style="<?=$block->getPackageType() === 1 ?: 'display:none';?>">
         <label class="admin__field-label"
                for="mypa_insurance" style="display: block">
@@ -84,18 +48,7 @@
         <?php $defaultInsurance = $block->getDefaultInsurance();?>
         <select name="mypa_insurance" id="mypa_insurance" class="required product-custom-option admin__control-select" title="" >
             <option value="0" ><?=__('No insurance') ?></option>
-            <option value="50" <?= $defaultInsurance == 50 ? 'selected="selected"' : '';?> >€ 50</option>
-            <option value="250" <?= $defaultInsurance == 250 ? 'selected="selected"' : '';?> >€ 250</option>
             <option value="500" <?= $defaultInsurance == 500 ? 'selected="selected"' : '';?> >€ 500</option>
-            <option value="1000" >€ 1000</option>
-            <option value="1500" >€ 1500</option>
-            <option value="2000" >€ 2000</option>
-            <option value="2500" >€ 2500</option>
-            <option value="3000" >€ 3000</option>
-            <option value="3500" >€ 3500</option>
-            <option value="4000" >€ 4000</option>
-            <option value="4500" >€ 4500</option>
-            <option value="5000" >€ 5000</option>
         </select>
     </div>
     <script type="text/x-magento-init">
