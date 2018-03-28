@@ -51,7 +51,7 @@ class DefaultOptions
     /**
      * Get default of the option
      *
-     * @param $option 'only_recipient'|'signature'|'return'|'large_format'
+     * @param $option 'signature'|'return'
      *
      * @return bool
      */
@@ -89,14 +89,6 @@ class DefaultOptions
     {
         if ($this->getDefault('insurance_500')) {
             return 500;
-        }
-
-        if ($this->getDefault('insurance_250')) {
-            return 250;
-        }
-
-        if ($this->getDefault('insurance_50')) {
-            return 50;
         }
 
         return 0;

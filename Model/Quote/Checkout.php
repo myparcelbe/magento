@@ -117,21 +117,13 @@ class Checkout
     {
         $deliveryData = [
             'delivery_title' => $this->helper->getCheckoutConfig('delivery/delivery_title'),
-            'only_recipient_active' => $this->helper->getBoolConfig('delivery/only_recipient_active'),
-            'only_recipient_title' => $this->helper->getCheckoutConfig('delivery/only_recipient_title'),
-            'only_recipient_fee' => $this->helper->getMethodPriceFormat('delivery/only_recipient_fee', false, '+ '),
             'signature_active' => $this->helper->getBoolConfig('delivery/signature_active'),
             'signature_title' => $this->helper->getCheckoutConfig('delivery/signature_title'),
             'signature_fee' => $this->helper->getMethodPriceFormat('delivery/signature_fee', false, '+ '),
-            'signature_and_only_recipient_fee' => $this->helper->getMethodPriceFormat('delivery/signature_and_only_recipient_fee', false, '+ '),
         ];
 
         if ($deliveryData['signature_active'] === false) {
             $deliveryData['signature_fee'] = 'disabled';
-        }
-
-        if ($deliveryData['only_recipient_active'] === false) {
-            $deliveryData['only_recipient_fee'] = 'disabled';
         }
 
         return $deliveryData;

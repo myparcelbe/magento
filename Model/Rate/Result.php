@@ -123,8 +123,6 @@ class Result extends \Magento\Shipping\Model\Rate\Result
     {
         $methods = [
             'signature' => 'delivery/signature_',
-            'only_recipient' => 'delivery/only_recipient_',
-            'signature_only_recip' => 'delivery/signature_and_only_recipient_',
             'morning' => 'morning/',
             'morning_signature' => 'morning_signature/',
             'evening' => 'evening/',

@@ -80,10 +80,8 @@ class MagentoCollection implements MagentoCollectionInterface
         'request_type' => 'download',
         'package_type' => 'default',
         'positions' => null,
-        'only_recipient' => null,
         'signature' => null,
         'return' => null,
-        'large_format' => null,
         'insurance' => null,
     ];
 

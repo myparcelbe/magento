@@ -3,7 +3,7 @@
  */
 
 (function() {
-    var $, AO_DEFAULT_TEXT, MAILBOX_DEFAULT_TEXT, Application, CARRIER, DAYS_OF_THE_WEEK, DAYS_OF_THE_WEEK_TRANSLATED, DEFAULT_DELIVERY, DISABLED, EVENING_DELIVERY, HVO_DEFAULT_TEXT, MORNING_DELIVERY, MORNING_PICKUP, NATIONAL, NORMAL_PICKUP, PICKUP, PICKUP_EXPRESS, PICKUP_TIMES, POST_NL_TRANSLATION, Slider, checkCombination, displayOtherTab, externalJQuery, obj1, orderOpeningHours, preparePickup, renderDeliveryOptions, renderExpressPickup, renderPage, renderPickup, renderPickupLocation, showDefaultPickupLocation, sortLocationsOnDistance, updateDelivery, updateInputField, hideMyParcelOptions,
+    var $, AO_DEFAULT_TEXT, MAILBOX_DEFAULT_TEXT, Application, CARRIER, DAYS_OF_THE_WEEK, DAYS_OF_THE_WEEK_TRANSLATED, DEFAULT_DELIVERY, DISABLED, EVENING_DELIVERY, HVO_DEFAULT_TEXT, MORNING_DELIVERY, MORNING_PICKUP, NATIONAL, NORMAL_PICKUP, PICKUP, PICKUP_EXPRESS, PICKUP_TIMES, POST_NL_TRANSLATION, Slider, displayOtherTab, externalJQuery, obj1, orderOpeningHours, preparePickup, renderDeliveryOptions, renderExpressPickup, renderPage, renderPickup, renderPickupLocation, showDefaultPickupLocation, sortLocationsOnDistance, updateDelivery, updateInputField, hideMyParcelOptions,
         bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
     DISABLED = 'disabled';
@@ -118,11 +118,6 @@
             externalJQuery('#mypa-signed').on('change', (function(_this) {
                 return function(e) {
                     return $('#mypa-signed').prop('checked', externalJQuery('#mypa-signed').prop('checked'));
-                };
-            })(this));
-            externalJQuery('#mypa-recipient-only').on('change', (function(_this) {
-                return function(e) {
-                    return $('#mypa-only-recipient').prop('checked', externalJQuery('#mypa-recipient-only').prop('checked'));
                 };
             })(this));
             return externalJQuery('input[name=delivery_options]').on('change', (function(_this) {
@@ -528,7 +523,6 @@
         var day_index, html, i, index, j, k, len, location, openingHoursHtml, orderedHours, ref, ref1, time;
         displayOtherTab();
         $('.mypa-onoffswitch-checkbox:checked').prop('checked', false);
-        checkCombination();
         $('#mypa-location-container').html('');
         for (index = i = 0, ref = data.length - 1; 0 <= ref ? i <= ref : i >= ref; index = 0 <= ref ? ++i : --i) {
             location = data[index];
@@ -579,7 +573,7 @@
     };
 
     renderDeliveryOptions = function(date) {
-        var checked, mailboxPrice, mailboxText, combinatedPrice, combine, deliveryTimes, html, hvoPrice, hvoText, i, index, json, len, onlyRecipientPrice, onlyRecipientText, price, ref, ref1, time;
+        var checked, mailboxPrice, mailboxText, combinatedPrice, combine, deliveryTimes, html, hvoPrice, hvoText, i, index, json, len, price, ref, ref1, time;
         $('#mypa-delivery-options').html('');
         html = '';
         deliveryTimes = window.mypa.sortedDeliverytimes[date];
@@ -610,23 +604,6 @@
         if (hvoText == null) {
             hvoText = HVO_DEFAULT_TEXT;
         }
-        onlyRecipientPrice = window.mypa.settings.price.only_recipient;
-        onlyRecipientText = (ref1 = window.mypa.settings.text) != null ? ref1.only_recipient : void 0;
-        if (onlyRecipientText == null) {
-            onlyRecipientText = AO_DEFAULT_TEXT;
-        }
-        combinatedPrice = window.mypa.settings.price.combi_options;
-        combine = onlyRecipientPrice !== 'disabled' && hvoPrice !== 'disabled' && (combinatedPrice != null);
-        if (combine) {
-            html += "<div class='mypa-combination-price'><span class='mypa-price mypa-hidden'>" + combinatedPrice + "</span>";
-        }
-        if (onlyRecipientPrice !== DISABLED) {
-            html += "<label for=\"mypa-only-recipient\" class='mypa-row-subitem'>\n  <input type=\"checkbox\" name=\"mypa-only-recipient\" class=\"mypa-onoffswitch-checkbox\" id=\"mypa-only-recipient\">\n  <div class=\"mypa-switch-container\">\n    <div class=\"mypa-onoffswitch\">\n      <label class=\"mypa-onoffswitch-label\" for=\"mypa-only-recipient\">\n        <span class=\"mypa-onoffswitch-inner\"></span>\n        <span class=\"mypa-onoffswitch-switch\"></span>\n      </label>\n    </div>\n  </div>\n  <span>";
-            if (onlyRecipientPrice != null) {
-                html += "<span class='mypa-price'>" + onlyRecipientPrice + "</span>";
-            }
-            html +=  onlyRecipientText + "</span></label>";
-        }
         if (hvoPrice !== DISABLED) {
             html += "<label for=\"mypa-signed\" class='mypa-row-subitem'>\n  <input type=\"checkbox\" name=\"mypa-signed\" class=\"mypa-onoffswitch-checkbox\" id=\"mypa-signed\">\n  <div class=\"mypa-switch-container\">\n    <div class=\"mypa-onoffswitch\">\n      <label class=\"mypa-onoffswitch-label\" for=\"mypa-signed\">\n        <span class=\"mypa-onoffswitch-inner\"></span>\n      <span class=\"mypa-onoffswitch-switch\"></span>\n      </label>\n    </div>\n  </div>\n  <span>";
             if (hvoPrice) {
@@ -650,45 +627,11 @@
         $('#mypa-mailbox-delivery').on('change', function () {
             externalJQuery('input[name=delivery_options]').val('{"time":[{"price_comment":"mailbox","type":6}]}').trigger('change');
         });
-        $('.mypa-combination-price label').on('click', checkCombination);
-        $('#mypa-delivery-options label.mypa-row-subitem input[name=mypa-delivery-time]').on('change', function(e) {
-            var deliveryType;
-            deliveryType = JSON.parse($(e.currentTarget).val())['time'][0]['price_comment'];
-            if (deliveryType === MORNING_DELIVERY || deliveryType === EVENING_DELIVERY) {
-                $('input#mypa-only-recipient').prop('checked', true).prop('disabled', true);
-                $('label[for=mypa-only-recipient] span.mypa-price').html('incl.');
-            } else {
-                onlyRecipientPrice = window.mypa.settings.price.only_recipient;
-                $('input#mypa-only-recipient').prop('disabled', false);
-                $('label[for=mypa-only-recipient] span.mypa-price').html(onlyRecipientPrice);
-            }
-            return checkCombination();
-        });
         if ($('input[name=mypa-delivery-time]:checked').length < 1) {
             $($('input[name=mypa-delivery-time]')[0]).prop('checked', true);
         }
         return $('div#mypa-delivery-row label').bind('click', updateInputField);
     };
-
-
-    /*
-     * Checks if the combination of options applies and displays this if needed.
-     */
-
-    checkCombination = function() {
-        var combination, deliveryType, inclusiveOption, json;
-        json = $('#mypa-delivery-options .mypa-row-subitem input[name=mypa-delivery-time]:checked').val();
-        if (json != null) {
-            deliveryType = JSON.parse(json)['time'][0]['price_comment'];
-        }
-        inclusiveOption = deliveryType === MORNING_DELIVERY || deliveryType === EVENING_DELIVERY;
-        combination = $('input[name=mypa-only-recipient]').prop('checked') && $('input[name=mypa-signed]').prop('checked') && !inclusiveOption;
-        $('.mypa-combination-price').toggleClass('mypa-combination-price-active', combination);
-        $('.mypa-combination-price > .mypa-price').toggleClass('mypa-price-active', combination);
-        $('.mypa-combination-price > .mypa-price').toggleClass('mypa-hidden', !combination);
-        return $('.mypa-combination-price label .mypa-price').toggleClass('mypa-hidden', combination);
-    };
-
 
     /*
      * Sets the json to the selected input field to be with the form
@@ -702,7 +645,6 @@
             jsonData = JSON.parse(stringData);
             jsonData.options = {};
             jsonData.options.signature = $('#mypa-signed').prop('checked');
-            jsonData.options.only_recipient = $('#mypa-only-recipient').prop('checked');
 
             stringData = JSON.stringify(jsonData);
 
