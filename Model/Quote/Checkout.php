@@ -97,7 +97,7 @@ class Checkout
             'base_price' => $this->helper->getMoneyFormat($this->helper->getBasePrice()),
             'cutoff_time' => $this->helper->getTimeConfig('general/cutoff_time'),
             'dropoff_days' => $this->helper->getArrayConfig('general/dropoff_days'),
-            'monday_delivery_active' => $this->helper->getBoolConfig('general/monday_delivery_active'),
+            'saturday_delivery_active' => $this->helper->getBoolConfig('general/saturday_delivery_active'),
             'dropoff_delay' => $this->helper->getIntergerConfig('general/dropoff_delay'),
             'color_base' => $this->helper->getCheckoutConfig('general/color_base'),
             'color_select' => $this->helper->getCheckoutConfig('general/color_select'),

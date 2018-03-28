@@ -34,7 +34,7 @@
         <myparcelbe_magento_checkout>
             <general>
                 <cutoff_time>15,30,00</cutoff_time>
-                <monday_delivery_active>0</monday_delivery_active>
+                <saturday_delivery_active>0</saturday_delivery_active>
                 <dropoff_days>1,2,3,4,5</dropoff_days>
                 <dropoff_delay>0</dropoff_delay>
                 <color_base>#01bbc5</color_base>

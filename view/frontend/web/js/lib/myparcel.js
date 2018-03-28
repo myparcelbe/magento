@@ -151,7 +151,7 @@
          * Fetches devliery options and an overall page update.
          */
         Application.prototype.updatePage = function(postal_code, number, street) {
-            var item, key, options, ref, settings, urlBase, current_date, monday_delivery, cutoff_time;
+            var item, key, options, ref, settings, urlBase, current_date, saturday_delivery, cutoff_time;
             ref = window.mypa.settings.price;
             for (key in ref) {
                 item = ref[key];
@@ -176,11 +176,11 @@
                 $('.mypa-overlay').removeClass('mypa-hidden');
                 return;
             }
-            /* Check if Monday delivery is active */
-            if (settings.monday_delivery == true) {
-                monday_delivery = 1;
+            /* Check if Saturday delivery is active */
+            if (settings.saturday_delivery == true) {
+                saturday_delivery = 1;
             } else {
-                monday_delivery = void 0;
+                saturday_delivery = void 0;
             }
 
             cutoff_time = settings.cutoff_time != null ? settings.cutoff_time : void 0
@@ -200,7 +200,7 @@
                     delivery_date: settings.delivery_date != null ? settings.delivery_date : void 0,
                     cutoff_time: cutoff_time,
                     dropoff_days: settings.dropoff_days != null ? settings.dropoff_days : void 0,
-                    monday_delivery: monday_delivery,
+                    saturday_delivery: saturday_delivery,
                     dropoff_delay: settings.dropoff_delay != null ? settings.dropoff_delay : void 0,
                     exclude_delivery_type: settings.exclude_delivery_type != null ? settings.exclude_delivery_type : void 0
                 },
