@@ -182,12 +182,9 @@
             } else {
                 monday_delivery = void 0;
             }
-            /* Use saturday_cutoff_time for cutoff_time if Monday delivery is active and current day is Saturday */
-            if (settings.monday_delivery == true && current_date.getDay() == 6) {
-                cutoff_time = settings.saturday_cutoff_time;
-            } else {
-                cutoff_time = settings.cutoff_time != null ? settings.cutoff_time : void 0
-            }
+
+            cutoff_time = settings.cutoff_time != null ? settings.cutoff_time : void 0
+
             $('#mypa-no-options').html('Bezig met laden...');
             $('.mypa-overlay').removeClass('mypa-hidden');
             $('.mypa-location').html(street);

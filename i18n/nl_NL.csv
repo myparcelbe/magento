@@ -119,7 +119,6 @@ Cut-off time,Het laatste bestelmoment
 Drop-off days,Verzenddagen
 Monday delivery,Maandagbezorging
 Note: Monday delivery is only possible when the package is delivered before 15.00 on Saturday at the designated PostNL locations. Click <a href="https://blog.myparcel.nl/maandagbezorging" target="_blank">here</a> for more information concerning Monday delivery and the locations.,Let op: Maandaglevering is alleen mogelijk wanneer zaterdag het pakket voor 15.00 wordt geleverd bij één van de hiervoor bestemde PostNL locaties. Klik <a href="https://blog.myparcel.nl/maandagbezorging" target="_blank">hier</a> voor de locaties en meer informatie omtrent de maandaglevering.
-Monday delivery cut-off time,Laatste bestelmoment voor maandaglevering.
 "If a request is made before this time on Saturday, Monday will be shown as the next possible delivery date.","Als een bestelling voor dit tijdstip op zaterdag wordt gedaan zal maandag als eerstvolgende afleverdag worden getoond."
 Dropoff-delay,Vertraging
 No delay,Geen vertraging
