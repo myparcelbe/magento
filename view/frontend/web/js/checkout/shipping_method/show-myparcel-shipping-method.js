@@ -125,7 +125,7 @@ define(
         }
 
         function _hideRadios() {
-            jQuery("td[id^='label_method_signature'],td[id^='label_method_pickup'],td[id^='label_method_evening'],td[id^='label_method_only_recipient'],td[id^='label_method_morning']").parent().hide();
+            jQuery("td[id^='label_method_signature'],td[id^='label_method_pickup'],td[id^='label_method_only_recipient']").parent().hide();
         }
 
         function _getCcIsLocal() {
@@ -186,11 +186,8 @@ define(
                 dropoff_delay: data.general.dropoff_delay,
                 exclude_delivery_type: data.general.exclude_delivery_types,
                 price: {
-                    morning: data.morning.fee,
                     default: data.general.base_price,
-                    night: data.evening.fee,
                     pickup: data.pickup.fee,
-                    pickup_express: data.pickup_express.fee,
                     signed: data.delivery.signature_fee,
                     only_recipient: data.delivery.only_recipient_fee,
                     combi_options: data.delivery.signature_and_only_recipient_fee,
@@ -243,14 +240,6 @@ define(
             }
 
             switch (type) {
-                case "morning":
-                    if (json.options.signature) {
-                        _checkMethod('input[value=' + myparcel_method_alias + '_morning_signature' + ']');
-                    } else {
-                        _checkMethod('input[value=' + myparcel_method_alias + '_morning' + ']');
-                    }
-                    myparcel.showDays();
-                    break;
                 case "standard":
                     if (json.options.signature && json.options.only_recipient) {
                         _checkMethod('input[value=' + myparcel_method_alias + '_signature_only_recip' + ']');
@@ -265,20 +254,8 @@ define(
                     }
                     myparcel.showDays();
                     break;
-                case "night":
-                    if (json.options.signature) {
-                        _checkMethod('input[value=' + myparcel_method_alias + '_evening_signature' + ']');
-                    } else {
-                        _checkMethod('input[value=' + myparcel_method_alias + '_evening' + ']');
-                    }
-                    myparcel.showDays();
-                    break;
                 case "retail":
                     _checkMethod('input[value=' + myparcel_method_alias + '_pickup' + ']');
-                    myparcel.hideDays();
-                    break;
-                case "retailexpress":
-                    _checkMethod('input[value=' + myparcel_method_alias + '_pickup_express' + ']');
                     myparcel.hideDays();
                     break;
             }

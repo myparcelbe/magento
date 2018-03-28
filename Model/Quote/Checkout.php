@@ -69,10 +69,7 @@ class Checkout
         $this->data = [
             'general' => $this->getGeneralData(),
             'delivery' => $this->getDeliveryData(),
-            'morning' => $this->getMorningData(),
-            'evening' => $this->getEveningData(),
             'pickup' => $this->getPickupData(),
-            'pickup_express' => $this->getPickupExpressData(),
         ];
 
         $this
@@ -134,32 +131,6 @@ class Checkout
     }
 
     /**
-     * Get morning data
-     *
-     * @return array)
-     */
-    private function getMorningData()
-    {
-        return [
-            'active' => $this->helper->getBoolConfig('morning/active'),
-            'fee' => $this->helper->getMethodPriceFormat('morning/fee'),
-        ];
-    }
-
-    /**
-     * Get evening data
-     *
-     * @return array)
-     */
-    private function getEveningData()
-    {
-        return [
-            'active' => $this->helper->getBoolConfig('evening/active'),
-            'fee' => $this->helper->getMethodPriceFormat('evening/fee'),
-        ];
-    }
-
-    /**
      * Get pickup data
      *
      * @return array)
@@ -174,19 +145,6 @@ class Checkout
     }
 
     /**
-     * Get pickup express data
-     *
-     * @return array)
-     */
-    private function getPickupExpressData()
-    {
-        return [
-            'active' => $this->helper->getCheckoutConfig('pickup_express/active'),
-            'fee' => $this->helper->getMethodPriceFormat('pickup_express/fee'),
-        ];
-    }
-
-    /**
      * This options allows the Merchant to exclude delivery types
      *
      * @return $this
@@ -195,20 +153,8 @@ class Checkout
     {
         $excludeDeliveryTypes = [];
 
-        if ($this->data['morning']['active'] == false) {
-            $excludeDeliveryTypes[] = '1';
-        }
-
-        if ($this->data['evening']['active'] == false) {
-            $excludeDeliveryTypes[] = '3';
-        }
-
         if ($this->data['pickup']['active'] == false) {
             $excludeDeliveryTypes[] = '4';
-        }
-
-        if ($this->data['pickup_express']['active'] == false) {
-            $excludeDeliveryTypes[] = '5';
         }
 
         $result = implode(';', $excludeDeliveryTypes);

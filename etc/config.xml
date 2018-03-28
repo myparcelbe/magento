@@ -51,23 +51,11 @@
                 <signature_fee>0.36</signature_fee>
                 <signature_and_only_recipient_fee>0.44</signature_and_only_recipient_fee>
             </delivery>
-            <morning>
-                <active>1</active>
-                <fee>10</fee>
-            </morning>
-            <evening>
-                <active>1</active>
-                <fee>1.25</fee>
-            </evening>
             <pickup>
                 <active>1</active>
                 <title>Ophalen bij een PostNL locatie</title>
                 <fee>0</fee>
             </pickup>
-            <pickup_express>
-                <active>1</active>
-                <fee>1.38</fee>
-            </pickup_express>
         </myparcelbe_magento_checkout>
         <sales_email>
             <track>

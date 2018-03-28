@@ -102,11 +102,6 @@ Full changelog,Volledige release notes
 Installation and configuration instructions,Installatie en configuratie handleiding
 MyParcel backoffice,MyParcel backoffice
 delivery/signature_and_only_recipient_title,Niet bij de buren bezorgen + handtekening voor ontvangst
-morning/title,Ochtendlevering
-morning_signature/title,Ochtendlevering + handtekening voor ontvangst
-pickup_express/title,Ophalen bij een PostNL locatie (extra vroeg ophalen)
-evening_signature/title,Avondlevering + handtekening voor ontvangst
-evening/title,Avondlevering
 Basic settings,Basis instellingen
 Delivery settings,Bezorging
 day,dag
@@ -138,20 +133,11 @@ This will be added to the regular shipping price, Dit zal bij de normale verzend
 Home address only and signature on receipt together fee,De prijs van handtekening voor ontvangst en alleen huisadres samen
 If both have been selected this price will be added to the regular shipping price. Leave empty for not using it.,Als beide geselecteerd zijn zal deze prijs bij de normale verzendkosten worden opgeteld. Laat leeg om dit niet te gebruiken.
 "Besides assigning weights to all products, you can also specify a volume of each product.","Om deze functie optimaal te gebruiken, stel je eerst het gewicht of volume in van jouw producten."
-Morning delivery,Ochtendlevering
-Morning delivery active,Ochtendlevering actief
-Morning delivery fee, Ochtendlevering prijs
 This will be added to the regular shipping price,Dit zal bij de normale verzendkosten worden opgeteld
-Evening delivery,Avondlevering
-Evening delivery active,Avondlevering actief
-Evening delivery fee,Avondlevering prijs
 Pickup at PostNL location,Ophalen bij een PostNL locatie
 Pickup active,Ophalen actief
 Pickup titel,Ophalen titel
 Pickup fee,Ophalen prijs
-Pickup Express at PostNL location,Extra vroeg ophalen bij PostNL locatie
-Pickup Express active,Extra vroeg ophalen actief
-Pickup Express fee,Extra vroeg ophalen prijs
 Drop off day,Verzenddagen
 Select the days that you send the orders.,Selecteer de dagen waarop jij de orders verzend.
 Set the number of days to let the customer make an order on a different day than to deliver the first one.,Stel hier het aantal dagen in om de klant de keuze te laten maken een bestelling op een andere dag dan de eerst volgende te laten bezorgen.

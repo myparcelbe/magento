@@ -149,12 +149,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
             'signature' => 'delivery/signature_',
             'only_recipient' => 'delivery/only_recipient_',
             'signature_only_recip' => 'delivery/signature_and_only_recipient_',
-            'morning' => 'morning/',
-            'morning_signature' => 'morning_signature/',
-            'evening' => 'evening/',
-            'evening_signature' => 'evening_signature/',
             'pickup' => 'pickup/',
-            'pickup_express' => 'pickup_express/',
         ];
 
         return $methods;
@@ -203,7 +198,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     private function getShippingMethod($alias, $settingPath)
     {
         $title = $this->createTitle($settingPath);
-        $price = $this->createPrice($alias, $settingPath);
+        $price = $this->createPrice($settingPath);
 
         /** @var \Magento\Quote\Model\Quote\Address\RateResult\Method $method */
         $method = $this->_rateMethodFactory->create();
@@ -242,22 +237,8 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
 	 * @param $settingPath
 	 * @return float
 	 */
-	private function createPrice($alias, $settingPath) {
+	private function createPrice($settingPath) {
 		$price = 0;
-		if ($alias == 'morning_signature') {
-			$price += $this->myParcelHelper->getMethodPrice('morning/fee');
-			$price += $this->myParcelHelper->getMethodPrice('delivery/signature_fee', false);
-
-			return $price;
-		}
-
-		if ($alias == 'evening_signature') {
-			$price += $this->myParcelHelper->getMethodPrice('evening/fee');
-			$price += $this->myParcelHelper->getMethodPrice('delivery/signature_fee', false);
-
-			return $price;
-		}
-
 		$price += $this->myParcelHelper->getMethodPrice($settingPath . 'fee');
 
 		return $price;
