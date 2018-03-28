@@ -643,25 +643,7 @@
         return $('div#mypa-delivery-row label').bind('click', updateInputField);
     };
 
-
-    /*
-     * Checks if the combination of options applies and displays this if needed.
-     */
-
-    checkCombination = function() {
-        var combination, deliveryType, inclusiveOption, json;
-        json = $('#mypa-delivery-options .mypa-row-subitem input[name=mypa-delivery-time]:checked').val();
-        if (json != null) {
-            deliveryType = JSON.parse(json)['time'][0]['price_comment'];
-        }
-        inclusiveOption = deliveryType === MORNING_DELIVERY || deliveryType === EVENING_DELIVERY;
-        combination = $('input[name=mypa-signed]').prop('checked') && !inclusiveOption;
-        $('.mypa-combination-price').toggleClass('mypa-combination-price-active', combination);
-        $('.mypa-combination-price > .mypa-price').toggleClass('mypa-price-active', combination);
-        $('.mypa-combination-price > .mypa-price').toggleClass('mypa-hidden', !combination);
-        return $('.mypa-combination-price label .mypa-price').toggleClass('mypa-hidden', combination);
-    };
-
+    
 
     /*
      * Sets the json to the selected input field to be with the form
