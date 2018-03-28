@@ -236,9 +236,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
 	 * @return float
 	 */
 	private function createPrice($settingPath) {
-		$price = 0;
-		$price += $this->myParcelHelper->getMethodPrice($settingPath . 'fee');
-
+		$price = $this->myParcelHelper->getMethodPrice($settingPath . 'fee');
 		return $price;
 	}
 }
