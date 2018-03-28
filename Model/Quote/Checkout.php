@@ -96,7 +96,6 @@ class Checkout
         return [
             'base_price' => $this->helper->getMoneyFormat($this->helper->getBasePrice()),
             'cutoff_time' => $this->helper->getTimeConfig('general/cutoff_time'),
-            'deliverydays_window' => $this->helper->getIntergerConfig('general/deliverydays_window'),
             'dropoff_days' => $this->helper->getArrayConfig('general/dropoff_days'),
             'monday_delivery_active' => $this->helper->getBoolConfig('general/monday_delivery_active'),
             'saturday_cutoff_time' => $this->helper->getTimeConfig('general/saturday_cutoff_time'),

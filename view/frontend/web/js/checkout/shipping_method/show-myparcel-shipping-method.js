@@ -200,7 +200,6 @@ define(
         function _setParameters() {
             var data = window.mypa.data;
             window.mypa.settings = {
-                deliverydays_window: data.general.deliverydays_window,
                 number: _getHouseNumber(),
                 street: _getFullStreet(),
                 postal_code: window.mypa.address.postcode,
