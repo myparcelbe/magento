@@ -3,7 +3,7 @@
  */
 
 (function() {
-    var $, AO_DEFAULT_TEXT, MAILBOX_DEFAULT_TEXT, Application, CARRIER, DAYS_OF_THE_WEEK, DAYS_OF_THE_WEEK_TRANSLATED, DEFAULT_DELIVERY, DISABLED, EVENING_DELIVERY, HVO_DEFAULT_TEXT, MORNING_DELIVERY, MORNING_PICKUP, NATIONAL, NORMAL_PICKUP, PICKUP, PICKUP_EXPRESS, PICKUP_TIMES, POST_NL_TRANSLATION, Slider, checkCombination, displayOtherTab, externalJQuery, obj1, orderOpeningHours, preparePickup, renderDeliveryOptions, renderExpressPickup, renderPage, renderPickup, renderPickupLocation, showDefaultPickupLocation, sortLocationsOnDistance, updateDelivery, updateInputField, hideMyParcelOptions,
+    var $, AO_DEFAULT_TEXT, MAILBOX_DEFAULT_TEXT, Application, CARRIER, DAYS_OF_THE_WEEK, DAYS_OF_THE_WEEK_TRANSLATED, DEFAULT_DELIVERY, DISABLED, EVENING_DELIVERY, HVO_DEFAULT_TEXT, MORNING_DELIVERY, MORNING_PICKUP, NATIONAL, NORMAL_PICKUP, PICKUP, PICKUP_EXPRESS, PICKUP_TIMES, POST_NL_TRANSLATION, Slider, displayOtherTab, externalJQuery, obj1, orderOpeningHours, preparePickup, renderDeliveryOptions, renderExpressPickup, renderPage, renderPickup, renderPickupLocation, showDefaultPickupLocation, sortLocationsOnDistance, updateDelivery, updateInputField, hideMyParcelOptions,
         bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
     DISABLED = 'disabled';
@@ -523,7 +523,6 @@
         var day_index, html, i, index, j, k, len, location, openingHoursHtml, orderedHours, ref, ref1, time;
         displayOtherTab();
         $('.mypa-onoffswitch-checkbox:checked').prop('checked', false);
-        checkCombination();
         $('#mypa-location-container').html('');
         for (index = i = 0, ref = data.length - 1; 0 <= ref ? i <= ref : i >= ref; index = 0 <= ref ? ++i : --i) {
             location = data[index];
@@ -605,11 +604,6 @@
         if (hvoText == null) {
             hvoText = HVO_DEFAULT_TEXT;
         }
-        combinatedPrice = window.mypa.settings.price.combi_options;
-        combine = hvoPrice !== 'disabled' && (combinatedPrice != null);
-        if (combine) {
-            html += "<div class='mypa-combination-price'><span class='mypa-price mypa-hidden'>" + combinatedPrice + "</span>";
-        }
         if (hvoPrice !== DISABLED) {
             html += "<label for=\"mypa-signed\" class='mypa-row-subitem'>\n  <input type=\"checkbox\" name=\"mypa-signed\" class=\"mypa-onoffswitch-checkbox\" id=\"mypa-signed\">\n  <div class=\"mypa-switch-container\">\n    <div class=\"mypa-onoffswitch\">\n      <label class=\"mypa-onoffswitch-label\" for=\"mypa-signed\">\n        <span class=\"mypa-onoffswitch-inner\"></span>\n      <span class=\"mypa-onoffswitch-switch\"></span>\n      </label>\n    </div>\n  </div>\n  <span>";
             if (hvoPrice) {
@@ -633,17 +627,11 @@
         $('#mypa-mailbox-delivery').on('change', function () {
             externalJQuery('input[name=delivery_options]').val('{"time":[{"price_comment":"mailbox","type":6}]}').trigger('change');
         });
-        $('.mypa-combination-price label').on('click', checkCombination);
-        $('#mypa-delivery-options label.mypa-row-subitem input[name=mypa-delivery-time]').on('change', function(e) {
-            return checkCombination();
-        });
         if ($('input[name=mypa-delivery-time]:checked').length < 1) {
             $($('input[name=mypa-delivery-time]')[0]).prop('checked', true);
         }
         return $('div#mypa-delivery-row label').bind('click', updateInputField);
     };
-
-    
 
     /*
      * Sets the json to the selected input field to be with the form
