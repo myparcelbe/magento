@@ -123,13 +123,7 @@ class Result extends \Magento\Shipping\Model\Rate\Result
     {
         $methods = [
             'signature' => 'delivery/signature_',
-            'morning' => 'morning/',
-            'morning_signature' => 'morning_signature/',
-            'evening' => 'evening/',
-            'evening_signature' => 'evening_signature/',
             'pickup' => 'pickup/',
-            'pickup_express' => 'pickup_express/',
-            'mailbox' => 'mailbox/',
         ];
 
         return $methods;
@@ -142,17 +136,7 @@ class Result extends \Magento\Shipping\Model\Rate\Result
      */
     private function getAllowedMethods()
     {
-	    if ($this->package->fitInMailbox() && $this->package->isShowMailboxWithOtherOptions() === false) {
-		    $methods = ['mailbox' => 'mailbox/'];
-
-		    return $methods;
-	    }
-
 	    $methods = $this->getMethods();
-
-	    if (!$this->package->fitInMailbox()) {
-		    unset($methods['mailbox']);
-	    }
 
 	    return $methods;
     }
@@ -172,8 +156,6 @@ class Result extends \Magento\Shipping\Model\Rate\Result
         if (!in_array($currentCarrier, $this->parentMethods)) {
             return;
         }
-
-        $this->package->setMailboxSettings();
 
         if (count($this->products) > 0){
             $this->package->setWeightFromQuoteProducts($this->products);
@@ -241,23 +223,7 @@ class Result extends \Magento\Shipping\Model\Rate\Result
      * @return float
      */
     private function createPrice($alias, $settingPath) {
-        $price = 0;
-        if ($alias == 'morning_signature') {
-            $price += $this->myParcelHelper->getMethodPrice('morning/fee');
-            $price += $this->myParcelHelper->getMethodPrice('delivery/signature_fee', false);
-
-            return $price;
-        }
-
-        if ($alias == 'evening_signature') {
-            $price += $this->myParcelHelper->getMethodPrice('evening/fee');
-            $price += $this->myParcelHelper->getMethodPrice('delivery/signature_fee', false);
-
-            return $price;
-        }
-
-        $price += $this->myParcelHelper->getMethodPrice($settingPath . 'fee', $alias !== 'mailbox');
-
+        $price = $this->myParcelHelper->getMethodPrice($settingPath . 'fee');
         return $price;
     }
 

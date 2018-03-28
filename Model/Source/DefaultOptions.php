@@ -97,42 +97,10 @@ class DefaultOptions
     /**
      * Get package type
      *
-     * @return int 1|2|3
+     * @return int 1
      */
     public function getPackageType()
     {
-        if ($this->isMailBox() === true) {
-            return 2;
-        }
-
         return 1;
-    }
-
-    private function isMailBox() {
-        /** @todo get mailbox config */
-        $mailboxActive = true;
-
-        if ($mailboxActive !== true) {
-            return false;
-        }
-
-        $country = self::$order->getShippingAddress()->getCountryId();
-        if ($country != 'NL') {
-            return false;
-        }
-
-        if (
-            is_array(self::$chosenOptions) &&
-            key_exists('time', self::$chosenOptions) &&
-            is_array(self::$chosenOptions['time']) &&
-            key_exists('price_comment', self::$chosenOptions['time'][0]) &&
-            self::$chosenOptions['time'][0]['price_comment'] == 'mailbox'
-        ) {
-            return true;
-        }
-
-        /** @todo; check if mailbox fit in box */
-        
-        return false;
     }
 }

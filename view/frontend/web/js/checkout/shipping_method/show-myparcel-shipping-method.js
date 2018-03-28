@@ -66,9 +66,7 @@ define(
                 _setAddress();
                 _hideRadios();
 
-                if (checkOnlyShowMailbox()) {
-                    showMailboxRadio();
-                } else if (_getCcIsLocal() && _getHouseNumber() !== null) {
+                if (_getCcIsLocal() && _getHouseNumber() !== null) {
                     _appendTemplate();
                     _setParameters();
                     showOptions();
@@ -77,27 +75,6 @@ define(
                     hideOptions();
                 }
             }, 1000);
-        }
-
-        function checkOnlyShowMailbox() {
-            if (_getCcIsLocal() === false) {
-                return false;
-            }
-
-            if (window.mypa.data.mailbox.active === false) {
-                return false
-            }
-
-            if (window.mypa.data.mailbox.mailbox_other_options === true) {
-                return false;
-            }
-
-            return true;
-        }
-        
-        function showMailboxRadio() {
-            jQuery("td[id^='label_carrier_" + window.mypa.data.general.parent_method + "']").parent().hide();
-            jQuery("td[id^='label_carrier_mailbox']").parent().show();
         }
 
         function _setAddress() {
@@ -148,7 +125,8 @@ define(
         }
 
         function _hideRadios() {
-            jQuery("td[id^='label_method_signature'],td[id^='label_method_mailbox'],td[id^='label_method_pickup'],td[id^='label_method_evening'],td[id^='label_method_morning']").parent().hide();
+            jQuery("td[id^='label_method_signature'],td[id^='label_method_pickup']").parent().hide();
+
         }
 
         function _getCcIsLocal() {
@@ -200,24 +178,18 @@ define(
         function _setParameters() {
             var data = window.mypa.data;
             window.mypa.settings = {
-                deliverydays_window: data.general.deliverydays_window,
                 number: _getHouseNumber(),
                 street: _getFullStreet(),
                 postal_code: window.mypa.address.postcode,
                 cutoff_time: data.general.cutoff_time,
                 dropoff_days: data.general.dropoff_days,
-                monday_delivery: data.general.monday_delivery_active,
-                saturday_cutoff_time: data.general.saturday_cutoff_time,
+                saturday_delivery: data.general.saturday_delivery_active,
                 dropoff_delay: data.general.dropoff_delay,
                 exclude_delivery_type: data.general.exclude_delivery_types,
                 price: {
-                    morning: data.morning.fee,
                     default: data.general.base_price,
-                    night: data.evening.fee,
                     pickup: data.pickup.fee,
-                    pickup_express: data.pickup_express.fee,
                     signed: data.delivery.signature_fee,
-                    mailbox: data.mailbox.fee,
                 },
                 base_url: 'https://api.myparcel.nl/delivery_options',
                 text:
@@ -266,14 +238,6 @@ define(
             }
 
             switch (type) {
-                case "morning":
-                    if (json.options.signature) {
-                        _checkMethod('input[value=' + myparcel_method_alias + '_morning_signature' + ']');
-                    } else {
-                        _checkMethod('input[value=' + myparcel_method_alias + '_morning' + ']');
-                    }
-                    myparcel.showDays();
-                    break;
                 case "standard":
                     if (json.options.signature) {
                         _checkMethod('input[value=' + myparcel_method_alias + '_signature' + ']');
@@ -282,24 +246,8 @@ define(
                     }
                     myparcel.showDays();
                     break;
-                case "night":
-                    if (json.options.signature) {
-                        _checkMethod('input[value=' + myparcel_method_alias + '_evening_signature' + ']');
-                    } else {
-                        _checkMethod('input[value=' + myparcel_method_alias + '_evening' + ']');
-                    }
-                    myparcel.showDays();
-                    break;
                 case "retail":
                     _checkMethod('input[value=' + myparcel_method_alias + '_pickup' + ']');
-                    myparcel.hideDays();
-                    break;
-                case "retailexpress":
-                    _checkMethod('input[value=' + myparcel_method_alias + '_pickup_express' + ']');
-                    myparcel.hideDays();
-                    break;
-                case "mailbox":
-                    _checkMethod('input[value=' + myparcel_method_alias + '_mailbox' + ']');
                     myparcel.hideDays();
                     break;
             }

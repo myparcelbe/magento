@@ -147,13 +147,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     {
 	    $methods = [
             'signature' => 'delivery/signature_',
-            'morning' => 'morning/',
-            'morning_signature' => 'morning_signature/',
-            'evening' => 'evening/',
-            'evening_signature' => 'evening_signature/',
             'pickup' => 'pickup/',
-            'pickup_express' => 'pickup_express/',
-            'mailbox' => 'mailbox/',
         ];
 
         return $methods;
@@ -166,18 +160,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      */
     public function getAllowedMethods()
     {
-	    if ($this->package->fitInMailbox() && $this->package->isShowMailboxWithOtherOptions() === false) {
-            $methods = ['mailbox' => 'mailbox/'];
-
-	        return $methods;
-        }
-
         $methods = $this->getMethods();
-
-        if (!$this->package->fitInMailbox()) {
-            unset($methods['mailbox']);
-        }
-
         return $methods;
     }
 
@@ -188,7 +171,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     private function addShippingMethods($result)
     {
         $products = $this->quote->getAllItems($result);
-        $this->package->setMailboxSettings();
         if (count($products) > 0){
             $this->package->setWeightFromQuoteProducts($products);
         }
@@ -214,7 +196,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     private function getShippingMethod($alias, $settingPath)
     {
         $title = $this->createTitle($settingPath);
-        $price = $this->createPrice($alias, $settingPath);
+        $price = $this->createPrice($settingPath);
 
         /** @var \Magento\Quote\Model\Quote\Address\RateResult\Method $method */
         $method = $this->_rateMethodFactory->create();
@@ -253,24 +235,8 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
 	 * @param $settingPath
 	 * @return float
 	 */
-	private function createPrice($alias, $settingPath) {
-		$price = 0;
-		if ($alias == 'morning_signature') {
-			$price += $this->myParcelHelper->getMethodPrice('morning/fee');
-			$price += $this->myParcelHelper->getMethodPrice('delivery/signature_fee', false);
-
-			return $price;
-		}
-
-		if ($alias == 'evening_signature') {
-			$price += $this->myParcelHelper->getMethodPrice('evening/fee');
-			$price += $this->myParcelHelper->getMethodPrice('delivery/signature_fee', false);
-
-			return $price;
-		}
-
-		$price += $this->myParcelHelper->getMethodPrice($settingPath . 'fee', $alias !== 'mailbox');
-
+	private function createPrice($settingPath) {
+		$price = $this->myParcelHelper->getMethodPrice($settingPath . 'fee');
 		return $price;
 	}
 }

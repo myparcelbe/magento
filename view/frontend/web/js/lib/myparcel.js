@@ -3,7 +3,9 @@
  */
 
 (function() {
-    var $, AO_DEFAULT_TEXT, MAILBOX_DEFAULT_TEXT, Application, CARRIER, DAYS_OF_THE_WEEK, DAYS_OF_THE_WEEK_TRANSLATED, DEFAULT_DELIVERY, DISABLED, EVENING_DELIVERY, HVO_DEFAULT_TEXT, MORNING_DELIVERY, MORNING_PICKUP, NATIONAL, NORMAL_PICKUP, PICKUP, PICKUP_EXPRESS, PICKUP_TIMES, POST_NL_TRANSLATION, Slider, displayOtherTab, externalJQuery, obj1, orderOpeningHours, preparePickup, renderDeliveryOptions, renderExpressPickup, renderPage, renderPickup, renderPickupLocation, showDefaultPickupLocation, sortLocationsOnDistance, updateDelivery, updateInputField, hideMyParcelOptions,
+  
+    var $, AO_DEFAULT_TEXT, Application, CARRIER, DAYS_OF_THE_WEEK, DAYS_OF_THE_WEEK_TRANSLATED, DEFAULT_DELIVERY, DISABLED, HVO_DEFAULT_TEXT, NATIONAL, NORMAL_PICKUP, PICKUP, PICKUP_TIMES, POST_NL_TRANSLATION, Slider, displayOtherTab, externalJQuery, obj1, orderOpeningHours, preparePickup, renderDeliveryOptions, renderPage, renderPickup, renderPickupLocation, showDefaultPickupLocation, sortLocationsOnDistance, updateDelivery, updateInputField, hideMyParcelOptions,
+
         bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
     DISABLED = 'disabled';
@@ -12,39 +14,26 @@
 
     AO_DEFAULT_TEXT = 'Alleen geadresseerde';
 
-    MAILBOX_DEFAULT_TEXT = 'Brievenbuspakje';
-
     NATIONAL = 'NL';
 
     CARRIER = 1;
 
-    MORNING_DELIVERY = 'morning';
-
     DEFAULT_DELIVERY = 'default';
-
-    EVENING_DELIVERY = 'night';
 
     PICKUP = 'pickup';
 
-    PICKUP_EXPRESS = 'pickup_express';
-
     POST_NL_TRANSLATION = {
-        morning: 'morning',
-        standard: 'default',
-        night: 'night'
+        standard: 'default'
     };
 
     DAYS_OF_THE_WEEK = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
     DAYS_OF_THE_WEEK_TRANSLATED = ['ma', 'di', 'wo', 'do', 'vr', 'za', 'zo'];
 
-    MORNING_PICKUP = '08:30:00';
-
     NORMAL_PICKUP = '16:00:00';
 
     PICKUP_TIMES = (
         obj1 = {},
-            obj1["" + MORNING_PICKUP] = 'morning',
             obj1["" + NORMAL_PICKUP] = 'normal',
             obj1
     );
@@ -146,7 +135,7 @@
          * Fetches devliery options and an overall page update.
          */
         Application.prototype.updatePage = function(postal_code, number, street) {
-            var item, key, options, ref, settings, urlBase, current_date, monday_delivery, cutoff_time;
+            var item, key, options, ref, settings, urlBase, current_date, saturday_delivery, cutoff_time;
             ref = window.mypa.settings.price;
             for (key in ref) {
                 item = ref[key];
@@ -171,23 +160,19 @@
                 $('.mypa-overlay').removeClass('mypa-hidden');
                 return;
             }
-            /* Check if Monday delivery is active */
-            if (settings.monday_delivery == true) {
-                monday_delivery = 1;
+            /* Check if Saturday delivery is active */
+            if (settings.saturday_delivery == true) {
+                saturday_delivery = 1;
             } else {
-                monday_delivery = void 0;
+                saturday_delivery = void 0;
             }
-            /* Use saturday_cutoff_time for cutoff_time if Monday delivery is active and current day is Saturday */
-            if (settings.monday_delivery == true && current_date.getDay() == 6) {
-                cutoff_time = settings.saturday_cutoff_time;
-            } else {
-                cutoff_time = settings.cutoff_time != null ? settings.cutoff_time : void 0
-            }
+
+            cutoff_time = settings.cutoff_time != null ? settings.cutoff_time : void 0
+
             $('#mypa-no-options').html('Bezig met laden...');
             $('.mypa-overlay').removeClass('mypa-hidden');
             $('.mypa-location').html(street);
 
-            var deliverydays_window = settings.deliverydays_window === 0 ? 1 : settings.deliverydays_window;
             options = {
                 url: urlBase,
                 data: {
@@ -199,9 +184,8 @@
                     delivery_date: settings.delivery_date != null ? settings.delivery_date : void 0,
                     cutoff_time: cutoff_time,
                     dropoff_days: settings.dropoff_days != null ? settings.dropoff_days : void 0,
-                    monday_delivery: monday_delivery,
+                    saturday_delivery: saturday_delivery,
                     dropoff_delay: settings.dropoff_delay != null ? settings.dropoff_delay : void 0,
-                    deliverydays_window: deliverydays_window != null ? deliverydays_window : void 0,
                     exclude_delivery_type: settings.exclude_delivery_type != null ? settings.exclude_delivery_type : void 0
                 },
                 success: renderPage,
@@ -220,11 +204,7 @@
         };
 
         Application.prototype.showDays = function() {
-            if (window.mypa.settings.deliverydays_window >= 1) {
-                $('#mypa-date-slider-left, #mypa-date-slider-right, #mypa-tabs-container').show();
-            } else {
-                $('#mypa-date-slider-left, #mypa-date-slider-right, #mypa-tabs-container').hide();
-            }
+            $('#mypa-date-slider-left, #mypa-date-slider-right, #mypa-tabs-container').hide();
         };
 
         Application.prototype.hideDays = function() {
@@ -278,10 +258,6 @@
             }
             $("#mypa-tabs").attr('style', "width:" + (this.deliveryDays.length * 105) + "px");
             this.makeSlider();
-
-            if (window.mypa.settings.deliverydays_window === 0) {
-                Application.prototype.hideDays();
-            }
         }
 
 
@@ -416,9 +392,6 @@
             renderDeliveryOptions(date);
             return updateInputField();
         });
-        $('#mypa-mailbox-options-title').on('click', function() {
-            return updateInputField();
-        });
         $('#mypa-pickup-options-title').on('click', function() {
             $('#mypa-pickup').prop('checked', true);
             return updateInputField();
@@ -427,18 +400,15 @@
     };
 
     preparePickup = function(pickupOptions) {
-        var filter, i, j, len, len1, name1, pickupExpressPrice, pickupLocation, pickupPrice, ref, time;
+        var filter, i, j, len, len1, name1, pickupLocation, pickupPrice, ref, time;
         if (pickupOptions.length < 1) {
             $('#mypa-pickup-row').addClass('mypa-hidden');
             return;
         }
         $('#mypa-pickup-row').removeClass('mypa-hidden');
         pickupPrice = window.mypa.settings.price[PICKUP];
-        pickupExpressPrice = window.mypa.settings.price[PICKUP_EXPRESS];
         $('.mypa-pickup-price').html(pickupPrice);
         $('.mypa-pickup-price').toggleClass('mypa-hidden', pickupPrice == null);
-        $('.mypa-pickup-express-price').html(pickupExpressPrice);
-        $('.mypa-pickup-express-price').toggleClass('mypa-hidden', pickupExpressPrice == null);
         window.mypa.pickupFiltered = filter = {};
         pickupOptions = sortLocationsOnDistance(pickupOptions);
         for (i = 0, len = pickupOptions.length; i < len; i++) {
@@ -452,17 +422,8 @@
                 filter[PICKUP_TIMES[time.start]].push(pickupLocation);
             }
         }
-        if (filter[PICKUP_TIMES[MORNING_PICKUP]] == null) {
-            $('#mypa-pickup-express').parent().css({
-                display: 'none'
-            });
-        }
         showDefaultPickupLocation('#mypa-pickup-address', filter[PICKUP_TIMES[NORMAL_PICKUP]][0]);
-        if(MORNING_PICKUP && PICKUP_TIMES[MORNING_PICKUP] && filter[PICKUP_TIMES[MORNING_PICKUP]]){
-            showDefaultPickupLocation('#mypa-pickup-express-address', filter[PICKUP_TIMES[MORNING_PICKUP]][0]);
-        }
         $('#mypa-pickup-address').off().bind('click', renderPickup);
-        $('#mypa-pickup-express-address').off().bind('click', renderExpressPickup);
         return $('.mypa-pickup-selector').on('click', updateInputField);
     };
 
@@ -501,19 +462,6 @@
         $('#mypa-pickup').prop('checked', true);
         return false;
     };
-
-
-    /*
-     * Set the pickup time HTML and start rendering the locations page
-     */
-
-    renderExpressPickup = function() {
-        renderPickupLocation(window.mypa.pickupFiltered[PICKUP_TIMES[MORNING_PICKUP]]);
-        $('.mypa-location-time').html('- Vanaf 08.30 uur');
-        $('#mypa-pickup-express').prop('checked', true);
-        return false;
-    };
-
 
     /*
      * Renders the locations in the array order given in data
@@ -573,16 +521,14 @@
     };
 
     renderDeliveryOptions = function(date) {
-        var checked, mailboxPrice, mailboxText, combinatedPrice, combine, deliveryTimes, html, hvoPrice, hvoText, i, index, json, len, price, ref, ref1, time;
+        var checked, deliveryTimes, html, hvoPrice, hvoText, i, index, json, len, price, ref, ref1, time;
+
         $('#mypa-delivery-options').html('');
         html = '';
         deliveryTimes = window.mypa.sortedDeliverytimes[date];
         index = 0;
         for (i = 0, len = deliveryTimes.length; i < len; i++) {
             time = deliveryTimes[i];
-            if (time.price_comment === 'avond') {
-                time.price_comment = EVENING_DELIVERY;
-            }
             price = window.mypa.settings.price[POST_NL_TRANSLATION[time.price_comment]];
             json = {
                 date: date,
@@ -604,6 +550,7 @@
         if (hvoText == null) {
             hvoText = HVO_DEFAULT_TEXT;
         }
+      
         if (hvoPrice !== DISABLED) {
             html += "<label for=\"mypa-signed\" class='mypa-row-subitem'>\n  <input type=\"checkbox\" name=\"mypa-signed\" class=\"mypa-onoffswitch-checkbox\" id=\"mypa-signed\">\n  <div class=\"mypa-switch-container\">\n    <div class=\"mypa-onoffswitch\">\n      <label class=\"mypa-onoffswitch-label\" for=\"mypa-signed\">\n        <span class=\"mypa-onoffswitch-inner\"></span>\n      <span class=\"mypa-onoffswitch-switch\"></span>\n      </label>\n    </div>\n  </div>\n  <span>";
             if (hvoPrice) {
@@ -611,22 +558,7 @@
             }
             html += "<span style=''>" + hvoText  + "</span>" + "</span></label>";
         }
-        if (combine) {
-            html += "</div>";
-        }
-        $('#mypa-delivery-options').html(html);
-        mailboxPrice = window.mypa.settings.price.mailbox;
-        mailboxText = (ref1 = window.mypa.settings.text) != null ? ref1.mailbox : void 0;
-        if (mailboxText == null) {
-            mailboxText = MAILBOX_DEFAULT_TEXT;
-        }
-        if (mailboxPrice !== DISABLED) {
-            var mailboxHtml = "<input type='radio' name='mypa-delivery-type' id='mypa-mailbox-delivery'><label id='mypa-mailbox-options-title' class='mypa-row-title' for='mypa-mailbox-delivery'><div class='mypa-checkmark mypa-main'><div class='mypa-circle'></div><div class='mypa-checkmark-stem'></div><div class='mypa-checkmark-kick'></div></div><span class='mypa-price mypa-mailbox-price'>" + mailboxPrice + "</span><span class='mypa-highlight'>" + mailboxText + "</span></label>";
-            $('#mypa-mailbox-row').addClass('mypa-row-lg').html(mailboxHtml)
-        }
-        $('#mypa-mailbox-delivery').on('change', function () {
-            externalJQuery('input[name=delivery_options]').val('{"time":[{"price_comment":"mailbox","type":6}]}').trigger('change');
-        });
+      
         if ($('input[name=mypa-delivery-time]:checked').length < 1) {
             $($('input[name=mypa-delivery-time]')[0]).prop('checked', true);
         }
