@@ -51,13 +51,6 @@
                 <signature_fee>0.36</signature_fee>
                 <signature_and_only_recipient_fee>0.44</signature_and_only_recipient_fee>
             </delivery>
-            <mailbox>
-                <active>0</active>
-                <other_options>1</other_options>
-                <title>Brievenbuspakje</title>
-                <weight>2000</weight>
-                <fee>3.50</fee>
-            </mailbox>
             <morning>
                 <active>1</active>
                 <fee>10</fee>

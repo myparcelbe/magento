@@ -54,7 +54,6 @@ class Checkout
         $this->quoteId = $session->getQuoteId();
         $this->products = $cart->getItems();
         $this->package = $package;
-        $this->package->setMailboxSettings();
     }
 
     /**
@@ -72,7 +71,6 @@ class Checkout
             'delivery' => $this->getDeliveryData(),
             'morning' => $this->getMorningData(),
             'evening' => $this->getEveningData(),
-            'mailbox' => $this->getMailboxData(),
             'pickup' => $this->getPickupData(),
             'pickup_express' => $this->getPickupExpressData(),
         ];
@@ -186,31 +184,6 @@ class Checkout
             'active' => $this->helper->getCheckoutConfig('pickup_express/active'),
             'fee' => $this->helper->getMethodPriceFormat('pickup_express/fee'),
         ];
-    }
-
-    /**
-     * @return array
-     */
-    private function getMailboxData()
-    {
-        /** @var \Magento\Quote\Model\Quote\Item[] $products */
-        if (count($this->products) > 0){
-            $this->package->setWeightFromQuoteProducts($this->products);
-        }
-
-        /** check if mailbox is active */
-        $mailboxData = [
-            'active' => $this->package->fitInMailbox(),
-            'mailbox_other_options' => $this->package->isShowMailboxWithOtherOptions(),
-            'title' => $this->helper->getCheckoutConfig('mailbox/title'),
-            'fee' => $this->helper->getMethodPriceFormat('mailbox/fee', false),
-        ];
-
-        if ($mailboxData['active'] === false) {
-            $mailboxData['fee'] = 'disabled';
-        }
-
-        return $mailboxData;
     }
 
     /**

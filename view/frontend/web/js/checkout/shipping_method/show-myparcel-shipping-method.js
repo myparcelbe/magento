@@ -66,9 +66,7 @@ define(
                 _setAddress();
                 _hideRadios();
 
-                if (checkOnlyShowMailbox()) {
-                    showMailboxRadio();
-                } else if (_getCcIsLocal() && _getHouseNumber() !== null) {
+                if (_getCcIsLocal() && _getHouseNumber() !== null) {
                     _appendTemplate();
                     _setParameters();
                     showOptions();
@@ -77,27 +75,6 @@ define(
                     hideOptions();
                 }
             }, 1000);
-        }
-
-        function checkOnlyShowMailbox() {
-            if (_getCcIsLocal() === false) {
-                return false;
-            }
-
-            if (window.mypa.data.mailbox.active === false) {
-                return false
-            }
-
-            if (window.mypa.data.mailbox.mailbox_other_options === true) {
-                return false;
-            }
-
-            return true;
-        }
-        
-        function showMailboxRadio() {
-            jQuery("td[id^='label_carrier_" + window.mypa.data.general.parent_method + "']").parent().hide();
-            jQuery("td[id^='label_carrier_mailbox']").parent().show();
         }
 
         function _setAddress() {
@@ -148,7 +125,7 @@ define(
         }
 
         function _hideRadios() {
-            jQuery("td[id^='label_method_signature'],td[id^='label_method_mailbox'],td[id^='label_method_pickup'],td[id^='label_method_evening'],td[id^='label_method_only_recipient'],td[id^='label_method_morning']").parent().hide();
+            jQuery("td[id^='label_method_signature'],td[id^='label_method_pickup'],td[id^='label_method_evening'],td[id^='label_method_only_recipient'],td[id^='label_method_morning']").parent().hide();
         }
 
         function _getCcIsLocal() {
@@ -217,7 +194,6 @@ define(
                     signed: data.delivery.signature_fee,
                     only_recipient: data.delivery.only_recipient_fee,
                     combi_options: data.delivery.signature_and_only_recipient_fee,
-                    mailbox: data.mailbox.fee,
                 },
                 base_url: 'https://api.myparcel.nl/delivery_options',
                 text:
@@ -303,10 +279,6 @@ define(
                     break;
                 case "retailexpress":
                     _checkMethod('input[value=' + myparcel_method_alias + '_pickup_express' + ']');
-                    myparcel.hideDays();
-                    break;
-                case "mailbox":
-                    _checkMethod('input[value=' + myparcel_method_alias + '_mailbox' + ']');
                     myparcel.hideDays();
                     break;
             }

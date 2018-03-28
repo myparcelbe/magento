@@ -130,8 +130,7 @@ class Result extends \Magento\Shipping\Model\Rate\Result
             'evening' => 'evening/',
             'evening_signature' => 'evening_signature/',
             'pickup' => 'pickup/',
-            'pickup_express' => 'pickup_express/',
-            'mailbox' => 'mailbox/',
+            'pickup_express' => 'pickup_express/'
         ];
 
         return $methods;
@@ -144,17 +143,7 @@ class Result extends \Magento\Shipping\Model\Rate\Result
      */
     private function getAllowedMethods()
     {
-	    if ($this->package->fitInMailbox() && $this->package->isShowMailboxWithOtherOptions() === false) {
-		    $methods = ['mailbox' => 'mailbox/'];
-
-		    return $methods;
-	    }
-
 	    $methods = $this->getMethods();
-
-	    if (!$this->package->fitInMailbox()) {
-		    unset($methods['mailbox']);
-	    }
 
 	    return $methods;
     }
@@ -174,8 +163,6 @@ class Result extends \Magento\Shipping\Model\Rate\Result
         if (!in_array($currentCarrier, $this->parentMethods)) {
             return;
         }
-
-        $this->package->setMailboxSettings();
 
         if (count($this->products) > 0){
             $this->package->setWeightFromQuoteProducts($this->products);
@@ -258,7 +245,7 @@ class Result extends \Magento\Shipping\Model\Rate\Result
             return $price;
         }
 
-        $price += $this->myParcelHelper->getMethodPrice($settingPath . 'fee', $alias !== 'mailbox');
+        $price += $this->myParcelHelper->getMethodPrice($settingPath . 'fee');
 
         return $price;
     }

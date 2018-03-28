@@ -139,7 +139,6 @@ define(
                     $.mage.__('Package Type');
                     $.mage.__('Default');
                     $.mage.__('Package');
-                    $.mage.__('Mailbox');
                     $.mage.__('Letter');
                     $.mage.__('Print position');
                     */
@@ -158,7 +157,7 @@ define(
                  */
                 _setActions: function () {
                     var parentThis = this;
-                    var actionOptions = ["request_type", "package_type", "package_type-mailbox", "print_position"];
+                    var actionOptions = ["request_type", "package_type", "print_position"];
 
                     actionOptions.forEach(function (option) {
                         if (!(option in parentThis.options['action_options']) || (parentThis.options['action_options'][option] == false)) {
