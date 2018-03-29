@@ -132,7 +132,7 @@
 
 
         /*
-         * Fetches devliery options and an overall page update.
+         * Fetches delivery options and an overall page update.
          */
         Application.prototype.updatePage = function(postal_code, number, street) {
             var item, key, options, ref, settings, urlBase, current_date, saturday_delivery, cutoff_time;

@@ -183,13 +183,14 @@ define(
                 postal_code: window.mypa.address.postcode,
                 cutoff_time: data.general.cutoff_time,
                 dropoff_days: data.general.dropoff_days,
-                saturday_delivery: data.general.saturday_delivery_active,
+                saturday_delivery: data.general.saturday_active,
                 dropoff_delay: data.general.dropoff_delay,
                 exclude_delivery_type: data.general.exclude_delivery_types,
                 price: {
                     default: data.general.base_price,
                     pickup: data.pickup.fee,
                     signed: data.delivery.signature_fee,
+                    saturday: data.delivery.saturday_fee,
                 },
                 base_url: 'https://api.myparcel.nl/delivery_options',
                 text:

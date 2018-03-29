@@ -92,7 +92,7 @@ class Checkout
             'base_price' => $this->helper->getMoneyFormat($this->helper->getBasePrice()),
             'cutoff_time' => $this->helper->getTimeConfig('general/cutoff_time'),
             'dropoff_days' => $this->helper->getArrayConfig('general/dropoff_days'),
-            'saturday_delivery_active' => $this->helper->getBoolConfig('general/saturday_delivery_active'),
+            'saturday_active' => $this->helper->getBoolConfig('general/saturday_active'),
             'dropoff_delay' => $this->helper->getIntergerConfig('general/dropoff_delay'),
             'color_base' => $this->helper->getCheckoutConfig('general/color_base'),
             'color_select' => $this->helper->getCheckoutConfig('general/color_select'),
@@ -113,11 +113,17 @@ class Checkout
             'signature_active' => $this->helper->getBoolConfig('delivery/signature_active'),
             'signature_title' => $this->helper->getCheckoutConfig('delivery/signature_title'),
             'signature_fee' => $this->helper->getMethodPriceFormat('delivery/signature_fee', false, '+ '),
+            'saturday_active' => $this->helper->getBoolConfig('delivery/saturday_active'),
+            'saturday_fee' => $this->helper->getMethodPriceFormat('delivery/saturday_fee', false, '+ '),
         ];
 
         if ($deliveryData['signature_active'] === false) {
             $deliveryData['signature_fee'] = 'disabled';
         }
+
+	    if ($deliveryData['saturday_active'] === false) {
+		    $deliveryData['saturday_fee'] = 'disabled';
+	    }
 
         return $deliveryData;
     }
