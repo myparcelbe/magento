@@ -149,7 +149,7 @@ class Checkout extends Data
          * @var \Magento\Quote\Model\Cart\ShippingMethod[] $methods
          */
         $estimatedAddress = $this->estimatedAddressFactory->create();
-        $estimatedAddress->setCountryId('NL');
+        $estimatedAddress->setCountryId('BE');
         $estimatedAddress->setPostcode('');
         $estimatedAddress->setRegion('');
         $estimatedAddress->setRegionId('');

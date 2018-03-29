@@ -135,7 +135,7 @@ class Constants extends \PHPUnit_Framework_TestCase
         $data = ["addressInformation" => [
             "shipping_address" => [
                 "email" => "reindert@myparcel.nl",
-                "countryId" => "NL",
+                "countryId" => "BE",
                 "regionId" => "0",
                 "region" => "",
                 "street" => [
@@ -149,7 +149,7 @@ class Constants extends \PHPUnit_Framework_TestCase
                 "lastname" => "yes",
             ],
             "billing_address" => [
-                "countryId" => "NL",
+                "countryId" => "BE",
                 "regionId" => "0",
                 "region" => "",
                 "street" => [
