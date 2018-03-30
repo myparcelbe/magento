@@ -63,7 +63,7 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
         $order = $observer->getEvent()->getData('order');
         $fullStreet = implode(' ', $order->getShippingAddress()->getStreet());
 
-        if ($order->getShippingAddress()->getCountryId() == 'NL' && $this->consignmentRepository->isCorrectAddress($fullStreet) == false) {
+        if ($order->getShippingAddress()->getCountryId() == 'BE' && $this->consignmentRepository->isCorrectAddress($fullStreet) == false) {
             $order->setData(self::FIELD_TRACK_STATUS, __('⚠️&#160; Please check address'));
         }
 

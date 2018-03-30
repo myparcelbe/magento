@@ -14,7 +14,7 @@
 
     AO_DEFAULT_TEXT = 'Alleen geadresseerde';
 
-    NATIONAL = 'NL';
+    NATIONAL = 'BE';
 
     CARRIER = 1;
 
