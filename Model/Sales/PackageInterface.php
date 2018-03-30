@@ -46,12 +46,6 @@ interface PackageInterface
      */
     public function setAllProductsFit($all_products_fit);
 
-
-    /**
-     * @return int
-     */
-    public function getMaxWeight();
-
     /**
      * package = 1, letter = 3
      *
