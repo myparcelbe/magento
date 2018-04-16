@@ -83,7 +83,7 @@
                     <can_be_empty>1</can_be_empty>
                 </field>
                 <field id="saturday_active" translate="label comment" type="select" sortOrder="214" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Saturday delivery</label>
+                    <label>Saturday active</label>
                     <comment><![CDATA[Note: Saturday delivery is only possible when the package is delivered before 15.00 on Saturday at the designated PostNL locations. Click <a href="https://blog.myparcel.nl/maandagbezorging" target="_blank">here</a> for more information concerning Monday delivery and the locations.]]></comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
