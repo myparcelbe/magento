@@ -87,7 +87,13 @@
                     <comment><![CDATA[Note: Saturday delivery is only possible when the package is delivered before 15.00 on Saturday at the designated PostNL locations. Click <a href="https://blog.myparcel.nl/maandagbezorging" target="_blank">here</a> for more information concerning Monday delivery and the locations.]]></comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="saturday_fee" translate="label comment" type="text" sortOrder="215" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="saturday_title" translate="label comment" type="text" sortOrder="215" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Saturday title</label>
+                    <depends>
+                        <field id="saturday_active">1</field>
+                    </depends>
+                </field>
+                <field id="saturday_fee" translate="label comment" type="text" sortOrder="216" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Saturday delivery</label>
                     <comment>This will be added to the regular shipping price</comment>
                     <depends>

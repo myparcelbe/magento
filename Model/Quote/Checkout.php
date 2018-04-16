@@ -63,7 +63,6 @@ class Checkout
      */
     public function getCheckoutSettings()
     {
-
         $this->helper->setBasePriceFromQuote($this->quoteId);
 
         $this->data = [
