@@ -82,18 +82,6 @@
                     <comment>Select the days that you send the orders.</comment>
                     <can_be_empty>1</can_be_empty>
                 </field>
-                <field id="saturday_active" translate="label comment" type="select" sortOrder="214" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Saturday delivery</label>
-                    <comment><![CDATA[Note: Saturday delivery is only possible when the package is delivered before 15.00 on Saturday at the designated PostNL locations. Click <a href="https://blog.myparcel.nl/maandagbezorging" target="_blank">here</a> for more information concerning Monday delivery and the locations.]]></comment>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
-                <field id="saturday_fee" translate="label comment" type="text" sortOrder="215" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Saturday delivery</label>
-                    <comment>This will be added to the regular shipping price</comment>
-                    <depends>
-                        <field id="saturday_active">1</field>
-                    </depends>
-                </field>
                 <field id="dropoff_delay" translate="label comment" type="select" sortOrder="216" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Dropoff-delay</label>
                     <comment>This options allows you to set the number of days it takes you to pick, pack and hand in your parcels at PostNL when ordered before the cutoff time.</comment>
@@ -104,10 +92,6 @@
                     <frontend_model>MyParcelBE\Magento\Block\System\Config\Form\Color</frontend_model>
                     <comment><![CDATA[<style>#myparcelbe_magento_checkout_general_dropoff_days {height: 185px}</style>]]></comment>
                 </field>
-                <field id="color_select" translate="label" type="text" sortOrder="218" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Color for selected items</label>
-                    <frontend_model>MyParcelBE\Magento\Block\System\Config\Form\Color</frontend_model>
-                </field>
                 <field id="shipping_methods" translate="label comment" type="multiselect" sortOrder="220" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Methods</label>
                     <source_model>MyParcelBE\Magento\Model\Source\ShippingMethods</source_model>
@@ -117,20 +101,38 @@
             </group>
             <group id="delivery" translate="label comment" type="text" sortOrder="220" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Delivery settings</label>
-                <field id="delivery_title" translate="label" type="text" sortOrder="221" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="saturday_active" translate="label comment" type="select" sortOrder="221" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Saturday active</label>
+                    <comment><![CDATA[Note: Saturday delivery is only possible when the package is delivered before 15.00 on Saturday at the designated PostNL locations. Click <a href="https://blog.myparcel.nl/maandagbezorging" target="_blank">here</a> for more information concerning Monday delivery and the locations.]]></comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="saturday_title" translate="label comment" type="text" sortOrder="222" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Saturday title</label>
+                    <depends>
+                        <field id="saturday_active">1</field>
+                    </depends>
+                </field>
+                <field id="saturday_fee" translate="label comment" type="text" sortOrder="223" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Saturday delivery</label>
+                    <comment>This will be added to the regular shipping price</comment>
+                    <depends>
+                        <field id="saturday_active">1</field>
+                    </depends>
+                </field>
+                <field id="delivery_title" translate="label" type="text" sortOrder="225" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Delivery titel</label>
                 </field>
-                <field id="signature_active" translate="label comment" type="select" sortOrder="225" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="signature_active" translate="label comment" type="select" sortOrder="226" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Signature on receipt</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="signature_title" translate="label comment" type="text" sortOrder="226" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="signature_title" translate="label comment" type="text" sortOrder="227" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Signature on receipt title</label>
                     <depends>
                         <field id="signature_active">1</field>
                     </depends>
                 </field>
-                <field id="signature_fee" translate="label comment" type="text" sortOrder="227" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="signature_fee" translate="label comment" type="text" sortOrder="228" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Signature on receipt fee</label>
                     <comment>This will be added to the regular shipping price</comment>
                     <depends>

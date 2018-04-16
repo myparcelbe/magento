@@ -63,7 +63,6 @@ class Checkout
      */
     public function getCheckoutSettings()
     {
-
         $this->helper->setBasePriceFromQuote($this->quoteId);
 
         $this->data = [
@@ -92,10 +91,8 @@ class Checkout
             'base_price' => $this->helper->getMoneyFormat($this->helper->getBasePrice()),
             'cutoff_time' => $this->helper->getTimeConfig('general/cutoff_time'),
             'dropoff_days' => $this->helper->getArrayConfig('general/dropoff_days'),
-            'saturday_active' => $this->helper->getBoolConfig('general/saturday_active'),
             'dropoff_delay' => $this->helper->getIntergerConfig('general/dropoff_delay'),
             'color_base' => $this->helper->getCheckoutConfig('general/color_base'),
-            'color_select' => $this->helper->getCheckoutConfig('general/color_select'),
             'parent_carrier' => $this->helper->getParentCarrierNameFromQuote($this->quoteId),
             'parent_method' => $this->helper->getParentMethodNameFromQuote($this->quoteId),
         ];
@@ -114,6 +111,7 @@ class Checkout
             'signature_title' => $this->helper->getCheckoutConfig('delivery/signature_title'),
             'signature_fee' => $this->helper->getMethodPriceFormat('delivery/signature_fee', false, '+ '),
             'saturday_active' => $this->helper->getBoolConfig('delivery/saturday_active'),
+            'saturday_title' => $this->helper->getCheckoutConfig('delivery/saturday_title'),
             'saturday_fee' => $this->helper->getMethodPriceFormat('delivery/saturday_fee', false, '+ '),
         ];
 
