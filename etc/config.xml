@@ -41,7 +41,7 @@
             </delivery>
             <pickup>
                 <active>1</active>
-                <title>Ophalen bij een PostNL locatie</title>
+                <title>Ophalen bij een bpost locatie</title>
                 <fee>0</fee>
             </pickup>
         </myparcelbe_magento_checkout>

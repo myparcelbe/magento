@@ -11,7 +11,7 @@ define(
         'MyParcelBE_Magento/js/lib/moment.min',
         'myparcelbe_lib_myparcel'
     ],
-    function(mageUrl, uiComponent, quote, customer, checkoutData,jQuery, optionsHtml, cssDynamic, moment) {
+    function(mageUrl, uiComponent, quote, customer, checkoutData, $, optionsHtml, cssDynamic, moment, MyParcel) {
         'use strict';
 
         var  originalShippingRate, optionsContainer, isLoading, myparcel, delivery_options_input, myparcel_method_alias, myparcel_method_element, isLoadingAddress;
@@ -36,7 +36,7 @@ define(
                     clearTimeout(isLoading);
                     _hideRadios();
 
-                    jQuery.ajax({
+                    $.ajax({
                         url: mageUrl.build('rest/V1/delivery_settings/get'),
                         type: "GET",
                         dataType: 'json',
@@ -44,6 +44,7 @@ define(
                     }).done(function (response) {
                         window.mypa.data = response[0].data;
                         init();
+
                         window.mypa.isLoading = false;
                     });
 
@@ -71,7 +72,7 @@ define(
                     _setParameters();
                     showOptions();
                 } else {
-                    jQuery(myparcel_method_element + ":first").parent().parent().show();
+                    $(myparcel_method_element + ":first").parent().parent().show();
                     hideOptions();
                 }
             }, 1000);
@@ -90,15 +91,15 @@ define(
                 var postcode = quote.shippingAddress._latestValue.postcode;
                 if (typeof postcode === 'undefined') postcode = '';
             } else {
-                var street0 = jQuery("input[name='street[0]']").val();
+                var street0 = $("input[name='street[0]']").val();
                 if (typeof street0 === 'undefined') street0 = '';
-                var street1 = jQuery("input[name='street[1]']").val();
+                var street1 = $("input[name='street[1]']").val();
                 if (typeof street1 === 'undefined') street1 = '';
-                var street2 = jQuery("input[name='street[2]']").val();
+                var street2 = $("input[name='street[2]']").val();
                 if (typeof street2 === 'undefined') street2 = '';
-                var country = jQuery("select[name='country_id']").val();
+                var country = $("select[name='country_id']").val();
                 if (typeof country === 'undefined') country = '';
-                var postcode = jQuery("input[name='postcode']").val();
+                var postcode = $("input[name='postcode']").val();
                 if (typeof postcode === 'undefined') postcode = '';
             }
 
@@ -111,7 +112,7 @@ define(
         }
 
         function showOptions() {
-            originalShippingRate = jQuery("td[id^='label_carrier_" + window.mypa.data.general.parent_method + "']").parent();
+            originalShippingRate = $("td[id^='label_carrier_" + window.mypa.data.general.parent_method + "']").parent();
             optionsContainer.show();
 
             if (typeof originalShippingRate !== 'undefined') {
@@ -120,13 +121,18 @@ define(
         }
 
         function hideOptions() {
-            optionsContainer.hide();
-            jQuery(myparcel_method_element + ':first').parent().parent().show();
+            if (typeof optionsContainer != 'undefined') {
+                optionsContainer.hide();
+            }
+            $(myparcel_method_element + ':first').parent().parent().show();
         }
 
         function _hideRadios() {
-            jQuery("td[id^='label_method_signature'],td[id^='label_method_pickup']").parent().hide();
-
+            $(
+                "td[id^='label_method_signature']," +
+                "td[id^='label_method_pickup']," +
+                "td[id^='label_method_saturday']"
+            ).parent().hide();
         }
 
         function _getCcIsLocal() {
@@ -153,18 +159,18 @@ define(
         }
 
         function _observeFields() {
-            delivery_options_input = jQuery("input[name='delivery_options']");
+            delivery_options_input = $("input[name='delivery_options']");
 
-            jQuery("input[id^='s_method']").parent().on('change', function (event) {
+            $("input[id^='s_method']").parent().on('change', function (event) {
                 setTimeout(function(){
-                    if (jQuery(myparcel_method_element + ':checked').length === 0) {
+                    if ($(myparcel_method_element + ':checked').length === 0) {
                         delivery_options_input.val('');
                         myparcel.optionsHaveBeenModified();
                     }
                 }, 50);
             });
 
-            jQuery("input[name^='street'],input[name='postcode'],input[name^='pc_postcode'],select[name^='pc_postcode']").on('change', function (event) {
+            $("input[name^='street'],input[name='postcode'],input[name^='pc_postcode'],select[name^='pc_postcode']").on('change', function (event) {
                 setTimeout(function(){
                     checkAddress();
                 }, 100);
@@ -177,46 +183,41 @@ define(
 
         function _setParameters() {
             var data = window.mypa.data;
-            window.mypa.settings = {
+            var myParcelConfig = {
+                apiBaseUrl: 'https://api.myparcel.nl/',
+                carrierCode: 2,
+                countryCode: 'BE',
                 number: _getHouseNumber(),
                 street: _getFullStreet(),
                 postal_code: window.mypa.address.postcode,
-                cutoff_time: data.general.cutoff_time,
-                dropoff_days: data.general.dropoff_days,
-                saturday_delivery: data.general.saturday_active,
-                dropoff_delay: data.general.dropoff_delay,
-                exclude_delivery_type: data.general.exclude_delivery_types,
-                price: {
-                    default: data.general.base_price,
-                    pickup: data.pickup.fee,
-                    signed: data.delivery.signature_fee,
-                    saturday: data.delivery.saturday_fee,
-                },
-                base_url: 'https://api.myparcel.nl/delivery_options',
-                text:
-                    {
-                        signed: data.delivery.signature_title,
-                    }
+                parent_carrier: data.general.parent_carrier,
+                parent_method: data.general.parent_method,
+                cutoffTime: data.general.cutoff_time,
+                dropOffDelay: data.general.dropoff_delay,
+                excludeDeliveryType: data.general.exclude_delivery_types,
+                dropOffDays: data.general.dropoff_days,
+                allowBpostSaturdayDelivery: data.delivery.saturday_active,
+                priceBpostSaturdayDelivery: data.delivery.saturday_fee,
+                allowBpostAutograph: data.delivery.signature_active,
+                priceBpostAutograph: data.delivery.signature_fee
             };
 
-            myparcel = new MyParcel();
-            myparcel.updatePage();
+
+            MyParcel.init(myParcelConfig);
+            MyParcel.bind();
         }
 
         function _appendTemplate() {
-            if (jQuery('#myparcel_td').length === 0) {
+            if ($('#myparcel_td').length === 0) {
                 var data = window.mypa.data;
                 var baseColor = data.general.color_base;
-                var selectColor = data.general.color_select;
-                cssDynamic = cssDynamic.replace(/_base_color_/g, baseColor).replace(/_select_color_/g, selectColor);
-                optionsHtml = optionsHtml.replace('<css-dynamic/>', cssDynamic);
 
-                originalShippingRate = jQuery("td[id^='label_carrier_" + window.mypa.data.general.parent_method + "']").parent();
+                originalShippingRate = $("td[id^='label_carrier_" + window.mypa.data.general.parent_method + "']").parent();
                 optionsContainer = originalShippingRate.parent().prepend('<tr><td colspan="5" id="myparcel_td" >Bezig met laden...</td></tr>').find('#myparcel_td');
 
                 optionsContainer.html(optionsHtml);
-                jQuery('#mypa-pickup_title').html(data.pickup.title);
-                jQuery('#mypa-delivery_title').html(data.delivery.delivery_title);
+                $('#mypa-pickup_title').html(data.pickup.title);
+                $('#mypa-delivery_title').html(data.delivery.delivery_title);
 
                 _observeFields();
             }
@@ -230,7 +231,7 @@ define(
                 return;
             }
 
-            json = jQuery.parseJSON(inputValue);
+            json = $.parseJSON(inputValue);
 
             if (typeof json.time[0].price_comment !== 'undefined') {
                 type = json.time[0].price_comment;
@@ -255,8 +256,8 @@ define(
         }
 
         function _checkMethod(selector) {
-            jQuery(".col-method > input[type='radio']").prop("checked", false).change();
-            jQuery(selector).prop("checked", true).change().trigger('click');
+            $(".col-method > input[type='radio']").prop("checked", false).change();
+            $(selector).prop("checked", true).change().trigger('click');
         }
     }
 );
