@@ -196,6 +196,8 @@ define(
             addPickupToMagentoInput: function () {
                 var locationId = $('#mypa-pickup-location').val();
                 var currentLocation = MyParcel.getPickupByLocationId(MyParcel.storeDeliveryOptions.data.pickup, locationId);
+                /* @todo remove this if the API gives retail */
+                currentLocation.price_comment = 'retail';
                 $("input[name='delivery_options']").val(JSON.stringify(currentLocation));
             },
 
