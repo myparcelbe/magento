@@ -7,11 +7,10 @@ define(
         'Magento_Checkout/js/checkout-data',
         'jquery',
         'myparcelbe_options_template',
-        'myparcelbe_options_css-dynamic',
         'MyParcelBE_Magento/js/lib/moment.min',
         'myparcelbe_lib_myparcel'
     ],
-    function(mageUrl, uiComponent, quote, customer, checkoutData, $, optionsHtml, cssDynamic, moment, MyParcel) {
+    function(mageUrl, uiComponent, quote, customer, checkoutData, $, optionsHtml, moment, MyParcel) {
         'use strict';
 
         var  originalShippingRate, optionsContainer, isLoading, myparcel, delivery_options_input, myparcel_method_alias, myparcel_method_element, isLoadingAddress;
@@ -210,7 +209,6 @@ define(
         function _appendTemplate() {
             if ($('#myparcel_td').length === 0) {
                 var data = window.mypa.data;
-                var baseColor = data.general.color_base;
 
                 originalShippingRate = $("td[id^='label_carrier_" + window.mypa.data.general.parent_method + "']").parent();
                 optionsContainer = originalShippingRate.parent().prepend('<tr><td colspan="5" id="myparcel_td" >Bezig met laden...</td></tr>').find('#myparcel_td');

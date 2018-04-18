@@ -92,7 +92,6 @@ class Checkout
             'cutoff_time' => $this->helper->getTimeConfig('general/cutoff_time'),
             'dropoff_days' => $this->helper->getArrayConfig('general/dropoff_days'),
             'dropoff_delay' => $this->helper->getIntergerConfig('general/dropoff_delay'),
-            'color_base' => $this->helper->getCheckoutConfig('general/color_base'),
             'parent_carrier' => $this->helper->getParentCarrierNameFromQuote($this->quoteId),
             'parent_method' => $this->helper->getParentMethodNameFromQuote($this->quoteId),
         ];

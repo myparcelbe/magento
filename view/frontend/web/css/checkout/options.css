@@ -9,33 +9,8 @@
     margin-left: 5px;
 }
 
-#mypa-send-per-carrier {
-    background-color: #4169e1 !important;
-    color: white;
-    font-weight: bold;
-    width: 100%;
-    text-align: center;
-    background-color: transparent;
-}
-
-#mypa-txt-send-per-carrier {
-    line-height: 2;
-}
-
-#mypa-delivery-option-form fieldset, form, ul, li, select {
-    padding: 0;
-    margin: 0;
-}
-
-#mypa-delivery-option-form label,
-#mypa-delivery-option-form div,
-#mypa-delivery-option-form select {
-    display: inline-block;
-    vertical-align: top;
-}
-
 #mypa-delivery-option-form label {
-    width: 66%;
+    width: calc(100% - 22px);
 }
 .myparcel-price::before {
     content: "+€";
@@ -66,7 +41,7 @@
 }
 
 #mypa-pickup-location {
-    width: 80%;
+    width: calc(100% - 22px);
 }
 
 #mypa-pickup-selector li{
@@ -154,13 +129,18 @@
 #mypa-delivery-date,
 #mypa-delivery-date-bpost-saturday {
     display: inline-block;
-    width: 66%;
+    width: calc(100% - 22px);
 }
 
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+td#myparcel_td {
+    width: auto;
+}
+
 /* hide shipping block in card */
 div#block-shipping {
     display: none;
