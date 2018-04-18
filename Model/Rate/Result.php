@@ -124,6 +124,8 @@ class Result extends \Magento\Shipping\Model\Rate\Result
         $methods = [
             'signature' => 'delivery/signature_',
             'pickup' => 'pickup/',
+            'saturday' => 'delivery/saturday_',
+            'saturday_signature' => 'delivery/saturday_signature_',
         ];
 
         return $methods;
@@ -223,7 +225,17 @@ class Result extends \Magento\Shipping\Model\Rate\Result
      * @return float
      */
     private function createPrice($alias, $settingPath) {
-        $price = $this->myParcelHelper->getMethodPrice($settingPath . 'fee');
+        $price = 0;
+
+        if ($alias == 'saturday_signature') {
+            $price += $this->myParcelHelper->getMethodPrice('delivery/saturday_fee');
+            $price += $this->myParcelHelper->getMethodPrice('delivery/signature_fee', false);
+
+            return $price;
+        }
+
+        $price += $this->myParcelHelper->getMethodPrice($settingPath . 'fee');
+
         return $price;
     }
 

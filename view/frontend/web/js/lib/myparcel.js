@@ -1,598 +1,739 @@
-/*
- * Constants
- */
+define(
+    [
+        'jquery'
+    ],
+    function($) {
+        txtWeekDays = [
+            'Zondag',
+            'Maandag',
+            'Dinsdag',
+            'Woensdag',
+            'Donderdag',
+            'Vrijdag',
+            'Zaterdag'
+        ];
 
-(function() {
-  
-    var $, AO_DEFAULT_TEXT, Application, CARRIER, DAYS_OF_THE_WEEK, DAYS_OF_THE_WEEK_TRANSLATED, DEFAULT_DELIVERY, DISABLED, HVO_DEFAULT_TEXT, NATIONAL, NORMAL_PICKUP, PICKUP, PICKUP_TIMES, POST_NL_TRANSLATION, Slider, displayOtherTab, externalJQuery, obj1, orderOpeningHours, preparePickup, renderDeliveryOptions, renderPage, renderPickup, renderPickupLocation, showDefaultPickupLocation, sortLocationsOnDistance, updateDelivery, updateInputField, hideMyParcelOptions,
+        translateENtoNL = {
+            'monday': 'maandag',
+            'tuesday': 'dindsag',
+            'wednesday': 'woensdag',
+            'thursday': 'donderdag',
+            'friday': 'vrijdag',
+            'saturday': 'zaterdag',
+            'sunday': 'zondag'
+        };
 
-        bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+        return MyParcel = {
 
-    DISABLED = 'disabled';
+            /*
+             * Init
+             *
+             * Initialize the MyParcel checkout.
+             *
+             */
 
-    HVO_DEFAULT_TEXT = 'Handtekening voor ontvangst';
+            init: function (data) {
+                MyParcel.myParcelConfig = data;
 
-    AO_DEFAULT_TEXT = 'Alleen geadresseerde';
-
-    NATIONAL = 'BE';
-
-    CARRIER = 1;
-
-    DEFAULT_DELIVERY = 'default';
-
-    PICKUP = 'pickup';
-
-    POST_NL_TRANSLATION = {
-        standard: 'default'
-    };
-
-    DAYS_OF_THE_WEEK = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-
-    DAYS_OF_THE_WEEK_TRANSLATED = ['ma', 'di', 'wo', 'do', 'vr', 'za', 'zo'];
-
-    NORMAL_PICKUP = '16:00:00';
-
-    PICKUP_TIMES = (
-        obj1 = {},
-            obj1["" + NORMAL_PICKUP] = 'normal',
-            obj1
-    );
-
-    this.MyParcel = Application = (function() {
-
-        /*
-         * Setup initial variables
-         */
-        function Application(options) {
-            var base;
-            if (window.mypa == null) {
-                window.mypa = {
-                    settings: {}
-                };
-            }
-            if ((base = window.mypa.settings).base_url == null) {
-                base.base_url = "//localhost:8080/api/delivery_options";
-            }
-
-            /** fix ipad */
-            var isload = false;
-            setTimeout(function () {
-                if(isload != true){
-                    hideMyParcelOptions();
+                isMobile = true;
+                if ($(window).width() > 980) {
+                    isMobile = false;
                 }
-            }, 1000);
 
-            this.el = document.getElementById('myparcel');
-            isload = true;
+                /* Prices */
+                $('#mypa-price-bpost-signature').html(' (+ € ' + MyParcel.myParcelConfig.priceBpostAutograph + ')');
+                $('#mypa-delivery-bpost-saturday-price').html(' (+ € ' + MyParcel.myParcelConfig.priceBpostSaturdayDelivery + ')');
+                if (parseFloat(MyParcel.myParcelConfig.pricePickup) > 0) {
+                    $('#mypa-price-pickup').html(' (+ € ' + MyParcel.myParcelConfig.pricePickup + ')');
+                }
+                /* Call delivery options */
+                MyParcel.callDeliveryOptions();
 
-            this.$el = externalJQuery('myparcel');
+                /* Engage defaults */
+                MyParcel.hideBpostSaturday();
+                MyParcel.hideDelivery();
+                $('#method-myparcel-flatrate').click();
 
-            this.render();
-            this.expose(this.updatePage, 'updatePage');
-            this.expose(this.optionsHaveBeenModified, 'optionsHaveBeenModified');
-            this.expose(this.showDays, 'showDays');
-            this.expose(this.hideDays, 'hideDays');
-            this.expose(this, 'activeInstance');
-        }
+                MyParcel.hideBpostSignature();
+                if (MyParcel.myParcelConfig.allowBpostAutograph) {
+                    MyParcel.showBpostSignature();
+                }
+
+            },
+
+            /*
+             * Bind
+             *
+             * Bind actions to selectors.
+             *
+             */
+
+            bind: function () {
+                $('#mypa-submit').on('click', function (e) {
+                    e.preventDefault();
+                    MyParcel.exportDeliveryOptionToWebshop();
+                });
+
+                $('#mypa-signature-selector').on('change', function (e) {
+                    MyParcel.toggleDeliveryOptions();
+                });
+
+                $('#mypa-recipient-only-selector').on('change', function () {
+                    MyParcel.toggleDeliveryOptions();
+                });
+
+                $('#mypa-deliver-pickup-deliver').on('click', function () {
+                    MyParcel.showDelivery();
+                });
+
+                $('#mypa-deliver-pickup-deliver-bpost-saturday').on('click', function () {
+                    MyParcel.showDelivery();
+                });
+
+                $('#mypa-deliver-pickup-pickup').on('click', function () {
+                    MyParcel.hideDelivery();
+                });
 
 
-        /*
-         * Reloads the HTML form the template.
-         */
+                /* Mobile specific triggers */
+                if (isMobile) {
+                    $('#mypa-show-location-details').on('click', function () {
+                        MyParcel.showLocationDetails();
+                    });
 
-        Application.prototype.render = function() {
+                    $('.mypa-help').on('click', function (e) {
+                        e.preventDefault();
+                        MyParcel.showHelp(e);
+                    });
+                }
 
-            return this.bindInputListeners();
-        };
+                /* Desktop specific triggers */
+                else {
+                    $('#mypa-show-location-details').on('mouseenter', function () {
+                        MyParcel.showLocationDetails();
+                    });
 
+                    $('.mypa-help').on('click', function (e) {
+                        e.preventDefault();
+                    });
 
-        /*
-         * Puts function in window.mypa effectively exposing the function.
-         */
+                    $('.mypa-help').on('mouseenter', function (e) {
+                        MyParcel.showHelp(e);
+                    });
+                }
 
-        Application.prototype.expose = function(fn, name) {
-            var base;
-            if ((base = window.mypa).fn == null) {
-                base.fn = {};
-            }
-            return window.mypa.fn[name] = fn;
-        };
+                $('#mypa-location-details').on('click', function () {
+                    MyParcel.hideLocationDetails();
+                });
 
+                $('#mypa-pickup-location').on('change', function () {
+                    $('#mypa-deliver-pickup-pickup').click();
+                });
 
-        /*
-         * Adds the listeners for the inputfields.
-         */
+                /* External webshop triggers */
+                $('#mypa-delivery-options-container').on('click', function () {
 
-        Application.prototype.bindInputListeners = function() {
-            externalJQuery('#mypa-signed').on('change', (function(_this) {
-                return function(e) {
-                    return $('#mypa-signed').prop('checked', externalJQuery('#mypa-signed').prop('checked'));
-                };
-            })(this));
-            return externalJQuery('input[name=delivery_options]').on('change', (function(_this) {
-                return function(e) {
-                    var el, i, json, len, ref;
-                    json = externalJQuery('input[name=delivery_options]').val();
-                    if (json === '') {
-                        $('input[name=mypa-delivery-time]:checked').prop('checked', false);
-                        $('input[name=mypa-delivery-type]:checked').prop('checked', false);
+                    $('#mypa-signed').prop('checked', false);
+
+                    /**
+                     * Signature
+                     */
+                    if (
+                        $('input[name="mypa-deliver-or-pickup"]:checked').val() == 'mypa-deliver' &&
+                        $('#mypa-method-signature-selector-be').prop('checked')
+                    ) {
+                        $('input[value="' + MyParcel.myParcelConfig.parent_carrier + '_signature"]').click();
+
+                        $('#mypa-signed').prop('checked', true);
+                        MyParcel.addDeliveryToMagentoInput();
                         return;
                     }
-                    ref = $('input[name=mypa-delivery-time]');
-                    for (i = 0, len = ref.length; i < len; i++) {
-                        el = ref[i];
-                        if ($(el).val() === json) {
-                            $(el).prop('checked', true);
-                            return;
-                        }
+
+                    /**
+                     * Saturday signature
+                     */
+                    if (
+                        $('#mypa-deliver-pickup-deliver-bpost-saturday').prop('checked') &&
+                        $('#mypa-method-signature-selector-be').prop('checked')
+                    ) {
+                        $('input[value="' + MyParcel.myParcelConfig.parent_carrier + '_saturday_signature"]').click();
+
+                        $('#mypa-signed').prop('checked', true);
+                        MyParcel.addDeliveryToMagentoInput();
+                        return;
                     }
-                };
-            })(this));
-        };
 
+                    /**
+                     * Saturday
+                     */
+                    if (
+                        $('#mypa-deliver-pickup-deliver-bpost-saturday').prop('checked') &&
+                        $('#mypa-method-signature-selector-be').prop('checked') === false
+                    ) {
+                        $('input[value="' + MyParcel.myParcelConfig.parent_carrier + '_saturday"]').click();
+                        MyParcel.addDeliveryToMagentoInput();
+                        return;
+                    }
 
-        /*
-         * Fetches delivery options and an overall page update.
-         */
-        Application.prototype.updatePage = function(postal_code, number, street) {
-            var item, key, options, ref, settings, urlBase, current_date, saturday_delivery, cutoff_time;
-            ref = window.mypa.settings.price;
-            for (key in ref) {
-                item = ref[key];
-                if (!(typeof item === 'string' || typeof item === 'function')) {
-                    throw new Error('Price needs to be of type string');
+                    /**
+                     * Pickup
+                     */
+                    if ($('#mypa-deliver-pickup-pickup').prop('checked')) {
+                        $('input[value="' + MyParcel.myParcelConfig.parent_carrier + '_pickup"]').click();
+                        MyParcel.addPickupToMagentoInput();
+                        return;
+                    }
+
+                    /**
+                     * Normal
+                     */
+                    $('input[value="' + MyParcel.myParcelConfig.parent_carrier + '_' + MyParcel.myParcelConfig.parent_method + '"]').click();
+                    MyParcel.addDeliveryToMagentoInput();
+                    return;
+                });
+            },
+
+            addPickupToMagentoInput: function () {
+                var locationId = $('#mypa-pickup-location').val();
+                var currentLocation = MyParcel.getPickupByLocationId(MyParcel.storeDeliveryOptions.data.pickup, locationId);
+                /* @todo remove this if the API gives retail */
+                currentLocation.price_comment = 'retail';
+                $("input[name='delivery_options']").val(JSON.stringify(currentLocation));
+            },
+
+            addDeliveryToMagentoInput: function () {
+                var currentLocation = MyParcel.storeDeliveryOptions.data.delivery[0];
+                $("input[name='delivery_options']").val(JSON.stringify(currentLocation));
+            },
+            /*
+             * getPickupByLocationId
+             *
+             * Find the location by id and return the object.
+             *
+             */
+            getPickupByLocationId: function (obj, locationId) {
+                var object;
+
+                $.each(obj, function (key, info) {
+                    if (info.location_code === locationId) {
+                        object = info;
+                        return false;
+                    }
+                    ;
+                });
+
+                return object;
+            },
+
+            /*
+             * toggleDeliveryOptions
+             *
+             * Shows and hides the display options that are valid for the recipient only and signature required pre-selectors
+             *
+             */
+
+            toggleDeliveryOptions: function () {
+                var recipientOnly = $('#mypa-recipient-only-selector').is(':checked');
+                var signatureRequired = $('#mypa-signature-selector').is(':checked');
+
+                hideAllDeliveryOptions();
+                if (recipientOnly && signatureRequired) {
+                    $('.method-myparcel-delivery-signature-and-only-recipient-fee-div').show();
+                    $('#method-myparcel-delivery-signature-and-only-recipient-fee').click();
                 }
+
+                else if (recipientOnly && !signatureRequired) {
+                    $('.method-myparcel-delivery-only-recipient-div').show();
+                    $('#method-myparcel-delivery-only-recipient').click();
+                }
+
+                else if (!recipientOnly && signatureRequired) {
+                    $('.method-myparcel-delivery-signature-div').show();
+                    $('.method-myparcel-delivery-evening-signature-div').show();
+                    $('.method-myparcel-morning-signature-div').show();
+                    $('#method-myparcel-delivery-signature').click();
+                }
+
+                /* No pre selection, show everything. */
+                else {
+                    MyParcel.showAllDeliveryOptions();
+                    $('#method-myparcel-flatrate').click();
+                }
+            },
+
+
+            /*
+             * exportDeliverOptionToWebshop
+             *
+             * Exports the selected deliveryoption to the webshop.
+             *
+             */
+
+            exportDeliveryOptionToWebshop: function () {
+                var deliveryOption = "";
+                var selected = $("#mypa-delivery-option-form").find("input[type='radio']:checked");
+                if (selected.length > 0) {
+                    deliveryOption = selected.val();
+                }
+
+                /* XXX Send to appropriate webshop field */
+            },
+
+            /*
+             * showHelp
+             *
+             * Shows all help for MyParcel option.
+             *
+             */
+
+            showHelp: function (e) {
+                alert('haelp!');
+            },
+
+            /*
+             * hideMessage
+             *
+             * Hides pop-up message.
+             *
+             */
+
+            hideMessage: function () {
+                $('#mypa-message').hide();
+                $('#mypa-message').html(' ');
+            },
+
+            /*
+             * hideMessage
+             *
+             * Hides pop-up essage.
+             *
+             */
+
+            showMessage: function (message) {
+                $('#mypa-message').html(message);
+                $('#mypa-message').show();
+            },
+
+            /*
+             * hideDelivery
+             *
+             * Hides interface part for delivery.
+             *
+             */
+
+            hideDelivery: function () {
+                $('#mypa-pre-selectors-nl').hide();
+                $('#mypa-delivery-selectors-nl').hide();
+                $('#mypa-delivery-selectors-be').hide();
+            },
+
+            /*
+             * showDelivery
+             *
+             * Shows interface part for delivery.
+             *
+             */
+
+            showDelivery: function () {
+                $('#mypa-pre-selectors-' + MyParcel.myParcelConfig.countryCode.toLowerCase()).show();
+                $('#mypa-delivery-selectors-' + MyParcel.myParcelConfig.countryCode.toLowerCase()).show();
+
+                MyParcel.hideBpostSignature();
+                if (MyParcel.myParcelConfig.allowBpostAutograph) {
+                    MyParcel.showBpostSignature();
+                }
+            },
+
+            /*
+             * hideAllDeliveryOptions
+             *
+             * Hides all available MyParcel delivery options.
+             *
+             */
+
+            hideAllDeliveryOptions: function () {
+                $('.mypa-delivery-option').hide();
+                $('#mypa-delivery-selectors-be').hide();
+            },
+
+            /*
+             * showAllDeliveryOptions
+             *
+             * Shows all available MyParcel delivery options.
+             *
+             */
+
+            showAllDeliveryOptions: function () {
+                $('.mypa-delivery-option').show();
+            },
+
+            /*
+             * showSpinner
+             *
+             * Shows the MyParcel spinner.
+             *
+             */
+
+            showSpinner: function () {
+                $('#mypa-spinner').show();
+            },
+
+
+            /*
+             * hideSpinner
+             *
+             * Hides the MyParcel spinner.
+             *
+             */
+
+            hideSpinner: function () {
+                $('#mypa-spinner').hide();
+            },
+
+            showPostNlSignatureAndRecipientOnly: function () {
+                $('#mypa-postnl-signature-recipient-only').show();
+            },
+
+            hidePostNlSignatureAndRecipientOnly: function () {
+                $('#mypa-postnl-signature-recipient-only').hide();
+            },
+
+            showPostNlRecipientOnly: function () {
+                $('#mypa-postnl-recipient-only').show();
+            },
+
+            hidePostNlRecipientOnly: function () {
+                $('#mypa-postnl-recipient-only').hide();
+            },
+
+            showPostNlSignature: function () {
+                $('#mypa-postnl-signature').show();
+            },
+
+            hidePostNlSignature: function () {
+                $('#mypa-postnl-signature').hide();
+            },
+
+            showPostNlRecpientOnly: function () {
+                $('#mypa-postnl-recipient-only').show();
+            },
+
+            hidePostNlRecpientOnly: function () {
+                $('#mypa-postnl-recipient-only').hide();
+            },
+
+            showPostNlSignature: function () {
+                $('#mypa-postnl-signature').show();
+            },
+
+            hidePostNlSignature: function () {
+                $('#mypa-postnl-signature').hide();
+            },
+
+            showBpostSignature: function () {
+                $('#mypa-delivery-selectors-be').show();
+            },
+
+            hideBpostSignature: function () {
+                $('#mypa-delivery-selectors-be').hide();
+            },
+
+            /*
+             * showBpostSaturday
+             *
+             * Show Bpost saturday delivery for extra fee.
+             *
+             */
+
+            showBpostSaturday: function (date) {
+                if (MyParcel.myParcelConfig.allowBpostSaturdayDelivery) {
+                    $('#mypa-delivery-date-bpost-saturday').val(date);
+                    $('#mypa-delivery-bpost-saturday-price').html(' (+ € ' + MyParcel.myParcelConfig.priceBpostSaturdayDelivery + ')');
+                    $('#mypa-bpost-saturday-delivery').show();
+                }
+            },
+
+            /*
+             * hideBpostSaturday
+             *
+             * Hide Bpost saturday delivery.
+             *
+             */
+
+            hideBpostSaturday: function () {
+                $('#mypa-bpost-saturday-delivery').hide();
+                $('#mypa-delivery-date-bpost-saturday').val(' ');
+                $('#mypa-delivery-bpost-saturday-price').html(' (+ € ' + MyParcel.myParcelConfig.priceBpostSaturdayDelivery + ')');
+            },
+
+            /*
+             * dateToObject
+             *
+             * Convert api date string format to object
+             *
+             */
+
+            dateToObject: function (apiDate) {
+                var deliveryDate = apiDate;
+                var dateArr = deliveryDate.split('-');
+                return new Date(dateArr[0], dateArr[1] - 1, dateArr[2]);
+            },
+
+            /*
+             * dateToString
+             *
+             * Convert api date string format to human readable string format
+             *
+             */
+
+            dateToString: function (apiDate) {
+                var deliveryDate = apiDate;
+                var dateArr = deliveryDate.split('-');
+                var dateObj = new Date(dateArr[0], dateArr[1] - 1, dateArr[2]);
+                var month = dateObj.getMonth();
+                month++;
+                return txtWeekDays[dateObj.getDay()] + " " + dateObj.getDate() + "-" + month + "-" + dateObj.getFullYear();
+            },
+
+            /*
+             * showDeliveryDates
+             *
+             * Show possible delivery dates.
+             *
+             */
+
+            showDeliveryDates: function (deliveryOptions) {
+                var dateString = MyParcel.dateToString(deliveryOptions.data.delivery[0].date);
+                var dateObj = MyParcel.dateToObject(deliveryOptions.data.delivery[0].date);
+
+                /* If there is a costly bPost saturday delivery also present the next option
+                   that has the standard fee */
+                if (dateObj.getDay() == 6 && MyParcel.myParcelConfig.carrierCode == 2) {
+                    MyParcel.showBpostSaturday(dateString);
+                    if (typeof deliveryOptions.data.delivery[1] !== 'undefined') {
+                        dateString = MyParcel.dateToString(deliveryOptions.data.delivery[1].date);
+                    }
+                }
+
+                /* All other deliveries */
+                $('#mypa-delivery-date').val(dateString);
+            },
+
+            /*
+             * clearPickupLocations
+             *
+             * Clear pickup locations and show a non-value option.
+             *
+             */
+
+            clearPickUpLocations: function () {
+                var html = '<option value="">---</option>';
+                $('#mypa-pickup-location').html(html);
+            },
+
+
+            /*
+             * hidePickupLocations
+             *
+             * Hide the pickup location option.
+             *
+             */
+
+            hidePickUpLocations: function () {
+                $('#mypa-pickup-location-selector').hide();
+                $('.mel-style').css('border-bottom', '0');
+            },
+
+
+            /*
+             * showPickupLocations
+             *
+             * Shows possible pickup locations, from closest to furdest.
+             *
+             */
+
+            showPickUpLocations: function (deliveryOptions) {
+                var html = "";
+                $.each(deliveryOptions.data.pickup, function (key, value) {
+                    var distance = parseFloat(Math.round(value.distance)/1000).toFixed(2) + ' KM';
+                    html += '<option value="' + value.location_code + '">' + value.location + ', ' + value.street + ' ' + value.number + ", " + value.city + " (" + distance + ") </option>\n";
+                });
+                $('#mypa-pickup-location').html(html);
+                $('#mypa-pickup-location-selector').show();
+            },
+
+            /*
+             * hideLocationDetails
+             *
+             * Hide the detailed information pop-up for selected location.
+             *
+             */
+
+            hideLocationDetails: function () {
+                $('#mypa-location-details').hide();
+            },
+
+            /*
+             * showLocationDetails
+             *
+             * Shows the detailed information pop-up for the selected pick-up location.
+             */
+
+            showLocationDetails: function () {
+                var locationId = $('#mypa-pickup-location').val();
+                var currentLocation = MyParcel.getPickupByLocationId(MyParcel.storeDeliveryOptions.data.pickup, locationId);
+                var startTime = currentLocation.start_time;
+
+                /* Strip seconds if present */
+                if (startTime.length > 5) {
+                    startTime = startTime.slice(0, -3);
+                }
+
+                var html = '<div class="mypa-close-message"><span class="fas fa-times-circle"></span></div>';
+                html += '<span class="mypa-pickup-location-details-location"><h3>' + currentLocation.location + '</h3></span>'
+                html += '<span class="mypa-pickup-location-details-street">' + currentLocation.street + '&nbsp;' + currentLocation.number + '</span>';
+                html += '<span class="mypa-pickup-location-details-city">' + currentLocation.postal_code + '&nbsp;' + currentLocation.city + '</span>';
+                if (currentLocation.phone_number) {
+                    html += '<span class="mypa-pickup-location-details-phone">&nbsp;' + currentLocation.phone_number + '</span>'
+                }
+                html += '<span class="mypa-pickup-location-details-time">Ophalen vanaf:&nbsp;' + startTime + '</span>'
+                html += '<h3>Openingstijden</h3>';
+                $.each(
+                    currentLocation.opening_hours, function (weekday, value) {
+                        html += '<span class="mypa-pickup-location-details-day">' + translateENtoNL[weekday] + "</span> ";
+                        $.each(value, function (key2, times) {
+                            html += '<span class="mypa-time">' + times + "</span>";
+                        });
+                        html += "<br>";
+                    });
+                $('#mypa-location-details').html(html);
+                $('#mypa-location-details').show();
+            },
+
+            /*
+             * retryPostalcodeHouseNumber
+             *
+             * After detecting an unrecognised postcal code / house number combination the user can try again.
+             * This function copies the newly entered data back into the webshop forms.
+             *
+             */
+
+            retryPostalcodeHouseNumber: function () {
+                $(triggerPostalCode).val($('#mypa-error-postcode').val());
+                $(triggerHouseNumber).val($('#mypa-error-number').val());
+                MyParcel.hideMessage();
+                MyParcel.callDeliveryOptions();
+                $('#mypa-deliver-pickup-deliver').click();
+            },
+
+            /*
+             * showFallBackDelivery
+             *
+             * If the API call fails and we have no data about delivery or pick up options
+             * show the customer an "As soon as possible" option.
+             */
+
+            showFallBackDelivery: function () {
+                MyParcel.hidePickUpLocations();
+                $('#mypa-delivery-date').val('Zo snel mogelijk.');
+                $('#mypa-deliver-pickup-deliver').click();
+            },
+
+
+            /*
+             * showRetru
+             *
+             * If a customer enters an unrecognised postal code housenumber combination show a
+             * pop-up so they can try again.
+             */
+
+            showRetry: function () {
+                MyParcel.showMessage(
+                    '<h3>Huisnummer/postcode combinatie onbekend</h3>' +
+                    '<div class="full-width mypa-error">' +
+                    '<label for="mypa-error-postcode">Postcode</label>' +
+                    '<input type="text" name="mypa-error-postcode" id="mypa-error-postcode" value="' + MyParcel.myParcelConfig.postal_code + '">' +
+                    '</div><div class="full-width mypa-error">' +
+                    '<label for="mypa-error-number">Huisnummer</label>' +
+                    '<input type="text" name="mypa-error-number" id="mypa-error-number" value="' + MyParcel.myParcelConfig.number + '">' +
+                    '<br><button id="mypa-error-try-again">Opnieuw</button>' +
+                    '</div>'
+                );
+
+                /* remove trigger that closes message */
+                $('#mypa-message').off('click');
+
+                /* bind trigger to new button */
+                $('#mypa-error-try-again').on('click', function () {
+                    MyParcel.retryPostalcodeHouseNumber();
+                });
+            },
+
+
+            /*
+             * callDeliveryOptions
+             *
+             * Calls the MyParcel API to retrieve the pickup and delivery options for given house number and
+             * Postal Code.
+             *
+             */
+
+            callDeliveryOptions: function () {
+                MyParcel.showSpinner();
+                MyParcel.clearPickUpLocations();
+
+                /* Don't call API unless both PC and House Number are set */
+                if (!MyParcel.myParcelConfig.number || !MyParcel.myParcelConfig.postal_code) {
+                    MyParcel.hideSpinner();
+                    MyParcel.showFallBackDelivery();
+                    return;
+                }
+
+                /* add streetName for Belgium */
+                $.get(MyParcel.myParcelConfig.apiBaseUrl + "delivery_options",
+                    {
+                        carrier: MyParcel.myParcelConfig.carrierCode,
+                        postal_code: MyParcel.myParcelConfig.postal_code,
+                        cc: MyParcel.myParcelConfig.countryCode,
+                        street: MyParcel.myParcelConfig.street,
+                        number: MyParcel.myParcelConfig.number,
+                        saturday_delivery: MyParcel.myParcelConfig.allowBpostSaturdayDelivery,
+                        cutofff_time: MyParcel.myParcelConfig.cutoffTime,
+                        dropoff_days: MyParcel.myParcelConfig.dropOffDays,
+                        dropoff_delay: MyParcel.myParcelConfig.dropOffDelay,
+                        exclude_delivery_type: MyParcel.myParcelConfig.excludeDeliveryType
+                    })
+                    .done(function (data) {
+
+                        if (data.errors) {
+                            $.each(data.errors, function (key, value) {
+                                /* Postalcode housenumber combination not found or not recognised. */
+                                if (value.code == '3212' || value.code == '3505') {
+                                    MyParcel.showRetry();
+                                }
+
+                                /* Any other error */
+                                else {
+                                    MyParcel.showFallBackDelivery();
+                                }
+                            });
+                        }
+
+                        /* No errors */
+                        else {
+                            MyParcel.showPickUpLocations(data);
+                            MyParcel.showDeliveryDates(data);
+                            MyParcel.storeDeliveryOptions = data;
+                            $('#mypa-deliver-pickup-deliver').click();
+                        }
+                    })
+                    .fail(function () {
+                        MyParcel.showFallBackDelivery();
+                    })
+                    .always(function () {
+                        MyParcel.hideSpinner();
+                    });
             }
-            settings = window.mypa.settings;
-            urlBase = settings.base_url;
-            current_date = new Date();
-            if (number == null) {
-                number = settings.number;
-            }
-            if (postal_code == null) {
-                postal_code = settings.postal_code;
-            }
-            if (street == null) {
-                street = settings.street;
-            }
-            if (!((street != null) || (postal_code != null) || (number != null))) {
-                $('#mypa-no-options').html('Geen adres opgegeven');
-                $('.mypa-overlay').removeClass('mypa-hidden');
-                return;
-            }
-            /* Check if Saturday delivery is active */
-            if (settings.saturday_delivery == true) {
-                saturday_delivery = 1;
-            } else {
-                saturday_delivery = void 0;
-            }
-
-            cutoff_time = settings.cutoff_time != null ? settings.cutoff_time : void 0
-
-            $('#mypa-no-options').html('Bezig met laden...');
-            $('.mypa-overlay').removeClass('mypa-hidden');
-            $('.mypa-location').html(street);
-
-            options = {
-                url: urlBase,
-                data: {
-                    cc: NATIONAL,
-                    carrier: CARRIER,
-                    number: number,
-                    postal_code: postal_code,
-                    delivery_time: settings.delivery_time != null ? settings.delivery_time : void 0,
-                    delivery_date: settings.delivery_date != null ? settings.delivery_date : void 0,
-                    cutoff_time: cutoff_time,
-                    dropoff_days: settings.dropoff_days != null ? settings.dropoff_days : void 0,
-                    saturday_delivery: saturday_delivery,
-                    dropoff_delay: settings.dropoff_delay != null ? settings.dropoff_delay : void 0,
-                    exclude_delivery_type: settings.exclude_delivery_type != null ? settings.exclude_delivery_type : void 0
-                },
-                success: renderPage,
-                error: hideMyParcelOptions
-            };
-            return externalJQuery.ajax(options);
-        };
-
-        /*
-         * optionsHaveBeenModified
-         */
-        Application.prototype.optionsHaveBeenModified = function() {
-            externalJQuery("input[name='delivery_options']").change();
-
-            return this;
-        };
-
-        Application.prototype.showDays = function() {
-            $('#mypa-date-slider-left, #mypa-date-slider-right, #mypa-tabs-container').hide();
-        };
-
-        Application.prototype.hideDays = function() {
-            $('#mypa-date-slider-left, #mypa-date-slider-right, #mypa-tabs-container').hide();
-        };
-
-        return Application;
-
-    })();
-
-    Slider = (function() {
-
-        /*
-         * Renders the available days for delivery
-         */
-        function Slider(deliveryDays) {
-            moment = window.mypa.moment;
-            moment.locale(NATIONAL);
-            this.slideRight = bind(this.slideRight, this);
-            this.slideLeft = bind(this.slideLeft, this);
-            var $el, $tabs, date, delivery, deliveryTimes, html, i, index, len, ref;
-            this.deliveryDays = deliveryDays;
-            if (deliveryDays.length < 1) {
-                $('mypa-delivery-row').addClass('mypa-hidden');
-                return;
-            }
-            $('mypa-delivery-row').removeClass('mypa-hidden');
-            deliveryDays.sort(this.orderDays);
-            deliveryTimes = window.mypa.sortedDeliverytimes = {};
-            $el = $('#mypa-tabs').html('');
-            window.mypa.deliveryDays = deliveryDays.length;
-            index = 0;
-            ref = this.deliveryDays;
-            for (i = 0, len = ref.length; i < len; i++) {
-                delivery = ref[i];
-                deliveryTimes[delivery.date] = delivery.time;
-                date = moment(delivery.date);
-                html = "<input type=\"radio\" id=\"mypa-date-" + index + "\" class=\"mypa-date\" name=\"date\" checked value=\"" + delivery.date + "\">\n<label for='mypa-date-" + index + "' class='mypa-tab active'>\n  <span class='mypa-day-of-the-week-item'>" + (date.format('dddd')) + "</span>\n <span class='date'>" + (date.format('DD MMMM')) + "</span>\n</label>";
-                $el.append(html);
-                index++;
-            }
-            $tabs = $('.mypa-tab');
-            if ($tabs.length > 0) {
-                $tabs.bind('click', updateDelivery);
-                $tabs[0].click();
-            }
-            
-            var tabsWidth = $("#mypa-tabs-container").width();
-            if (tabsWidth > 0) {
-                 $("#mypa-tabs-container").attr('style', "width:" + (tabsWidth) + "px");
-            }
-            $("#mypa-tabs").attr('style', "width:" + (this.deliveryDays.length * 105) + "px");
-            this.makeSlider();
         }
-
-
-        /*
-         * Initializes the slider
-         */
-
-        Slider.prototype.makeSlider = function() {
-            this.slider = {};
-            this.slider.currentBar = 0;
-            this.slider.tabWidth = $('.mypa-tab')[0].offsetWidth + 5;
-            this.slider.tabsPerBar = Math.floor($('#mypa-tabs-container')[0].offsetWidth / this.slider.tabWidth);
-            this.slider.bars = window.mypa.deliveryDays / this.slider.tabsPerBar;
-            $('#mypa-date-slider-right').removeClass('mypa-slider-disabled');
-            $('#mypa-date-slider-left').unbind().bind('click', this.slideLeft);
-            return $('#mypa-date-slider-right').unbind().bind('click', this.slideRight);
-        };
-
-
-        /*
-         * Event handler for sliding the date slider to the left
-         */
-
-        Slider.prototype.slideLeft = function(e) {
-            var $el, left, slider;
-            slider = this.slider;
-            if (slider.currentBar === 1) {
-                $(e.currentTarget).addClass('mypa-slider-disabled');
-            } else if (slider.currentBar < 1) {
-                return false;
-            } else {
-                $(e.currentTarget).removeClass('mypa-slider-disabled');
-            }
-            $('#mypa-date-slider-right').removeClass('mypa-slider-disabled');
-            slider.currentBar--;
-
-            $el = $('#mypa-tabs');
-            left = this.slider.currentBar * this.slider.tabsPerBar * this.slider.tabWidth * -1 + 5 * this.slider.currentBar;
-            return $el.attr('style', "left:" + left + "px; width:" + (window.mypa.deliveryDays * this.slider.tabWidth) + "px");
-        };
-
-
-        /*
-         * Event handler for sliding the date slider to the right
-         */
-
-        Slider.prototype.slideRight = function(e) {
-            var $el, left, slider;
-            slider = this.slider;
-            if (parseInt(slider.currentBar) === parseInt(slider.bars - 1)) {
-                $(e.currentTarget).addClass('mypa-slider-disabled');
-            } else if (slider.currentBar >= slider.bars - 1) {
-                return false;
-            } else {
-                $(e.currentTarget).removeClass('mypa-slider-disabled');
-            }
-            $('#mypa-date-slider-left').removeClass('mypa-slider-disabled');
-            slider.currentBar++;
-
-            $el = $('#mypa-tabs');
-            left = this.slider.currentBar * this.slider.tabsPerBar * this.slider.tabWidth * -1 + 5 * this.slider.currentBar;
-            return $el.attr('style', "left:" + left + "px; width:" + (window.mypa.deliveryDays * this.slider.tabWidth) + "px");
-        };
-
-
-        /*
-         * Order function for the delivery array
-         */
-
-        Slider.prototype.orderDays = function(dayA, dayB) {
-            var dateA, dateB, max;
-            dateA = moment(dayA.date);
-            dateB = moment(dayB.date);
-            max = moment.max(dateA, dateB);
-            if (max === dateA) {
-                return 1;
-            }
-            return -1;
-        };
-
-        return Slider;
-
-    })();
-
-    if (typeof mypajQuery !== "undefined" && mypajQuery !== null) {
-        externalJQuery = mypajQuery;
     }
-
-    if (externalJQuery == null) {
-        externalJQuery = $;
-    }
-
-    if (externalJQuery == null) {
-        externalJQuery = jQuery;
-    }
-
-    $ = externalJQuery;
-
-    displayOtherTab = function() {
-        return $('.mypa-tab-container').toggleClass('mypa-slider-pos-1').toggleClass('mypa-slider-pos-0');
-    };
-
-
-    /*
-     * Starts the render of the delivery options with the preset config
-     */
-
-    renderPage = function(response) {
-        if (response.data.message === 'No results') {
-            /* Show input field for housenumber */
-            $('#mypa-no-options').html('Het opgegeven huisnummer in combinatie met postcode ' + window.mypa.settings.postal_code + ' wordt niet herkend. Vul hier opnieuw uw huisnummer zonder toevoeging in.<br><br><input id="mypa-new-number" type="number" /><submit id="mypa-new-number-submit">Verstuur</submit>');
-            $('.mypa-overlay').removeClass('mypa-hidden');
-            externalJQuery('.myparcel_base_method').prop("checked", false).prop('disabled', true);
-
-            $('#mypa-new-number-submit').click(function () {
-                var houseNumber = $('#mypa-new-number').val();
-                window.mypa.fn.updatePage(window.mypa.settings.postal_code, houseNumber);
-                /** @todo uncheck options */
-            });
-
-            return;
-        }
-        $('.mypa-overlay').addClass('mypa-hidden');
-        $('#mypa-delivery-option-check').bind('click', function() {
-            return renderDeliveryOptions($('input[name=date]:checked').val());
-        });
-        new Slider(response.data.delivery);
-        preparePickup(response.data.pickup);
-        $('#mypa-delivery-options-title').on('click', function() {
-            var date;
-            date = $('input[name=date]:checked').val();
-            renderDeliveryOptions(date);
-            return updateInputField();
-        });
-        $('#mypa-pickup-options-title').on('click', function() {
-            $('#mypa-pickup').prop('checked', true);
-            return updateInputField();
-        });
-        return updateInputField();
-    };
-
-    preparePickup = function(pickupOptions) {
-        var filter, i, j, len, len1, name1, pickupLocation, pickupPrice, ref, time;
-        if (pickupOptions.length < 1) {
-            $('#mypa-pickup-row').addClass('mypa-hidden');
-            return;
-        }
-        $('#mypa-pickup-row').removeClass('mypa-hidden');
-        pickupPrice = window.mypa.settings.price[PICKUP];
-        $('.mypa-pickup-price').html(pickupPrice);
-        $('.mypa-pickup-price').toggleClass('mypa-hidden', pickupPrice == null);
-        window.mypa.pickupFiltered = filter = {};
-        pickupOptions = sortLocationsOnDistance(pickupOptions);
-        for (i = 0, len = pickupOptions.length; i < len; i++) {
-            pickupLocation = pickupOptions[i];
-            ref = pickupLocation.time;
-            for (j = 0, len1 = ref.length; j < len1; j++) {
-                time = ref[j];
-                if (filter[name1 = PICKUP_TIMES[time.start]] == null) {
-                    filter[name1] = [];
-                }
-                filter[PICKUP_TIMES[time.start]].push(pickupLocation);
-            }
-        }
-        showDefaultPickupLocation('#mypa-pickup-address', filter[PICKUP_TIMES[NORMAL_PICKUP]][0]);
-        $('#mypa-pickup-address').off().bind('click', renderPickup);
-        return $('.mypa-pickup-selector').on('click', updateInputField);
-    };
-
-
-    /*
-     * Sorts the pickup options on nearest location
-     */
-
-    sortLocationsOnDistance = function(pickupOptions) {
-        return pickupOptions.sort(function(a, b) {
-            return parseInt(a.distance) - parseInt(b.distance);
-        });
-    };
-
-
-    /*
-     * Displays the default location behind the pickup location
-     */
-
-    showDefaultPickupLocation = function(selector, item) {
-        var html;
-        html = ' - <span class="mypa-edit-location">Aanpassen</span><span class="mypa-text-location">' + item.location + ", " + item.street + " " + item.number + ", " + item.city + '</span>';
-        $(selector).html(html);
-        $(selector).parent().find('input').val(JSON.stringify(item));
-        return updateInputField();
-    };
-
-
-    /*
-     * Set the pickup time HTML and start rendering the locations page
-     */
-
-    renderPickup = function() {
-        renderPickupLocation(window.mypa.pickupFiltered[PICKUP_TIMES[NORMAL_PICKUP]]);
-        $('.mypa-location-time').html('- Vanaf 16.00 uur');
-        $('#mypa-pickup').prop('checked', true);
-        return false;
-    };
-
-    /*
-     * Renders the locations in the array order given in data
-     */
-
-    renderPickupLocation = function(data) {
-        var day_index, html, i, index, j, k, len, location, openingHoursHtml, orderedHours, ref, ref1, time;
-        displayOtherTab();
-        $('.mypa-onoffswitch-checkbox:checked').prop('checked', false);
-        $('#mypa-location-container').html('');
-        for (index = i = 0, ref = data.length - 1; 0 <= ref ? i <= ref : i >= ref; index = 0 <= ref ? ++i : --i) {
-            location = data[index];
-            orderedHours = orderOpeningHours(location.opening_hours);
-            openingHoursHtml = '';
-            for (day_index = j = 0; j <= 6; day_index = ++j) {
-                openingHoursHtml += "<div>\n  <div class='mypa-day-of-the-week'>\n    " + DAYS_OF_THE_WEEK_TRANSLATED[day_index] + ":\n  </div>\n  <div class='mypa-opening-hours-list'>";
-                ref1 = orderedHours[day_index];
-                for (k = 0, len = ref1.length; k < len; k++) {
-                    time = ref1[k];
-                    openingHoursHtml += "<div>" + time + "</div>";
-                }
-                if (orderedHours[day_index].length < 1) {
-                    openingHoursHtml += "<div><i>Gesloten</i></div>";
-                }
-                openingHoursHtml += '</div></div>';
-            }
-            html = "<div for='mypa-pickup-location-" + index + "' class=\"mypa-row-lg mypa-afhalen-row\">\n  <div class=\"mypa-afhalen-right\">\n    <i class='mypa-info'>\n    </i>\n  </div>\n  <div class='mypa-opening-hours'>\n    " + openingHoursHtml + "\n  </div>\n  <label for='mypa-pickup-location-" + index + "' class=\"afhalen-left\">\n    <div class=\"mypa-afhalen-check\">\n      <input id=\"mypa-pickup-location-" + index + "\" type=\"radio\" name=\"mypa-pickup-option\" value='" + (JSON.stringify(location)) + "'>\n      <label for='mypa-pickup-location-" + index + "' class='mypa-row-title'>\n        <div class=\"mypa-checkmark mypa-main\">\n          <div class=\"mypa-circle\"></div>\n          <div class=\"mypa-checkmark-stem\"></div>\n          <div class=\"mypa-checkmark-kick\"></div>\n        </div>\n      </label>\n    </div>\n    <div class='mypa-afhalen-tekst'>\n      <span class=\"mypa-highlight mypa-inline-block\">" + location.location + ", <b class='mypa-inline-block'>" + location.street + " " + location.number + ", " + location.city + "</b>,\n      <i class='mypa-inline-block'>" + (String(Math.round(location.distance / 100) / 10).replace('.', ',')) + " Km</i></span>\n    </div>\n  </label>\n</div>";
-            $('#mypa-location-container').append(html);
-        }
-        return $('input[name=mypa-pickup-option]').bind('click', function(e) {
-            var obj, selector;
-            displayOtherTab();
-            obj = JSON.parse($(e.currentTarget).val());
-            selector = '#' + $('input[name=mypa-delivery-time]:checked').parent().find('span.mypa-address').attr('id');
-            return showDefaultPickupLocation(selector, obj);
-        });
-    };
-
-    orderOpeningHours = function(opening_hours) {
-        var array, day, i, len;
-        array = [];
-        for (i = 0, len = DAYS_OF_THE_WEEK.length; i < len; i++) {
-            day = DAYS_OF_THE_WEEK[i];
-            array.push(opening_hours[day]);
-        }
-        return array;
-    };
-
-    updateDelivery = function(e) {
-        var date;
-        if ($('#mypa-delivery-option-check').prop('checked') !== true) {
-            return;
-        }
-        date = $("#" + ($(e.currentTarget).prop('for')))[0].value;
-        renderDeliveryOptions(date);
-        return updateInputField();
-    };
-
-    renderDeliveryOptions = function(date) {
-        var checked, deliveryTimes, html, hvoPrice, hvoText, i, index, json, len, price, ref, ref1, time;
-
-        $('#mypa-delivery-options').html('');
-        html = '';
-        deliveryTimes = window.mypa.sortedDeliverytimes[date];
-        index = 0;
-        for (i = 0, len = deliveryTimes.length; i < len; i++) {
-            time = deliveryTimes[i];
-            price = window.mypa.settings.price[POST_NL_TRANSLATION[time.price_comment]];
-            json = {
-                date: date,
-                time: [time]
-            };
-            checked = '';
-            if (time.price_comment === 'standard') {
-                checked = "checked";
-            }
-            html += "<label for=\"mypa-time-" + index + "\" class='mypa-row-subitem'>\n  <input id='mypa-time-" + index + "' type=\"radio\" name=\"mypa-delivery-time\" value='" + (JSON.stringify(json)) + "' " + checked + ">\n  <label for=\"mypa-time-" + index + "\" class=\"mypa-checkmark\">\n    <div class=\"mypa-circle mypa-circle-checked\"></div>\n    <div class=\"mypa-checkmark-stem\"></div>\n    <div class=\"mypa-checkmark-kick\"></div>\n  </label>\n  <span class=\"mypa-highlight\">" + (moment(time.start, 'HH:mm:SS').format('H.mm')) + " - " + (moment(time.end, 'HH:mm:SS').format('H.mm')) + " uur</span>";
-            if (price != null) {
-                html += "<span class='mypa-price'>" + price + "</span>";
-            }
-            html += "</label>";
-            index++;
-        }
-        hvoPrice = window.mypa.settings.price.signed;
-        hvoText = (ref = window.mypa.settings.text) != null ? ref.signed : void 0;
-        if (hvoText == null) {
-            hvoText = HVO_DEFAULT_TEXT;
-        }
-      
-        if (hvoPrice !== DISABLED) {
-            html += "<label for=\"mypa-signed\" class='mypa-row-subitem'>\n  <input type=\"checkbox\" name=\"mypa-signed\" class=\"mypa-onoffswitch-checkbox\" id=\"mypa-signed\">\n  <div class=\"mypa-switch-container\">\n    <div class=\"mypa-onoffswitch\">\n      <label class=\"mypa-onoffswitch-label\" for=\"mypa-signed\">\n        <span class=\"mypa-onoffswitch-inner\"></span>\n      <span class=\"mypa-onoffswitch-switch\"></span>\n      </label>\n    </div>\n  </div>\n  <span>";
-            if (hvoPrice) {
-                html += "<span class='mypa-price'>" + hvoPrice + "</span>";
-            }
-            html += "<span style=''>" + hvoText  + "</span>" + "</span></label>";
-        }
-      
-        if ($('input[name=mypa-delivery-time]:checked').length < 1) {
-            $($('input[name=mypa-delivery-time]')[0]).prop('checked', true);
-        }
-        return $('div#mypa-delivery-row label').bind('click', updateInputField);
-    };
-
-    /*
-     * Sets the json to the selected input field to be with the form
-     */
-    updateInputField = function() {
-        var stringData;
-        var jsonData;
-
-        stringData = $('input[name=mypa-delivery-time]:checked').val();
-        if (typeof stringData !== 'undefined') {
-            jsonData = JSON.parse(stringData);
-            jsonData.options = {};
-            jsonData.options.signature = $('#mypa-signed').prop('checked');
-
-            stringData = JSON.stringify(jsonData);
-
-            if (externalJQuery('input[name=delivery_options]').val() !== stringData) {
-                externalJQuery('input[name=delivery_options]').val(stringData).change();
-            }
-        }
-    };
-
-    /*
-     * Hide MyParcel options
-     */
-    hideMyParcelOptions = function() {
-        if (typeof window.mypa.fn.hideOptions !== 'undefined') {
-            window.mypa.fn.hideOptions();
-        }
-    };
-
-}).call(this);
+);

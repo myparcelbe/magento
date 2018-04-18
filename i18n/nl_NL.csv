@@ -98,13 +98,11 @@ Cut-off time,Het laatste bestelmoment
 "If a request is made for the delivery options between Friday after, and Monday before, cut-off time then Tuesday will be shown as the next possible delivery date.","Als een bestelling tussen vrijdag na, en maandag voor, het opgegeven bestelmoment wordt gedaan dan zal dinsdag worden getoond als eerstvolgende afleverdag."
 Drop-off days,Verzenddagen
 Saturday delivery,Zaterdagbezorging
-Note: Saturday delivery is only possible when the package is delivered before 15.00 on Saturday at the designated PostNL locations. Click <a href="https://blog.myparcel.nl/maandagbezorging" target="_blank">here</a> for more information concerning Saturday delivery and the locations.,Let op: Zaterdaglevering is alleen mogelijk wanneer zaterdag het pakket voor 15.00 wordt geleverd bij één van de hiervoor bestemde PostNL locaties. Klik <a href="https://blog.myparcel.nl/maandagbezorging" target="_blank">hier</a> voor de locaties en meer informatie omtrent de maandaglevering.
+Note: Saturday delivery is only possible when the package is delivered before 15.00 on Saturday at the designated PostNL locations. Click <a href="https://blog.myparcel.nl/maandagbezorging" target="_blank">here</a> for more information concerning Saturday delivery and the locations.,Let op: Zaterdaglevering is alleen mogelijk wanneer zaterdag het pakket voor 15.00 wordt geleverd bij één van de hiervoor bestemde bpost locaties. Klik <a href="https://blog.myparcel.nl/maandagbezorging" target="_blank">hier</a> voor de locaties en meer informatie omtrent de maandaglevering.
 "If a request is made before this time on Saturday, Monday will be shown as the next possible delivery date.","Als een bestelling voor dit tijdstip op zaterdag wordt gedaan zal maandag als eerstvolgende afleverdag worden getoond."
 Dropoff-delay,Vertraging
 No delay,Geen vertraging
 "This options allows you to set the number of days it takes you to pick, pack and hand in your parcels at PostNL when ordered before the cutoff time.","Stel hier het aantal dagen in die je nodig hebt om het product (te ontvangen,) te verpakken en aan te bieden bij PostNL, vanaf het moment dat de bestelling is geplaatst".
-Base color,Basis kleur
-Color for selected items,Kleur voor geselecteerde items
 Methods,Verzendmethode
 The extra myparcel options are added to this shipping method,De extra myparcel opties worden bij deze verzendmethode toegevoegd.
 Delivery titel,Bezorg titel
@@ -116,14 +114,14 @@ This will be added to the regular shipping price, Dit zal bij de normale verzend
 If both have been selected this price will be added to the regular shipping price. Leave empty for not using it.,Als beide geselecteerd zijn zal deze prijs bij de normale verzendkosten worden opgeteld. Laat leeg om dit niet te gebruiken.
 "Besides assigning weights to all products, you can also specify a volume of each product.","Om deze functie optimaal te gebruiken, stel je eerst het gewicht of volume in van jouw producten."
 This will be added to the regular shipping price,Dit zal bij de normale verzendkosten worden opgeteld
-Pickup at PostNL location,Ophalen bij een PostNL locatie
+Pickup at PostNL location,Ophalen bij een bpost locatie
 Pickup active,Ophalen actief
 Pickup titel,Ophalen titel
 Pickup fee,Ophalen prijs
 Drop off day,Verzenddagen
 Select the days that you send the orders.,Selecteer de dagen waarop jij de orders verzend.
 Set the number of days to let the customer make an order on a different day than to deliver the first one.,Stel hier het aantal dagen in om de klant de keuze te laten maken een bestelling op een andere dag dan de eerst volgende te laten bezorgen.
-
+delivery/saturday_signature_title,Saturday delivery + signature
 
 
 

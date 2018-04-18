@@ -1,81 +1,42 @@
 <style><css-dynamic/></style>
 <div id='mypa-delivery-options-container'>
-    <div class="mypa-overlay">
-        <span id="mypa-no-options">Adres ophalen...</span>
-    </div>
-    <div id="mypa-slider">
-        <!-- First frame -->
-        <div id="mypa-delivery-type-selection" class="mypa-tab-container mypa-slider-pos-0">
-            <div id="mypa-date-slider-left"
-                 class="mypa-arrow-left mypa-back-arrow mypa-date-slider-button mypa-slider-disabled"></div>
-            <div id="mypa-date-slider-right"
-                 class="mypa-arrow-right myapa-next-arrow mypa-date-slider-button mypa-slider-disabled"></div>
-            <div id="mypa-tabs-container">
-                <div id='mypa-tabs'>
+    <div class="mypa-fieldset">
+        <ul id="mypa-pickup-selector">
+            <li>
+                <label for="mypa-deliver-date">Bezorgen op</label>
+                <div class="full-width">
+                    <input name="mypa-deliver-or-pickup" id="mypa-deliver-pickup-deliver" value="mypa-deliver" type="radio">
+                    <input name="mypa-delivery-date" id="mypa-delivery-date" type="text" readonly>
                 </div>
-            </div>
-            <div class='mypa-delivery-content mypa-container-lg'>
-                <div class='mypa-header-lg mypa-delivery-header'>
-                    <span class="mypa-header-title"><b>BEZORGOPTIES:</b></span> <span class="mypa-location"></span>
+            </li>
+            <li id="mypa-bpost-saturday-delivery">
+                <label for="mypa-deliver-date-bpost-saturday">Bezorgen op</label>
+                <div class="full-width">
+                    <input name="mypa-deliver-or-pickup" id="mypa-deliver-pickup-deliver-bpost-saturday" value="mypa-deliver-bpost-saturday" type="radio" readonly>
+                    <input name="mypa-delivery-date-bpost-saturday" id="mypa-delivery-date-bpost-saturday" type="text">
+                    <span id="mypa-delivery-bpost-saturday-price"></span>
                 </div>
-                <div id='mypa-delivery-body'>
-                    <div id='mypa-delivery-row' class='mypa-row-lg'>
-                        <input id='mypa-delivery-option-check' type="radio" name="mypa-delivery-type"
-                               checked>
-                        <label id='mypa-delivery-options-title' class='mypa-row-title'
-                               for="mypa-delivery-option-check">
-                            <div class="mypa-checkmark mypa-main">
-                                <div class="mypa-circle mypa-circle-checked"></div>
-                                <div class="mypa-checkmark-stem"></div>
-                                <div class="mypa-checkmark-kick"></div>
-                            </div>
-                            <span class="mypa-highlight" id="mypa-delivery_title">Thuis of op het werk bezorgd</span>
-                        </label>
-                        <div id='mypa-delivery-options' class='mypa-content-lg'>
-                        </div>
-                    </div>
-                    <div id='mypa-pickup-row' class='mypa-row-lg'>
-                        <input type="radio" name="mypa-delivery-type" id="mypa-pickup-location">
-                        <label id='mypa-pickup-options-title' class='mypa-row-title'
-                               for="mypa-pickup-location">
-                            <div class="mypa-checkmark mypa-main">
-                                <div class="mypa-circle"></div>
-                                <div class="mypa-checkmark-stem"></div>
-                                <div class="mypa-checkmark-kick"></div>
-                            </div>
-                            <span class="mypa-highlight" id="mypa-pickup_title">Ophalen op een PostNL locatie</span>
-                        </label>
-                        <div id='mypa-pickup-options-content' class='mypa-content-lg'>
-                            <div>
-                                <label for='mypa-pickup' class='mypa-row-subitem mypa-pickup-selector'>
-                                    <input id='mypa-pickup' type="radio" name="mypa-delivery-time">
-                                    <label for="mypa-pickup" class="mypa-checkmark">
-                                        <div class="mypa-circle"></div>
-                                        <div class="mypa-checkmark-stem"></div>
-                                        <div class="mypa-checkmark-kick"></div>
-                                    </label>
-                                    <span class='mypa-price mypa-pickup-price'></span>
-                                    <span class="mypa-highlight">Vanaf 16.00 uur</span><span
-                                        class='mypa-address' id="mypa-pickup-address"></span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+            </li>
+        </ul>
+        <ul id="mypa-delivery-selectors-be">
+            <li>
+                <div class="full-width">
+                    <div><input name="mypa-method-signature-selector-be" id="mypa-method-signature-selector-be" type="checkbox"</div>
+                    <label for ="mypa-method-signature-selector-be">Handtekening voor ontvangst&nbsp;<span id="mypa-price-bpost-signature"></span></label>
                 </div>
-            </div>
-        </div>
-        <div id="mypa-location-selector" class="mypa-tab-container mypa-slider-pos-0">
-            <!-- Second frame -->
-            <div id='mypa-tabs-2'>
-            </div>
-            <div class='mypa-container-lg mypa-delivery-content'>
-                <div class='mypa-header-lg mypa-delivery-header'>
-                    <span id='mypa-back-arrow'><b>AFHALEN </b><span class="mypa-location-time"></span></span>
+            </li>
+        </ul>
+        <ul id="mypa-pickup-location-selector">
+            <li>
+                <label for="mypa-pickup-location">Afhalen op locatie<span id="mypa-price-pickup"></span></label>
+                <div class="full-width">
+                    <input name="mypa-deliver-or-pickup" id="mypa-deliver-pickup-pickup" value="mypa-pickup" type="radio">
+                    <select name="mypa-pickup-location" id="mypa-pickup-location">
+                        <option value="">Geen Locatie</option>
+                    </select>
+                    <span id="mypa-show-location-details"><i class="fas fa-clock"></i></span>
                 </div>
-                <div id="mypa-location-container">
-
-                </div>
-            </div>
-        </div>
+            </li>
+        </ul>
     </div>
 </div>

@@ -92,7 +92,6 @@ class Checkout
             'cutoff_time' => $this->helper->getTimeConfig('general/cutoff_time'),
             'dropoff_days' => $this->helper->getArrayConfig('general/dropoff_days'),
             'dropoff_delay' => $this->helper->getIntergerConfig('general/dropoff_delay'),
-            'color_base' => $this->helper->getCheckoutConfig('general/color_base'),
             'parent_carrier' => $this->helper->getParentCarrierNameFromQuote($this->quoteId),
             'parent_method' => $this->helper->getParentMethodNameFromQuote($this->quoteId),
         ];
@@ -109,10 +108,10 @@ class Checkout
             'delivery_title' => $this->helper->getCheckoutConfig('delivery/delivery_title'),
             'signature_active' => $this->helper->getBoolConfig('delivery/signature_active'),
             'signature_title' => $this->helper->getCheckoutConfig('delivery/signature_title'),
-            'signature_fee' => $this->helper->getMethodPriceFormat('delivery/signature_fee', false, '+ '),
+            'signature_fee' => $this->helper->getMethodPriceFormat('delivery/signature_fee', false),
             'saturday_active' => $this->helper->getBoolConfig('delivery/saturday_active'),
             'saturday_title' => $this->helper->getCheckoutConfig('delivery/saturday_title'),
-            'saturday_fee' => $this->helper->getMethodPriceFormat('delivery/saturday_fee', false, '+ '),
+            'saturday_fee' => $this->helper->getMethodPriceFormat('delivery/saturday_fee', false),
         ];
 
         if ($deliveryData['signature_active'] === false) {

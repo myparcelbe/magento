@@ -87,11 +87,6 @@
                     <comment>This options allows you to set the number of days it takes you to pick, pack and hand in your parcels at PostNL when ordered before the cutoff time.</comment>
                     <source_model>MyParcelBE\Magento\Model\Source\DropOffDelayDays</source_model>
                 </field>
-                <field id="color_base" translate="label" type="text" sortOrder="217" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Base color</label>
-                    <frontend_model>MyParcelBE\Magento\Block\System\Config\Form\Color</frontend_model>
-                    <comment><![CDATA[<style>#myparcelbe_magento_checkout_general_dropoff_days {height: 185px}</style>]]></comment>
-                </field>
                 <field id="shipping_methods" translate="label comment" type="multiselect" sortOrder="220" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Methods</label>
                     <source_model>MyParcelBE\Magento\Model\Source\ShippingMethods</source_model>

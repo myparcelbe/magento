@@ -27,7 +27,6 @@
                 <dropoff_days>1,2,3,4,5</dropoff_days>
                 <saturday_fee>2.00</saturday_fee>
                 <dropoff_delay>0</dropoff_delay>
-                <color_base>#01bbc5</color_base>
                 <shipping_methods>tablerate</shipping_methods>
             </general>
             <delivery>
@@ -41,7 +40,7 @@
             </delivery>
             <pickup>
                 <active>1</active>
-                <title>Ophalen bij een PostNL locatie</title>
+                <title>Ophalen bij een bpost locatie</title>
                 <fee>0</fee>
             </pickup>
         </myparcelbe_magento_checkout>
