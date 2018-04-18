@@ -69,12 +69,11 @@ class DefaultOptions
         $total = self::$order->getGrandTotal();
         $settings = self::$helper->getStandardConfig('options');
 
-        if ($settings[$option . '_active'] == '1') {
-            if ($total > (int)$settings[$option . '_from_price']) {
+        if (isset($settings[$option . '_active']) &&
+            $settings[$option . '_active'] == '1' &&
+            $total > (int)$settings[$option . '_from_price']
+        ) {
                 return true;
-            } else {
-                return false;
-            }
         }
 
         return false;

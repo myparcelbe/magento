@@ -41,7 +41,7 @@
 }
 
 #mypa-pickup-location {
-    width: calc(100% - 22px);
+    width: calc(100% - 55px);
 }
 
 #mypa-pickup-selector li{
@@ -59,6 +59,11 @@
 
 .fa-question {
     text-decoration: none;
+}
+
+.fa-clock {
+    width: 30px;
+    margin-bottom: -10px;
 }
 
 #mypa-shop-mock {
@@ -87,6 +92,10 @@
     margin: 5px;
     display: none;
     background-color: white;
+    box-shadow: 0px 0px 20px #3333337d;
+}
+.mypa-close {
+    cursor: pointer;
 }
 
 .mypa-pickup-location-details-location,

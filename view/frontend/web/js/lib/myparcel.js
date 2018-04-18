@@ -589,7 +589,7 @@ define(
                     startTime = startTime.slice(0, -3);
                 }
 
-                var html = '<div class="mypa-close-message"><span class="fas fa-times-circle"></span></div>';
+                var html = '<span class="mypa-close">Sluiten</span>';
                 html += '<span class="mypa-pickup-location-details-location"><h3>' + currentLocation.location + '</h3></span>'
                 html += '<span class="mypa-pickup-location-details-street">' + currentLocation.street + '&nbsp;' + currentLocation.number + '</span>';
                 html += '<span class="mypa-pickup-location-details-city">' + currentLocation.postal_code + '&nbsp;' + currentLocation.city + '</span>';
@@ -606,8 +606,7 @@ define(
                         });
                         html += "<br>";
                     });
-                $('#mypa-location-details').html(html);
-                $('#mypa-location-details').show();
+                $('#mypa-location-details').html(html).show();
             },
 
             /*
