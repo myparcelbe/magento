@@ -25,6 +25,7 @@
 a#mypa-error-try-again {
     display: block;
     margin-top: 10px;
+    cursor: pointer;
 }
 #mypa-method-signature-selector-be {
     display: inline-block;
