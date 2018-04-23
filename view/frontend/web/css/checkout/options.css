@@ -15,12 +15,17 @@
 .myparcel-price::before {
     content: "+€";
 }
-
+.full-width.mypa-error {
+    margin-top: 10px;
+}
 .mypa-error label {
     display: inline-block;
     width: 50%;
 }
-
+a#mypa-error-try-again {
+    display: block;
+    margin-top: 10px;
+}
 #mypa-method-signature-selector-be {
     display: inline-block;
 }
@@ -74,11 +79,7 @@
 }
 
 .full-width {
-    display: inline-block;
-    width: 100%;
-    background-color: white;
-    margin-bottom: 1px;
-    padding-bottom: 2px;
+    display: block;
 }
 
 #mypa-location-details {
