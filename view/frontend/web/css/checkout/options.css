@@ -15,12 +15,18 @@
 .myparcel-price::before {
     content: "+€";
 }
-
+.full-width.mypa-error {
+    margin-top: 10px;
+}
 .mypa-error label {
     display: inline-block;
     width: 50%;
 }
-
+a#mypa-error-try-again {
+    display: block;
+    margin-top: 10px;
+    cursor: pointer;
+}
 #mypa-method-signature-selector-be {
     display: inline-block;
 }
@@ -41,7 +47,7 @@
 }
 
 #mypa-pickup-location {
-    width: calc(100% - 22px);
+    width: calc(100% - 55px);
 }
 
 #mypa-pickup-selector li{
@@ -61,6 +67,11 @@
     text-decoration: none;
 }
 
+.fa-clock {
+    width: 30px;
+    margin-bottom: -10px;
+}
+
 #mypa-shop-mock {
     margin-top: 500px;
     background-color: #ccc;
@@ -69,11 +80,7 @@
 }
 
 .full-width {
-    display: inline-block;
-    width: 100%;
-    background-color: white;
-    margin-bottom: 1px;
-    padding-bottom: 2px;
+    display: block;
 }
 
 #mypa-location-details {
@@ -87,6 +94,10 @@
     margin: 5px;
     display: none;
     background-color: white;
+    box-shadow: 0px 0px 20px #3333337d;
+}
+.mypa-close {
+    cursor: pointer;
 }
 
 .mypa-pickup-location-details-location,

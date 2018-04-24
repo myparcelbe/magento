@@ -35,11 +35,6 @@ define(
             init: function (data) {
                 MyParcel.myParcelConfig = data;
 
-                isMobile = true;
-                if ($(window).width() > 980) {
-                    isMobile = false;
-                }
-
                 /* Prices */
                 $('#mypa-price-bpost-signature').html(' (+ € ' + MyParcel.myParcelConfig.priceBpostAutograph + ')');
                 $('#mypa-delivery-bpost-saturday-price').html(' (+ € ' + MyParcel.myParcelConfig.priceBpostSaturdayDelivery + ')');
@@ -94,33 +89,14 @@ define(
                     MyParcel.hideDelivery();
                 });
 
+                $('#mypa-show-location-details').on('click', function () {
+                    MyParcel.showLocationDetails();
+                });
 
-                /* Mobile specific triggers */
-                if (isMobile) {
-                    $('#mypa-show-location-details').on('click', function () {
-                        MyParcel.showLocationDetails();
-                    });
-
-                    $('.mypa-help').on('click', function (e) {
-                        e.preventDefault();
-                        MyParcel.showHelp(e);
-                    });
-                }
-
-                /* Desktop specific triggers */
-                else {
-                    $('#mypa-show-location-details').on('mouseenter', function () {
-                        MyParcel.showLocationDetails();
-                    });
-
-                    $('.mypa-help').on('click', function (e) {
-                        e.preventDefault();
-                    });
-
-                    $('.mypa-help').on('mouseenter', function (e) {
-                        MyParcel.showHelp(e);
-                    });
-                }
+                $('.mypa-help').on('click', function (e) {
+                    e.preventDefault();
+                    MyParcel.showHelp(e);
+                });
 
                 $('#mypa-location-details').on('click', function () {
                     MyParcel.hideLocationDetails();
@@ -589,7 +565,7 @@ define(
                     startTime = startTime.slice(0, -3);
                 }
 
-                var html = '<div class="mypa-close-message"><span class="fas fa-times-circle"></span></div>';
+                var html = '<span class="mypa-close">Sluiten</span>';
                 html += '<span class="mypa-pickup-location-details-location"><h3>' + currentLocation.location + '</h3></span>'
                 html += '<span class="mypa-pickup-location-details-street">' + currentLocation.street + '&nbsp;' + currentLocation.number + '</span>';
                 html += '<span class="mypa-pickup-location-details-city">' + currentLocation.postal_code + '&nbsp;' + currentLocation.city + '</span>';
@@ -606,8 +582,7 @@ define(
                         });
                         html += "<br>";
                     });
-                $('#mypa-location-details').html(html);
-                $('#mypa-location-details').show();
+                $('#mypa-location-details').html(html).show();
             },
 
             /*
@@ -619,8 +594,8 @@ define(
              */
 
             retryPostalcodeHouseNumber: function () {
-                $(triggerPostalCode).val($('#mypa-error-postcode').val());
-                $(triggerHouseNumber).val($('#mypa-error-number').val());
+                MyParcel.myParcelConfig.postal_code = $('#mypa-error-postcode').val();
+                MyParcel.myParcelConfig.number = $('#mypa-error-number').val();
                 MyParcel.hideMessage();
                 MyParcel.callDeliveryOptions();
                 $('#mypa-deliver-pickup-deliver').click();
@@ -656,7 +631,7 @@ define(
                     '</div><div class="full-width mypa-error">' +
                     '<label for="mypa-error-number">Huisnummer</label>' +
                     '<input type="text" name="mypa-error-number" id="mypa-error-number" value="' + MyParcel.myParcelConfig.number + '">' +
-                    '<br><button id="mypa-error-try-again">Opnieuw</button>' +
+                    '<br><a href="#" id="mypa-error-try-again">Opnieuw</a>' +
                     '</div>'
                 );
 
