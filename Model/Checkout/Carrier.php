@@ -20,7 +20,7 @@ namespace MyParcelBE\Magento\Model\Checkout;
 
 use Magento\Shipping\Model\Carrier\AbstractCarrierOnline;
 use Magento\Shipping\Model\Carrier\CarrierInterface;
-class Carrier extends AbstractCarrierOnline implements CarrierInterface
+abstract class Carrier extends AbstractCarrierOnline implements CarrierInterface
 {
     public function __construct() {
         throw new \Exception('deprecated');
