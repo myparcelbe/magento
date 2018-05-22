@@ -26,7 +26,7 @@ status_99,Inactief - Onbekende status
 Version and support,Versie en support
 General settings,Algemene instellingen
 API settings,API instellingen
-To get your personal API credentials you should contact MyParcel BE.,Neem contact op met MyParcel BE om de API gegevens te ontvangen.
+To get your personal API credentials please contact MyParcel BE.,Neem contact op met MyParcel BE om de API gegevens te ontvangen.
 The API Key given by MyParcel BE,Stel hier de API key in die is ontvangen vanuit MyParcel BE
 Default shipment settings,Standaard verzendinstellingen
 Checkout settings,Checkout instellingen
@@ -104,10 +104,10 @@ Saturday delivery fee,Zaterdaglevering prijs
 "If a request is made before this time on Saturday, Monday will be shown as the next possible delivery date.","Als een bestelling voor dit tijdstip op zaterdag wordt gedaan zal maandag als eerstvolgende afleverdag worden getoond."
 Dropoff-delay,Vertraging
 No delay,Geen vertraging
-"This options allows you to set the number of days it takes you to pick, pack and hand in your parcels at PostNL when ordered before the cutoff time.","Stel hier het aantal dagen in die je nodig hebt om het product (te ontvangen,) te verpakken en aan te bieden bij PostNL, vanaf het moment dat de bestelling is geplaatst".
+"This options allows you to set the number of days it takes you to pick, pack and hand in your parcels at bpost when ordered before the cutoff time.","Stel hier het aantal dagen in die je nodig hebt om het product (te ontvangen,) te verpakken en aan te bieden bij bpost, vanaf het moment dat de bestelling is geplaatst".
 Methods,Verzendmethode
 The extra MyParcel BE options are added to this shipping method,De extra MyParcel BE opties worden bij deze verzendmethode toegevoegd.
-Delivery titel,Bezorg titel
+Delivery title,Bezorg titel
 This will be added to the regular shipping price,Dit zal bij de normale verzendkosten worden opgeteld
 Signature on receipt,Handtekening voor ontvangst
 Signature on receipt title, Handtekening voor ontvangst titel
@@ -116,7 +116,7 @@ This will be added to the regular shipping price, Dit zal bij de normale verzend
 If both have been selected this price will be added to the regular shipping price. Leave empty for not using it.,Als beide geselecteerd zijn zal deze prijs bij de normale verzendkosten worden opgeteld. Laat leeg om dit niet te gebruiken.
 "Besides assigning weights to all products, you can also specify a volume of each product.","Om deze functie optimaal te gebruiken, stel je eerst het gewicht of volume in van jouw producten."
 This will be added to the regular shipping price,Dit zal bij de normale verzendkosten worden opgeteld
-Pickup at PostNL location,Ophalen bij een bpost locatie
+Pickup at bpost location,Ophalen bij een bpost locatie
 Pickup active,Ophalen actief
 Pickup titel,Ophalen titel
 Pickup fee,Ophalen prijs

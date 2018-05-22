@@ -18,7 +18,7 @@
             <resource>MyParcelBE_Magento::myparcelbe_magento</resource>
             <group id="api" translate="label comment" type="text" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>API settings</label>
-                <comment>To get your personal API credentials you should contact MyParcel BE.</comment>
+                <comment>To get your personal API credentials please contact MyParcel BE.</comment>
                 <field id="key" translate="label comment" type="text" sortOrder="111" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>API key</label>
                     <comment>The API Key given by MyParcel BE</comment>
@@ -84,7 +84,7 @@
                 </field>
                 <field id="dropoff_delay" translate="label comment" type="select" sortOrder="216" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Dropoff-delay</label>
-                    <comment>This options allows you to set the number of days it takes you to pick, pack and hand in your parcels at PostNL when ordered before the cutoff time.</comment>
+                    <comment>This options allows you to set the number of days it takes you to pick, pack and hand in your parcels at bpost when ordered before the cutoff time.</comment>
                     <source_model>MyParcelBE\Magento\Model\Source\DropOffDelayDays</source_model>
                 </field>
                 <field id="shipping_methods" translate="label comment" type="multiselect" sortOrder="220" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -114,7 +114,7 @@
                     </depends>
                 </field>
                 <field id="delivery_title" translate="label" type="text" sortOrder="225" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Delivery titel</label>
+                    <label>Delivery title</label>
                 </field>
                 <field id="signature_active" translate="label comment" type="select" sortOrder="226" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Signature on receipt</label>
@@ -135,7 +135,7 @@
                 </field>
             </group>
             <group id="pickup" translate="label comment" type="text" sortOrder="260" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>Pickup at PostNL location</label>
+                <label>Pickup at bpost location</label>
                 <field id="active" translate="label comment" type="select" sortOrder="261" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Pickup active</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>

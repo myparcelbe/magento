@@ -70,7 +70,7 @@ class CreateAndPrintMyParcelTrack extends \Magento\Framework\App\Action\Action
     private function massAction()
     {
         if ($this->orderCollection->apiKeyIsCorrect() !== true) {
-            $message = 'You not have entered the correct API key. To get your personal API credentials you should contact MyParcel BE.';
+            $message = 'You not have entered the correct API key. To get your personal API credentials please contact MyParcel BE.';
             $this->messageManager->addErrorMessage(__($message));
             $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($message);
 
@@ -125,7 +125,7 @@ class CreateAndPrintMyParcelTrack extends \Magento\Framework\App\Action\Action
                 ->downloadPdfOfLabels();
         } catch (\Exception $e) {
             if (count($this->messageManager->getMessages()) == 0) {
-                $this->messageManager->addErrorMessage(__('An error has occurred while creating a MyParcel BE label. To get your personal API credentials you should contact MyParcel BE.'));
+                $this->messageManager->addErrorMessage(__('An error has occurred while creating a MyParcel BE label. To get your personal API credentials please contact MyParcel BE.'));
                 $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
             }
         }

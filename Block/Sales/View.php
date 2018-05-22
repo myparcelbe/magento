@@ -62,7 +62,7 @@ class View extends \Magento\Sales\Block\Adminhtml\Order\AbstractOrder
 
                 $dateTime = date('d-m-Y H:i', strtotime($data['date'] . ' ' . $data['start_time']));
 
-                $html .= __('PostNL location:') . ' ' . $dateTime;
+                $html .= __('bpost location:') . ' ' . $dateTime;
                 if($data['price_comment'] != 'retail')
                     $html .= ', ' . __($data['price_comment']);
                 $html .= ', ' . $data['location']. ', ' . $data['city']. ' (' . $data['postal_code']. ')';
