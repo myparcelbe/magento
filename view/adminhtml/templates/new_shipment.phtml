@@ -1,0 +1,61 @@
+<?php /** @var MyParcelBE\Magento\Block\Sales\NewShipment $block */ ?>
+    <input name="mypa_extra_options_checkboxes_in_form"
+           value="1"
+           type="hidden"
+    />
+    <!-- MyParcel options -->
+    <div class="field choice admin__field admin__field-option field-mypa_create_from_observer mypa_create_from_observer-toggle">
+        <input id="mypa_create_from_observer"
+               class="admin__control-checkbox"
+               name="mypa_create_from_observer"
+               value="1"
+               type="checkbox"
+               checked="checked"
+        />
+        <label class="admin__field-label"
+               for="mypa_create_from_observer">
+            <span><?=__('Create MyParcel consignment') ?></span></label>
+    </div>
+    <div class="field field-mypa_package_type mypa-option-toggle" style="margin-top: 10px;">
+        <div class="admin__field-control">
+            <div class="admin__field admin__field-option">
+                <input type="radio" class="admin__control-radio" id="mypa_package_type-package" name="mypa_package_type" value="1" <?=$block->getPackageType() !== 1 ?: 'checked="checked"';?>>
+                <label class="admin__field-label" for="mypa_package_type-package"><?=__('Package');?></label>
+            </div>
+            <div class="admin__field admin__field-option">
+                <input type="radio" class="admin__control-radio" id="mypa_package_type-letter" name="mypa_package_type" value="3" <?=$block->getPackageType() !== 3 ?: 'checked="checked"';?>>
+                <label class="admin__field-label" for="mypa_package_type-letter"><?=__('Letter');?></label>
+            </div>
+        </div>
+    </div>
+<?php if ($block->getCountry() == 'BE'): ?>
+    <div class="field choice admin__field admin__field-option field-mypa_signature mypa_package-toggle mypa-option-toggle" style="<?=$block->getPackageType() === 1 ?: 'display:none';?>">
+        <input id="mypa_signature"
+               class="admin__control-checkbox"
+               name="mypa_signature"
+               value="1"
+               type="checkbox"
+               <?= $block->getDefaultOption('signature') == true ? 'checked="checked"' : '';?>
+        />
+        <label class="admin__field-label"
+               for="mypa_signature">
+            <span><?=__('Signature on receipt') ?></span></label>
+    </div>
+    <div class="field choice admin__field admin__field-option field-mypa_insurance mypa_package-toggle mypa-option-toggle" style="<?=$block->getPackageType() === 1 ?: 'display:none';?>">
+        <label class="admin__field-label"
+               for="mypa_insurance" style="display: block">
+            <span><?=__('Insured up to:') ?></span></label>
+        <?php $defaultInsurance = $block->getDefaultInsurance();?>
+        <select name="mypa_insurance" id="mypa_insurance" class="required product-custom-option admin__control-select" title="" >
+            <option value="0" ><?=__('No insurance') ?></option>
+            <option value="500" <?= $defaultInsurance == 500 ? 'selected="selected"' : '';?> >€ 500</option>
+        </select>
+    </div>
+    <script type="text/x-magento-init">
+       {
+           ".page-footer": {
+               "myparcelbe_newshipment": {}
+            }
+       }
+    </script>
+<?php endif; ?>

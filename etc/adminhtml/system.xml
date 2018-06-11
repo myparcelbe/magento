@@ -1,0 +1,183 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../Magento/Config/etc/system_file.xsd">
+    <system>
+        <tab id="myparcelbe_magento" translate="label" sortOrder="100">
+            <label>MyParcel BE</label>
+        </tab>
+        <section id="myparcelbe_magento_support_tab" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Version and support</label>
+            <tab>myparcelbe_magento</tab>
+            <resource>MyParcelBE_Magento::myparcelbe_magento</resource>
+            <group id="support_tab" translate="label comment" type="text" sortOrder="220" showInDefault="1" showInWebsite="1" showInStore="1">
+                <frontend_model>\MyParcelBE\Magento\Block\System\Config\Form\SupportTab</frontend_model>
+            </group>
+        </section>
+        <section id="myparcelbe_magento_general" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>General settings</label>
+            <tab>myparcelbe_magento</tab>
+            <resource>MyParcelBE_Magento::myparcelbe_magento</resource>
+            <group id="api" translate="label comment" type="text" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>API settings</label>
+                <comment>To get your personal API credentials please contact MyParcel BE.</comment>
+                <field id="key" translate="label comment" type="text" sortOrder="111" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>API key</label>
+                    <comment>The API Key given by MyParcel BE</comment>
+                </field>
+            </group>
+            <group id="print" translate="label" type="text" sortOrder="210" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Print settings</label>
+                <field id="paper_type" translate="label comment" type="select" sortOrder="211" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Paper type</label>
+                    <comment>Select a standard orientation for printing labels.</comment>
+                    <source_model>MyParcelBE\Magento\Model\Source\PaperType</source_model>
+                </field>
+            </group>
+        </section>
+        <section id="myparcelbe_magento_standard" translate="label" type="text" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Default shipment settings</label>
+            <tab>myparcelbe_magento</tab>
+            <resource>MyParcelBE_Magento::myparcelbe_magento</resource>
+            <group id="options" translate="label comment" type="text" sortOrder="220" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Default shipping options</label>
+                <comment>Fill in your preferences for a shipment. These settings will only apply for the mass actions in the order grid. When creating a single shipment, these settings can be changed manually. These settings will activate based on the order total amount.</comment>
+                <field id="signature_active" translate="label" type="select" sortOrder="223" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Automate 'Signature on receipt'</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="signature_from_price" translate="label comment" type="text" sortOrder="224" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>From price</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                    <comment>'Signature on receipt' operates above a certain order total amount</comment>
+                    <depends>
+                        <field id="signature_active">1</field>
+                    </depends>
+                </field>
+                <field id="insurance_500_active" translate="label" type="select" sortOrder="233" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Automate 'Insurance € 500'</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="insurance_500_from_price" translate="label comment" type="text" sortOrder="234" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>From price</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                    <comment>'Insurance € 500' operates above a certain order total amount. For NL shipping only, shipments inside the EU insured default is € 500.</comment>
+                    <depends>
+                        <field id="insurance_500_active">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+        <section id="myparcelbe_magento_checkout" translate="label" type="text" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Checkout settings</label>
+            <tab>myparcelbe_magento</tab>
+            <resource>MyParcelBE_Magento::myparcelbe_magento</resource>
+            <group id="general" translate="label comment" type="text" sortOrder="210" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Basic settings</label>
+                <field id="cutoff_time" translate="label comment" type="time" sortOrder="212" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Cut-off time</label>
+                    <comment>If a request is made for the delivery options between Friday after, and Monday before, cut-off time then Tuesday will be shown as the next possible delivery date.</comment>
+                </field>
+                <field id="dropoff_days" translate="label comment" type="multiselect" sortOrder="213" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Drop-off days</label>
+                    <source_model>MyParcelBE\Magento\Model\Source\DropOffDays</source_model>
+                    <comment>Select the days that you send the orders.</comment>
+                    <can_be_empty>1</can_be_empty>
+                </field>
+                <field id="dropoff_delay" translate="label comment" type="select" sortOrder="216" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Dropoff-delay</label>
+                    <comment>This options allows you to set the number of days it takes you to pick, pack and hand in your parcels at bpost when ordered before the cutoff time.</comment>
+                    <source_model>MyParcelBE\Magento\Model\Source\DropOffDelayDays</source_model>
+                </field>
+                <field id="shipping_methods" translate="label comment" type="multiselect" sortOrder="220" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Methods</label>
+                    <source_model>MyParcelBE\Magento\Model\Source\ShippingMethods</source_model>
+                    <comment>The extra MyParcel BE options are added to this shipping method</comment>
+                    <can_be_empty>1</can_be_empty>
+                </field>
+            </group>
+            <group id="delivery" translate="label comment" type="text" sortOrder="220" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Delivery settings</label>
+                <field id="saturday_active" translate="label comment" type="select" sortOrder="221" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Saturday active</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="saturday_title" translate="label comment" type="text" sortOrder="222" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Saturday title</label>
+                    <depends>
+                        <field id="saturday_active">1</field>
+                    </depends>
+                </field>
+                <field id="saturday_fee" translate="label comment" type="text" sortOrder="223" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Saturday delivery fee</label>
+                    <comment>This will be added to the regular shipping price</comment>
+                    <depends>
+                        <field id="saturday_active">1</field>
+                    </depends>
+                </field>
+                <field id="delivery_title" translate="label" type="text" sortOrder="225" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Delivery title</label>
+                </field>
+                <field id="signature_active" translate="label comment" type="select" sortOrder="226" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Signature on receipt</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="signature_title" translate="label comment" type="text" sortOrder="227" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Signature on receipt title</label>
+                    <depends>
+                        <field id="signature_active">1</field>
+                    </depends>
+                </field>
+                <field id="signature_fee" translate="label comment" type="text" sortOrder="228" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Signature on receipt fee</label>
+                    <comment>This will be added to the regular shipping price</comment>
+                    <depends>
+                        <field id="signature_active">1</field>
+                    </depends>
+                </field>
+            </group>
+            <group id="pickup" translate="label comment" type="text" sortOrder="260" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Pickup at bpost location</label>
+                <field id="active" translate="label comment" type="select" sortOrder="261" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Pickup active</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="title" translate="label comment" type="text" sortOrder="262" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Pickup titel</label>
+                    <depends>
+                        <field id="active">1</field>
+                    </depends>
+                </field>
+                <field id="fee" translate="label comment" type="text" sortOrder="263" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Pickup fee</label>
+                    <comment>This will be added to the regular shipping price</comment>
+                    <depends>
+                        <field id="active">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+        <section id="sales_email">
+            <group id="track" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>MyParcel Track</label>
+                <comment>Enable this option to add the MyParcel barcode in the email.</comment>
+                <field id="enabled" translate="label" type="select" sortOrder="0" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="identity" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Shipment Email Sender</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Identity</source_model>
+                </field>
+                <field id="template" translate="label comment" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>MyParcel Shipment Email Template</label>
+                    <comment>Use Shipment email template when "Default" option is selected.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                </field>
+                <field id="guest_template" translate="label comment" type="select" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>MyParcel Shipment Email Template for Guest</label>
+                    <comment>Use Shipment email template when "Default" option is selected.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

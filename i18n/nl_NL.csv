@@ -1,0 +1,126 @@
+status_1,Concept
+status_2,Voorgemeld
+status_3,Aangeboden aan PostNL
+status_4,In sorteerproces
+status_5,In distributie
+status_6,Zending bij douane
+status_7,Zending afgeleverd
+status_8,Zending op afhaallocatie
+status_9,Zending afgehaald op afhaallocatie
+status_10,Retourzending afgeleverd
+status_11,Retourzending op afhaallocatie
+status_12,Ongefrankeerd label geprint
+status_13,Gecrediteerd
+status_30,Inactief - Concept
+status_31,Inactief - Voorgemeld
+status_32,Inactief - Aangeboden bij MyParcel
+status_33,Inactief - In sorteerprocess
+status_34,Inactief - In distributie
+status_35,Inactief - Zending bij douane
+status_36,Inactief - Zending afgeleverd
+status_37,Inactief - Zending op afhaallocatie
+status_38,Inactief - Zending afgehaald op afhaallocatie
+status_39,Inactief - Retourzending afgeleverd
+status_40,Inactief - Retourzending op afhaallocactie
+status_99,Inactief - Onbekende status
+Version and support,Versie en support
+General settings,Algemene instellingen
+API settings,API instellingen
+To get your personal API credentials please contact MyParcel BE.,Neem contact op met MyParcel BE om de API gegevens te ontvangen.
+The API Key given by MyParcel BE,Stel hier de API key in die is ontvangen vanuit MyParcel BE
+Default shipment settings,Standaard verzendinstellingen
+Checkout settings,Checkout instellingen
+Print MyParcel labels directly,Print MyParcel labels direct
+Print settings,Print instellingen
+Paper type,Print oriëntatie
+Select a standard orientation for printing labels.,Selecteer een standaard print ori&euml;ntatie voor het printen van labels.
+Default shipping options,Standaard verzendinstellingen
+"Fill in your preferences for a shipment. These settings will only apply for the mass actions in the order grid. When creating a single shipment, these settings can be changed manually. These settings will activate based on the order total amount.","Vul hier uw standaard voorkeuren in voor uw verzendopties. Deze instellingen worden als default op al uw zendingen toegepast, indien van toepassing. Deze opties zijn later, per zending, uiteraard nog wel aan te passen tijdens het verwerken."
+Automate 'Signature on receipt',Automatiseer 'Handtekening voor ontvangst'
+'Signature on receipt' operates above a certain order total amount,'Handtekening voor ontvangst' wordt geactiveerd als het totaal bedrag meer is dan bovenstaande bedrag
+Automate 'Insurance € 500',Automatiseer 'Verzekerd tot € 500'
+"'Insurance € 500' operates above a certain order total amount. For NL shipping only, shipments inside the EU insured default is € 500.","'Verzekerd tot € 500' wordt geactiveerd als het totaal bedrag meer is dan bovenstaande bedrag. Alleen voor Nederlandse verzendingen, zendingen naar landen binnen de EU zijn standaard verzekerd tot € 500."
+From price,Vanaf prijs
+Track number,Track nummer
+Track status,Track status
+Track action,Track actie
+MyParcel options,MyParcel opties
+Package,Pakket
+Letter,Ongefrankeerd
+Home address only,Alleen huisadres
+Signature on receipt,Handtekening voor ontvangst
+Insured up to:,Verzekeren tot:
+Download package label,Download pakket label
+Download letter label,Download ongefrankeerd label
+Create new concept,Creëer nieuw concept
+Create shipment,Zending aanmaken
+Please select an item from the list,Selecteer eerst een order uit de lijst
+⚠️&#160; Please check address,⚠️&#160; Controller het adres
+No key found. Go to Configuration and then to MyParcel to enter the key.,Geen API key gevonden. Ga naar Configuratie en vervolgens naar MyParcel om de API key in te voeren.
+"No shipment can be made with this order. Shipments can not be created if the status is On Hold or if the product is digital.","Er kan geen zending met deze bestelling gemaakt worden. Zendingen kunnen niet worden aangemaakt als de status 'Wordt vastgehouden' is of als het product digitaal is."
+MyParcel Track,MyParcel barcode
+Use Shipment template,Gebruik Verzending template
+Enable this option to add the MyParcel barcode in the email.,Activeer deze optie om de MyParcel barcode toe te voegen in de email.
+MyParcel Shipment Email Template,Sjabloon e-mail voor een MyParcel zending
+MyParcel Shipment Email Template for Guest,Sjabloon e-mail voor een MyParcel zending voor gast
+Use Shipment email template when "Default" option is selected.,Gebruik Verzending template als er gekozen is voor "Gebruik systeemwaarde".
+Action type,Actie
+Download label,Download label
+Open in new tab, Open in nieuw tabblad
+Package Type,Pakkettype
+Print position,Printpositie
+MyParcel version,MyParcel versie
+"The MyParcel BE extension version %1 is installed on your webshop. Currently version %2 is the latest stable version. If you experience an issue, we recommend that you install the latest stable version.","De MyParcel BE extensie versie %1 is geïnstalleerd in jouw webshop. Momenteel is de laatste stabiele versie %2. Als je enige problemen ervaart adviseren wij altijd de laatste stabiele versie te installeren in jouw magento omgeving."
+"To read the instructions for the MyParcel BE Magento extension, click %1 here %2.","Klik %1 hier %2 om de handleiding van de MyParcel BE Magento extensie te bekijken."
+When using the extension please note:,Aandachtspunten bij het gebruik van deze extensie:
+To be able to configure the extension you need to possess and use an active MyParcel BE account.,U dient een actief MyParcel BE account te hebben om de extensie te kunnen configureren.
+"During the transition phase the old Magento MyParcel BE extension can remain active. However, you do need to turn off PakjeGemak in the old MyParcel BE extension.","Indien u de oude MyParcel BE extensie gebruikt kan deze actief blijven in de overgangsfase. Wel dient u PakjeGemak in de oude MyParcel BE extensie uit te schakelen."
+Magento &amp; 3rd party version compatibility,Magento & derde partijen ondersteuning
+"We cannot guarantee perfect functionality of the MyParcel BE extension when you intend to use the extension on a version of Magento that is not supported or when you intend to use the extension together with a 3rd part extension that is not supported. If you have any questions please contact MyParcel BE.","Indien u de extensie wilt gebruiken op een niet-ondersteunde versie of editie van Magento, of als u de extensie wilt gebruiken samen met een 3rd party extensie die niet ondersteund wordt, kunnen wij niet garanderen dat de MyParcel BE extensie feilloos zal functioneren. Voor vragen kunt u contact opnemen met MyParcel BE."
+Questions and information about your MyParcel BE account,MyParcel BE account vragen en informatie
+"For questions related to your MyParcel BE account, configuration problems, extension conflicts and bugs, please contact MyParcel BE.","Voor vragen gerelateerd aan uw MyParcel BE account, configuratie problemen, extensie conflicten en bugs, neemt u contact op met MyParcel BE."
+MyParcel BE:,MyParcel BE:
+www.myparcel.nl,www.myparcel.nl
+info@sendmyparcel.be,info@sendmyparcel.be
+Phone:,Telefoon
+Email,E-mail
+Documents,Documenten
+Latest stable release,Laatste stabiele versie
+Installation and configuration manual,Installatie en configuratie handleiding
+Full changelog,Volledige release notes
+Installation and configuration instructions,Installatie en configuratie handleiding
+MyParcel BE backoffice,MyParcel BE backoffice
+Basic settings,Basis instellingen
+Delivery settings,Bezorging
+Saturday active,Zaterdag actief
+Saturday title,Zaterdag titel
+day,dag
+days,dagen
+Hide days,Dagen verbergen
+Cut-off time,Het laatste bestelmoment
+"If a request is made for the delivery options between Friday after, and Monday before, cut-off time then Tuesday will be shown as the next possible delivery date.","Als een bestelling tussen vrijdag na, en maandag voor, het opgegeven bestelmoment wordt gedaan dan zal dinsdag worden getoond als eerstvolgende afleverdag."
+Drop-off days,Verzenddagenl
+Saturday delivery fee,Zaterdaglevering prijs
+"If a request is made before this time on Saturday, Monday will be shown as the next possible delivery date.","Als een bestelling voor dit tijdstip op zaterdag wordt gedaan zal maandag als eerstvolgende afleverdag worden getoond."
+Dropoff-delay,Vertraging
+No delay,Geen vertraging
+"This options allows you to set the number of days it takes you to pick, pack and hand in your parcels at bpost when ordered before the cutoff time.","Stel hier het aantal dagen in die je nodig hebt om het product (te ontvangen,) te verpakken en aan te bieden bij bpost, vanaf het moment dat de bestelling is geplaatst".
+Methods,Verzendmethode
+The extra MyParcel BE options are added to this shipping method,De extra MyParcel BE opties worden bij deze verzendmethode toegevoegd.
+Delivery title,Bezorg titel
+This will be added to the regular shipping price,Dit zal bij de normale verzendkosten worden opgeteld
+Signature on receipt,Handtekening voor ontvangst
+Signature on receipt title, Handtekening voor ontvangst titel
+Signature on receipt fee, Handtekening voor ontvangst prijs
+This will be added to the regular shipping price, Dit zal bij de normale verzendkosten worden opgeteld
+If both have been selected this price will be added to the regular shipping price. Leave empty for not using it.,Als beide geselecteerd zijn zal deze prijs bij de normale verzendkosten worden opgeteld. Laat leeg om dit niet te gebruiken.
+"Besides assigning weights to all products, you can also specify a volume of each product.","Om deze functie optimaal te gebruiken, stel je eerst het gewicht of volume in van jouw producten."
+This will be added to the regular shipping price,Dit zal bij de normale verzendkosten worden opgeteld
+Pickup at bpost location,Ophalen bij een bpost locatie
+Pickup active,Ophalen actief
+Pickup titel,Ophalen titel
+Pickup fee,Ophalen prijs
+Drop off day,Verzenddagen
+Select the days that you send the orders.,Selecteer de dagen waarop jij de orders verzend.
+Set the number of days to let the customer make an order on a different day than to deliver the first one.,Stel hier het aantal dagen in om de klant de keuze te laten maken een bestelling op een andere dag dan de eerst volgende te laten bezorgen.
+delivery/saturday_signature_title,Saturday delivery + signature
