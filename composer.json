@@ -2,7 +2,7 @@
     "name": "myparcelbe/magento",
     "description": "A Magento 2 module that creates MyParcel Belgium labels",
     "type": "magento2-module",
-    "version": "2.3.3-beta.2",
+    "version": "2.0.1",
     "homepage": "https://www.sendmyparcel.be",
     "keywords": ["MyParcel BE", "My Parcel BE", "Bpost", "bpost", "Magento 2"],
     "license": "GPL-3.0-or-later",

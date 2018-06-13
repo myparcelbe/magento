@@ -672,6 +672,7 @@ define(
                         cc: MyParcel.myParcelConfig.countryCode,
                         street: MyParcel.myParcelConfig.street,
                         number: MyParcel.myParcelConfig.number,
+                        city: MyParcel.myParcelConfig.city,
                         saturday_delivery: MyParcel.myParcelConfig.allowBpostSaturdayDelivery,
                         cutofff_time: MyParcel.myParcelConfig.cutoffTime,
                         dropoff_days: MyParcel.myParcelConfig.dropOffDays,

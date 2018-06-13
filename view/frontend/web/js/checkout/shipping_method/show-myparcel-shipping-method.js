@@ -95,6 +95,8 @@ define(
                 if (typeof country === 'undefined') country = '';
                 var postcode = quote.shippingAddress._latestValue.postcode;
                 if (typeof postcode === 'undefined') postcode = '';
+                var city = quote.shippingAddress._latestValue.city;
+                if (typeof city === 'undefined') city = '';
             } else {
                 var street0 = $("input[name='street[0]']").val();
                 if (typeof street0 === 'undefined') street0 = '';
@@ -106,6 +108,8 @@ define(
                 if (typeof country === 'undefined') country = '';
                 var postcode = $("input[name='postcode']").val();
                 if (typeof postcode === 'undefined') postcode = '';
+                var city = $("input[name='city']").val();
+                if (typeof city === 'undefined') city = '';
             }
 
             window.mypa.address = [];
@@ -114,6 +118,7 @@ define(
             window.mypa.address.street2 = street2.replace(/[<>=]/g,'');
             window.mypa.address.cc = country.replace(/[<>=]/g,'');
             window.mypa.address.postcode = postcode.replace(/[\s<>=]/g,'');
+            window.mypa.address.city = city.replace(/[<>=]/g,'');
         }
 
         function showOptions() {
@@ -196,6 +201,7 @@ define(
                 street: _getFullStreet(),
                 postal_code: window.mypa.address.postcode,
                 parent_carrier: data.general.parent_carrier,
+                city: window.mypa.address.city,
                 parent_method: data.general.parent_method,
                 cutoffTime: data.general.cutoff_time,
                 dropOffDelay: data.general.dropoff_delay,
