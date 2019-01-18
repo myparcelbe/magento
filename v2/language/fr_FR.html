@@ -1,0 +1,224 @@
+<script src="js/auto_menu.js"></script>
+<section class="page-header">
+    <p>
+        <img alt="" src="media/MyParcel_Belgie.png"/>
+        <img height="185" src="media/logo_magento.png" style="margin-left: -70px;"/>
+    </p>
+    <h1 class="project-name">Manuel d'utilisation</h1>
+    <h2 class="project-tagline">Extension Magento 2 MyParcel Belgique</h2>
+    <a target="_blank" class="btn" href="https://github.com/myparcelbe/magento">GitHub</a>
+    <a target="_blank" class="btn" href="https://github.com/myparcelbe/magento/releases">Toutes les mises à jour</a>
+    <a target="_blank" class="btn" href="https://github.com/myparcelbe/magento/archive/master.zip">Dernière version stable</a>
+</section>
+<section class="main-content">
+    <h1>Introduction</h1>
+    <p>Ce manuel décrit les fonctionnalités de l’extension MyParcel Belgique pour Magento 2.</p>
+    <p>Cette extension Magento 2 vous permet de créer deux types d’envois MyParcel Belgique :</p>
+    <ol>
+        <li>Normal (en Belgique, avec de nombreuses options de livraison et de moment d’envoi)</li>
+        <li>colis vers l’étranger, uniquement vers l’UE.</li>
+    </ol>
+
+    <h1>Sommaire</h1>
+    <div class="menu"></div>
+    <div>
+        <h1 id="1">1 Installation et mise à jour</h1>
+        <h2 id="1_1">1.1 Exigences techniques</h2>
+        <p>Pour utiliser l'extension MyParcel Belgique Magento 2, votre serveur doit répondre à l’une des conditions suivantes:</p>
+        <ul>
+            <li>Version de PHP 5.6</li>
+            <li>Version de PHP 7 ou supérieure</li>
+        </ul>
+        <p>La version de Magento suivante est supportée:</p>
+        <ul>
+            <li>Community 2.x</li>
+        </ul>
+
+        <h2 id="1_2">1.2 Installation</h2>
+        <p>L’extension MyParcel Belgique Magento 2 ne peut pas être téléchargée via le Magento Marketplace. <br><br>
+
+            Nous vous recommandons de faire une sauvegarde de votre environnement Magento 2 avant toute installation. L’extension est disponible via le terminal. Consultez votre administrateur web. Votre administrateur web peut exécuter la commande suivante à la racine du site (par ex. public_html) pour installer l’extension MyParcel Belgique: <br>
+            <span class="nice">composer require myparcelbe/magento </span><br><br>
+
+        <div class="accordion">
+            <a style="cursor:pointer; outline: none;"><img src="media/icons/ic_arrow_drop_down_black_24dp_1x.png" style="margin-bottom: -5px;">Vous installez une extension dans votre environnement Magento pour la première fois?</a>
+            <div style="margin-top:10px">
+                Dan bestaat de kans dat je de volgende melding krijgt:<br><br>
+                <img src="media/composerupdate.png"><br><br>
+                Om de Username en Password te verkrijgen ga je naar <a href="https://marketplace.magento.com" target="_blank">https://marketplace.magento.com</a>. Hier kun je een account aanmaken en inloggen. Ga daarna in <span class="nice">My Account</span> naar <span class="nice">Marketplace</span>. Klik vervolgens op <span class="nice">My Access Keys</span> en op <span class="nice">Magento 2</span>.
+                <img src="media/magento_marketplace_start.png"><br><br>
+                Hier zie je public key en een private key. De public key kan je in de terminal gebruiken als username en de private key kan je gebruiken als Password. Zie je de keys nog niet? Klik dan op Create A New Access Key.<br><br>
+                <img src="media/marketplace_key.png">
+            </div>
+        </div><br><br>
+
+        Pour vider le cache et exécuter d’autres actions nécessaires de Magento 2, utilisez la commande suivante:
+        <span class="nice">rm -rf var/di/*; rm -rf pub/static/*; rm -rf var/cache/*; rm -rf var/pagecache/*; rm -rf var/generation/*; rm -rf var/dir/*; rm -rf var/view_preprocessed/*; php bin/magento cache:flush && php bin/magento setup:upgrade && php bin/magento setup:static-content:deploy && php bin/magento setup:static-content:deploy nl_NL && php bin/magento indexer:reindex</span>
+        </p>
+        <h2 id="1_3">1.3 Mise à jour</h2>
+        <p>Pour effectuer une mise à jour, utilisez la commande suivante: <br>
+            <span class="nice">composer update myparcelbe/magento</span><br><br>
+
+            Si vous utilisez actuellement la version 1.x de MyParcel Belgique et si vous souhaitez la mettre à jour avec la version 2.x, vous devrez utiliser la commande suivante pour installer la dernière version: <br>
+            <span class="nice">composer require myparcelbe/magento "~2.1"</span><br><br>
+
+            Pour vider le cache et exécuter d’autres actions nécessaires de Magento 2, utilisez la commande suivante:
+            <span class="nice">rm -rf var/di/*; rm -rf pub/static/*; rm -rf var/cache/*; rm -rf var/pagecache/*; rm -rf var/generation/*; rm -rf var/dir/*; rm -rf var/view_preprocessed/*; php bin/magento cache:flush && php bin/magento setup:upgrade && php bin/magento setup:static-content:deploy && php bin/magento setup:static-content:deploy nl_NL && php bin/magento indexer:reindex</span>
+        </p>
+
+        <h1 id="2">2 Configuration</h1>
+        <p>Allez dans le menu <span class="nice">Stores → Configuration → MyParcel</span> pour configurer l’extension MyParcel Belgique.</p><br>
+        <img src="media/config.png">
+        <p>
+            Vous aurez également le choix entre 4 onglets. Dans l’onglet ‘version’, vous pouvez vérifier la version du plug-in que vous avez installée. Dans l’onglet ‘Paramètres généraux’, vous pourrez introduire votre clé API et définir vos préférences d'impression. L’onglet ‘Paramètres d’expédition standards’ vous donne la possibilité de définir vos
+            préférences d’options d’expédition standards de MyParcel Belgique. L’onglet ‘Paramètres de checkout’ vous permet de configurer des options d'expédition complémentaires que vos clients pourront choisir dans le panier.
+        </p>
+
+        <h2 id="2_1">2.1 Paramètres généraux</h2>
+        <h3 id="2_1_1">2.1.1 Paramètres de la clé API</h3>
+        <p>Vous pouvez introduire ici votre clé API. Celle-ci est nécessaire au transfert des envois vers MyParcel. Ces données peuvent être retrouvées dans votre compte MyParcel Belgique sur <a href="https://backoffice.sendmyparcel.be/settings" target="_blank">backoffice.sendmyparcel.be</a> en choisissant <span class="nice">Paramètres -> Général</span>.</p>
+        <img src="media/api_key.png">
+
+        <h3 id="2_1_2">2.1.2 Orientation de l’impression</h3>
+        <p>Sélectionnez orientation d’impression. Si vous choisissez le format A4, quatre étiquettes d'expédition seront imprimées par feuille A4. Si vous choisissez le format A6, vous aurez besoin d’étiquettes d’expédition qui sont compatibles avec une imprimante à étiquettes spéciales comme une Zebra ou une Dymo 4XL. <br><br></p>
+        <img src="media/print_opties.png">
+
+        <h2 id="2_2">2.2 Paramètres d'expédition standards</h2>
+        <p>
+            Dans <span class="nice">Paramètres d’expédition standards</span> vous pouvez configurer le mode de traitement par défaut de votre envoi lorsque vous utilisez l'extension MyParcel Belgique pour Magento 2.
+        </p>
+        <img src="media/MA2_standaard_verzendinstellingenBE.png">
+
+        <h3 id="2_2_1">2.2.1 Options d'expédition standards</h3>
+        <p>
+            Les options suivantes sont activées en fonction de la valeur de la commande. Exemple : si vous saisissez la valeur 100 dans
+            <span class="nice">Assurance jusqu’à 500 €</span> les commandes d'une valeur d’achat supérieure à 100 € seront automatiquement assurées à concurrence de 500 €.
+        </p>
+        <ul>
+            <li>Signature pour réception</li>
+            <li>Assurance jusqu'à 500 €</li>
+        </ul>
+        <p>Attention : l’option n’est pas activée si <span class="nice">Non</span> est complété. L’option est active si la valeur <span class="nice">Oui</span> est saisie. L’option est également activée lorsque ‘0’ est saisi dans ‘A partir du prix’.</p>
+
+        <h1 id="3">3 Fonctionnalités back-end</h1>
+        <h2 id="3_1">3.1 Créer un envoi</h2>
+        <p>Vous pouvez créer un envoi MyParcel Belgique de deux manières:</p>
+
+        <h4>1.Méthode par lots via l’aperçu des commandes.</h4>
+        <ol>
+            <li>Sélectionnez les commandes que vous voulez exporter vers MyParcel Belgique.</li><br><br>
+            <img src="media/MA2_bestelling_overzicht.png"><br><br>
+            <li>Dans la barre d’actions, sélectionnez <span class="nice">Imprimer les étiquettes MyParcel Belgique</span>.</li><br>
+            <img src="media/MA2_actiemenu_bestellingen.png"><br><br>
+            <li>Sélectionnez la position d’impression correcte si vous avez choisi ‘A4’.</li>
+            <img src="media/print_positionBE.png"><br><br>
+            <li>Le PDF apparaît sur votre ordinateur et est prêt à être imprimé.</li><br>
+            <li>
+                WSi vous souhaitez ignorer les paramètres de l’étape 3, parce que vous avez par exemple déjà défini les options d'expédition correctes pour vos commandes via les
+                ‘Paramètres d'expédition standards’, vous pouvez alors télécharger immédiatement vos étiquettes via ‘Imprimer directement les étiquettes MyParcel’.
+            </li><br><br>
+            <img src="media/MA2_actiemenu_bestellingen_2.png">
+        </ol><br>
+
+
+        <h4>2. Par commande, lorsque vous créez un envoi Magento.</h4>
+        <ol>
+            <li>Cliquez sur la commande correspondante et choisissez le bouton <span class="nice">Envoyer</span>dans le coin supérieur droit.</li>
+            <img src="media/MA2_order_detailBE.png"><br><br>
+            <li>Un cadre apparaît dans le coin inférieur droit. Vous pouvez ici adapter le type d’envoi, de même que les options d’expédition disponibles par type d’envoi.</li><br><br>
+            <img src="media/MA2_aanpassing_verzendmethode_optiesBE.png"><br><br>
+            <li>Envoyez la commande vers MyParcel Belgique via <span class="nice">Enregistrer l’envoi</span>.Cela permet la création d’un concept d'envoi.</li><br>
+            <li>Vous pourrez ensuite immédiatement imprimer l’étiquette dans la commande, en cliquant sur le bouton <span class="nice">Imprimer l'étiquette</span> en haut à droite.</li><br>
+            <img src="media/MA2_printlabel.png"><br><br>
+        </ol>
+
+        <h2 id="3_2">3.2 Aperçu des commandes</h2>
+        <p>Afin de vous fournir à tout moment une vision claire sur le statut de vos envois, 3 colonnes sont automatiquement ajoutées à l’aperçu des commandes après l'installation du plug-in MyParcel Belgique.</p>
+        <img src="media/MA_trackstatus_tracknummer_actie.png"><br><br/>
+        <ul>
+            <li>Suivi du statut: vous pouvez voir ici le statut de l’envoi, constamment mis à jour.</li><br>
+            <li>Numéro de suivi: vous trouverez ici le code-barres de votre envoi.</li><br>
+            <li>
+                Action de suivi: lorsque la commande n’a pas encore été envoyée et que vous cliquez sur ‘Select’,
+                une fenêtre contextuelle contenant des options de téléchargement des étiquettes apparaît. Si votre commande a
+                déjà été expédiée, vous pourrez télécharger l’étiquette à nouveau.
+            </li><br><br/>
+        </ul>
+
+        <h2 id="3_3">3.3 Modèle d’e-mail Track & Trace</h2>
+        <p>
+            Lorsqu’un e-mail de confirmation de commande est envoyé au client depuis Magento, le code-barres de l’envoi est repris automatiquement. Cela ne doit donc pas être configuré séparément. Si vous souhaitez toutefois envoyer un autre e-mail Track & Trace au client à partir de Magento 2, allez dans
+            <span class="nice">Boutiques → Configuration → Vente → E-mail de vente → Codes-barres MyParcel</span>, et définissez votre propre modèle.
+        </p>
+
+        <h1 id="4">4 Checkout instellingen</h1>
+        <p>Sous l’onglet ‘Paramètres de checkout’, vous pouvez appliquer tous les paramètres qui seront visibles au moment du checkout. Cet onglet est subdivisé en ‘Paramètres de base’, ‘Livraison’, ‘Petit paquet pour boîte aux lettres’, ‘Livraison le matin’, ‘Livraison en soirée’, ‘Collecte’ et ‘Collecte anticipée’.</p>
+
+        <h2 id="4_1">4.1 Paramètres de checkout</h2>
+        <img src="media/MA2_basisinstellingen_checkoutBE.png">
+        <h3 id="4_1_1">4.1.1 Dernier moment de commande</h3>
+        <p>
+            Vous pouvez définir ici jusqu’à quel moment il vous est possible de préparer une commande pour la livraison. Si vous saisissez 16:00, la première possibilité de livraison sera portée à un jour ultérieur pour tous les clients qui passeront commande après cette heure.<br>
+            Par exemple : votre délai de traitement est d’un jour et vous pouvez traiter les commandes jusqu’à 16h00. Pour une commande reçue le mardi 4 octobre à 16h02, la première possibilité de livraison pour votre client sera donc le jeudi 6 octobre. Cela signifie que vous devrez déposer votre colis le mercredi à un point bpost.
+        </p><br><br>
+
+        <img src="media/MA2_laatste_bestelmoment.png">
+
+        <h3 id="4_1_2">4.1.2 Jours d’envoi</h3>
+        <p>Dans ‘jours d'expédition’, vous pouvez indiquer les jours lors desquels il vous est possible de fournir des colis pour un enlèvement le jour même. Au niveau du checkout, cet élément sera pris en compte pour les options proposées à votre client.</p>
+        <img src="media/MA2_verzenddagen.png">
+        <h3 id="4_1_3">4.1.3 Retard</h3>
+        <p>Vous pouvez indiquer ici si vous avez besoin d’un délai de traitement plus long pour procéder à la livraison. Au niveau du checkout, cet élément sera pris en compte pour les jours de livraison possibles proposés à votre client.</p>
+        <img src="media/MA2_vertragingBE.png">
+
+        <h2 id="4_2">4.2 Livraison</h2>
+        <img src="media/MA2_bezorging_checkoutBE.png">
+        <h3 id="4_2_1">4.2.1 Samedi</h3>
+        <p>Vous pouvez également choisir de faire livrer un colis le lundi. N’oubliez pas de sélectionner le samedi comme jour d’envoi.<br>Attention : la livraison le samedi n’est possible que lorsque le dernier moment de commande est fixé au vendredi 14:30 et que l’envoi est déposé dans l’un des points bpost destinés à cet effet.</p>
+        <h3 id="4_2_2">4.2.2 Signature pour réception</h3>
+        <p>Vous pouvez indiquer si vos clients peuvent choisir cette option lors du checkout. Si vous souhaitez l’afficher, choisissez<span class="nice">Oui</span> Il est possible de renommer cette option ; dans l’exemple, elle s’appelle ‘Signature pour réception’. Vous pouvez également associer des frais complémentaires à cette option. Dans l'exemple cette option coûte 0,36 € supplémentaires.</p>
+        <p>Une option a été également créée pour un supplément combiné des choix<span class="nice">Livrer uniquement chez moi</span> et <span class="nice">Signature pour réception</span>. Vous pouvez remplir un prix à votre discrétion.</p>
+
+        <h2 id="4_3">4.3 Collecte dans un point bpost</h2>
+        <p>Avec cette option, vos clients peuvent choisir d’aller chercher leur colis dans un point bpost. Ils peuvent choisir le point en question lors du checkout. Vous pouvez éventuellement facturer un supplément pour cela.</p>
+        <img src="media/MA2_ophalen_bij_bpost.png">
+
+        <h1 id="5">5 Questions fréquemment posées</h1>
+        <h2 id="5_1">5.1 Mon système de checkout est-il supporté?</h2>
+        <p>Les checkouts suivants ont été testés et sont pris en charge:</p>
+        <ul>
+            <li>OnePageCheckout, qui est le checkout standard de Magento.</li>
+            <li><a href="https://www.mageplaza.com/magento-2-one-step-checkout-extension/" target="_blank">MagePlaza One Step Checkout</a></li>
+        </ul>
+
+        <h2 id="5_2">5.2 J’utilise une extension de vérification du code postal, est-ce un problème?</h2>
+        <p>
+            Il est possible d’utiliser une extension de vérification de code postal en combinaison avec l’extension MyParcel Belgique Magento 2. Le lien suivant vous amène sur le site proposant l’extension que nous vous recommandons. <br><br>
+            <a href="http://www.postcode-checkout.nl/plug-ins/standaard/magento-2" target="_blank">Postcode Checkout Magento Extensie</a>
+        </p>
+
+        <h2 id="5_3">5.3 Comment puis-je configurer la livraison gratuite?</h2>
+        <p>A côté des Tables Rates, vous pouvez également définir un envoi gratuit via Marketing > Règles de prix du panier</p>
+        <ol>
+            <li>Cliquez en haut à droite sur <span class="nice">Ajouter une nouvelle règle</span>.</li>
+            <li>
+                Donnez un nom à la règle dans <span class="nice">Données de la règle</span> (par ex. : ‘Envoi gratuit à partir de 50’). Activez le <span class="nice">statut</span> et sélectionnez toutes les options dans sites internet et groupes de clients.
+            </li>
+            <li>En haut à gauche, cliquez sur <span class="nice">Conditions</span> et précisez vous-même la règle en cliquant sur <span class="nice">+</span>. (Exemple : ‘Sous-total est égal ou supérieur à 50’).</li>
+            <li>A l’étape suivante, indiquez ‘Seulement pour les articles concernés’ dans ‘Expédition gratuite’.</li>
+            <li>Cliquez sur ‘Enregistrer’ dans le coin supérieur droit.</li>
+        </ol>
+    </div>
+
+    <footer class="site-footer">
+        <p><span class="site-footer-owner">MyParcel Belgique</span></p>
+        <p>
+            <span class="site-footer-credits">
+                <strong>Adresse </strong>Adriaan Brouwerstraat 16, 2000 Antwerpen&nbsp;
+                <strong>Téléphone </strong>03 808 18 20&nbsp;
+                <strong>E-mail</strong> &nbsp;info@sendmyparcel.be<br/>
+                <strong>Site internet </strong>www.sendmyparcel.be&nbsp;
+            </span><br/>&nbsp;
+        </p>
+    </footer>
+</section>

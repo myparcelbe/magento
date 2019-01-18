@@ -1,0 +1,45 @@
+/* language picker*/
+
+.languagepicker {
+    background-color: #FFF;
+    display: inline-block;
+    padding: 0;
+    height: 40px;
+    overflow: hidden;
+    transition: all .3s ease;
+    margin: 20px 40px 10px 0;
+    vertical-align: top;
+    float: right;
+}
+
+.languagepicker:hover {
+    height: auto;
+}
+
+.languagepicker a{
+    color: #000;
+    text-decoration: none;
+}
+
+.languagepicker li {
+    display: block;
+    padding: 0px 20px;
+    line-height: 40px;
+    border-top: 1px solid #EEE;
+}
+
+.languagepicker li:hover{
+    background-color: #EEE;
+}
+
+.roundborders {
+    border-radius: 5px;
+}
+
+/* Accordion effect */
+.accordion {
+     border-radius: 5px;
+     border: solid #dd5735 1px;
+     display: inline-block;
+     padding: 15px;
+ }
