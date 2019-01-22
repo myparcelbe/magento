@@ -1,5 +1,14 @@
 /* language picker*/
 
+.languageTitel{
+    float: right;
+    margin: 0 48px;
+    z-index: 300;
+    position: absolute;
+    right: 100px;
+    top: 30px;
+}
+
 .languagepicker {
     background-color: #FFF;
     display: inline-block;
@@ -7,12 +16,18 @@
     height: 40px;
     overflow: hidden;
     transition: all .3s ease;
-    margin: 20px 40px 10px 0;
     vertical-align: top;
+
     float: right;
+    margin: 0 48px;
+    z-index: 300;
+    position: absolute;
+    right: 0px;
+    top: 21px;
 }
 
 .languagepicker:hover {
+    /* don't forget the 1px border */
     height: auto;
 }
 
@@ -35,11 +50,3 @@
 .roundborders {
     border-radius: 5px;
 }
-
-/* Accordion effect */
-.accordion {
-     border-radius: 5px;
-     border: solid #dd5735 1px;
-     display: inline-block;
-     padding: 15px;
- }

@@ -27,4 +27,13 @@ $( document ).ready(function() {
         }
     });
     $('.menu').html(indexHtml);
+
+    $( function() {
+        $( ".accordion" ).accordion({
+            collapsible: true,
+            active: false,
+            autoHeight: false
+        });
+    });
+
 });
