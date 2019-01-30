@@ -7,12 +7,12 @@
  * - Show inside the columns the cards
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelnl
+ * https://github.com/myparcelbe
  *
  * @author      Richard Perdaan <richard@myparcel.nl>
  * @author 		Reindert Vetter <reindert@myparcel.nl>
  * @copyright   2017 MyParcel
- * @link        https://github.com/myparcelnl/magento
+ * @link        https://github.com/myparcelbe/magento
  */
 
 require(['jquery'], function($){

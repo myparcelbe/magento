@@ -12,7 +12,7 @@ define(
         'myparcelbe_init_shipping_options'
         'MyParcelBE_Magento/js/checkout/shipping_method/show-myparcel-shipping-method'
     ],
-    function (Component, quote, priceUtils, MyParcel) {
+    function (Component, quote, priceUtils, MyParcelBE) {
         "use strict";
 
         return Component.extend({
@@ -28,7 +28,7 @@ define(
             getFormattedPrice: function (price) {
                 //todo add format data
 
-                MyParcel.loadOptions();
+                MyParcelBE.loadOptions();
 
                 return priceUtils.formatPrice(price, quote.getPriceFormat());
             }

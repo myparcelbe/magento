@@ -26,20 +26,20 @@ class OrderAction extends OrdersAction
      */
     private $order;
     /**
-     * @var \MyParcelNL\Sdk\src\Model\Repository\MyParcelConsignmentRepository
+     * @var \MyParcelBE\Sdk\src\Model\Repository\MyParcelConsignmentRepository
      */
     private $consignmentRepository;
 
     /**
      * @param Context $context
      * @param \Magento\Framework\Registry $registry
-     * @param \MyParcelNL\Sdk\src\Model\Repository\MyParcelConsignmentRepository $consignmentRepository
+     * @param \MyParcelBE\Sdk\src\Model\Repository\MyParcelConsignmentRepository $consignmentRepository
      * @param array $data
      */
     public function __construct(
         Context $context,
         \Magento\Framework\Registry $registry,
-        \MyParcelNL\Sdk\src\Model\Repository\MyParcelConsignmentRepository $consignmentRepository,
+        \MyParcelBE\Sdk\src\Model\Repository\MyParcelConsignmentRepository $consignmentRepository,
         array $data = []
     ) {
         // Set order

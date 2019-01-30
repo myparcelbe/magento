@@ -28,7 +28,7 @@ class ShipmentAction extends OrdersAction
      */
     private $shipment;
     /**
-     * @var \MyParcelNL\Sdk\src\Model\Repository\MyParcelConsignmentRepository
+     * @var \MyParcelBE\Sdk\src\Model\Repository\MyParcelConsignmentRepository
      */
     private $consignmentRepository;
 

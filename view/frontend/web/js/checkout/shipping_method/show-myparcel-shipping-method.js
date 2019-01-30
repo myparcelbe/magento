@@ -11,7 +11,7 @@ define(
         'MyParcelBE_Magento/js/lib/myparcel',
         'Magento_Checkout/js/action/set-shipping-information'
     ],
-    function(mageUrl, uiComponent, quote, customer, checkoutData,jQuery, optionsHtml, cssDynamic, moment, MyParcel, setShippingInformationAction) {
+    function(mageUrl, uiComponent, quote, customer, checkoutData,jQuery, optionsHtml, cssDynamic, moment, MyParcelBE, setShippingInformationAction) {
         'use strict';
 
         var  originalShippingRate, optionsContainer, isLoading, myparcel, delivery_options_input, myparcel_method_alias, myparcel_method_element, isLoadingAddress;
@@ -191,7 +191,7 @@ define(
                 setTimeout(function(){
                     if (jQuery(myparcel_method_element + ':checked').length === 0) {
                         delivery_options_input.val('');
-                        MyParcel.optionsHaveBeenModified();
+                        MyParcelBE.optionsHaveBeenModified();
                     }
                 }, 50);
             });
