@@ -148,14 +148,14 @@ MyParcel = {
             MyParcel.exportDeliveryOptionToWebshop();
         });
 
-        /* show default delivery options and hide PostNL options */
+        /* show default delivery options and hide bpost options */
         jQuery('#mypa-select-delivery').on('click', function () {
             MyParcel.setCurrentDeliveryOptions();
             MyParcel.showDelivery();
             MyParcel.hidePickUpLocations();
         });
 
-        /* hide default delivery options and show PostNL options */
+        /* hide default delivery options and show bpost options */
         jQuery('#mypa-pickup-delivery').on('click', function () {
             MyParcel.hideDelivery();
             MyParcel.showPickUpLocations();
