@@ -70,7 +70,7 @@ class CreateAndPrintMyParcelTrack extends \Magento\Framework\App\Action\Action
     private function massAction()
     {
         if ($this->orderCollection->apiKeyIsCorrect() !== true) {
-            $message = 'You not have entered the correct API key. To get your personal API credentials please contact MyParcel BE.';
+            $message = 'You not have entered the correct API key. To get your personal API credentials you should contact MyParcel.';
             $this->messageManager->addErrorMessage(__($message));
             $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($message);
 
@@ -91,44 +91,30 @@ class CreateAndPrintMyParcelTrack extends \Magento\Framework\App\Action\Action
 
         $this->addOrdersToCollection($orderIds);
 
-//        try {
-            $this->orderCollection
-                ->setOptionsFromParameters()
-                ->setNewMagentoShipment();
-//        } catch (\Exception $e) {
-//            if (count($this->messageManager->getMessages()) == 0) {
-//                $this->messageManager->addErrorMessage(__('An error has occurred while creating a Magento shipment. Please check the order and contact MyParcel'));
-//                $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
-//            }
-//        }
+        $this->orderCollection
+            ->setOptionsFromParameters()
+            ->setNewMagentoShipment();
 
         if (!$this->orderCollection->hasShipment()) {
             $this->messageManager->addErrorMessage(__(MagentoOrderCollection::ERROR_ORDER_HAS_NO_SHIPMENT));
             return $this;
         }
 
-//        try {
-            $this->orderCollection
-                ->setMagentoTrack()
-                ->setMyParcelTrack()
-                ->createMyParcelConcepts()
-                ->updateGridByOrder();
+        $this->orderCollection
+            ->setMagentoTrack()
+            ->setMyParcelTrack()
+            ->createMyParcelConcepts()
+            ->updateGridByOrder();
 
-            if ($this->orderCollection->getOption('request_type') == 'concept') {
-                return $this;
-            }
+        if ($this->orderCollection->getOption('request_type') == 'concept') {
+            return $this;
+        }
 
-            $this->orderCollection
-                ->setPdfOfLabels()
-                ->updateMagentoTrack()
-                ->sendTrackEmails()
-                ->downloadPdfOfLabels();
-//        } catch (\Exception $e) {
-//            if (count($this->messageManager->getMessages()) == 0) {
-//                $this->messageManager->addErrorMessage(__('An error has occurred while creating a MyParcel BE label. To get your personal API credentials please contact MyParcel BE.'));
-//                $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
-//            }
-//        }
+        $this->orderCollection
+            ->setPdfOfLabels()
+            ->updateMagentoTrack()
+            ->sendTrackEmails()
+            ->downloadPdfOfLabels();
 
         return $this;
     }

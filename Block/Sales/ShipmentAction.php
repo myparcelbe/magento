@@ -27,17 +27,23 @@ class ShipmentAction extends OrdersAction
      * @var \Magento\Sales\Model\Order\Shipment
      */
     private $shipment;
+    /**
+     * @var \MyParcelNL\Sdk\src\Model\Repository\MyParcelConsignmentRepository
+     */
+    private $consignmentRepository;
 
     /**
      * @param Context $context
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Sales\Model\Order\Shipment $shipment
+     * @param \MyParcelBE\Sdk\src\Model\Repository\MyParcelConsignmentRepository $consignmentRepository
      * @param array $data
      */
     public function __construct(
         Context $context,
         \Magento\Framework\Registry $registry,
         \Magento\Sales\Model\Order\Shipment $shipment,
+        \MyParcelBE\Sdk\src\Model\Repository\MyParcelConsignmentRepository $consignmentRepository,
         array $data = []
     ) {
         // Set shipment and order
@@ -46,6 +52,7 @@ class ShipmentAction extends OrdersAction
 
         $this->order = $this->shipment->getOrder();
         parent::__construct($context, $data);
+        $this->consignmentRepository = $consignmentRepository;
     }
 
     public function getEntityId()
@@ -90,9 +97,6 @@ class ShipmentAction extends OrdersAction
      */
     public function isCdCountry()
     {
-        return !in_array(
-            $this->getCountry(),
-            MyParcelClassConstants::EU_COUNTRIES
-        );
+        return $this->consignmentRepository->isCdCountry();
     }
 }

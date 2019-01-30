@@ -26,8 +26,8 @@ status_99,Inactief - Onbekende status
 Version and support,Versie en support
 General settings,Algemene instellingen
 API settings,API instellingen
-To get your personal API credentials please contact MyParcel BE.,Neem contact op met MyParcel BE om de API gegevens te ontvangen.
-The API Key given by MyParcel BE,Stel hier de API key in die is ontvangen vanuit MyParcel BE
+To get your personal API credentials you should contact MyParcel.,Neem contact op met MyParcel om de API gegevens te ontvangen.
+The API Key,Stel hier de API key in
 Default shipment settings,Standaard verzendinstellingen
 Checkout settings,Checkout instellingen
 Print MyParcel labels directly,Print MyParcel labels direct
@@ -49,13 +49,15 @@ Package,Pakket
 Letter,Ongefrankeerd
 Home address only,Alleen huisadres
 Signature on receipt,Handtekening voor ontvangst
+Return if no answer,Retour bij niet aanwezig
+Large package,Groot pakket
 Insured up to:,Verzekeren tot:
 Download package label,Download pakket label
 Download letter label,Download ongefrankeerd label
 Create new concept,Creëer nieuw concept
 Create shipment,Zending aanmaken
 Please select an item from the list,Selecteer eerst een order uit de lijst
-⚠️&#160; Please check address,⚠️&#160; Controller het adres
+Please check address,Controleer het adres
 No key found. Go to Configuration and then to MyParcel to enter the key.,Geen API key gevonden. Ga naar Configuratie en vervolgens naar MyParcel om de API key in te voeren.
 "No shipment can be made with this order. Shipments can not be created if the status is On Hold or if the product is digital.","Er kan geen zending met deze bestelling gemaakt worden. Zendingen kunnen niet worden aangemaakt als de status 'Wordt vastgehouden' is of als het product digitaal is."
 MyParcel Track,MyParcel barcode
@@ -89,17 +91,25 @@ Latest stable release,Laatste stabiele versie
 Installation and configuration manual,Installatie en configuratie handleiding
 Full changelog,Volledige release notes
 Installation and configuration instructions,Installatie en configuratie handleiding
-MyParcel BE backoffice,MyParcel BE backoffice
+MyParcel progress, MyParcel vooruitgang
+MyParcel backoffice,MyParcel backoffice
+delivery/signature_and_only_recipient_title,Niet bij de buren bezorgen + handtekening voor ontvangst
+morning/title,Ochtendlevering
+morning_signature/title,Ochtendlevering + handtekening voor ontvangst
+pickup_express/title,Ophalen bij een PostNL locatie (extra vroeg ophalen)
+evening_signature/title,Avondlevering + handtekening voor ontvangst
+evening/title,Avondlevering
 Basic settings,Basis instellingen
 Delivery settings,Bezorging
 Saturday active,Zaterdag actief
 Saturday title,Zaterdag titel
+Numbers of days,Aantal dagen vooruit
 day,dag
 days,dagen
 Hide days,Dagen verbergen
 Cut-off time,Het laatste bestelmoment
 "If a request is made for the delivery options between Friday after, and Monday before, cut-off time then Tuesday will be shown as the next possible delivery date.","Als een bestelling tussen vrijdag na, en maandag voor, het opgegeven bestelmoment wordt gedaan dan zal dinsdag worden getoond als eerstvolgende afleverdag."
-Drop-off days,Verzenddagenl
+Drop-off days,Verzenddagen
 Saturday delivery fee,Zaterdaglevering prijs
 "If a request is made before this time on Saturday, Monday will be shown as the next possible delivery date.","Als een bestelling voor dit tijdstip op zaterdag wordt gedaan zal maandag als eerstvolgende afleverdag worden getoond."
 Dropoff-delay,Vertraging
@@ -113,6 +123,7 @@ Signature on receipt,Handtekening voor ontvangst
 Signature on receipt title, Handtekening voor ontvangst titel
 Signature on receipt fee, Handtekening voor ontvangst prijs
 This will be added to the regular shipping price, Dit zal bij de normale verzendkosten worden opgeteld
+Home address only and signature on receipt together fee,De prijs van handtekening voor ontvangst en alleen huisadres samen
 If both have been selected this price will be added to the regular shipping price. Leave empty for not using it.,Als beide geselecteerd zijn zal deze prijs bij de normale verzendkosten worden opgeteld. Laat leeg om dit niet te gebruiken.
 "Besides assigning weights to all products, you can also specify a volume of each product.","Om deze functie optimaal te gebruiken, stel je eerst het gewicht of volume in van jouw producten."
 This will be added to the regular shipping price,Dit zal bij de normale verzendkosten worden opgeteld

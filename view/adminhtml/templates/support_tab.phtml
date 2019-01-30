@@ -108,8 +108,30 @@
                 </div>
             </fieldset>
             <script type="text/javascript">
-                require(['prototype'], function(){Fieldset.applyCollapse('myparcelbe_magento_version');});
+                require(['prototype'], function(){Fieldset.applyCollapse('myparcelnbe_magento_version');});
+            </script>
+        </div>
+        <div class="section-config active">
+            <div class="entry-edit-head admin__collapsible-block">
+                <a id="myparcelnl_magento_progress-head" href="#myparcelnl_magento_progress-link" onclick="Fieldset.toggleCollapse('myparcelbe_magento_progress'); return false;" class="open"><?= __('MyParcel progress');?></a>
+            </div>
+            <input id="myparcelnl_magento_progress-state" name="config_state[myparcelnl_magento_progress]" type="hidden" value="1">
+            <fieldset class="config admin__collapsible-block" id="myparcelnl_magento_progress">
+                <p><?= __('Do you want to know what they are doing in the near future? Below you can find the schedule for Magento 2. Do you have any suggestions or ideas? They are always welcome. That way we will continue to improve the extension together.');?></p>
+                <div class="mypa_columns"></div>
+
+            </fieldset>
+            <script type="text/javascript">
+                require(['prototype'], function(){Fieldset.applyCollapse('myparcelbe_magento_progress');});
             </script>
         </div>
     </div>
 </div>
+
+<script type="text/x-magento-init">
+   {
+       ".mypa_columns": {
+           "myparcelbe_supporttab": {}
+        }
+   }
+</script>
