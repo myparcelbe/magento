@@ -10,7 +10,7 @@
  * https://github.com/myparcelnl
  *
  * @author      Richard Perdaan <richard@myparcel.nl>
- * @author 		Reindert Vetter <reindert@myparcel.nl>
+ * @author 		Reindert Vetter <info@sendmyparcel.be>
  * @copyright   2017 MyParcel
  * @link        https://github.com/myparcelnl/magento
  */

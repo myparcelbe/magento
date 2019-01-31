@@ -9,7 +9,7 @@
  * If you want to add improvements, please create a fork in our GitHub:
  * https://github.com/myparcelnl
  *
- * @author      Reindert Vetter <reindert@myparcel.nl>
+ * @author      Reindert Vetter <info@sendmyparcel.be>
  * @copyright   2010-2017 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelnl/magento
@@ -141,7 +141,7 @@ class Constants extends \PHPUnit_Framework_TestCase
     {
         $data = ["addressInformation" => [
             "shipping_address" => [
-                "email" => "reindert@myparcel.nl",
+                "email" => "info@sendmyparcel.be",
                 "countryId" => "NL",
                 "regionId" => "0",
                 "region" => "",
