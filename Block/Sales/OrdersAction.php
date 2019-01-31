@@ -3,12 +3,12 @@
  * Block for order actions (multiple orders action and one order action)
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelnl
+ * https://github.com/myparcelbe
  *
  * @author      Reindert Vetter <info@sendmyparcel.be>
  * @copyright   2010-2017 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelnl/magento
+ * @link        https://github.com/myparcelbe/magento
  * @since       File available since Release v0.1.0
  */
 
@@ -62,7 +62,7 @@ class OrdersAction extends Template
      */
     public function getOrderAjaxUrl()
     {
-        return $this->_urlBuilder->getUrl('myparcelnl/order/CreateAndPrintMyParcelTrack');
+        return $this->_urlBuilder->getUrl('myparcelbe/order/CreateAndPrintMyParcelTrack');
     }
 
     /**
@@ -72,7 +72,7 @@ class OrdersAction extends Template
      */
     public function getShipmentAjaxUrl()
     {
-        return $this->_urlBuilder->getUrl('myparcelnl/shipment/CreateAndPrintMyParcelTrack');
+        return $this->_urlBuilder->getUrl('myparcelbe/shipment/CreateAndPrintMyParcelTrack');
     }
 
     /**
@@ -82,7 +82,7 @@ class OrdersAction extends Template
      */
     public function getAjaxUrlSendReturnMail()
     {
-        return $this->_urlBuilder->getUrl('myparcelnl/order/SendMyParcelReturnMail');
+        return $this->_urlBuilder->getUrl('myparcelbe/order/SendMyParcelReturnMail');
     }
 
     /**

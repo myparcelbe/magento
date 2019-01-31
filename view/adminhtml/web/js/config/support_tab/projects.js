@@ -7,12 +7,12 @@
  * - Show inside the columns the cards
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelnl
+ * https://github.com/myparcelbe
  *
  * @author      Richard Perdaan <richard@myparcel.nl>
  * @author 		Reindert Vetter <info@sendmyparcel.be>
  * @copyright   2017 MyParcel
- * @link        https://github.com/myparcelnl/magento
+ * @link        https://github.com/myparcelbe/magento
  */
 
 require(['jquery'], function($){
@@ -56,7 +56,7 @@ require(['jquery'], function($){
         appendCards = function (column) {
             $.ajax({
                 type: 'GET',
-                url: "https://api.github.com/repos/myparcelnl/magento/issues?labels=" + column.alias + "&sort=updated-asc",
+                url: "https://api.github.com/repos/myparcelbe/magento/issues?labels=" + column.alias + "&sort=updated-asc",
                 success : function(issues) {
                     $.each(issues, function(key, issue) {
                         $('#label-' + column.alias).append('<a href="' + issue.html_url + '" target="_blank"><div class="card_item"><h3>' + issue.title + '</h3></div></a>');
