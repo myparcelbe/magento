@@ -9,12 +9,12 @@
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelbe
+ * https://github.com/myparcelnl
  *
  * @author      Reindert Vetter <reindert@myparcel.nl>
  * @copyright   2010-2017 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelbe/magento
+ * @link        https://github.com/myparcelnl/magento
  * @since       File available since Release 0.1.0
  */
 
@@ -77,7 +77,7 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
         $order = $observer->getEvent()->getData('order');
         $fullStreet = implode(' ', $order->getShippingAddress()->getStreet());
 
-        if ($order->getShippingAddress()->getCountryId() == 'BE' && $this->consignmentRepository->isCorrectAddress($fullStreet) == false) {
+        if ($order->getShippingAddress()->getCountryId() == 'NL' && $this->consignmentRepository->isCorrectAddress($fullStreet) == false) {
             $order->setData(self::FIELD_TRACK_STATUS, __('⚠️&#160; Please check address'));
         }
 
@@ -100,7 +100,7 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
     private function isMyParcelMethod($quote) {
         $myParcelMethods = array_keys(Carrier::getMethods());
         $shippingMethod  = $quote->getShippingAddress()->getShippingMethod();
-
+      
         if ($this->array_like($shippingMethod, $myParcelMethods)) {
             return true;
         }

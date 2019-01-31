@@ -9,10 +9,9 @@ define(
         'uiComponent',
         'Magento_Checkout/js/model/quote',
         'Magento_Catalog/js/price-utils',
-        'myparcelbe_init_shipping_options'
         'MyParcelBE_Magento/js/checkout/shipping_method/show-myparcel-shipping-method'
     ],
-    function (Component, quote, priceUtils, MyParcelBE) {
+    function (Component, quote, priceUtils, MyParcel) {
         "use strict";
 
         return Component.extend({
@@ -28,7 +27,7 @@ define(
             getFormattedPrice: function (price) {
                 //todo add format data
 
-                MyParcelBE.loadOptions();
+                MyParcel.loadOptions();
 
                 return priceUtils.formatPrice(price, quote.getPriceFormat());
             }

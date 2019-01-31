@@ -7,12 +7,12 @@
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelbe/magento
+ * https://github.com/myparcelnl/magento
  *
  * @author      Reindert Vetter <reindert@myparcel.nl>
  * @copyright   2010-2017 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelbe/magento
+ * @link        https://github.com/myparcelnl/magento
  * @since       File available since Release 2.0.0
  */
 
@@ -123,9 +123,15 @@ class Result extends \Magento\Shipping\Model\Rate\Result
     {
         $methods = [
             'signature' => 'delivery/signature_',
+            'only_recipient' => 'delivery/only_recipient_',
+            'signature_only_recip' => 'delivery/signature_and_only_recipient_',
+            'morning' => 'morning/',
+            'morning_signature' => 'morning_signature/',
+            'evening' => 'evening/',
+            'evening_signature' => 'evening_signature/',
             'pickup' => 'pickup/',
-            'saturday' => 'delivery/saturday_',
-            'saturday_signature' => 'delivery/saturday_signature_',
+            'pickup_express' => 'pickup_express/',
+            'mailbox' => 'mailbox/',
         ];
 
         return $methods;
@@ -138,7 +144,17 @@ class Result extends \Magento\Shipping\Model\Rate\Result
      */
     private function getAllowedMethods()
     {
+	    if ($this->package->fitInMailbox() && $this->package->isShowMailboxWithOtherOptions() === false) {
+		    $methods = ['mailbox' => 'mailbox/'];
+
+		    return $methods;
+	    }
+
 	    $methods = $this->getMethods();
+
+	    if (!$this->package->fitInMailbox()) {
+		    unset($methods['mailbox']);
+	    }
 
 	    return $methods;
     }
@@ -158,6 +174,8 @@ class Result extends \Magento\Shipping\Model\Rate\Result
         if (!in_array($currentCarrier, $this->parentMethods)) {
             return;
         }
+
+        $this->package->setMailboxSettings();
 
         if (count($this->products) > 0){
             $this->package->setWeightFromQuoteProducts($this->products);
@@ -226,15 +244,21 @@ class Result extends \Magento\Shipping\Model\Rate\Result
      */
     private function createPrice($alias, $settingPath) {
         $price = 0;
-
-        if ($alias == 'saturday_signature') {
-            $price += $this->myParcelHelper->getMethodPrice('delivery/saturday_fee');
+        if ($alias == 'morning_signature') {
+            $price += $this->myParcelHelper->getMethodPrice('morning/fee');
             $price += $this->myParcelHelper->getMethodPrice('delivery/signature_fee', false);
 
             return $price;
         }
 
-        $price += $this->myParcelHelper->getMethodPrice($settingPath . 'fee');
+        if ($alias == 'evening_signature') {
+            $price += $this->myParcelHelper->getMethodPrice('evening/fee');
+            $price += $this->myParcelHelper->getMethodPrice('delivery/signature_fee', false);
+
+            return $price;
+        }
+
+        $price += $this->myParcelHelper->getMethodPrice($settingPath . 'fee', $alias !== 'mailbox');
 
         return $price;
     }

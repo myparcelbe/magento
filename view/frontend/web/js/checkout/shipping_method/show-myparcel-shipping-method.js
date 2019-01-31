@@ -11,7 +11,7 @@ define(
         'MyParcelBE_Magento/js/lib/myparcel',
         'Magento_Checkout/js/action/set-shipping-information'
     ],
-    function(mageUrl, uiComponent, quote, customer, checkoutData,jQuery, optionsHtml, cssDynamic, moment, MyParcelBE, setShippingInformationAction) {
+    function(mageUrl, uiComponent, quote, customer, checkoutData,jQuery, optionsHtml, cssDynamic, moment, setShippingInformationAction) {
         'use strict';
 
         var  originalShippingRate, optionsContainer, isLoading, myparcel, delivery_options_input, myparcel_method_alias, myparcel_method_element, isLoadingAddress;
@@ -77,7 +77,30 @@ define(
                     jQuery(myparcel_method_element + ":first").parent().parent().show();
                     hideOptions();
                 }
+
+                _observeFields();
             }, 1000);
+        }
+
+        function checkOnlyShowMailbox() {
+            if (_getCcIsLocal() === false) {
+                return false;
+            }
+
+            if (window.mypa.data.mailbox.active === false) {
+                return false
+            }
+
+            if (window.mypa.data.mailbox.mailbox_other_options === true) {
+                return false;
+            }
+
+            return true;
+        }
+        
+        function showMailboxRadio() {
+            jQuery("td[id^='label_carrier_" + window.mypa.data.general.parent_method + "']").parent().hide();
+            jQuery("td[id^='label_carrier_mailbox']").parent().show();
         }
 
         function _setAddress() {
@@ -98,10 +121,14 @@ define(
                 if (typeof country === 'undefined') country = '';
                 var postcode = quote.shippingAddress._latestValue.postcode;
                 if (typeof postcode === 'undefined') postcode = '';
-                var city = quote.shippingAddress._latestValue.city;
+                var city = quote.shippingAddress._latestValue.postcode;
                 if (typeof city === 'undefined') city = '';
             } else {
                 var street0 = jQuery("input[name='street[0]']").val();
+                var validatedAddress = getPostcodeValidateAddress();
+                if (validatedAddress && typeof validatedAddress !== 'undefined'){
+                    var street0 = validatedAddress;
+                }
                 if (typeof street0 === 'undefined') street0 = '';
                 var street1 = jQuery("input[name='street[1]']").val();
                 if (typeof street1 === 'undefined') street1 = '';
@@ -111,7 +138,7 @@ define(
                 if (typeof country === 'undefined') country = '';
                 var postcode = jQuery("input[name='postcode']").val();
                 if (typeof postcode === 'undefined') postcode = '';
-                var city = $("input[name='city']").val();
+                var city = jQuery("input[name='city']").val();
                 if (typeof city === 'undefined') city = '';
             }
 
@@ -154,15 +181,11 @@ define(
         }
 
         function _hideRadios() {
-            jQuery(
-                "td[id^='label_method_signature']," +
-                "td[id^='label_method_pickup']," +
-                "td[id^='label_method_saturday']"
-            ).parent().hide();
+            jQuery("td[id^='label_method_signature'],td[id^='label_method_mailbox'],td[id^='label_method_pickup'],td[id^='label_method_evening'],td[id^='label_method_only_recipient'],td[id^='label_method_morning']").parent().hide();
         }
 
         function _getCcIsLocal() {
-            if (window.mypa.address.cc !== 'BE') {
+            if (window.mypa.address.cc !== 'NL' && window.mypa.address.cc !== 'BE' ) {
                 return false;
             }
 
@@ -191,7 +214,7 @@ define(
                 setTimeout(function(){
                     if (jQuery(myparcel_method_element + ':checked').length === 0) {
                         delivery_options_input.val('');
-                        MyParcelBE.optionsHaveBeenModified();
+                        MyParcel.optionsHaveBeenModified();
                     }
                 }, 50);
             });
@@ -280,6 +303,10 @@ define(
         function _appendTemplate() {
             if (jQuery('#myparcel_td').length === 0) {
                 var data = window.mypa.data;
+                var baseColor = data.general.color_base;
+                var selectColor = data.general.color_select;
+                cssDynamic = cssDynamic.replace(/_base_color_/g, baseColor).replace(/_select_color_/g, selectColor);
+                optionsHtml = optionsHtml.replace('<css-dynamic/>', cssDynamic);
 
                 originalShippingRate = jQuery("td[id^='label_carrier_" + window.mypa.data.general.parent_method + "']").parent();
                 optionsContainer = originalShippingRate.parent().prepend('<tr><td colspan="5" id="myparcel_td" >Bezig met laden...</td></tr>').find('#myparcel_td');
@@ -308,6 +335,14 @@ define(
             }
 
             switch (type) {
+                case "morning":
+                    if (json.options.signature) {
+                        _checkMethod('input[value=' + myparcel_method_alias + '_morning_signature' + ']');
+                    } else {
+                        _checkMethod('input[value=' + myparcel_method_alias + '_morning' + ']');
+                    }
+                    myparcel.showDays();
+                    break;
                 case "standard":
                     if (json.options.signature && json.options.only_recipient) {
                         _checkMethod('input[value=' + myparcel_method_alias + '_signature_only_recip' + ']');
@@ -322,8 +357,24 @@ define(
                     }
                     myparcel.showDays();
                     break;
+                case "night":
+                    if (json.options.signature) {
+                        _checkMethod('input[value=' + myparcel_method_alias + '_evening_signature' + ']');
+                    } else {
+                        _checkMethod('input[value=' + myparcel_method_alias + '_evening' + ']');
+                    }
+                    myparcel.showDays();
+                    break;
                 case "retail":
                     _checkMethod('input[value=' + myparcel_method_alias + '_pickup' + ']');
+                    myparcel.hideDays();
+                    break;
+                case "retailexpress":
+                    _checkMethod('input[value=' + myparcel_method_alias + '_pickup_express' + ']');
+                    myparcel.hideDays();
+                    break;
+                case "mailbox":
+                    _checkMethod('input[value=' + myparcel_method_alias + '_mailbox' + ']');
                     myparcel.hideDays();
                     break;
             }

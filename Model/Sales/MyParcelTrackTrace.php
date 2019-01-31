@@ -3,12 +3,12 @@
  * An object with the track and trace data
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelbe
+ * https://github.com/myparcelnl
  *
  * @author      Reindert Vetter <reindert@myparcel.nl>
  * @copyright   2010-2017 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelbe/magento
+ * @link        https://github.com/myparcelnl/magento
  * @since       File available since Release v0.1.0
  */
 
@@ -29,7 +29,7 @@ class MyParcelTrackTrace extends MyParcelConsignmentRepository
      * Track title showing in Magento
      */
     const MYPARCEL_TRACK_TITLE = 'MyParcel';
-    const MYPARCEL_CARRIER_CODE = 'myparcelbe';
+    const MYPARCEL_CARRIER_CODE = 'myparcelnl';
 
     /**
      * @var ObjectManagerInterface
@@ -120,7 +120,7 @@ class MyParcelTrackTrace extends MyParcelConsignmentRepository
             $packageType = (int)$options['package_type'] ?: 1;
         }
 
-        if ($address->getCountryId() != 'BE' && (int)$options['package_type'] == 2) {
+        if ($address->getCountryId() != 'NL' && (int)$options['package_type'] == 2) {
             $options['package_type'] = 1;
         }
 
@@ -143,7 +143,7 @@ class MyParcelTrackTrace extends MyParcelConsignmentRepository
             $this->objectManager->get('Psr\Log\LoggerInterface')->critical($errorHuman . '-' . $e);
         }
 
-        if ($address->getPostcode() == null && $address->getCountryId() == 'BE') {
+        if ($address->getPostcode() == null && $address->getCountryId() == 'NL') {
             $errorHuman = 'An error has occurred while validating the order number ' . $magentoTrack->getOrderId(). '. Postcode is required.';
             $this->messageManager->addErrorMessage($errorHuman . ' View log file for more information.');
             $this->objectManager->get('Psr\Log\LoggerInterface')->critical($errorHuman);
@@ -155,12 +155,14 @@ class MyParcelTrackTrace extends MyParcelConsignmentRepository
             ->setPhone($address->getTelephone())
             ->setEmail($address->getEmail())
             ->setLabelDescription($magentoTrack->getShipment()->getOrder()->getIncrementId())
-//            ->setDeliveryDateFromCheckout($checkoutData)
+            ->setDeliveryDateFromCheckout($checkoutData)
             ->setDeliveryType($deliveryType)
             ->setPickupAddressFromCheckout($checkoutData)
             ->setPackageType($packageType)
+            ->setOnlyRecipient($this->getValueOfOption($options, 'only_recipient'))
             ->setSignature($this->getValueOfOption($options, 'signature'))
             ->setReturn($this->getValueOfOption($options, 'return'))
+            ->setLargeFormat($this->getValueOfOption($options, 'large_format'))
             ->setInsurance($options['insurance'] !== null ? $options['insurance'] : self::$defaultOptions->getDefaultInsurance())
             ->convertDataForCdCountry($magentoTrack);
 
@@ -211,7 +213,7 @@ class MyParcelTrackTrace extends MyParcelConsignmentRepository
                     ->setWeight($product->getWeight() ?: 1)
                     ->setItemValue($product->getPrice())
                     ->setClassification('0000')
-                    ->setCountry('BE');
+                    ->setCountry('NL');
 
                 $this->addItem($myParcelProduct);
             }
@@ -226,7 +228,7 @@ class MyParcelTrackTrace extends MyParcelConsignmentRepository
                 ->setWeight($product['weight'] ?: 1)
                 ->setItemValue($product['price'])
                 ->setClassification('0000')
-                ->setCountry('BE');
+                ->setCountry('NL');
 
             $this->addItem($myParcelProduct);
         }

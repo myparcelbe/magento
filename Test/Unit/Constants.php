@@ -7,12 +7,12 @@
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelbe
+ * https://github.com/myparcelnl
  *
  * @author      Reindert Vetter <reindert@myparcel.nl>
  * @copyright   2010-2017 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelbe/magento
+ * @link        https://github.com/myparcelnl/magento
  * @since       File available since Release 0.1.0
  */
 
@@ -142,7 +142,7 @@ class Constants extends \PHPUnit_Framework_TestCase
         $data = ["addressInformation" => [
             "shipping_address" => [
                 "email" => "reindert@myparcel.nl",
-                "countryId" => "BE",
+                "countryId" => "NL",
                 "regionId" => "0",
                 "region" => "",
                 "street" => [
@@ -156,7 +156,7 @@ class Constants extends \PHPUnit_Framework_TestCase
                 "lastname" => "yes",
             ],
             "billing_address" => [
-                "countryId" => "BE",
+                "countryId" => "NL",
                 "regionId" => "0",
                 "region" => "",
                 "street" => [
@@ -198,6 +198,6 @@ class Constants extends \PHPUnit_Framework_TestCase
      */
     protected function getCreateLabelUrl()
     {
-        return 'admin/myparcelbe/order/CreateAndPrintMyParcelTrack/';
+        return 'admin/myparcelnl/order/CreateAndPrintMyParcelTrack/';
     }
 }

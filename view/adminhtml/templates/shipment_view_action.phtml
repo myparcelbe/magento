@@ -2,7 +2,7 @@
 <script type="text/x-magento-init">
    {
        ".page-footer": {
-           "myparcelbe_massaction": {
+           "myparcelnl_massaction": {
                 "has_api_key": <?= $block->hasApiKey();?>,
                 "entity_id": <?= $block->getEntityId();?>,
                 "url": "<?= $block->getShipmentAjaxUrl(); ?>",
@@ -15,12 +15,14 @@
                     "action_options": {
                         "request_type": true,
                         "package_type": true,
+                        "package_type-mailbox": <?= $block->getCountry() == 'NL' ? 'true' : 'false'; ?>,
                         "print_position": <?= $block->isCdCountry() == true ? 'false' : 'true'; ?>
                     }
                 <?php else: ?>
                     "action_options": {
                         "request_type": false,
                         "package_type": false,
+                        "package_type-mailbox": false,
                         "print_position": true
                     }
                 <?php endif; ?>

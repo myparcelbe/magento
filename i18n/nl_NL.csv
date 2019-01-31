@@ -29,15 +29,24 @@ API settings,API instellingen
 To get your personal API credentials you should contact MyParcel.,Neem contact op met MyParcel om de API gegevens te ontvangen.
 The API Key,Stel hier de API key in
 Default shipment settings,Standaard verzendinstellingen
-Checkout settings,Checkout instellingen
 Print MyParcel labels directly,Print MyParcel labels direct
 Print settings,Print instellingen
 Paper type,Print oriëntatie
 Select a standard orientation for printing labels.,Selecteer een standaard print ori&euml;ntatie voor het printen van labels.
 Default shipping options,Standaard verzendinstellingen
 "Fill in your preferences for a shipment. These settings will only apply for the mass actions in the order grid. When creating a single shipment, these settings can be changed manually. These settings will activate based on the order total amount.","Vul hier uw standaard voorkeuren in voor uw verzendopties. Deze instellingen worden als default op al uw zendingen toegepast, indien van toepassing. Deze opties zijn later, per zending, uiteraard nog wel aan te passen tijdens het verwerken."
+Automate 'Home address only',Automatiseer 'Alleen huisadres'
+'Home address only' operates above a certain order total amount,'Alleen huisadres' wordt geactiveerd als het totaal bedrag meer is dan bovenstaande bedrag
 Automate 'Signature on receipt',Automatiseer 'Handtekening voor ontvangst'
 'Signature on receipt' operates above a certain order total amount,'Handtekening voor ontvangst' wordt geactiveerd als het totaal bedrag meer is dan bovenstaande bedrag
+Automate 'Return if no answer',Automatiseer 'Retour bij niet aanwezig'
+'Return if no answer' operates above a certain order total amount,'Retour bij niet aanwezig' wordt geactiveerd als het totaal bedrag meer is dan bovenstaande bedrag
+Automate 'Large format',Automatiseer 'Groot pakket'
+'Large format' operates above a certain order total amount,'Groot pakket' wordt geactiveerd als het totaal bedrag meer is dan bovenstaande bedrag
+Automate 'Insurance € 100',Automatiseer 'Verzekerd tot € 100'
+"'Insurance € 100' operates above a certain order total amount. Only for dutch shipments.","'Verzekerd tot € 100' wordt geactiveerd als het totaal bedrag meer is dan bovenstaande bedrag. Alleen voor Nederlandse verzendingen."
+Automate 'Insurance € 250',Automatiseer 'Verzekerd tot € 250'
+"'Insurance € 250' operates above a certain order total amount. Only for dutch shipments, shipments to outside of the EU are standard ensured up to € 200.","'Verzekerd tot € 250' wordt geactiveerd als het totaal bedrag meer is dan bovenstaande bedrag. Alleen voor Nederlandse verzendingen, zendingen naar landen buiten de EU zijn standaard verzekerd tot € 200."
 Automate 'Insurance € 500',Automatiseer 'Verzekerd tot € 500'
 "'Insurance € 500' operates above a certain order total amount. For NL shipping only, shipments inside the EU insured default is € 500.","'Verzekerd tot € 500' wordt geactiveerd als het totaal bedrag meer is dan bovenstaande bedrag. Alleen voor Nederlandse verzendingen, zendingen naar landen binnen de EU zijn standaard verzekerd tot € 500."
 From price,Vanaf prijs
@@ -46,6 +55,9 @@ Track status,Track status
 Track action,Track actie
 MyParcel options,MyParcel opties
 Package,Pakket
+Mailbox,Brievenbuspakje
+Morning delivery,Ochtendlevering
+Evening delivery,Avondlevering
 Letter,Ongefrankeerd
 Home address only,Alleen huisadres
 Signature on receipt,Handtekening voor ontvangst
@@ -53,6 +65,7 @@ Return if no answer,Retour bij niet aanwezig
 Large package,Groot pakket
 Insured up to:,Verzekeren tot:
 Download package label,Download pakket label
+Download mailbox label,Download brievenbuspakje label
 Download letter label,Download ongefrankeerd label
 Create new concept,Creëer nieuw concept
 Create shipment,Zending aanmaken
@@ -72,18 +85,18 @@ Open in new tab, Open in nieuw tabblad
 Package Type,Pakkettype
 Print position,Printpositie
 MyParcel version,MyParcel versie
-"The MyParcel BE extension version %1 is installed on your webshop. Currently version %2 is the latest stable version. If you experience an issue, we recommend that you install the latest stable version.","De MyParcel BE extensie versie %1 is geïnstalleerd in jouw webshop. Momenteel is de laatste stabiele versie %2. Als je enige problemen ervaart adviseren wij altijd de laatste stabiele versie te installeren in jouw magento omgeving."
-"To read the instructions for the MyParcel BE Magento extension, click %1 here %2.","Klik %1 hier %2 om de handleiding van de MyParcel BE Magento extensie te bekijken."
+"The version %1 of the extension is installed on your webshop. Currently version %2 is the latest stable version. If you experience an issue, we recommend that you install the latest stable version.","Versie %1 van de extensie is geïnstalleerd in jouw webshop. Momenteel is de laatste stabiele versie %2. Als je enige problemen ervaart adviseren wij altijd de laatste stabiele versie te installeren in jouw magento omgeving."
+"To read the instructions for the Magento extension, click %1 here %2.","Klik %1 hier %2 om de handleiding van de Magento extensie te bekijken."
 When using the extension please note:,Aandachtspunten bij het gebruik van deze extensie:
-To be able to configure the extension you need to possess and use an active MyParcel BE account.,U dient een actief MyParcel BE account te hebben om de extensie te kunnen configureren.
-"During the transition phase the old Magento MyParcel BE extension can remain active. However, you do need to turn off PakjeGemak in the old MyParcel BE extension.","Indien u de oude MyParcel BE extensie gebruikt kan deze actief blijven in de overgangsfase. Wel dient u PakjeGemak in de oude MyParcel BE extensie uit te schakelen."
+To be able to configure the extension you need to possess and use an active account.,U dient een actief account te hebben om de extensie te kunnen configureren.
+During the transition phase the old Magento MyParcel extension can remain active. However, you do need to turn off PakjeGemak in the old MyParcel extension.,Indien u de oude MyParcel extensie gebruikt kan deze actief blijven in de overgangsfase. Wel dient u PakjeGemak in de oude MyParcel extensie uit te schakelen.
 Magento &amp; 3rd party version compatibility,Magento & derde partijen ondersteuning
-"We cannot guarantee perfect functionality of the MyParcel BE extension when you intend to use the extension on a version of Magento that is not supported or when you intend to use the extension together with a 3rd part extension that is not supported. If you have any questions please contact MyParcel BE.","Indien u de extensie wilt gebruiken op een niet-ondersteunde versie of editie van Magento, of als u de extensie wilt gebruiken samen met een 3rd party extensie die niet ondersteund wordt, kunnen wij niet garanderen dat de MyParcel BE extensie feilloos zal functioneren. Voor vragen kunt u contact opnemen met MyParcel BE."
-Questions and information about your MyParcel BE account,MyParcel BE account vragen en informatie
-"For questions related to your MyParcel BE account, configuration problems, extension conflicts and bugs, please contact MyParcel BE.","Voor vragen gerelateerd aan uw MyParcel BE account, configuratie problemen, extensie conflicten en bugs, neemt u contact op met MyParcel BE."
-MyParcel BE:,MyParcel BE:
+We cannot guarantee perfect functionality of the extension when you intend to use the extension on a version of Magento that is not supported or when you intend to use the extension together with a 3rd part extension that is not supported. If you have any questions please contact us.,Indien u de extensie wilt gebruiken op een niet-ondersteunde versie of editie van Magento, of als u de extensie wilt gebruiken samen met een 3rd party extensie die niet ondersteund wordt, kunnen wij niet garanderen dat de extensie feilloos zal functioneren. Voor vragen kunt u contact opnemen met ons.
+Questions and information about your account,Account vragen en informatie
+"For questions related to your account, configuration problems, extension conflicts and bugs, please contact us.","Voor vragen gerelateerd aan uw account, configuratie problemen, extensie conflicten en bugs, neemt u contact ons op."
+MyParcel:,MyParcel:
 www.myparcel.nl,www.myparcel.nl
-info@sendmyparcel.be,info@sendmyparcel.be
+info@myparcel.nl,info@myparcel.nl
 Phone:,Telefoon
 Email,E-mail
 Documents,Documenten
@@ -92,7 +105,8 @@ Installation and configuration manual,Installatie en configuratie handleiding
 Full changelog,Volledige release notes
 Installation and configuration instructions,Installatie en configuratie handleiding
 MyParcel progress, MyParcel vooruitgang
-MyParcel backoffice,MyParcel backoffice
+Do you want to know what they are doing in the near future? Below you can find the schedule for Magento 2. Do you have any suggestions or ideas? They are always welcome. That way we will continue to improve the extension together.,Wil je weten waar ze de komende tijd mee bezig zijn? Hieronder vind je de planning voor Magento 2. Heb je zelf suggesties of ideeën? Ze zijn altijd welkom. Op die manier blijven we samen de extensie verbeteren.
+API key is not known. Go to the settings in the backoffice to create an API key. Fill the API key in the settings.,API key is niet bekend. Ga naar de instellingen in de backoffice om een API key te maken. Vul de API key in bij de instellingen.
 delivery/signature_and_only_recipient_title,Niet bij de buren bezorgen + handtekening voor ontvangst
 morning/title,Ochtendlevering
 morning_signature/title,Ochtendlevering + handtekening voor ontvangst
@@ -101,8 +115,6 @@ evening_signature/title,Avondlevering + handtekening voor ontvangst
 evening/title,Avondlevering
 Basic settings,Basis instellingen
 Delivery settings,Bezorging
-Saturday active,Zaterdag actief
-Saturday title,Zaterdag titel
 Numbers of days,Aantal dagen vooruit
 day,dag
 days,dagen
@@ -110,28 +122,56 @@ Hide days,Dagen verbergen
 Cut-off time,Het laatste bestelmoment
 "If a request is made for the delivery options between Friday after, and Monday before, cut-off time then Tuesday will be shown as the next possible delivery date.","Als een bestelling tussen vrijdag na, en maandag voor, het opgegeven bestelmoment wordt gedaan dan zal dinsdag worden getoond als eerstvolgende afleverdag."
 Drop-off days,Verzenddagen
-Saturday delivery fee,Zaterdaglevering prijs
+Monday delivery,Maandagbezorging
+Note: Monday delivery is only possible when the package is delivered before 15.00 on Saturday at the designated PostNL locations. Click <a href="https://blog.myparcel.nl/maandagbezorging" target="_blank">here</a> for more information concerning Monday delivery and the locations.,Let op: Maandaglevering is alleen mogelijk wanneer zaterdag het pakket voor 15.00 wordt geleverd bij één van de hiervoor bestemde PostNL locaties. Klik <a href="https://blog.myparcel.nl/maandagbezorging" target="_blank">hier</a> voor de locaties en meer informatie omtrent de maandaglevering.
+Monday delivery cut-off time,Laatste bestelmoment voor maandaglevering.
 "If a request is made before this time on Saturday, Monday will be shown as the next possible delivery date.","Als een bestelling voor dit tijdstip op zaterdag wordt gedaan zal maandag als eerstvolgende afleverdag worden getoond."
 Dropoff-delay,Vertraging
 No delay,Geen vertraging
-"This options allows you to set the number of days it takes you to pick, pack and hand in your parcels at bpost when ordered before the cutoff time.","Stel hier het aantal dagen in die je nodig hebt om het product (te ontvangen,) te verpakken en aan te bieden bij bpost, vanaf het moment dat de bestelling is geplaatst".
+"This options allows you to set the number of days it takes you to pick, pack and hand in your parcels at PostNL when ordered before the cutoff time.","Stel hier het aantal dagen in die je nodig hebt om het product (te ontvangen,) te verpakken en aan te bieden bij PostNL, vanaf het moment dat de bestelling is geplaatst".
 Methods,Verzendmethode
-The extra MyParcel BE options are added to this shipping method,De extra MyParcel BE opties worden bij deze verzendmethode toegevoegd.
+The extra myparcel options are added to this shipping method,De extra myparcel opties worden bij deze verzendmethode toegevoegd.
 Delivery title,Bezorg titel
+Home address only, Alleen huisadres
+Deliver the package only at address of the intended recipient.,Lever het pakket alleen aan het adres van de beoogde ontvanger.
+Home address only title,Alleen huisadres titel
+Home address only fee,Alleen huisadres prijs
 This will be added to the regular shipping price,Dit zal bij de normale verzendkosten worden opgeteld
+Not possible if Pickup at PostNL location is not active,Dit zal niet mogelijk zijn zodra ophalen bij een PostNL locatie niet geactiveerd is
 Signature on receipt,Handtekening voor ontvangst
 Signature on receipt title, Handtekening voor ontvangst titel
 Signature on receipt fee, Handtekening voor ontvangst prijs
 This will be added to the regular shipping price, Dit zal bij de normale verzendkosten worden opgeteld
 Home address only and signature on receipt together fee,De prijs van handtekening voor ontvangst en alleen huisadres samen
 If both have been selected this price will be added to the regular shipping price. Leave empty for not using it.,Als beide geselecteerd zijn zal deze prijs bij de normale verzendkosten worden opgeteld. Laat leeg om dit niet te gebruiken.
+Mailbox settings,Brievenbuspakje instellingen
+Automate mailbox,Brievenbuspakje automatiseren
+Mailbox with other options,Brievenbuspakje tonen met andere opties
+Mailbox title,Brievenbuspakje titel
+Select automatically mailbox packages based on weight or volume,Selecteer automatisch brievenbuspakje op basis van gewicht of volume
+Leave blank to automate mailbox packets only in the backend,Laat leeg om brievenbuspakjes alleen in de backend te automatiseren
+Mailbox weight,Brievenbuspakje gewicht
 "Besides assigning weights to all products, you can also specify a volume of each product.","Om deze functie optimaal te gebruiken, stel je eerst het gewicht of volume in van jouw producten."
+Mailbox fee,Brievenbuspakje prijs
+Enter a basic price for a mailbox. The regular price will not affect this price.,Vul een basis prijs in voor een brievenbuspakje. De huidige prijs heeft geen invloed op deze prijs.
+Morning delivery,Ochtendlevering
+Morning delivery active,Ochtendlevering actief
+Morning delivery fee, Ochtendlevering prijs
 This will be added to the regular shipping price,Dit zal bij de normale verzendkosten worden opgeteld
-Pickup at bpost location,Ophalen bij een bpost locatie
+Evening delivery,Avondlevering
+Evening delivery active,Avondlevering actief
+Evening delivery fee,Avondlevering prijs
+Pickup at PostNL location,Ophalen bij een PostNL locatie
 Pickup active,Ophalen actief
 Pickup titel,Ophalen titel
 Pickup fee,Ophalen prijs
+Pickup Express at PostNL location,Extra vroeg ophalen bij PostNL locatie
+Pickup Express active,Extra vroeg ophalen actief
+Pickup Express fee,Extra vroeg ophalen prijs
 Drop off day,Verzenddagen
 Select the days that you send the orders.,Selecteer de dagen waarop jij de orders verzend.
 Set the number of days to let the customer make an order on a different day than to deliver the first one.,Stel hier het aantal dagen in om de klant de keuze te laten maken een bestelling op een andere dag dan de eerst volgende te laten bezorgen.
-delivery/saturday_signature_title,Saturday delivery + signature
+
+
+
+

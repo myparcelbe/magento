@@ -7,12 +7,12 @@
  * - Show inside the columns the cards
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelbe
+ * https://github.com/myparcelnl
  *
  * @author      Richard Perdaan <richard@myparcel.nl>
  * @author 		Reindert Vetter <reindert@myparcel.nl>
  * @copyright   2017 MyParcel
- * @link        https://github.com/myparcelbe/magento
+ * @link        https://github.com/myparcelnl/magento
  */
 
 require(['jquery'], function($){
@@ -49,14 +49,14 @@ require(['jquery'], function($){
         };
 
         appendColumn = function (column) {
-            $('.mypa_columns').append('<div class="myparcel_column"><h2 class="myparcel_progress_column_titel">' + column.title + '</h2><div id="label-' + column.alias + '"></div></div>');
+            $('.mypa_columns').append('<div class="myparcel_column"><h2 class="myparcel_progress_column_title">' + column.title + '</h2><div id="label-' + column.alias + '"></div></div>');
             appendCards(column)
         };
 
         appendCards = function (column) {
             $.ajax({
                 type: 'GET',
-                url: "https://api.github.com/repos/myparcelbe/magento/issues?labels=" + column.alias + "&sort=updated-asc",
+                url: "https://api.github.com/repos/myparcelnl/magento/issues?labels=" + column.alias + "&sort=updated-asc",
                 success : function(issues) {
                     $.each(issues, function(key, issue) {
                         $('#label-' + column.alias).append('<a href="' + issue.html_url + '" target="_blank"><div class="card_item"><h3>' + issue.title + '</h3></div></a>');

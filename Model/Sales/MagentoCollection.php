@@ -1,12 +1,12 @@
 <?php
 /**
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelbe
+ * https://github.com/myparcelnl
  *
  * @author      Reindert Vetter <reindert@myparcel.nl>
  * @copyright   2010-2017 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelbe/magento
+ * @link        https://github.com/myparcelnl/magento
  * @since       File available since Release v0.1.0
  */
 
@@ -32,6 +32,7 @@ class MagentoCollection implements MagentoCollectionInterface
     const PATH_ORDER_TRACK = 'Magento\Sales\Model\Order\Shipment\Track';
     const PATH_MANAGER_INTERFACE = '\Magento\Framework\Message\ManagerInterface';
     const PATH_ORDER_TRACK_COLLECTION = '\Magento\Sales\Model\ResourceModel\Order\Shipment\Track\Collection';
+    const URL_SHOW_POSTNL_STATUS = 'https://mijnpakket.postnl.nl/Inbox/Search';
     const ERROR_ORDER_HAS_NO_SHIPMENT = 'No shipment can be made with this order. Shipments can not be created if the status is On Hold or if the product is digital.';
 
     /**
@@ -79,8 +80,10 @@ class MagentoCollection implements MagentoCollectionInterface
         'request_type' => 'download',
         'package_type' => 'default',
         'positions' => null,
+        'only_recipient' => null,
         'signature' => null,
         'return' => null,
+        'large_format' => null,
         'insurance' => null,
     ];
 
