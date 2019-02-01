@@ -174,7 +174,7 @@ define(
         }
 
         function _hideRadios() {
-            jQuery("td[id^='label_method_signature'],td[id^='label_method_mailbox'],td[id^='label_method_pickup'],td[id^='label_method_evening']").parent().hide();
+            jQuery("td[id^='label_method_signature'],td[id^='label_method_mailbox'],td[id^='label_method_pickup']").parent().hide();
         }
 
         function _getCcIsLocal() {
@@ -255,7 +255,6 @@ define(
                     "carrier": "2",
 
                     "priceStandardDelivery": window.mypa.data.general.base_price,
-                    "priceEveningDelivery": window.mypa.data.evening.fee,
                     "priceSignature": window.mypa.data.delivery.signature_fee,
                     "pricePickup": window.mypa.data.pickup.fee,
                     "pricePickupExpress": window.mypa.data.pickup_express.fee,
@@ -263,11 +262,9 @@ define(
                     "deliveryTitle": window.mypa.data.delivery.delivery_title,
                     "pickupTitle": window.mypa.data.pickup.title,
                     "deliveryStandardTitle": window.mypa.data.delivery.standard_delivery_title,
-                    "deliveryEveningTitle": window.mypa.data.evening.title,
                     "signatureTitle": window.mypa.data.delivery.signature_title,
 
                     "allowMondayDelivery": window.mypa.data.general.monday_delivery_active,
-                    "allowEveningDelivery": window.mypa.data.evening.active,
                     "allowSignature": window.mypa.data.delivery.signature_active,
                     "allowPickupPoints": window.mypa.data.pickup.active,
                     "allowPickupExpress": window.mypa.data.pickup_express.active,
@@ -330,14 +327,6 @@ define(
                         _checkMethod('input[value=' + myparcel_method_alias + '_' + window.mypa.data.general.parent_method + ']');
                     }
 
-                    myparcel.showDays();
-                    break;
-                case "night":
-                    if (json.options.signature) {
-                        _checkMethod('input[value=' + myparcel_method_alias + '_evening_signature' + ']');
-                    } else {
-                        _checkMethod('input[value=' + myparcel_method_alias + '_evening' + ']');
-                    }
                     myparcel.showDays();
                     break;
                 case "retail":

@@ -54,7 +54,6 @@ Track action,Track actie
 MyParcel options,MyParcel opties
 Package,Pakket
 Mailbox,Brievenbuspakje
-Evening delivery,Avondlevering
 Letter,Ongefrankeerd
 Signature on receipt,Handtekening voor ontvangst
 Return if no answer,Retour bij niet aanwezig
@@ -104,8 +103,6 @@ MyParcel progress, MyParcel vooruitgang
 Do you want to know what they are doing in the near future? Below you can find the schedule for Magento 2. Do you have any suggestions or ideas? They are always welcome. That way we will continue to improve the extension together.,Wil je weten waar ze de komende tijd mee bezig zijn? Hieronder vind je de planning voor Magento 2. Heb je zelf suggesties of ideeën? Ze zijn altijd welkom. Op die manier blijven we samen de extensie verbeteren.
 API key is not known. Go to the settings in the backoffice to create an API key. Fill the API key in the settings.,API key is niet bekend. Ga naar de instellingen in de backoffice om een API key te maken. Vul de API key in bij de instellingen.
 pickup_express/title,Ophalen bij een PostNL locatie (extra vroeg ophalen)
-evening_signature/title,Avondlevering + handtekening voor ontvangst
-evening/title,Avondlevering
 Basic settings,Basis instellingen
 Delivery settings,Bezorging
 Numbers of days,Aantal dagen vooruit
@@ -144,9 +141,6 @@ Mailbox weight,Brievenbuspakje gewicht
 Mailbox fee,Brievenbuspakje prijs
 Enter a basic price for a mailbox. The regular price will not affect this price.,Vul een basis prijs in voor een brievenbuspakje. De huidige prijs heeft geen invloed op deze prijs.
 This will be added to the regular shipping price,Dit zal bij de normale verzendkosten worden opgeteld
-Evening delivery,Avondlevering
-Evening delivery active,Avondlevering actief
-Evening delivery fee,Avondlevering prijs
 Pickup at PostNL location,Ophalen bij een PostNL locatie
 Pickup active,Ophalen actief
 Pickup titel,Ophalen titel

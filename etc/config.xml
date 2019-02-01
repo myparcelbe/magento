@@ -55,11 +55,6 @@
                 <weight>2000</weight>
                 <fee>3.50</fee>
             </mailbox>
-            <evening>
-                <active>1</active>
-                <title>Avondlevering</title>
-                <fee>1.25</fee>
-            </evening>
             <pickup>
                 <active>1</active>
                 <title>Ophalen bij een PostNL locatie</title>
