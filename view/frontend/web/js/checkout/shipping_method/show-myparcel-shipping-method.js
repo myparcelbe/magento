@@ -174,7 +174,7 @@ define(
         }
 
         function _hideRadios() {
-            jQuery("td[id^='label_method_signature'],td[id^='label_method_mailbox'],td[id^='label_method_pickup'],td[id^='label_method_evening'],td[id^='label_method_morning']").parent().hide();
+            jQuery("td[id^='label_method_signature'],td[id^='label_method_mailbox'],td[id^='label_method_pickup'],td[id^='label_method_evening']").parent().hide();
         }
 
         function _getCcIsLocal() {
@@ -254,7 +254,6 @@ define(
                     "apiBaseUrl": "https://api.myparcel.nl/",
                     "carrier": "2",
 
-                    "priceMorningDelivery":  window.mypa.data.morning.fee,
                     "priceStandardDelivery": window.mypa.data.general.base_price,
                     "priceEveningDelivery": window.mypa.data.evening.fee,
                     "priceSignature": window.mypa.data.delivery.signature_fee,
@@ -263,13 +262,11 @@ define(
 
                     "deliveryTitle": window.mypa.data.delivery.delivery_title,
                     "pickupTitle": window.mypa.data.pickup.title,
-                    "deliveryMorningTitle": window.mypa.data.morning.title,
                     "deliveryStandardTitle": window.mypa.data.delivery.standard_delivery_title,
                     "deliveryEveningTitle": window.mypa.data.evening.title,
                     "signatureTitle": window.mypa.data.delivery.signature_title,
 
                     "allowMondayDelivery": window.mypa.data.general.monday_delivery_active,
-                    "allowMorningDelivery": window.mypa.data.morning.active,
                     "allowEveningDelivery": window.mypa.data.evening.active,
                     "allowSignature": window.mypa.data.delivery.signature_active,
                     "allowPickupPoints": window.mypa.data.pickup.active,
@@ -325,14 +322,6 @@ define(
             }
 
             switch (type) {
-                case "morning":
-                    if (json.options.signature) {
-                        _checkMethod('input[value=' + myparcel_method_alias + '_morning_signature' + ']');
-                    } else {
-                        _checkMethod('input[value=' + myparcel_method_alias + '_morning' + ']');
-                    }
-                    myparcel.showDays();
-                    break;
                 case "standard":
 
                     if (json.options.signature) {

@@ -70,7 +70,6 @@ class Checkout
         $this->data = [
             'general' => $this->getGeneralData(),
             'delivery' => $this->getDeliveryData(),
-            'morning' => $this->getMorningData(),
             'evening' => $this->getEveningData(),
             'mailbox' => $this->getMailboxData(),
             'pickup' => $this->getPickupData(),
@@ -129,20 +128,6 @@ class Checkout
         }
 
         return $deliveryData;
-    }
-
-    /**
-     * Get morning data
-     *
-     * @return array)
-     */
-    private function getMorningData()
-    {
-        return [
-            'active' => $this->helper->getBoolConfig('morning/active'),
-            'title' => $this->helper->getCheckoutConfig('morning/title'),
-            'fee' => $this->helper->getMethodPriceFormat('morning/fee'),
-        ];
     }
 
     /**
@@ -240,10 +225,6 @@ class Checkout
     private function setExcludeDeliveryTypes()
     {
         $excludeDeliveryTypes = [];
-
-        if ($this->data['morning']['active'] == false) {
-            $excludeDeliveryTypes[] = '1';
-        }
 
         if ($this->data['evening']['active'] == false) {
             $excludeDeliveryTypes[] = '3';

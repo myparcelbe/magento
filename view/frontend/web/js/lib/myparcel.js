@@ -14,7 +14,6 @@ MyParcel = {
     isBinded: false,
     isCallingDeliveryOptions: false,
 
-    DELIVERY_MORNING: 'morning',
     DELIVERY_NORMAL: 'standard',
     DELIVERY_NIGHT: 'avond',
 
@@ -40,7 +39,6 @@ MyParcel = {
         }
 
         /* Prices */
-        jQuery('#mypa-morning-delivery').html(MyParcel.getPriceHtml(this.data.config.priceMorningDelivery));
         jQuery('#mypa-evening-delivery').html(MyParcel.getPriceHtml(this.data.config.priceEveningDelivery));
         jQuery('#mypa-normal-delivery').html(MyParcel.getPriceHtml(this.data.config.priceStandardDelivery));
         jQuery('#mypa-signature-price').html(MyParcel.getPriceHtml(this.data.config.priceSignature));
@@ -82,16 +80,10 @@ MyParcel = {
         var selectedDate = jQuery('#mypa-select-date').val();
         var selectDateKey = MyParcel.storeDeliveryOptions.data.delivery[selectedDate]['time'];
         jQuery('#method-myparcel-normal').prop('checked', true);
-        MyParcel.hideMorningDelivery();
         MyParcel.hideEveningDelivery();
 
         jQuery.each(selectDateKey, function (key, value) {
 
-            if (value['price_comment'] == 'morning' && MyParcel.data.config.allowMorningDelivery) {
-                var morningTitle = MyParcel.data.config.deliveryMorningTitle;
-                MyParcel.getDeliveryTime(morningTitle, 'morning', value['start'], value['end']);
-                MyParcel.showMorningDelivery();
-            }
             if (value['price_comment'] == 'standard') {
                 var standardTitle = MyParcel.data.config.BEdeliveryTitle;
                 if(MyParcel.data.address.cc === 'BE'){
@@ -211,28 +203,6 @@ MyParcel = {
         var method = null;
         MyParcel.deliverySigned = 0;
         MyParcel.removeStyleFromPrice();
-
-        /**
-         * Morning delivery
-         *
-         */
-        if (jQuery('#mypa-pickup-delivery').prop('checked') === false && jQuery('#method-myparcel-delivery-morning').prop('checked')) {
-            method = 'morning';
-            MyParcel.addStyleToPrice('#mypa-morning-delivery');
-
-            /**
-             * Signature
-             */
-            if (jQuery('#mypa-signature-selector').prop('checked')) {
-                method = 'morning_signature';
-                MyParcel.deliverySigned = 1;
-                MyParcel.addStyleToPrice('#mypa-signature-price');
-            }
-
-            MyParcel.addDeliveryToExternalInput(MyParcel.DELIVERY_MORNING);
-            MyParcel.clickMagentoShippingMethod(method);
-            return;
-        }
 
         /**
          * Normal delivery
@@ -443,7 +413,6 @@ MyParcel = {
         jQuery('#mypa-delivery-date-select, #mypa-pre-selectors-nl, #mypa-delivery-date-text,.mypa-extra-delivery-options').hide();
         jQuery('#mypa-delivery').parent().parent().hide();
         MyParcel.hideSignature();
-        MyParcel.hideMorningDelivery();
         MyParcel.hideEveningDelivery();
 
     },
@@ -497,14 +466,6 @@ MyParcel = {
 
     hideSpinner: function () {
         jQuery('#mypa-spinner-model').hide();
-    },
-
-    showMorningDelivery: function () {
-        jQuery('#method-myparcel-delivery-morning-div').show();
-    },
-
-    hideMorningDelivery: function () {
-        jQuery('#method-myparcel-delivery-morning-div').hide();
     },
 
     showEveningDelivery: function () {

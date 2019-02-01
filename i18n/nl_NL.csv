@@ -54,7 +54,6 @@ Track action,Track actie
 MyParcel options,MyParcel opties
 Package,Pakket
 Mailbox,Brievenbuspakje
-Morning delivery,Ochtendlevering
 Evening delivery,Avondlevering
 Letter,Ongefrankeerd
 Signature on receipt,Handtekening voor ontvangst
@@ -104,8 +103,6 @@ Installation and configuration instructions,Installatie en configuratie handleid
 MyParcel progress, MyParcel vooruitgang
 Do you want to know what they are doing in the near future? Below you can find the schedule for Magento 2. Do you have any suggestions or ideas? They are always welcome. That way we will continue to improve the extension together.,Wil je weten waar ze de komende tijd mee bezig zijn? Hieronder vind je de planning voor Magento 2. Heb je zelf suggesties of ideeën? Ze zijn altijd welkom. Op die manier blijven we samen de extensie verbeteren.
 API key is not known. Go to the settings in the backoffice to create an API key. Fill the API key in the settings.,API key is niet bekend. Ga naar de instellingen in de backoffice om een API key te maken. Vul de API key in bij de instellingen.
-morning/title,Ochtendlevering
-morning_signature/title,Ochtendlevering + handtekening voor ontvangst
 pickup_express/title,Ophalen bij een PostNL locatie (extra vroeg ophalen)
 evening_signature/title,Avondlevering + handtekening voor ontvangst
 evening/title,Avondlevering
@@ -146,9 +143,6 @@ Mailbox weight,Brievenbuspakje gewicht
 "Besides assigning weights to all products, you can also specify a volume of each product.","Om deze functie optimaal te gebruiken, stel je eerst het gewicht of volume in van jouw producten."
 Mailbox fee,Brievenbuspakje prijs
 Enter a basic price for a mailbox. The regular price will not affect this price.,Vul een basis prijs in voor een brievenbuspakje. De huidige prijs heeft geen invloed op deze prijs.
-Morning delivery,Ochtendlevering
-Morning delivery active,Ochtendlevering actief
-Morning delivery fee, Ochtendlevering prijs
 This will be added to the regular shipping price,Dit zal bij de normale verzendkosten worden opgeteld
 Evening delivery,Avondlevering
 Evening delivery active,Avondlevering actief

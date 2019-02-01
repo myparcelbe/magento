@@ -55,11 +55,6 @@
                 <weight>2000</weight>
                 <fee>3.50</fee>
             </mailbox>
-            <morning>
-                <active>1</active>
-                <title>Ochtendlevering</title>
-                <fee>10</fee>
-            </morning>
             <evening>
                 <active>1</active>
                 <title>Avondlevering</title>

@@ -147,8 +147,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     {
 	    $methods = [
             'signature' => 'delivery/signature_',
-            'morning' => 'morning/',
-            'morning_signature' => 'morning_signature/',
             'evening' => 'evening/',
             'evening_signature' => 'evening_signature/',
             'pickup' => 'pickup/',
@@ -255,12 +253,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
 	 */
 	private function createPrice($alias, $settingPath) {
 		$price = 0;
-		if ($alias == 'morning_signature') {
-			$price += $this->myParcelHelper->getMethodPrice('morning/fee');
-			$price += $this->myParcelHelper->getMethodPrice('delivery/signature_fee', false);
-
-			return $price;
-		}
 
 		if ($alias == 'evening_signature') {
 			$price += $this->myParcelHelper->getMethodPrice('evening/fee');
