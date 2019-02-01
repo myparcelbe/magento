@@ -80,8 +80,6 @@ class View extends \Magento\Sales\Block\Adminhtml\Order\AbstractOrder
                     $html .=  ', ' . __($data['time'][0]['price_comment']);
 
                 if (key_exists('options', $data)) {
-                    if(key_exists('only_recipient', $data['options']) && $data['options']['only_recipient'])
-                        $html .=  ', ' . strtolower(__('Home address only'));
                     if(key_exists('signature', $data['options']) && $data['options']['signature'])
                         $html .=  ', ' . strtolower(__('Signature on receipt'));
                 }

@@ -35,18 +35,6 @@
         </div>
     </div>
 <?php if ($block->getCountry() == 'BE'): ?>
-    <div class="field choice admin__field admin__field-option field-mypa_only_recipient mypa_package-toggle mypa-option-toggle" style="<?=$block->getPackageType() !== 2 ?: 'display:none';?>">
-        <input id="mypa_only_recipient"
-               class="admin__control-checkbox"
-               name="mypa_only_recipient"
-               value="1"
-               type="checkbox"
-                <?= $block->getDefaultOption('only_recipient') == true ? 'checked="checked"' : '';?>
-        />
-        <label class="admin__field-label"
-               for="mypa_only_recipient">
-            <span><?=__('Home address only') ?></span></label>
-    </div>
     <div class="field choice admin__field admin__field-option field-mypa_signature mypa_package-toggle mypa-option-toggle" style="<?=$block->getPackageType() === 1 ?: 'display:none';?>">
         <input id="mypa_signature"
                class="admin__control-checkbox"

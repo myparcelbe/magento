@@ -10,7 +10,6 @@ MyParcel = {
     currentLocation: {},
 
     deliverySigned: 0,
-    deliveryOnlyRecipient: 0,
 
     isBinded: false,
     isCallingDeliveryOptions: false,
@@ -33,9 +32,6 @@ MyParcel = {
         if (MyParcel.data.config.deliveryTitle) {
             jQuery('#mypa-delivery-title').html(MyParcel.data.config.deliveryTitle);
         }
-        if (MyParcel.data.config.onlyRecipientTitle) {
-            jQuery('#mypa-only-recipient-title').html(MyParcel.data.config.onlyRecipientTitle);
-        }
         if (MyParcel.data.config.signatureTitle) {
             jQuery('#mypa-signature-title').html(MyParcel.data.config.signatureTitle);
         }
@@ -48,7 +44,6 @@ MyParcel = {
         jQuery('#mypa-evening-delivery').html(MyParcel.getPriceHtml(this.data.config.priceEveningDelivery));
         jQuery('#mypa-normal-delivery').html(MyParcel.getPriceHtml(this.data.config.priceStandardDelivery));
         jQuery('#mypa-signature-price').html(MyParcel.getPriceHtml(this.data.config.priceSignature));
-        jQuery('#mypa-only-recipient-price').html(MyParcel.getPriceHtml(this.data.config.priceOnlyRecipient));
         jQuery('#mypa-pickup-price').html(MyParcel.getPriceHtml(this.data.config.pricePickup));
 
         /* Call delivery options */
@@ -161,10 +156,6 @@ MyParcel = {
             MyParcel.showPickUpLocations();
         });
 
-        jQuery('#method-myparcel-delivery-morning, #method-myparcel-delivery-evening').on('click', function () {
-            MyParcel.defaultCheckCheckbox('mypa-only-recipient');
-        });
-
         /* Mobile specific triggers */
         if (isMobile) {
             jQuery('#mypa-show-location-details').on('click', function () {
@@ -184,10 +175,6 @@ MyParcel = {
 
         jQuery('#mypa-location-details').on('click', function () {
             MyParcel.hideLocationDetails();
-        });
-
-        jQuery('#method-myparcel-normal').on('click', function () {
-            MyParcel.defaultCheckCheckbox('method-myparcel-normal');
         });
 
         jQuery('#mypa-pickup-express').hide();
@@ -223,7 +210,6 @@ MyParcel = {
     mapExternalWebshopTriggers: function () {
         var method = null;
         MyParcel.deliverySigned = 0;
-        MyParcel.deliveryOnlyRecipient = 0;
         MyParcel.removeStyleFromPrice();
 
         /**
@@ -232,8 +218,7 @@ MyParcel = {
          */
         if (jQuery('#mypa-pickup-delivery').prop('checked') === false && jQuery('#method-myparcel-delivery-morning').prop('checked')) {
             method = 'morning';
-            MyParcel.deliveryOnlyRecipient = 1;
-            MyParcel.addStyleToPrice('#mypa-morning-delivery, #mypa-only-recipient-price');
+            MyParcel.addStyleToPrice('#mypa-morning-delivery');
 
             /**
              * Signature
@@ -254,15 +239,6 @@ MyParcel = {
          *
          */
         if (jQuery('#mypa-pickup-delivery').prop('checked') === false && jQuery('#method-myparcel-normal').prop('checked')) {
-            /**
-             * Signature and only recipient
-             */
-            if (jQuery('#mypa-signature-selector').prop('checked') && jQuery('#mypa-only-recipient-selector').prop('checked')) {
-                method = 'signature_only_recip';
-                MyParcel.deliverySigned = 1;
-                MyParcel.deliveryOnlyRecipient = 1;
-                MyParcel.addStyleToPrice('#mypa-signature-price, #mypa-only-recipient-price');
-            } else
 
             /**
              * Signature
@@ -271,15 +247,6 @@ MyParcel = {
                 method = 'signature';
                 MyParcel.deliverySigned = 1;
                 MyParcel.addStyleToPrice('#mypa-signature-price');
-            } else
-
-            /**
-             * Only recipient
-             */
-            if (jQuery('#mypa-only-recipient-selector').prop('checked')) {
-                method = 'only_recipient';
-                MyParcel.deliveryOnlyRecipient = 1;
-                MyParcel.addStyleToPrice('#mypa-only-recipient-price');
             } else {
                 method = window.mypa.data.general.parent_method;
             }
@@ -296,8 +263,7 @@ MyParcel = {
          */
         if (jQuery('#mypa-pickup-delivery').prop('checked') === false && jQuery('#method-myparcel-delivery-evening').prop('checked')) {
             method = 'evening';
-            MyParcel.deliveryOnlyRecipient = 1;
-            MyParcel.addStyleToPrice('#mypa-evening-delivery, #mypa-only-recipient-price');
+            MyParcel.addStyleToPrice('#mypa-evening-delivery');
 
             /**
              * Signature
@@ -359,8 +325,7 @@ MyParcel = {
         if (currentDeliveryData !== null) {
 
             currentDeliveryData.options = {
-                "signature": MyParcel.deliverySigned,
-                "only_recipient": MyParcel.deliveryOnlyRecipient
+                "signature": MyParcel.deliverySigned
             };
 
             jQuery("input[name='delivery_options']").val(JSON.stringify(currentDeliveryData));
@@ -395,28 +360,11 @@ MyParcel = {
         }
 
         if (currentDeliveryData === null) {
-            jQuery('#mypa-only-recipient-selector').prop('disabled', false).prop('checked', false);
             jQuery('#method-myparcel-normal').prop('checked', true);
             MyParcel.mapExternalWebshopTriggers();
         }
 
         return currentDeliveryData;
-    },
-
-    /*
-     * defaultCheckCheckbox
-     *
-     * Check the additional options that are required for certain delivery options
-     *
-     */
-    defaultCheckCheckbox: function (selectedOption) {
-        if (selectedOption === 'mypa-only-recipient') {
-            jQuery('#mypa-only-recipient-selector').prop('checked', true).prop({disabled: true});
-            jQuery('#mypa-only-recipient-price').html('Inclusief');
-        } else {
-            jQuery('#mypa-only-recipient-selector').prop('checked', false).removeAttr("disabled");
-            jQuery('#mypa-only-recipient-price').html(MyParcel.getPriceHtml(this.data.config.priceOnlyRecipient));
-        }
     },
 
     /*
@@ -495,7 +443,6 @@ MyParcel = {
         jQuery('#mypa-delivery-date-select, #mypa-pre-selectors-nl, #mypa-delivery-date-text,.mypa-extra-delivery-options').hide();
         jQuery('#mypa-delivery').parent().parent().hide();
         MyParcel.hideSignature();
-        MyParcel.hideOnlyRecipient();
         MyParcel.hideMorningDelivery();
         MyParcel.hideEveningDelivery();
 
@@ -519,11 +466,6 @@ MyParcel = {
             MyParcel.hideSignature();
             if (this.data.config.allowSignature) {
                 MyParcel.showSignature();
-            }
-
-            MyParcel.hideOnlyRecipient();
-            if (this.data.config.allowOnlyRecipient) {
-                MyParcel.showOnlyRecipient();
             }
         }
         if(MyParcel.data.address.cc === 'BE'){
@@ -579,14 +521,6 @@ MyParcel = {
 
     hideSignature: function () {
         jQuery('.mypa-extra-delivery-option-signature, #mypa-signature-price').hide();
-    },
-
-    showOnlyRecipient: function () {
-        jQuery('#mypa-only-recipient').parent().show();
-    },
-
-    hideOnlyRecipient: function () {
-        jQuery('#mypa-only-recipient').parent().hide();
     },
 
     /*

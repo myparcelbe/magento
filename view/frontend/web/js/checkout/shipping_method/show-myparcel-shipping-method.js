@@ -174,7 +174,7 @@ define(
         }
 
         function _hideRadios() {
-            jQuery("td[id^='label_method_signature'],td[id^='label_method_mailbox'],td[id^='label_method_pickup'],td[id^='label_method_evening'],td[id^='label_method_only_recipient'],td[id^='label_method_morning']").parent().hide();
+            jQuery("td[id^='label_method_signature'],td[id^='label_method_mailbox'],td[id^='label_method_pickup'],td[id^='label_method_evening'],td[id^='label_method_morning']").parent().hide();
         }
 
         function _getCcIsLocal() {
@@ -258,7 +258,6 @@ define(
                     "priceStandardDelivery": window.mypa.data.general.base_price,
                     "priceEveningDelivery": window.mypa.data.evening.fee,
                     "priceSignature": window.mypa.data.delivery.signature_fee,
-                    "priceOnlyRecipient":window.mypa.data.delivery.only_recipient_fee,
                     "pricePickup": window.mypa.data.pickup.fee,
                     "pricePickupExpress": window.mypa.data.pickup_express.fee,
 
@@ -268,13 +267,11 @@ define(
                     "deliveryStandardTitle": window.mypa.data.delivery.standard_delivery_title,
                     "deliveryEveningTitle": window.mypa.data.evening.title,
                     "signatureTitle": window.mypa.data.delivery.signature_title,
-                    "onlyRecipientTitle": window.mypa.data.delivery.only_recipient_title,
 
                     "allowMondayDelivery": window.mypa.data.general.monday_delivery_active,
                     "allowMorningDelivery": window.mypa.data.morning.active,
                     "allowEveningDelivery": window.mypa.data.evening.active,
                     "allowSignature": window.mypa.data.delivery.signature_active,
-                    "allowOnlyRecipient": window.mypa.data.delivery.only_recipient_active,
                     "allowPickupPoints": window.mypa.data.pickup.active,
                     "allowPickupExpress": window.mypa.data.pickup_express.active,
 
@@ -337,17 +334,13 @@ define(
                     myparcel.showDays();
                     break;
                 case "standard":
-                    if (json.options.signature && json.options.only_recipient) {
-                        _checkMethod('input[value=' + myparcel_method_alias + '_signature_only_recip' + ']');
+
+                    if (json.options.signature) {
+                        _checkMethod('input[value=' + myparcel_method_alias + '_signature' + ']');
                     } else {
-                        if (json.options.signature) {
-                            _checkMethod('input[value=' + myparcel_method_alias + '_signature' + ']');
-                        } else if (json.options.only_recipient) {
-                            _checkMethod('input[value=' + myparcel_method_alias + '_only_recipient' + ']');
-                        } else {
-                            _checkMethod('input[value=' + myparcel_method_alias + '_' + window.mypa.data.general.parent_method + ']');
-                        }
+                        _checkMethod('input[value=' + myparcel_method_alias + '_' + window.mypa.data.general.parent_method + ']');
                     }
+
                     myparcel.showDays();
                     break;
                 case "night":
