@@ -22,7 +22,7 @@
                 <input type="radio" class="admin__control-radio" id="mypa_package_type-package" name="mypa_package_type" value="1" <?=$block->getPackageType() !== 1 ?: 'checked="checked"';?>>
                 <label class="admin__field-label" for="mypa_package_type-package"><?=__('Package');?></label>
             </div>
-            <?php if ($block->getCountry() == 'NL'): ?>
+            <?php if ($block->getCountry() == 'BE'): ?>
                 <div class="admin__field admin__field-option">
                     <input type="radio" class="admin__control-radio" id="mypa_package_type-mailbox" name="mypa_package_type" value="2" <?=$block->getPackageType() !== 2 ?: 'checked="checked"';?>>
                     <label class="admin__field-label" for="mypa_package_type-mailbox"><?=__('Mailbox');?></label>
@@ -34,7 +34,7 @@
             </div>
         </div>
     </div>
-<?php if ($block->getCountry() == 'NL'): ?>
+<?php if ($block->getCountry() == 'BE'): ?>
     <div class="field choice admin__field admin__field-option field-mypa_only_recipient mypa_package-toggle mypa-option-toggle" style="<?=$block->getPackageType() !== 2 ?: 'display:none';?>">
         <input id="mypa_only_recipient"
                class="admin__control-checkbox"

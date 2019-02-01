@@ -52,7 +52,7 @@ class PackageRepository extends Package
      */
     public function fitInMailbox()
     {
-        if ($this->getCurrentCountry() !== 'NL') {
+        if ($this->getCurrentCountry() !== 'BE') {
             return false;
         }
 

@@ -66,10 +66,7 @@ define(
                 clearTimeout(isLoadingAddress);
                 _setAddress();
                 _hideRadios();
-
-                if (checkOnlyShowMailbox()) {
-                    showMailboxRadio();
-                } else if (_getCcIsLocal() && _getHouseNumber() !== null) {
+                if (_getCcIsLocal() && _getHouseNumber() !== null) {
                     _appendTemplate();
                     _setParameters();
                     showOptions();
@@ -121,14 +118,10 @@ define(
                 if (typeof country === 'undefined') country = '';
                 var postcode = quote.shippingAddress._latestValue.postcode;
                 if (typeof postcode === 'undefined') postcode = '';
-                var city = quote.shippingAddress._latestValue.postcode;
+                var city = quote.shippingAddress._latestValue.city;
                 if (typeof city === 'undefined') city = '';
             } else {
                 var street0 = jQuery("input[name='street[0]']").val();
-                var validatedAddress = getPostcodeValidateAddress();
-                if (validatedAddress && typeof validatedAddress !== 'undefined'){
-                    var street0 = validatedAddress;
-                }
                 if (typeof street0 === 'undefined') street0 = '';
                 var street1 = jQuery("input[name='street[1]']").val();
                 if (typeof street1 === 'undefined') street1 = '';
@@ -185,7 +178,7 @@ define(
         }
 
         function _getCcIsLocal() {
-            if (window.mypa.address.cc !== 'NL' && window.mypa.address.cc !== 'BE' ) {
+            if (window.mypa.address.cc !== 'BE' ) {
                 return false;
             }
 
@@ -259,7 +252,7 @@ define(
                 },
                 config: {
                     "apiBaseUrl": "https://api.myparcel.nl/",
-                    "carrier": "1",
+                    "carrier": "2",
 
                     "priceMorningDelivery":  window.mypa.data.morning.fee,
                     "priceStandardDelivery": window.mypa.data.general.base_price,

@@ -61,7 +61,7 @@ class Package extends Data implements PackageInterface
     /**
      * @var string
      */
-    private $current_country = 'NL';
+    private $current_country = 'BE';
 
     /**
      * @var int

@@ -120,7 +120,7 @@ class MyParcelTrackTrace extends MyParcelConsignmentRepository
             $packageType = (int)$options['package_type'] ?: 1;
         }
 
-        if ($address->getCountryId() != 'NL' && (int)$options['package_type'] == 2) {
+        if ($address->getCountryId() != 'BE' && (int)$options['package_type'] == 2) {
             $options['package_type'] = 1;
         }
 
@@ -143,7 +143,7 @@ class MyParcelTrackTrace extends MyParcelConsignmentRepository
             $this->objectManager->get('Psr\Log\LoggerInterface')->critical($errorHuman . '-' . $e);
         }
 
-        if ($address->getPostcode() == null && $address->getCountryId() == 'NL') {
+        if ($address->getPostcode() == null && $address->getCountryId() == 'BE') {
             $errorHuman = 'An error has occurred while validating the order number ' . $magentoTrack->getOrderId(). '. Postcode is required.';
             $this->messageManager->addErrorMessage($errorHuman . ' View log file for more information.');
             $this->objectManager->get('Psr\Log\LoggerInterface')->critical($errorHuman);
@@ -213,7 +213,7 @@ class MyParcelTrackTrace extends MyParcelConsignmentRepository
                     ->setWeight($product->getWeight() ?: 1)
                     ->setItemValue($product->getPrice())
                     ->setClassification('0000')
-                    ->setCountry('NL');
+                    ->setCountry('BE');
 
                 $this->addItem($myParcelProduct);
             }
@@ -228,7 +228,7 @@ class MyParcelTrackTrace extends MyParcelConsignmentRepository
                 ->setWeight($product['weight'] ?: 1)
                 ->setItemValue($product['price'])
                 ->setClassification('0000')
-                ->setCountry('NL');
+                ->setCountry('BE');
 
             $this->addItem($myParcelProduct);
         }

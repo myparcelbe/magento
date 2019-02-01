@@ -99,7 +99,7 @@ MyParcel = {
             }
             if (value['price_comment'] == 'standard') {
                 var standardTitle = MyParcel.data.config.BEdeliveryTitle;
-                if(MyParcel.data.address.cc === 'NL'){
+                if(MyParcel.data.address.cc === 'BE'){
                     standardTitle = MyParcel.data.config.deliveryStandardTitle;
                 }
                 MyParcel.getDeliveryTime(standardTitle, 'standard', value['start'], value['end']);
@@ -511,7 +511,7 @@ MyParcel = {
     showDelivery: function () {
         jQuery('#mypa-delivery').parent().parent().show();
         MyParcel.showDeliveryDates();
-        if (MyParcel.data.address.cc === "NL") {
+        if (MyParcel.data.address.cc === "BE") {
             jQuery('#mypa-pre-selectors-' + this.data.address.cc.toLowerCase()).show();
             jQuery('#mypa-delivery-selectors-' + this.data.address.cc.toLowerCase()).show();
             jQuery('.mypa-extra-delivery-options').show();

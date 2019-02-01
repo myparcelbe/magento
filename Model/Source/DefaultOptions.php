@@ -125,7 +125,7 @@ class DefaultOptions
         }
 
         $country = self::$order->getShippingAddress()->getCountryId();
-        if ($country != 'NL') {
+        if ($country != 'BE') {
             return false;
         }
 
