@@ -224,18 +224,10 @@ MyParcel = {
          *
          */
         if (jQuery('#mypa-pickup-delivery').prop('checked') || jQuery('#mypa-pickup-selector').prop('checked')) {
-            /**
-             * Early morning pickup
-             */
-            if (jQuery('#mypa-pickup-express-selector').prop('checked')) {
-                method = 'pickup_express';
-                MyParcel.addPickupToExternalInput('retailexpress');
-                MyParcel.addStyleToPrice('#mypa-pickup-express-price');
-            } else {
-                method = 'pickup';
-                MyParcel.addPickupToExternalInput('retail');
-                MyParcel.addStyleToPrice('#mypa-pickup-price');
-            }
+
+            method = 'pickup';
+            MyParcel.addPickupToExternalInput('retail');
+            MyParcel.addStyleToPrice('#mypa-pickup-price');
 
             MyParcel.clickMagentoShippingMethod(method);
             window.mypa.setShippingInformationAction();
@@ -317,16 +309,6 @@ MyParcel = {
     toggleDeliveryOptions: function () {
         var isPickup = jQuery('#mypa-pickup-delivery').is(':checked');
         jQuery('#mypa-pickup-selector').prop('checked', true);
-
-        if (isPickup && this.currentLocation.price_comment === "retailexpress") {
-            jQuery('#mypa-pickup-express-price').html(MyParcel.getPriceHtml(this.data.config.pricePickupExpress));
-            jQuery('#mypa-pickup-express').show();
-
-        } else {
-            jQuery('#mypa-pickup-express-selector').attr("checked", false);
-            jQuery('#mypa-pickup-express').hide();
-
-        }
     },
 
 

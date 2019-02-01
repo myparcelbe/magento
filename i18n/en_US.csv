@@ -23,4 +23,3 @@ status_38,Inactive - Delivered - Package picked up
 status_39,Inactive - Return shipment delivered
 status_40,Inactive - Return shipment pickup location
 status_99,Inactive - Unknown
-pickup_express/title,Extra early at a PostNL location

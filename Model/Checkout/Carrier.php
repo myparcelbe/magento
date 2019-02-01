@@ -148,7 +148,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
 	    $methods = [
             'signature' => 'delivery/signature_',
             'pickup' => 'pickup/',
-            'pickup_express' => 'pickup_express/',
             'mailbox' => 'mailbox/',
         ];
 
