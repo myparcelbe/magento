@@ -177,14 +177,11 @@ class Checkout extends Data
     public function getMethodPrice($key, $addBasePrice = true)
     {
         $value = $this->getCheckoutConfig($key);
-
         if ($addBasePrice) {
-            if ($this->getBasePrice() + $value < 0) {
-                return (float)0;
+            if ($value > 0) {
+                // Calculate value
+                $value = $this->getBasePrice() + $value;
             }
-
-            // Calculate value
-            $value = $this->getBasePrice() + $value;
         }
 
         return (float)$value;
@@ -216,8 +213,8 @@ class Checkout extends Data
      * @return string
      */
     public function getMoneyFormat($value) {
+
         $value = number_format($value, 2, ',', '.');
-        $value = '&#8364; ' . (string)$value;
 
         return $value;
     }

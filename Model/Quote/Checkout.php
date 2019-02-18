@@ -111,7 +111,7 @@ class Checkout
             'standard_delivery_title' => $this->helper->getCheckoutConfig('delivery/standard_delivery_title'),
             'signature_active' => $this->helper->getBoolConfig('delivery/signature_active'),
             'signature_title' => $this->helper->getCheckoutConfig('delivery/signature_title'),
-            'signature_fee' => $this->helper->getMethodPriceFormat('delivery/signature_fee', false, '+ '),
+            'signature_fee' => $this->helper->getMethodPriceFormat('delivery/signature_fee', false),
             'saturday_active' => $this->helper->getBoolConfig('general/saturday_active'),
             'saturday_title' => $this->helper->getCheckoutConfig('general/saturday_title'),
             'saturday_fee' => $this->helper->getMethodPriceFormat('general/saturday_fee', false),
@@ -138,7 +138,7 @@ class Checkout
         return [
             'active' => $this->helper->getBoolConfig('pickup/active'),
             'title' => $this->helper->getCheckoutConfig('pickup/title'),
-            'fee' => $this->helper->getMethodPriceFormat('pickup/fee'),
+            'fee' => $this->helper->getMethodPriceFormat('pickup/fee', false),
         ];
     }
 
