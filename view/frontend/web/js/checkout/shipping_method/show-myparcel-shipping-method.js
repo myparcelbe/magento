@@ -237,11 +237,6 @@ define(
                     "priceSignature": window.mypa.data.delivery.signature_fee,
                     "pricePickup": window.mypa.data.pickup.fee,
 
-                    "deliveryTitle": window.mypa.data.delivery.delivery_title,
-                    "pickupTitle": window.mypa.data.pickup.title,
-                    "deliveryStandardTitle": window.mypa.data.delivery.standard_delivery_title,
-                    "signatureTitle": window.mypa.data.delivery.signature_title,
-
                     // "allowSaturdayDelivery": window.data.delivery.saturday_active,
                     "allowSignature": window.mypa.data.delivery.signature_active,
                     "allowPickupPoints": window.mypa.data.pickup.active,
@@ -250,7 +245,32 @@ define(
                     "saturdayCutoffTime": window.mypa.data.general.saturday_cutoff_time,
                     "cutoffTime": window.mypa.data.general.cutoff_time,
                     "deliverydaysWindow": window.mypa.data.general.deliverydays_window,
-                    "dropoffDelay":window.mypa.data.general.dropoff_delay,
+                    "dropoffDelay":window.mypa.data.general.dropoff_delay
+                },
+                textToTranslate: {
+                    "deliveryTitel": window.mypa.data.text.delivery_title,
+                    "deliveryStandardTitel": window.mypa.data.text.standard_delivery_title,
+                    "signatureTitel": window.mypa.data.text.signature_title,
+                    "pickupTitel": window.mypa.data.text.pickup_title,
+
+                    "allDataNotFound": window.mypa.data.text['all_data_not_found'],
+                    "pickUpFrom": window.mypa.data.text['pick_up_from'],
+                    "openingHours": window.mypa.data.text['opening_hours'],
+                    "closed": window.mypa.data.text['closed'],
+                    "postcode": window.mypa.data.text['postcode'],
+                    "houseNumber": window.mypa.data.text['house_number'],
+                    "city": window.mypa.data.text['city'],
+                    "again": window.mypa.data.text['again'],
+                    "wrongHouseNumberCity": window.mypa.data.text['wrong_house_number_city'],
+                    "quickDelivery":window.mypa.data.text['quick_delivery'],
+
+                    'sunday': window.mypa.data.text['sunday'],
+                    'monday': window.mypa.data.text['monday'],
+                    'tuesday': window.mypa.data.text['tuesday'],
+                    'wednesday': window.mypa.data.text['wednesday'],
+                    'thursday': window.mypa.data.text['thursday'],
+                    'friday': window.mypa.data.text['friday'],
+                    'saturday': window.mypa.data.text['saturday']
                 }
 
             };

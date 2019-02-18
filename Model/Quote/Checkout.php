@@ -70,6 +70,7 @@ class Checkout
             'general' => $this->getGeneralData(),
             'delivery' => $this->getDeliveryData(),
             'pickup' => $this->getPickupData(),
+            'text' => $this->getCheckoutText(),
         ];
 
         $this
@@ -107,13 +108,9 @@ class Checkout
     private function getDeliveryData()
     {
         $deliveryData = [
-            'delivery_title' => $this->helper->getCheckoutConfig('delivery/delivery_title'),
-            'standard_delivery_title' => $this->helper->getCheckoutConfig('delivery/standard_delivery_title'),
             'signature_active' => $this->helper->getBoolConfig('delivery/signature_active'),
-            'signature_title' => $this->helper->getCheckoutConfig('delivery/signature_title'),
             'signature_fee' => $this->helper->getMethodPriceFormat('delivery/signature_fee', false),
             'saturday_active' => $this->helper->getBoolConfig('general/saturday_active'),
-            'saturday_title' => $this->helper->getCheckoutConfig('general/saturday_title'),
             'saturday_fee' => $this->helper->getMethodPriceFormat('general/saturday_fee', false),
         ];
 
@@ -137,8 +134,42 @@ class Checkout
     {
         return [
             'active' => $this->helper->getBoolConfig('pickup/active'),
-            'title' => $this->helper->getCheckoutConfig('pickup/title'),
             'fee' => $this->helper->getMethodPriceFormat('pickup/fee', false),
+        ];
+    }
+
+    /**
+     * Get checkout text
+     *
+     * @return array)
+     */
+    private function getCheckoutText()
+    {
+        return [
+            'delivery_title'            => $this->helper->getCheckoutConfig('delivery/delivery_title'),
+            'standard_delivery_title'   => $this->helper->getCheckoutConfig('delivery/standard_delivery_title'),
+            'signature_title'           => $this->helper->getCheckoutConfig('delivery/signature_title'),
+            'saturday_title'            => $this->helper->getCheckoutConfig('general/saturday_title'),
+            'pickup_title'              => $this->helper->getCheckoutConfig('pickup/title'),
+
+            'all_data_not_found'        => __('Address details are not entered'),
+            'pick_up_from'              => __('Pick up from'),
+            'opening_hours'             => __('Opening hours'),
+            'closed'                    => __('Closed'),
+            'postcode'                  => __('Postcode'),
+            'house_number'              => __('House number'),
+            'city'                      => __('City'),
+            'again'                     => __('Again'),
+            'wrong_house_number_city'   => __('Postcode/city combination unknown'),
+            'quick_delivery'            => __('Deliver as quickly as possible'),
+
+            'sunday'                    => __('Monday'),
+            'monday'                    => __('Tuesday'),
+            'tuesday'                   => __('Wednesday'),
+            'wednesday'                 => __('Thursday'),
+            'thursday'                  => __('Friday'),
+            'friday'                    => __('Saturday'),
+            'saturday'                  => __('Sunday'),
         ];
     }
 
