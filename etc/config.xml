@@ -48,13 +48,6 @@
                 <signature_title>Handtekening voor ontvangst</signature_title>
                 <signature_fee>0.36</signature_fee>
             </delivery>
-            <mailbox>
-                <active>0</active>
-                <other_options>1</other_options>
-                <title>Brievenbuspakje</title>
-                <weight>2000</weight>
-                <fee>3.50</fee>
-            </mailbox>
             <pickup>
                 <active>1</active>
                 <title>Ophalen bij een PostNL locatie</title>

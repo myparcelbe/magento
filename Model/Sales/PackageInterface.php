@@ -36,44 +36,20 @@ interface PackageInterface
     /**
      * @return bool
      */
-    public function isMailboxActive();
-    /**
-     * @param bool $mailbox_active
-     */
-    public function setMailboxActive($mailbox_active);
-    /**
-     * @return bool
-     */
     public function isAllProductsFit();
     /**
      * @param bool $all_products_fit
      */
     public function setAllProductsFit($all_products_fit);
+
     /**
-     * @return bool
-     */
-    public function isShowMailboxWithOtherOptions();
-    /**
-     * @param bool $show_mailbox_with_other_options
-     * @return $this
-     */
-    public function setShowMailboxWithOtherOptions($show_mailbox_with_other_options);
-    /**
-     * @return int
-     */
-    public function getMaxWeight();
-    /**
-     * @param int $max_mailbox_weight
-     */
-    public function setMaxWeight($max_mailbox_weight);
-    /**
-     * package = 1, mailbox = 2, letter = 3
+     * package = 1
      *
      * @return int
      */
     public function getPackageType();
     /**
-     * package = 1, mailbox = 2, letter = 3
+     * package = 1
      *
      * @param int $package_type
      */

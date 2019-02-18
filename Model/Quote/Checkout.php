@@ -54,7 +54,6 @@ class Checkout
         $this->quoteId = $session->getQuoteId();
         $this->products = $cart->getItems();
         $this->package = $package;
-        $this->package->setMailboxSettings();
     }
 
     /**
@@ -70,7 +69,6 @@ class Checkout
         $this->data = [
             'general' => $this->getGeneralData(),
             'delivery' => $this->getDeliveryData(),
-            'mailbox' => $this->getMailboxData(),
             'pickup' => $this->getPickupData(),
             'belgium_pickup' => $this->getBelgiumPickupData(),
         ];
@@ -161,31 +159,6 @@ class Checkout
             'title' => $this->helper->getCheckoutConfig('belgium_pickup/title'),
             'fee' => $this->helper->getMethodPriceFormat('belgium_pickup/fee'),
         ];
-    }
-
-    /**
-     * @return array
-     */
-    private function getMailboxData()
-    {
-        /** @var \Magento\Quote\Model\Quote\Item[] $products */
-        if (count($this->products) > 0){
-            $this->package->setWeightFromQuoteProducts($this->products);
-        }
-
-        /** check if mailbox is active */
-        $mailboxData = [
-            'active' => $this->package->fitInMailbox(),
-            'mailbox_other_options' => $this->package->isShowMailboxWithOtherOptions(),
-            'title' => $this->helper->getCheckoutConfig('mailbox/title'),
-            'fee' => $this->helper->getMethodPriceFormat('mailbox/fee', false),
-        ];
-
-        if ($mailboxData['active'] === false) {
-            $mailboxData['fee'] = 'disabled';
-        }
-
-        return $mailboxData;
     }
 
     /**

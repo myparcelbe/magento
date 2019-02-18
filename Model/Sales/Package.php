@@ -30,8 +30,6 @@ use Psr\Log\LoggerInterface;
 class Package extends Data implements PackageInterface
 {
     const PACKAGE_TYPE_NORMAL = 1;
-    const PACKAGE_TYPE_MAILBOX = 2;
-    const PACKAGE_TYPE_LETTER = 3;
 
     /**
      * @var int
@@ -39,24 +37,9 @@ class Package extends Data implements PackageInterface
     private $weight = 0;
 
     /**
-     * @var int
-     */
-    private $max_mailbox_weight = 0;
-
-    /**
-     * @var bool
-     */
-    private $mailbox_active = false;
-
-    /**
      * @var bool
      */
     private $all_products_fit = true;
-
-    /**
-     * @var bool
-     */
-    private $show_mailbox_with_other_options = true;
 
     /**
      * @var string
@@ -95,22 +78,6 @@ class Package extends Data implements PackageInterface
     /**
      * @return bool
      */
-    public function isMailboxActive()
-    {
-        return $this->mailbox_active;
-    }
-
-    /**
-     * @param bool $mailbox_active
-     */
-    public function setMailboxActive($mailbox_active)
-    {
-        $this->mailbox_active = $mailbox_active;
-    }
-
-    /**
-     * @return bool
-     */
     public function isAllProductsFit()
     {
         return $this->all_products_fit;
@@ -127,42 +94,7 @@ class Package extends Data implements PackageInterface
     }
 
     /**
-     * @return bool
-     */
-    public function isShowMailboxWithOtherOptions()
-    {
-        return $this->show_mailbox_with_other_options;
-    }
-
-    /**
-     * @param bool $show_mailbox_with_other_options
-     * @return $this
-     */
-    public function setShowMailboxWithOtherOptions($show_mailbox_with_other_options)
-    {
-        $this->show_mailbox_with_other_options = $show_mailbox_with_other_options;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getMaxWeight()
-    {
-        return (int)$this->max_mailbox_weight;
-    }
-
-    /**
-     * @param int $max_mailbox_weight
-     */
-    public function setMaxWeight($max_mailbox_weight)
-    {
-        $this->max_mailbox_weight = $max_mailbox_weight;
-    }
-
-    /**
-     * package = 1, mailbox = 2, letter = 3
+     * package = 1, letter = 3
      *
      * @return int
      */
@@ -172,7 +104,7 @@ class Package extends Data implements PackageInterface
     }
 
     /**
-     * package = 1, mailbox = 2, letter = 3
+     * package = 1, letter = 3
      *
      * @param int $package_type
      */

@@ -79,27 +79,6 @@ define(
             }, 1000);
         }
 
-        function checkOnlyShowMailbox() {
-            if (_getCcIsLocal() === false) {
-                return false;
-            }
-
-            if (window.mypa.data.mailbox.active === false) {
-                return false
-            }
-
-            if (window.mypa.data.mailbox.mailbox_other_options === true) {
-                return false;
-            }
-
-            return true;
-        }
-        
-        function showMailboxRadio() {
-            jQuery("td[id^='label_carrier_" + window.mypa.data.general.parent_method + "']").parent().hide();
-            jQuery("td[id^='label_carrier_mailbox']").parent().show();
-        }
-
         function _setAddress() {
             if (customer.isLoggedIn() &&
                 typeof quote !== 'undefined' &&
@@ -174,7 +153,7 @@ define(
         }
 
         function _hideRadios() {
-            jQuery("td[id^='label_method_signature'],td[id^='label_method_mailbox'],td[id^='label_method_pickup']").parent().hide();
+            jQuery("td[id^='label_method_signature'],td[id^='label_method_pickup']").parent().hide();
         }
 
         function _getCcIsLocal() {
@@ -329,10 +308,6 @@ define(
                     break;
                 case "retail":
                     _checkMethod('input[value=' + myparcel_method_alias + '_pickup' + ']');
-                    myparcel.hideDays();
-                    break;
-                case "mailbox":
-                    _checkMethod('input[value=' + myparcel_method_alias + '_mailbox' + ']');
                     myparcel.hideDays();
                     break;
             }

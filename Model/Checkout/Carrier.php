@@ -148,7 +148,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
 	    $methods = [
             'signature' => 'delivery/signature_',
             'pickup' => 'pickup/',
-            'mailbox' => 'mailbox/',
         ];
 
         return $methods;
@@ -161,18 +160,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      */
     public function getAllowedMethods()
     {
-	    if ($this->package->fitInMailbox() && $this->package->isShowMailboxWithOtherOptions() === false) {
-            $methods = ['mailbox' => 'mailbox/'];
-
-	        return $methods;
-        }
-
         $methods = self::getMethods();
-
-        if (!$this->package->fitInMailbox()) {
-            unset($methods['mailbox']);
-        }
-
         return $methods;
     }
 
@@ -183,7 +171,6 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     private function addShippingMethods($result)
     {
         $products = $this->quote->getAllItems($result);
-        $this->package->setMailboxSettings();
         if (count($products) > 0){
             $this->package->setWeightFromQuoteProducts($products);
         }
@@ -251,7 +238,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
 	private function createPrice($alias, $settingPath) {
 		$price = 0;
 
-		$price += $this->myParcelHelper->getMethodPrice($settingPath . 'fee', $alias !== 'mailbox');
+		$price += $this->myParcelHelper->getMethodPrice($settingPath . 'fee', $alias);
 
 		return $price;
 	}

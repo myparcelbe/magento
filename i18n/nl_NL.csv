@@ -53,14 +53,12 @@ Track status,Track status
 Track action,Track actie
 MyParcel options,MyParcel opties
 Package,Pakket
-Mailbox,Brievenbuspakje
 Letter,Ongefrankeerd
 Signature on receipt,Handtekening voor ontvangst
 Return if no answer,Retour bij niet aanwezig
 Large package,Groot pakket
 Insured up to:,Verzekeren tot:
 Download package label,Download pakket label
-Download mailbox label,Download brievenbuspakje label
 Download letter label,Download ongefrankeerd label
 Create new concept,Creëer nieuw concept
 Create shipment,Zending aanmaken
@@ -129,16 +127,7 @@ Signature on receipt title, Handtekening voor ontvangst titel
 Signature on receipt fee, Handtekening voor ontvangst prijs
 This will be added to the regular shipping price, Dit zal bij de normale verzendkosten worden opgeteld
 If both have been selected this price will be added to the regular shipping price. Leave empty for not using it.,Als beide geselecteerd zijn zal deze prijs bij de normale verzendkosten worden opgeteld. Laat leeg om dit niet te gebruiken.
-Mailbox settings,Brievenbuspakje instellingen
-Automate mailbox,Brievenbuspakje automatiseren
-Mailbox with other options,Brievenbuspakje tonen met andere opties
-Mailbox title,Brievenbuspakje titel
-Select automatically mailbox packages based on weight or volume,Selecteer automatisch brievenbuspakje op basis van gewicht of volume
-Leave blank to automate mailbox packets only in the backend,Laat leeg om brievenbuspakjes alleen in de backend te automatiseren
-Mailbox weight,Brievenbuspakje gewicht
 "Besides assigning weights to all products, you can also specify a volume of each product.","Om deze functie optimaal te gebruiken, stel je eerst het gewicht of volume in van jouw producten."
-Mailbox fee,Brievenbuspakje prijs
-Enter a basic price for a mailbox. The regular price will not affect this price.,Vul een basis prijs in voor een brievenbuspakje. De huidige prijs heeft geen invloed op deze prijs.
 This will be added to the regular shipping price,Dit zal bij de normale verzendkosten worden opgeteld
 Pickup at PostNL location,Ophalen bij een PostNL locatie
 Pickup active,Ophalen actief

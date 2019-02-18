@@ -78,18 +78,6 @@ class TrackActions extends Column
                         'label' => __('Download package label'),
                         'hidden' => false,
                     ];
-                    $item[$this->getData('name')]['action-download_mailbox_label'] = [
-                        'href' => $this->urlBuilder->getUrl(
-                            'myparcelbe/order/CreateAndPrintMyParcelTrack',
-                            [
-                                'selected_ids' => $item['entity_id'],
-                                'mypa_package_type' => 2,
-                                'mypa_request_type' => 'download'
-                            ]
-                        ),
-                        'label' => __('Download mailbox label'),
-                        'hidden' => false,
-                    ];
                     $item[$this->getData('name')]['action-download_letter_label'] = [
                         'href' => $this->urlBuilder->getUrl(
                             'myparcelbe/order/CreateAndPrintMyParcelTrack',
