@@ -160,8 +160,6 @@ class MyParcelTrackTrace extends MyParcelConsignmentRepository
             ->setPickupAddressFromCheckout($checkoutData)
             ->setPackageType($packageType)
             ->setSignature($this->getValueOfOption($options, 'signature'))
-            ->setReturn($this->getValueOfOption($options, 'return'))
-            ->setLargeFormat($this->getValueOfOption($options, 'large_format'))
             ->setInsurance($options['insurance'] !== null ? $options['insurance'] : self::$defaultOptions->getDefaultInsurance())
             ->convertDataForCdCountry($magentoTrack);
 

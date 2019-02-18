@@ -149,7 +149,7 @@
     white-space: nowrap;
     vertical-align:top;
 }
-.mypa-postnl-logo{
+.mypa-bpost-logo{
     width: 100px;
     float: right;
     margin: 45px 8px 0 0;
@@ -169,7 +169,7 @@
     display: none;
 }
 
-#mypa-list-postnl-pickup option{
+#mypa-list-bpost-pickup option{
     padding: 5px 0px 5px 0px;
 }
 .mypa-bold-price{
@@ -211,7 +211,7 @@
     .mypa-delivery-option-table tr {
         height: 30px !important;
     }
-    .mypa-postnl-logo{
+    .mypa-bpost-logo{
         float: none;
         margin: 0 100% 0 0;
 

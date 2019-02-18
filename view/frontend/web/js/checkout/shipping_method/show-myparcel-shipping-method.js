@@ -251,10 +251,6 @@ define(
                     "cutoffTime": window.mypa.data.general.cutoff_time,
                     "deliverydaysWindow": window.mypa.data.general.deliverydays_window,
                     "dropoffDelay":window.mypa.data.general.dropoff_delay,
-
-                    "AllowBelgiumPickup": window.mypa.data.belgium_pickup.active,
-                    "BelgiumDeliveryTitle": window.mypa.data.belgium_pickup.title,
-                    "BelgiumDeliveryStandardTitle": window.mypa.data.belgium_pickup.fee
                 }
 
             };

@@ -51,7 +51,7 @@ class DefaultOptions
     /**
      * Get default of the option
      *
-     * @param $option 'signature'|'return'|'large_format'
+     * @param $option 'signature'
      *
      * @return bool
      */
@@ -89,14 +89,6 @@ class DefaultOptions
     {
         if ($this->getDefault('insurance_500')) {
             return 500;
-        }
-
-        if ($this->getDefault('insurance_250')) {
-            return 250;
-        }
-
-        if ($this->getDefault('insurance_100')) {
-            return 100;
         }
 
         return 0;
