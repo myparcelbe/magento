@@ -741,7 +741,7 @@ MyParcel = {
             city: city,
             carrier: this.data.config.carrier,
             dropoff_days: this.data.config.dropOffDays,
-            saturday_delivery: allowSaturdayDelivery,
+            // saturday_delivery: allowSaturdayDelivery,
             deliverydays_window: this.deliveryDaysWindow,
             cutoff_time: this.data.config.cutoffTime,
             dropoff_delay: this.data.config.dropoffDelay,
