@@ -93,11 +93,7 @@ class Checkout
             'cutoff_time' => $this->helper->getTimeConfig('general/cutoff_time'),
             'deliverydays_window' => $this->helper->getIntergerConfig('general/deliverydays_window'),
             'dropoff_days' => $this->helper->getArrayConfig('general/dropoff_days'),
-            'monday_delivery_active' => $this->helper->getBoolConfig('general/monday_delivery_active'),
-            'saturday_cutoff_time' => $this->helper->getTimeConfig('general/saturday_cutoff_time'),
             'dropoff_delay' => $this->helper->getIntergerConfig('general/dropoff_delay'),
-            'color_base' => $this->helper->getCheckoutConfig('general/color_base'),
-            'color_select' => $this->helper->getCheckoutConfig('general/color_select'),
             'parent_carrier' => $this->helper->getParentCarrierNameFromQuote($this->quoteId),
             'parent_method' => $this->helper->getParentMethodNameFromQuote($this->quoteId),
         ];
@@ -116,10 +112,17 @@ class Checkout
             'signature_active' => $this->helper->getBoolConfig('delivery/signature_active'),
             'signature_title' => $this->helper->getCheckoutConfig('delivery/signature_title'),
             'signature_fee' => $this->helper->getMethodPriceFormat('delivery/signature_fee', false, '+ '),
+            'saturday_active' => $this->helper->getBoolConfig('general/saturday_active'),
+            'saturday_title' => $this->helper->getCheckoutConfig('general/saturday_title'),
+            'saturday_fee' => $this->helper->getMethodPriceFormat('general/saturday_fee', false),
         ];
 
         if ($deliveryData['signature_active'] === false) {
             $deliveryData['signature_fee'] = 'disabled';
+        }
+
+        if ($deliveryData['saturday_active'] === false) {
+            $deliveryData['saturday_fee'] = 'disabled';
         }
 
         return $deliveryData;

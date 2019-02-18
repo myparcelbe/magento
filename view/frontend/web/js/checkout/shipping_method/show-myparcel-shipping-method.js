@@ -242,7 +242,7 @@ define(
                     "deliveryStandardTitle": window.mypa.data.delivery.standard_delivery_title,
                     "signatureTitle": window.mypa.data.delivery.signature_title,
 
-                    "allowMondayDelivery": window.mypa.data.general.monday_delivery_active,
+                    "allowSaturdayDelivery": window.data.delivery.saturday_active,
                     "allowSignature": window.mypa.data.delivery.signature_active,
                     "allowPickupPoints": window.mypa.data.pickup.active,
 

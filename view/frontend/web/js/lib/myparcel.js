@@ -729,8 +729,8 @@ MyParcel = {
             this.deliveryDaysWindow = 1;
         }
 
-        if (this.data.config.allowMondayDelivery === true) {
-            mondayDeliveryActive = 1;
+        if (this.data.config.allowSaturdayDelivery === true) {
+            allowSaturdayDelivery = 1;
         }
 
         var url = this.data.config.apiBaseUrl + "delivery_options";
@@ -741,7 +741,7 @@ MyParcel = {
             city: city,
             carrier: this.data.config.carrier,
             dropoff_days: this.data.config.dropOffDays,
-            monday_delivery: mondayDeliveryActive,
+            saturday_delivery: allowSaturdayDelivery,
             deliverydays_window: this.deliveryDaysWindow,
             cutoff_time: this.data.config.cutoffTime,
             dropoff_delay: this.data.config.dropoffDelay,
