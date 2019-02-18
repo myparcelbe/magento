@@ -94,7 +94,7 @@ class Package extends Data implements PackageInterface
     }
 
     /**
-     * package = 1, letter = 3
+     * package = 1
      *
      * @return int
      */
@@ -104,7 +104,7 @@ class Package extends Data implements PackageInterface
     }
 
     /**
-     * package = 1, letter = 3
+     * package = 1
      *
      * @param int $package_type
      */
