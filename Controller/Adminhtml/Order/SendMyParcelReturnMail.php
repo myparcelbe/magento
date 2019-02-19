@@ -72,7 +72,7 @@ class SendMyParcelReturnMail extends \Magento\Framework\App\Action\Action
         error_reporting(E_ALL);
         ini_set('display_errors', 1);
         if ($this->orderCollection->apiKeyIsCorrect() !== true) {
-            $message = 'You not have entered the correct API key. To get your personal API credentials you should contact MyParcel.';
+            $message = 'You not have entered the correct API key. Go to the general settings in the back office of MyParcel BE to generate the API Key.';
             $this->messageManager->addErrorMessage(__($message));
             $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($message);
 

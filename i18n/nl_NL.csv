@@ -26,7 +26,7 @@ status_99,Inactief - Onbekende status
 Version and support,Versie en support
 General settings,Algemene instellingen
 API settings,API instellingen
-To get your personal API credentials you should contact MyParcel.,Neem contact op met MyParcel om de API gegevens te ontvangen.
+Go to the general settings in the back office of MyParcel BE to generate the API Key.,Ga naar de algemene instellingen in de backoffice van MyParcel BE om de API Key te genereren.
 The API Key,Stel hier de API key in
 Default shipment settings,Standaard verzendinstellingen
 Print MyParcel labels directly,Print MyParcel labels direct
@@ -70,7 +70,7 @@ MyParcel version,MyParcel versie
 "To read the instructions for the Magento extension, click %1 here %2.","Klik %1 hier %2 om de handleiding van de Magento extensie te bekijken."
 When using the extension please note:,Aandachtspunten bij het gebruik van deze extensie:
 To be able to configure the extension you need to possess and use an active account.,U dient een actief account te hebben om de extensie te kunnen configureren.
-During the transition phase the old Magento MyParcel extension can remain active. However, you do need to turn off PakjeGemak in the old MyParcel extension.,Indien u de oude MyParcel extensie gebruikt kan deze actief blijven in de overgangsfase. Wel dient u PakjeGemak in de oude MyParcel extensie uit te schakelen.
+During the transition phase the old Magento MyParcel BE extension can remain active. However, you do need to turn off PakjeGemak in the old MyParcel BE extension.,Indien u de oude MyParcel BE extensie gebruikt kan deze actief blijven in de overgangsfase. Wel dient u PakjeGemak in de oude MyParcel BE extensie uit te schakelen.
 Magento &amp; 3rd party version compatibility,Magento & derde partijen ondersteuning
 We cannot guarantee perfect functionality of the extension when you intend to use the extension on a version of Magento that is not supported or when you intend to use the extension together with a 3rd part extension that is not supported. If you have any questions please contact us.,Indien u de extensie wilt gebruiken op een niet-ondersteunde versie of editie van Magento, of als u de extensie wilt gebruiken samen met een 3rd party extensie die niet ondersteund wordt, kunnen wij niet garanderen dat de extensie feilloos zal functioneren. Voor vragen kunt u contact opnemen met ons.
 Questions and information about your account,Account vragen en informatie
@@ -86,7 +86,7 @@ Do you want to know what they are doing in the near future? Below you can find t
 API key is not known. Go to the settings in the backoffice to create an API key. Fill the API key in the settings.,API key is niet bekend. Ga naar de instellingen in de backoffice om een API key te maken. Vul de API key in bij de instellingen.
 Basic settings,Basis instellingen
 Delivery settings,Bezorging
-Numbers of days,Aantal dagen vooruit
+Show delivery date,Leveringsdatum weergeven
 day,dag
 days,dagen
 Hide days,Dagen verbergen
@@ -117,9 +117,11 @@ Pickup titel,Ophalen titel
 Pickup fee,Ophalen prijs
 Drop off day,Verzenddagen
 Select the days that you send the orders.,Selecteer de dagen waarop jij de orders verzend.
-Set the number of days to let the customer make an order on a different day than to deliver the first one.,Stel hier het aantal dagen in om de klant de keuze te laten maken een bestelling op een andere dag dan de eerst volgende te laten bezorgen.
-
+Show a delivery day in the checkout.,Laat een bezorgdag zien in de checkout.
+You not have entered the correct API key. Go to the general settings in the back office of MyParcel BE to generate the API Key.,U hebt niet de juiste API-sleutel ingevoerd. Ga naar de algemene instellingen in de backoffice van MyParcel BE om de API Key te genereren.
 Address details are not entered,Adresgegevens zijn niet ingevuld
+The times will be visible when nothing is filled in,De tijden zullen zichtbaar zijn wanneer niets is ingevuld
+"Enter an amount that is either positive or negative. For example, do you want to give a discount for using this function or do you want to charge extra for this delivery option.","Voer een bedrag in dat positief of negatief is. Wilt u bijvoorbeeld een korting geven voor het gebruik van deze functie of wilt u extra in rekening brengen voor deze leveringsoptie."
 Pick up from,Ophalen vanaf
 Opening hours,Openingstijden
 Closed,Gesloten
