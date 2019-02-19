@@ -248,10 +248,10 @@ define(
                     "dropoffDelay":window.mypa.data.general.dropoff_delay
                 },
                 textToTranslate: {
-                    "deliveryTitel": window.mypa.data.text.delivery_title,
-                    "deliveryStandardTitel": window.mypa.data.text.standard_delivery_title,
-                    "signatureTitel": window.mypa.data.text.signature_title,
-                    "pickupTitel": window.mypa.data.text.pickup_title,
+                    "deliveryTitle": window.mypa.data.text.delivery_title,
+                    "deliveryStandardTitle": window.mypa.data.text.standard_delivery_title,
+                    "signatureTitle": window.mypa.data.text.signature_title,
+                    "pickupTitle": window.mypa.data.text.pickup_title,
 
                     "allDataNotFound": window.mypa.data.text['all_data_not_found'],
                     "pickUpFrom": window.mypa.data.text['pick_up_from'],

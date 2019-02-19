@@ -24,17 +24,20 @@ MyParcel = {
             isMobile = false;
         }
         /* Titles of the options*/
-        if (MyParcel.data.config.headerDeliveryTitle) {
-            jQuery('#mypa-header-delivery-title').html(MyParcel.data.config.headerDeliveryTitle);
+        if (MyParcel.data.textToTranslate.deliveryTitle) {
+            jQuery('#mypa-delivery-title').html(MyParcel.data.textToTranslate.deliveryTitle);
         }
-        if (MyParcel.data.config.deliveryTitle) {
-            jQuery('#mypa-delivery-title').html(MyParcel.data.config.deliveryTitle);
+        if (MyParcel.data.textToTranslate.deliveryStandardTitle) {
+            jQuery('#mypa-standard-title').html(MyParcel.data.textToTranslate.deliveryStandardTitle);
         }
-        if (MyParcel.data.config.signatureTitle) {
-            jQuery('#mypa-signature-title').html(MyParcel.data.config.signatureTitle);
+        if (MyParcel.data.textToTranslate.signatureTitle) {
+            jQuery('#mypa-signature-title').html(MyParcel.data.textToTranslate.signatureTitle);
         }
-        if (MyParcel.data.config.pickupTitle) {
-            jQuery('#mypa-pickup-title').html(MyParcel.data.config.pickupTitle);
+        if (MyParcel.data.textToTranslate.pickupTitle) {
+            jQuery('#mypa-pickup-title').html(MyParcel.data.textToTranslate.pickupTitle);
+        }
+        if (MyParcel.data.textToTranslate.pickupTitle){
+            jQuery('.mypa-pickup-delivery-titel').html(MyParcel.data.textToTranslate.pickUpFrom +': 15:00');
         }
 
         /* Prices */
@@ -85,25 +88,19 @@ MyParcel = {
 
         jQuery.each(selectDateKey, function (key, value) {
 
-            if (value['price_comment'] == 'standard') {
-                var standardTitle = MyParcel.data.config.BEdeliveryTitle;
-                if(MyParcel.data.address.cc === 'BE'){
-                    standardTitle = MyParcel.data.config.deliveryStandardTitle;
-                }
-                MyParcel.getDeliveryTime(standardTitle, 'standard', value['start'], value['end']);
-
+            if(value['price_comment'] == 'standard'){
+                var standardTitle = MyParcel.data.textToTranslate.deliveryStandardTitle;
+                MyParcel.getDeliveryTime(standardTitle,'standard', value['start'], value['end']);
             }
 
         });
     },
-    getDeliveryTime: function (configDeliveryTitle, deliveryMoment, startTime, endTime) {
-        startTime = startTime.replace(/(.*)\D\d+/, '$1');
-        endTime = endTime.replace(/(.*)\D\d+/, '$1');
 
-        jQuery('#mypa-' + deliveryMoment + '-title').html(configDeliveryTitle);
+    getDeliveryTime: function (deliveryTitel, deliveryMoment, startTime, endTime) {
 
-        if (!configDeliveryTitle) {
-            jQuery('#mypa-' + deliveryMoment + '-title').html(startTime + ' - ' + endTime);
+        jQuery('#mypa-' + deliveryMoment + '-titel').html(deliveryTitel);
+        if (!deliveryTitel){
+            jQuery('#mypa-' + deliveryMoment + '-titel').html(startTime + ' - ' + endTime);
         }
 
     },
@@ -574,15 +571,15 @@ MyParcel = {
         if (currentLocation.phone_number) {
             html += '<span class="mypa-pickup-location-details-phone">' + currentLocation.phone_number + '</span>';
         }
-        html += '<span class="mypa-pickup-location-details-time">Ophalen vanaf:&nbsp;' + startTime + '</span>';
-        html += '<h3 class="mypa-openings-title">Openingstijden</h3>';
+        html += '<span class="mypa-pickup-location-details-time">'+ MyParcel.data.textToTranslate.pickUpFrom +' :&nbsp;' + startTime + '</span>';
+        html += '<h3 class="mypa-openings-title">'+ MyParcel.data.textToTranslate.openingHours +'</h3>';
 
         jQuery.each(
             currentLocation.opening_hours, function (weekday, value) {
-                html += '<span class="mypa-pickup-location-details-day">' + MyParcel.data.translateENtoNL[weekday] + "</span> ";
+                html += '<span class="mypa-pickup-location-details-day">' + MyParcel.data.textToTranslate[weekday] + "</span> ";
 
                 if (value[0] === undefined) {
-                    html += '<span class="mypa-time">Gesloten</span>';
+                    html += '<span class="mypa-time">'+ MyParcel.data.textToTranslate.closed +'</span>';
                 }
 
                 jQuery.each(value, function (key2, times) {
@@ -644,27 +641,27 @@ MyParcel = {
         MyParcel.hideDelivery();
         jQuery('#mypa-select-date, #method-myparcel-normal').hide();
         jQuery('.mypa-is-pickup-element').hide();
-        jQuery('#mypa-select-delivery-title').html('Zo snel mogelijk bezorgen');
+        jQuery('#mypa-select-delivery-title').html(MyParcel.data.textToTranslate.quickDelivery);
     },
 
 
     /*
-     * showRetru
+     * showRetry
      *
-     * If a customer enters an unrecognised postal code housenumber combination show a
+     * If a customer enters an unrecognised housenumber and city combination show a
      * pop-up so they can try again.
      */
 
     showRetry: function () {
         MyParcel.showMessage(
-            '<h3>Huisnummer/postcode combinatie onbekend</h3>' +
+            '<h3>'+ MyParcel.data.textToTranslate.wrongHouseNumberCity +'</h3>' +
             '<div class="mypa-full-width mypa-error">' +
-            '<label for="mypa-error-postcode">Postcode</label>' +
-            '<input type="text" name="mypa-error-postcode" id="mypa-error-postcode" value="' + MyParcel.data.address.postalCode + '">' +
+            '<label for="mypa-error-number">'+ MyParcel.data.textToTranslate.houseNumber +'</label>' +
+            '<input type="text" name="mypa-error-postcode" id="mypa-error-postcode" value="' + MyParcel.data.address.number + '">' +
             '</div><div class="mypa-full-width mypa-error">' +
-            '<label for="mypa-error-number">Huisnummer</label>' +
-            '<input type="text" name="mypa-error-number" id="mypa-error-number" value="' + MyParcel.data.address.number + '">' +
-            '<br><button id="mypa-error-try-again">Opnieuw</button>' +
+            '<label for="mypa-error-city">'+ MyParcel.data.textToTranslate.city +'</label>' +
+            '<input type="text" name="mypa-error-number" id="mypa-error-number" value="' + MyParcel.data.address.city + '">' +
+            '<br><button id="mypa-error-try-again">'+ MyParcel.data.textToTranslate.again +'</button>' +
             '</div>'
         );
 
@@ -701,26 +698,18 @@ MyParcel = {
         var postalCode = this.data.address.postalCode;
         var number = this.data.address.number;
         var city = this.data.address.city;
-        var mondayDeliveryActive = 0;
+        var saturdayDeliveryActive = 0;
 
-        if (postalCode == '' || number == '') {
+        if (number == '' || city == '' ) {
             MyParcel.showMessage(
-                '<h3>Adresgegevens zijn niet ingevuld</h3>'
+                '<h3>'+ MyParcel.data.textToTranslate.allDataNotFound +'</h3>'
             );
             MyParcel.isCallingDeliveryOptions = false;
             return;
         }
-        if (cc === "BE") {
-            var numberExtra = this.data.address.numberExtra;
-            var street = this.data.address.street;
-        }
 
-        if (numberExtra) {
-            number = number + numberExtra;
-        }
-
-        /* Don't call API unless both Postcode and House Number are set */
-        if (!number || !postalCode) {
+        /* Don't call API unless both House Number and city are set */
+        if (!number || !city) {
             MyParcel.showFallBackDelivery();
             MyParcel.isCallingDeliveryOptions = false;
             return;
@@ -748,7 +737,7 @@ MyParcel = {
             // saturday_delivery: allowSaturdayDelivery,
             deliverydays_window: this.deliveryDaysWindow,
             cutoff_time: this.data.config.cutoffTime,
-            dropoff_delay: this.data.config.dropoffDelay,
+            dropoff_delay: this.data.config.dropoffDelay
         };
 
         jQuery.get(url, params)
