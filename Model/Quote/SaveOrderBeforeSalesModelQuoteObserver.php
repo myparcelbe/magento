@@ -101,11 +101,11 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
         $myParcelMethods = array_keys(Carrier::getMethods());
         $shippingMethod  = $quote->getShippingAddress()->getShippingMethod();
       
-        if ($this->array_like($shippingMethod, $myParcelMethods)) {
+        if ($this->arrayLike($shippingMethod, $myParcelMethods)) {
             return true;
         }
 
-        if ($this->array_like($shippingMethod, $this->parentMethods)) {
+        if ($this->arrayLike($shippingMethod, $this->parentMethods)) {
             return true;
         }
 
@@ -118,7 +118,7 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
      *
      * @return bool
      */
-    private function array_like($input, $data) {
+    private function arrayLike($input, $data) {
         $result = array_filter($data, function ($item) use ($input) {
             if (stripos($input, $item) !== false) {
                 return true;
