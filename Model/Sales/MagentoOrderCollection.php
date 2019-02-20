@@ -261,6 +261,9 @@ class MagentoOrderCollection extends MagentoCollection
         return $this;
     }
 
+    /**
+     * return void
+     */
     private function save() {
         foreach ($this->getOrders() as $order) {
             $order->save();
