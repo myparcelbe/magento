@@ -69,12 +69,11 @@ class DefaultOptions
         $total = self::$order->getGrandTotal();
         $settings = self::$helper->getStandardConfig('options');
 
-        if ($settings[$option . '_active'] == '1') {
-            if ($total > (int)$settings[$option . '_from_price']) {
-                return true;
-            } else {
-                return false;
-            }
+        if (isset($settings[$option . '_active']) &&
+            $settings[$option . '_active'] == '1' &&
+            $total > (int)$settings[$option . '_from_price']
+        ) {
+            return true;
         }
 
         return false;
@@ -97,7 +96,7 @@ class DefaultOptions
     /**
      * Get package type
      *
-     * @return int 1||3
+     * @return int 1
      */
     public function getPackageType()
     {
