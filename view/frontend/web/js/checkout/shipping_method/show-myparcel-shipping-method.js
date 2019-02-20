@@ -157,7 +157,7 @@ define(
         }
 
         function _getCcIsLocal() {
-            if (window.mypa.address.cc !== 'BE' ) {
+            if (window.mypa.address.cc !== 'BE') {
                 return false;
             }
 
