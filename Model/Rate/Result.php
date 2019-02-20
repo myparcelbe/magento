@@ -223,11 +223,7 @@ class Result extends \Magento\Shipping\Model\Rate\Result
      * @return float
      */
     private function createPrice($alias, $settingPath) {
-        $price = 0;
-
-        $price += $this->myParcelHelper->getMethodPrice($settingPath . 'fee', $alias);
-
-        return $price;
+        return $this->myParcelHelper->getMethodPrice($settingPath . 'fee', $alias);
     }
 
 	/**
