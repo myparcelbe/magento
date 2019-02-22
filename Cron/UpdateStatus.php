@@ -10,7 +10,7 @@
  * If you want to add improvements, please create a fork in our GitHub:
  * https://github.com/myparcelbe
  *
- * @author      Reindert Vetter <reindert@myparcel.nl>
+ * @author      Reindert Vetter <info@sendmyparcel.be>
  * @copyright   2010-2017 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
@@ -97,7 +97,7 @@ class UpdateStatus
         $trackCollection = $this->objectManager->get(self::PATH_MODEL_ORDER_TRACK);
         $trackCollection
             ->addFieldToSelect('order_id')
-            ->addAttributeToFilter('myparcel_status', [0, 1, 2, 3, 4, 5, 6])
+            ->addAttributeToFilter('myparcel_status', [1, 2, 3, 4, 5, 6, 8])
             ->addAttributeToFilter('myparcel_consignment_id', ['notnull' => true])
             ->addAttributeToFilter(ShipmentTrackInterface::CARRIER_CODE, MyParcelTrackTrace::MYPARCEL_CARRIER_CODE)
             ->setPageSize(300)

@@ -3,7 +3,7 @@
  * If you want to add improvements, please create a fork in our GitHub:
  * https://github.com/myparcelbe
  *
- * @author      Reindert Vetter <reindert@myparcel.nl>
+ * @author      Reindert Vetter <info@sendmyparcel.be>
  * @copyright   2010-2017 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
@@ -80,7 +80,6 @@ class MagentoCollection implements MagentoCollectionInterface
         'package_type' => 'default',
         'positions' => null,
         'signature' => null,
-        'return' => null,
         'insurance' => null,
     ];
 
@@ -317,7 +316,7 @@ class MagentoCollection implements MagentoCollectionInterface
         $conn = $connection->getConnection();
         $select = $conn->select()
             ->from(
-                ['main_table' => $conn->getTableName('sales_shipment_track')]
+                ['main_table' => $connection->getTableName('sales_shipment_track')]
             )
             ->where('main_table.order_id=?', $orderId);
         $tracks = $conn->fetchAll($select);

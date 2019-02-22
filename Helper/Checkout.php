@@ -7,7 +7,7 @@
  * If you want to add improvements, please create a fork in our GitHub:
  * https://github.com/myparcelbe
  *
- * @author      Reindert Vetter <reindert@myparcel.nl>
+ * @author      Reindert Vetter <info@sendmyparcel.be>
  * @copyright   2010-2016 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
@@ -177,14 +177,11 @@ class Checkout extends Data
     public function getMethodPrice($key, $addBasePrice = true)
     {
         $value = $this->getCheckoutConfig($key);
-
         if ($addBasePrice) {
-            if ($this->getBasePrice() + $value < 0) {
-                return (float)0;
+            if ($value > 0) {
+                // Calculate value
+                $value = $this->getBasePrice() + $value;
             }
-
-            // Calculate value
-            $value = $this->getBasePrice() + $value;
         }
 
         return (float)$value;
@@ -216,6 +213,7 @@ class Checkout extends Data
      * @return string
      */
     public function getMoneyFormat($value) {
+
         $value = number_format($value, 2, ',', '.');
 
         return $value;
