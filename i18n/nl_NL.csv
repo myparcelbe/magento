@@ -38,7 +38,7 @@ Default shipping options,Standaard verzendinstellingen
 Automate 'Signature on receipt',Automatiseer 'Handtekening voor ontvangst'
 'Signature on receipt' operates above a certain order total amount,'Handtekening voor ontvangst' wordt geactiveerd als het totaal bedrag meer is dan bovenstaande bedrag
 Automate 'Insurance € 500',Automatiseer 'Verzekerd tot € 500'
-"'Insurance € 500' operates above a certain order total amount. For NL shipping only, shipments inside the EU insured default is € 500.","'Verzekerd tot € 500' wordt geactiveerd als het totaal bedrag meer is dan bovenstaande bedrag. Alleen voor Nederlandse verzendingen, zendingen naar landen binnen de EU zijn standaard verzekerd tot € 500."
+"'Insurance € 500' operates above a certain order total amount.","'Verzekerd tot € 500' wordt geactiveerd als het totaal bedrag meer is dan bovenstaande bedrag."
 From price,Vanaf prijs
 Track number,Track nummer
 Track status,Track status
