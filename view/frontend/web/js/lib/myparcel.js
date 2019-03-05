@@ -656,12 +656,12 @@ MyParcel = {
         MyParcel.showMessage(
             '<h3>'+ MyParcel.data.textToTranslate.wrongHouseNumberCity +'</h3>' +
             '<div class="mypa-full-width mypa-error">' +
-            '<label for="mypa-error-number">'+ MyParcel.data.textToTranslate.houseNumber +'</label>' +
-            '<input type="text" name="mypa-error-postcode" id="mypa-error-postcode" value="' + MyParcel.data.address.number + '">' +
+            '<label for="mypa-error-number">'+ MyParcel.data.textToTranslate.postcode +'</label>' +
+            '<input type="text" name="mypa-error-postcode" id="mypa-error-postcode" value="' + MyParcel.data.address.postalCode + '">' +
             '</div><div class="mypa-full-width mypa-error">' +
             '<label for="mypa-error-city">'+ MyParcel.data.textToTranslate.city +'</label>' +
             '<input type="text" name="mypa-error-number" id="mypa-error-number" value="' + MyParcel.data.address.city + '">' +
-            '<br><button id="mypa-error-try-again">'+ MyParcel.data.textToTranslate.again +'</button>' +
+            '<br><div id="mypa-error-try-again" class="button btn action primary"><span>'+ MyParcel.data.textToTranslate.again +'</span></div>' +
             '</div>'
         );
 
@@ -755,7 +755,7 @@ MyParcel = {
         MyParcel.result.deliveryOptions = response;
         if (response.errors) {
             jQuery.each(response.errors, function (key, value) {
-                /* Postalcode housenumber combination not found or not recognised. */
+                /* Postalcode city combination not found or not recognised. */
                 if (value.code != '') {
                     MyParcel.showRetry();
                 }
