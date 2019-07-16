@@ -62,7 +62,7 @@ class TrackTraceHolder
     public $mageTrack;
 
     /**
-     * @var \MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment|null
+     * @var \MyParcelBE\Sdk\src\Model\Consignment\AbstractConsignment|null
      */
     public $consignment;
 
