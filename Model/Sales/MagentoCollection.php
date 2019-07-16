@@ -260,8 +260,8 @@ class MagentoCollection implements MagentoCollectionInterface
         $track
             ->setOrderId($shipment->getOrderId())
             ->setShipment($shipment)
-            ->setCarrierCode(MyParcelTrackTrace::MYPARCEL_CARRIER_CODE)
-            ->setTitle(MyParcelTrackTrace::MYPARCEL_TRACK_TITLE)
+            ->setCarrierCode(TrackTraceHolder::MYPARCEL_CARRIER_CODE)
+            ->setTitle(TrackTraceHolder::MYPARCEL_TRACK_TITLE)
             ->setQty($shipment->getTotalQty())
             ->setTrackNumber('Concept')
             ->save();
@@ -291,11 +291,11 @@ class MagentoCollection implements MagentoCollectionInterface
      *
      * @param Order\Shipment\Track $magentoTrack
      *
-     * @return MyParcelTrackTrace $myParcelTrack
+     * @return TrackTraceHolder $myParcelTrack
      */
     protected function getMyParcelTrack($magentoTrack)
     {
-        $myParcelTrack = new MyParcelTrackTrace(
+        $myParcelTrack = new TrackTraceHolder(
             $this->objectManager,
             $this->helper,
             $magentoTrack->getShipment()->getOrder()

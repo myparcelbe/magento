@@ -159,7 +159,7 @@ class MagentoOrderCollection extends MagentoCollection
             }
             foreach ($order->getShipmentsCollection() as $shipment) {
                 foreach ($shipment->getTracksCollection() as $magentoTrack) {
-                    if ($magentoTrack->getCarrierCode() == MyParcelTrackTrace::MYPARCEL_CARRIER_CODE) {
+                    if ($magentoTrack->getCarrierCode() == TrackTraceHolder::MYPARCEL_CARRIER_CODE) {
                         $myParcelTrack = $this->getMyParcelTrack($magentoTrack);
                         $this->myParcelCollection->addConsignment($myParcelTrack);
                     }

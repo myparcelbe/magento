@@ -19,7 +19,7 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Sales\Model\Order\Shipment;
 use MyParcelBE\Magento\Model\Sales\MagentoOrderCollection;
-use MyParcelBE\Magento\Model\Sales\MyParcelTrackTrace;
+use MyParcelBE\Magento\Model\Sales\TrackTraceHolder;
 
 class NewShipment implements ObserverInterface
 {
@@ -88,7 +88,7 @@ class NewShipment implements ObserverInterface
         $options = $this->orderCollection->setOptionsFromParameters()->getOptions();
 
         // Set MyParcel options
-        $myParcelTrack = (new MyParcelTrackTrace($this->objectManager, $this->helper, $shipment->getOrder()))
+        $myParcelTrack = (new TrackTraceHolder($this->objectManager, $this->helper, $shipment->getOrder()))
             ->createTrackTraceFromShipment($shipment);
         $myParcelTrack->convertDataFromMagentoToApi($myParcelTrack->mageTrack, $options);
 

@@ -23,7 +23,7 @@ use Magento\Framework\App\ObjectManager;
 use Magento\Sales\Api\Data\ShipmentTrackInterface;
 use Magento\Sales\Model\Order;
 use MyParcelBE\Magento\Model\Sales\MagentoOrderCollection;
-use MyParcelBE\Magento\Model\Sales\MyParcelTrackTrace;
+use MyParcelBE\Magento\Model\Sales\TrackTraceHolder;
 
 class UpdateStatus
 {
@@ -99,7 +99,7 @@ class UpdateStatus
             ->addFieldToSelect('order_id')
             ->addAttributeToFilter('myparcel_status', [1, 2, 3, 4, 5, 6, 8])
             ->addAttributeToFilter('myparcel_consignment_id', ['notnull' => true])
-            ->addAttributeToFilter(ShipmentTrackInterface::CARRIER_CODE, MyParcelTrackTrace::MYPARCEL_CARRIER_CODE)
+            ->addAttributeToFilter(ShipmentTrackInterface::CARRIER_CODE, TrackTraceHolder::MYPARCEL_CARRIER_CODE)
             ->setPageSize(300)
             ->setOrder('order_id', 'DESC');
 
