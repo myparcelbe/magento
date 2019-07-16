@@ -9,7 +9,7 @@
  * If you want to add improvements, please create a fork in our GitHub:
  * https://github.com/myparcelbe
  *
- * @author      Reindert Vetter <reindert@myparcel.nl>
+ * @author      Reindert Vetter <info@sendmyparcel.be>
  * @copyright   2010-2017 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
@@ -62,7 +62,7 @@ class View extends \Magento\Sales\Block\Adminhtml\Order\AbstractOrder
 
                 $dateTime = date('d-m-Y H:i', strtotime($data['date'] . ' ' . $data['start_time']));
 
-                $html .= __('bpost location:') . ' ' . $dateTime;
+                $html .= __('Bpost location:') . ' ' . $dateTime;
                 if($data['price_comment'] != 'retail')
                     $html .= ', ' . __($data['price_comment']);
                 $html .= ', ' . $data['location']. ', ' . $data['city']. ' (' . $data['postal_code']. ')';

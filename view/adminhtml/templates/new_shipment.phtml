@@ -22,10 +22,6 @@
                 <input type="radio" class="admin__control-radio" id="mypa_package_type-package" name="mypa_package_type" value="1" <?=$block->getPackageType() !== 1 ?: 'checked="checked"';?>>
                 <label class="admin__field-label" for="mypa_package_type-package"><?=__('Package');?></label>
             </div>
-            <div class="admin__field admin__field-option">
-                <input type="radio" class="admin__control-radio" id="mypa_package_type-letter" name="mypa_package_type" value="3" <?=$block->getPackageType() !== 3 ?: 'checked="checked"';?>>
-                <label class="admin__field-label" for="mypa_package_type-letter"><?=__('Letter');?></label>
-            </div>
         </div>
     </div>
 <?php if ($block->getCountry() == 'BE'): ?>
@@ -48,7 +44,18 @@
         <?php $defaultInsurance = $block->getDefaultInsurance();?>
         <select name="mypa_insurance" id="mypa_insurance" class="required product-custom-option admin__control-select" title="" >
             <option value="0" ><?=__('No insurance') ?></option>
+            <option value="100" <?= $defaultInsurance == 100 ? 'selected="selected"' : '';?> >€ 100</option>
+            <option value="250" <?= $defaultInsurance == 250 ? 'selected="selected"' : '';?> >€ 250</option>
             <option value="500" <?= $defaultInsurance == 500 ? 'selected="selected"' : '';?> >€ 500</option>
+            <option value="1000" >€ 1000</option>
+            <option value="1500" >€ 1500</option>
+            <option value="2000" >€ 2000</option>
+            <option value="2500" >€ 2500</option>
+            <option value="3000" >€ 3000</option>
+            <option value="3500" >€ 3500</option>
+            <option value="4000" >€ 4000</option>
+            <option value="4500" >€ 4500</option>
+            <option value="5000" >€ 5000</option>
         </select>
     </div>
     <script type="text/x-magento-init">

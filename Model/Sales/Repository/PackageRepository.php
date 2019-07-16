@@ -9,7 +9,7 @@
  * If you want to add improvements, please create a fork in our GitHub:
  * https://github.com/myparcelbe/magento
  *
- * @author      Reindert Vetter <reindert@myparcel.nl>
+ * @author      Reindert Vetter <info@sendmyparcel.be>
  * @copyright   2010-2017 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
@@ -30,7 +30,7 @@ class PackageRepository extends Package
      *
      * If package type is not set, calculate package type
      *
-     * @return int 1|2|3
+     * @return int 1|3
      */
     public function getPackageType()
     {
@@ -43,7 +43,7 @@ class PackageRepository extends Package
     }
 
     /**
-     * Set weight depend on product setting weight from product
+     * Set weight depend on product weight from product
      *
      * @param \Magento\Quote\Model\Quote\Item[] $products
      *
@@ -72,11 +72,9 @@ class PackageRepository extends Package
     {
         if ($product->getWeight() > 0) {
             $this->addWeight($product->getWeight() * $product->getQty());
-
-            return $this;
+        } else {
+            $this->setAllProductsFit(false);
         }
-
-        $this->setAllProductsFit(false);
 
         return $this;
     }

@@ -9,7 +9,7 @@
  * If you want to add improvements, please create a fork in our GitHub:
  * https://github.com/myparcelbe/magento
  *
- * @author      Reindert Vetter <reindert@myparcel.nl>
+ * @author      Reindert Vetter <info@sendmyparcel.be>
  * @copyright   2010-2017 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
@@ -25,46 +25,39 @@ interface PackageInterface
      * @return int
      */
     public function getWeight();
-
     /**
      * @param $weight
      */
     public function setWeight($weight);
-
     /**
      * @param int $weight
      */
     public function addWeight($weight);
-
     /**
      * @return bool
      */
     public function isAllProductsFit();
-
     /**
      * @param bool $all_products_fit
      */
     public function setAllProductsFit($all_products_fit);
 
     /**
-     * package = 1, letter = 3
+     * package = 1
      *
      * @return int
      */
     public function getPackageType();
-
     /**
-     * package = 1, letter = 3
+     * package = 1
      *
      * @param int $package_type
      */
     public function setPackageType($package_type);
-
     /**
      * @return string
      */
     public function getCurrentCountry();
-
     /**
      * @param string $current_country
      * @return Package

@@ -5,7 +5,7 @@
  * If you want to add improvements, please create a fork in our GitHub:
  * https://github.com/myparcelbe
  *
- * @author      Reindert Vetter <reindert@myparcel.nl>
+ * @author      Reindert Vetter <info@sendmyparcel.be>
  * @copyright   2010-2017 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
@@ -155,12 +155,11 @@ class MyParcelTrackTrace extends MyParcelConsignmentRepository
             ->setPhone($address->getTelephone())
             ->setEmail($address->getEmail())
             ->setLabelDescription($magentoTrack->getShipment()->getOrder()->getIncrementId())
-//            ->setDeliveryDateFromCheckout($checkoutData)
+            ->setDeliveryDateFromCheckout($checkoutData)
             ->setDeliveryType($deliveryType)
             ->setPickupAddressFromCheckout($checkoutData)
             ->setPackageType($packageType)
             ->setSignature($this->getValueOfOption($options, 'signature'))
-            ->setReturn($this->getValueOfOption($options, 'return'))
             ->setInsurance($options['insurance'] !== null ? $options['insurance'] : self::$defaultOptions->getDefaultInsurance())
             ->convertDataForCdCountry($magentoTrack);
 
@@ -178,7 +177,7 @@ class MyParcelTrackTrace extends MyParcelConsignmentRepository
     public function setApiKey($apiKey)
     {
         if ($apiKey == null) {
-            throw new LocalizedException(__('API key is not known. Go to the settings in the back office of MyParcel to create an API key. Fill the API key in the settings.'));
+            throw new LocalizedException(__('API key is not known. Go to the settings in the backoffice to create an API key. Fill the API key in the settings.'));
         }
         parent::setApiKey($apiKey);
 

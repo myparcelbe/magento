@@ -11,7 +11,7 @@
  * If you want to add improvements, please create a fork in our GitHub:
  * https://github.com/myparcelbe
  *
- * @author      Reindert Vetter <reindert@myparcel.nl>
+ * @author      Reindert Vetter <info@sendmyparcel.be>
  * @copyright   2010-2017 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
@@ -22,6 +22,8 @@ namespace MyParcelBE\Magento\Model\Quote;
 
 
 use Magento\Framework\Event\ObserverInterface;
+use MyParcelBE\Magento\Helper\Checkout;
+use MyParcelBE\Magento\Model\Checkout\Carrier;
 use MyParcelBE\Magento\Model\Sales\Repository\DeliveryRepository;
 use MyParcelBE\Sdk\src\Model\Repository\MyParcelConsignmentRepository;
 
@@ -38,16 +40,28 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
      * @var MyParcelConsignmentRepository
      */
     private $consignmentRepository;
+    /**
+     * @var array
+     */
+    private $parentMethods;
 
     /**
      * SaveOrderBeforeSalesModelQuoteObserver constructor.
+     *
      * @param DeliveryRepository $delivery
      * @param MyParcelConsignmentRepository $consignmentRepository
+     * @param Checkout $checkoutHelper
      */
-    public function __construct(DeliveryRepository $delivery, MyParcelConsignmentRepository $consignmentRepository)
-    {
+    public function __construct(
+        DeliveryRepository $delivery,
+        MyParcelConsignmentRepository $consignmentRepository,
+        Checkout $checkoutHelper
+    ) {
         $this->delivery = $delivery;
         $this->consignmentRepository = $consignmentRepository;
+
+        $this->parentMethods = explode(',', $checkoutHelper->getCheckoutConfig('general/shipping_methods'));
+
     }
 
     /**
@@ -67,7 +81,7 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
             $order->setData(self::FIELD_TRACK_STATUS, __('⚠️&#160; Please check address'));
         }
 
-        if ($quote->hasData(self::FIELD_DELIVERY_OPTIONS)) {
+        if ($quote->hasData(self::FIELD_DELIVERY_OPTIONS) && $this->isMyParcelMethod($quote)) {
             $jsonDeliveryOptions = $quote->getData(self::FIELD_DELIVERY_OPTIONS);
             $order->setData(self::FIELD_DELIVERY_OPTIONS, $jsonDeliveryOptions);
 
@@ -78,4 +92,40 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
         return $this;
     }
 
+    /**
+     * @param $quote
+     *
+     * @return bool
+     */
+    private function isMyParcelMethod($quote) {
+        $myParcelMethods = array_keys(Carrier::getMethods());
+        $shippingMethod  = $quote->getShippingAddress()->getShippingMethod();
+      
+        if ($this->arrayLike($shippingMethod, $myParcelMethods)) {
+            return true;
+        }
+
+        if ($this->arrayLike($shippingMethod, $this->parentMethods)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $input
+     * @param $data
+     *
+     * @return bool
+     */
+    private function arrayLike($input, $data) {
+        $result = array_filter($data, function ($item) use ($input) {
+            if (stripos($input, $item) !== false) {
+                return true;
+            }
+            return false;
+        });
+
+        return count($result) > 0;
+    }
 }

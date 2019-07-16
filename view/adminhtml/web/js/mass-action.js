@@ -139,7 +139,6 @@ define(
                     $.mage.__('Package Type');
                     $.mage.__('Default');
                     $.mage.__('Package');
-                    $.mage.__('Letter');
                     $.mage.__('Print position');
                     */
 
