@@ -14,6 +14,7 @@ namespace MyParcelBE\Magento\Model\Sales;
 
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Model\Order;
+use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
 
 /**
  * Class MagentoOrderCollection
@@ -53,8 +54,6 @@ class MagentoOrderCollection extends MagentoCollection
 
     /**
      * Set Magento collection
-     *
-     * @param $orderCollection \Magento\Sales\Model\ResourceModel\Order\Collection
      *
      * @return $this
      */
@@ -160,8 +159,8 @@ class MagentoOrderCollection extends MagentoCollection
             foreach ($order->getShipmentsCollection() as $shipment) {
                 foreach ($shipment->getTracksCollection() as $magentoTrack) {
                     if ($magentoTrack->getCarrierCode() == TrackTraceHolder::MYPARCEL_CARRIER_CODE) {
-                        $myParcelTrack = $this->getMyParcelTrack($magentoTrack);
-                        $this->myParcelCollection->addConsignment($myParcelTrack);
+                        $trackTraceHolder = $this->createConsignmentAndGetTrackTraceHolder($magentoTrack);
+                        $this->myParcelCollection->addConsignment($trackTraceHolder->consignment);
                     }
                 }
             }
@@ -174,6 +173,7 @@ class MagentoOrderCollection extends MagentoCollection
      * Set PDF content and convert status 'Concept' to 'Registered'
      *
      * @return $this
+     * @throws \Exception
      */
     public function setPdfOfLabels()
     {
@@ -200,6 +200,9 @@ class MagentoOrderCollection extends MagentoCollection
      * Create MyParcel concepts and update Magento Track
      *
      * @return $this
+     * @throws \MyParcelNL\Sdk\src\Exception\ApiException
+     * @throws \MyParcelNL\Sdk\src\Exception\MissingFieldException
+     * @throws \Exception
      */
     public function createMyParcelConcepts()
     {
@@ -208,16 +211,17 @@ class MagentoOrderCollection extends MagentoCollection
         /**
          * @var Order                $order
          * @var Order\Shipment       $shipment
-         * @var Order\Shipment\Track $track
+         * @var Order\Shipment\Track $mageTrack
+         * @var AbstractConsignment $consignment
          */
         foreach ($this->getShipmentsCollection() as $shipment) {
-            foreach ($shipment->getTracksCollection() as $track) {
-                $myParcelTrack = $this
-                    ->myParcelCollection->getConsignmentByReferenceId($track->getId());
+            foreach ($shipment->getTracksCollection() as $mageTrack) {
+                $myParcelCollection = $this->myParcelCollection->getConsignmentsByReferenceId($shipment->getEntityId());
+                $consignment = $myParcelCollection->first();
 
-                $track
-                    ->setData('myparcel_consignment_id', $myParcelTrack->getMyParcelConsignmentId())
-                    ->setData('myparcel_status', $myParcelTrack->getStatus())
+                $mageTrack
+                    ->setData('myparcel_consignment_id', $consignment->getConsignmentId())
+                    ->setData('myparcel_status', $consignment->getStatus())
                     ->save(); // must
             }
         }
@@ -229,6 +233,7 @@ class MagentoOrderCollection extends MagentoCollection
      * Update MyParcel collection
      *
      * @return $this
+     * @throws \Exception
      */
     public function setLatestData()
     {
@@ -239,6 +244,8 @@ class MagentoOrderCollection extends MagentoCollection
 
     /**
      * @return $this
+     * @throws \MyParcelNL\Sdk\src\Exception\ApiException
+     * @throws \MyParcelNL\Sdk\src\Exception\MissingFieldException
      */
     public function sendReturnLabelMails()
     {
@@ -264,7 +271,8 @@ class MagentoOrderCollection extends MagentoCollection
     /**
      * return void
      */
-    private function save() {
+    private function save()
+    {
         foreach ($this->getOrders() as $order) {
             $order->save();
         }
@@ -274,6 +282,7 @@ class MagentoOrderCollection extends MagentoCollection
      * Send shipment email with Track and trace variable
      *
      * @param \Magento\Sales\Model\Order $order
+     *
      * @return $this
      */
     private function sendTrackEmailFromOrder(Order $order)
@@ -300,8 +309,8 @@ class MagentoOrderCollection extends MagentoCollection
      *
      * @param Order $order
      *
-     * @return $this
-     * @throws LocalizedException
+     * @return void
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     private function createShipment(Order $order)
     {
@@ -316,7 +325,7 @@ class MagentoOrderCollection extends MagentoCollection
         // Loop through order items
         foreach ($order->getAllItems() as $orderItem) {
             // Check if order item has qty to ship or is virtual
-            if (!$orderItem->getQtyToShip() || $orderItem->getIsVirtual()) {
+            if (! $orderItem->getQtyToShip() || $orderItem->getIsVirtual()) {
                 continue;
             }
 

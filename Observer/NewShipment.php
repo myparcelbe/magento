@@ -65,7 +65,8 @@ class NewShipment implements ObserverInterface
      *
      * @param Observer $observer
      *
-     * @return $this
+     * @return void
+     * @throws \Exception
      */
     public function execute(Observer $observer)
     {
@@ -101,7 +102,7 @@ class NewShipment implements ObserverInterface
         $consignmentId = $this
             ->orderCollection
             ->myParcelCollection
-            ->getConsignmentByReferenceId($myParcelTrack->mageTrack->getId())
+            ->getConsignmentsByReferenceId($shipment->getEntityId())->first()
             ->getMyParcelConsignmentId();
 
         $myParcelTrack->mageTrack
@@ -118,6 +119,8 @@ class NewShipment implements ObserverInterface
      * Magento puts our two columns sales_order automatically to sales_order_grid
      *
      * @param \Magento\Sales\Model\Order\Shipment $shipment
+     *
+     * @throws \Exception
      */
     private function updateTrackGrid($shipment)
     {

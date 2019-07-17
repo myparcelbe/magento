@@ -2,11 +2,9 @@
 
 namespace MyParcelBE\Magento\Controller\Adminhtml\Order;
 
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Sales\Model\Order;
 use MyParcelBE\Magento\Model\Sales\MagentoOrderCollection;
 
 /**
@@ -52,7 +50,7 @@ class CreateAndPrintMyParcelTrack extends \Magento\Framework\App\Action\Action
      * Dispatch request
      *
      * @return \Magento\Framework\Controller\ResultInterface|ResponseInterface
-     * @throws \Magento\Framework\Exception\NotFoundException
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function execute()
     {
@@ -65,7 +63,8 @@ class CreateAndPrintMyParcelTrack extends \Magento\Framework\App\Action\Action
      * Get selected items and process them
      *
      * @return $this
-     * @throws LocalizedException
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Exception
      */
     private function massAction()
     {

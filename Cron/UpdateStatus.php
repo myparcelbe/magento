@@ -57,6 +57,7 @@ class UpdateStatus
      * Run the cron job
      *
      * @return $this
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function execute()
     {
