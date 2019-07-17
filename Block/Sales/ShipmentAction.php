@@ -27,7 +27,7 @@ class ShipmentAction extends OrdersAction
      */
     private $shipment;
     /**
-     * @var \MyParcelBE\Sdk\src\Model\Repository\MyParcelConsignmentRepository
+     * @var \MyParcelNL\Sdk\src\Model\Repository\MyParcelConsignmentRepository
      */
     private $consignmentRepository;
 
@@ -35,14 +35,14 @@ class ShipmentAction extends OrdersAction
      * @param Context $context
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Sales\Model\Order\Shipment $shipment
-     * @param \MyParcelBE\Sdk\src\Model\Repository\MyParcelConsignmentRepository $consignmentRepository
+     * @param \MyParcelNL\Sdk\src\Model\Repository\MyParcelConsignmentRepository $consignmentRepository
      * @param array $data
      */
     public function __construct(
         Context $context,
         \Magento\Framework\Registry $registry,
         \Magento\Sales\Model\Order\Shipment $shipment,
-        \MyParcelBE\Sdk\src\Model\Repository\MyParcelConsignmentRepository $consignmentRepository,
+        \MyParcelNL\Sdk\src\Model\Repository\MyParcelConsignmentRepository $consignmentRepository,
         array $data = []
     ) {
         // Set shipment and order

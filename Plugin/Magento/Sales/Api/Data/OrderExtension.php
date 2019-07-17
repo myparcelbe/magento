@@ -11,7 +11,7 @@ namespace MyParcelBE\Magento\Plugin\Magento\Sales\Api\Data;
 
 use Magento\Framework\HTTP\PhpEnvironment\Request;
 use Magento\Framework\App\ObjectManager;
-use MyParcelBE\Sdk\src\Support\Arr;
+use MyParcelNL\Sdk\src\Support\Arr;
 
 class OrderExtension
 {

@@ -17,7 +17,7 @@ namespace MyParcelBE\Magento\Block\Sales;
 use Magento\Backend\Block\Template;
 use Magento\Backend\Block\Template\Context;
 use Magento\Framework\App\ObjectManager;
-use MyParcelBE\Sdk\src\Model\MyParcelClassConstants;
+use MyParcelNL\Sdk\src\Model\MyParcelClassConstants;
 
 class OrderAction extends OrdersAction
 {
@@ -26,20 +26,20 @@ class OrderAction extends OrdersAction
      */
     private $order;
     /**
-     * @var \MyParcelBE\Sdk\src\Model\Repository\MyParcelConsignmentRepository
+     * @var \MyParcelNL\Sdk\src\Model\Repository\MyParcelConsignmentRepository
      */
     private $consignmentRepository;
 
     /**
      * @param Context $context
      * @param \Magento\Framework\Registry $registry
-     * @param \MyParcelBE\Sdk\src\Model\Repository\MyParcelConsignmentRepository $consignmentRepository
+     * @param \MyParcelNL\Sdk\src\Model\Repository\MyParcelConsignmentRepository $consignmentRepository
      * @param array $data
      */
     public function __construct(
         Context $context,
         \Magento\Framework\Registry $registry,
-        \MyParcelBE\Sdk\src\Model\Repository\MyParcelConsignmentRepository $consignmentRepository,
+        \MyParcelNL\Sdk\src\Model\Repository\MyParcelConsignmentRepository $consignmentRepository,
         array $data = []
     ) {
         // Set order

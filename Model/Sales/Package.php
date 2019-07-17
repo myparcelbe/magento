@@ -24,7 +24,7 @@ use Magento\Framework\Module\ModuleListInterface;
 use Magento\Framework\App\Helper\Context;
 use Magento\Quote\Api\Data\EstimateAddressInterfaceFactory;
 use MyParcelBE\Magento\Helper\Data;
-use MyParcelBE\Sdk\src\Services\CheckApiKeyService;
+use MyParcelNL\Sdk\src\Services\CheckApiKeyService;
 use Psr\Log\LoggerInterface;
 
 class Package extends Data implements PackageInterface

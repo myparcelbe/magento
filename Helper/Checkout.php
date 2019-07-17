@@ -20,7 +20,7 @@ use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Module\ModuleListInterface;
 use Magento\Quote\Api\Data\EstimateAddressInterfaceFactory;
 use Magento\Quote\Model\ShippingMethodManagement;
-use MyParcelBE\Sdk\src\Services\CheckApiKeyService;
+use MyParcelNL\Sdk\src\Services\CheckApiKeyService;
 
 class Checkout extends Data
 {

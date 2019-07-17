@@ -25,7 +25,7 @@ use Magento\Framework\Event\ObserverInterface;
 use MyParcelBE\Magento\Helper\Checkout;
 use MyParcelBE\Magento\Model\Checkout\Carrier;
 use MyParcelBE\Magento\Model\Sales\Repository\DeliveryRepository;
-use MyParcelBE\Sdk\src\Model\Repository\MyParcelConsignmentRepository;
+use MyParcelNL\Sdk\src\Model\Repository\MyParcelConsignmentRepository;
 
 class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
 {

@@ -19,10 +19,10 @@ use Magento\Framework\ObjectManagerInterface;
 use Magento\Sales\Model\Order;
 use MyParcelBE\Magento\Helper\Data;
 use MyParcelBE\Magento\Model\Source\DefaultOptions;
-use MyParcelBE\Sdk\src\Factory\ConsignmentFactory;
-use MyParcelBE\Sdk\src\Model\Consignment\AbstractConsignment;
-use MyParcelBE\Sdk\src\Model\Consignment\PostNLConsignment;
-use MyParcelBE\Sdk\src\Model\MyParcelCustomsItem;
+use MyParcelNL\Sdk\src\Factory\ConsignmentFactory;
+use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
+use MyParcelNL\Sdk\src\Model\Consignment\PostNLConsignment;
+use MyParcelNL\Sdk\src\Model\MyParcelCustomsItem;
 
 /**
  * Class TrackTraceHolder
@@ -62,7 +62,7 @@ class TrackTraceHolder
     public $mageTrack;
 
     /**
-     * @var \MyParcelBE\Sdk\src\Model\Consignment\AbstractConsignment|null
+     * @var \MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment|null
      */
     public $consignment;
 
@@ -213,7 +213,7 @@ class TrackTraceHolder
      * @return $this
      *
      * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \MyParcelBE\Sdk\src\Exception\MissingFieldException
+     * @throws \MyParcelNL\Sdk\src\Exception\MissingFieldException
      * @throws \Exception
      * @todo Add setting to global setting and/or category (like magento 1)
      * @todo Get Classification from setting and/or category

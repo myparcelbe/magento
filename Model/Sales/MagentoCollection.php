@@ -15,8 +15,8 @@ namespace MyParcelBE\Magento\Model\Sales;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Sales\Model\Order;
 use MyParcelBE\magento\Model\Order\Email\Sender\TrackSender;
-use MyParcelBE\Sdk\src\Helper\MyParcelCollection;
-use MyParcelBE\Sdk\src\Model\Repository\MyParcelConsignmentRepository;
+use MyParcelNL\Sdk\src\Helper\MyParcelCollection;
+use MyParcelNL\Sdk\src\Model\Repository\MyParcelConsignmentRepository;
 
 /**
  * Class MagentoOrderCollection
