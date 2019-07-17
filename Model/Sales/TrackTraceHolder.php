@@ -21,7 +21,7 @@ use MyParcelBE\Magento\Helper\Data;
 use MyParcelBE\Magento\Model\Source\DefaultOptions;
 use MyParcelNL\Sdk\src\Factory\ConsignmentFactory;
 use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
-use MyParcelNL\Sdk\src\Model\Consignment\PostNLConsignment;
+use MyParcelNL\Sdk\src\Model\Consignment\BpostConsignment;
 use MyParcelNL\Sdk\src\Model\MyParcelCustomsItem;
 
 /**
@@ -120,12 +120,11 @@ class TrackTraceHolder
      */
     public function convertDataFromMagentoToApi($magentoTrack, $options)
     {
-        $this->consignment = ConsignmentFactory::createByCarrierId(PostNLConsignment::CARRIER_ID);
+        $this->consignment = ConsignmentFactory::createByCarrierId(BpostConsignment::CARRIER_ID);
 
         $address      = $magentoTrack->getShipment()->getShippingAddress();
         $checkoutData = $magentoTrack->getShipment()->getOrder()->getData('delivery_options');
         $deliveryType = $this->consignment->getDeliveryTypeFromCheckout($checkoutData);
-        $totalWeight  = $options['digital_stamp_weight'] !== null ? (int) $options['digital_stamp_weight'] : (int) self::$defaultOptions->getDigitalStampWeight();
 
         if ($options['package_type'] === 'default') {
             $packageType = self::$defaultOptions->getPackageType();
@@ -177,15 +176,8 @@ class TrackTraceHolder
             ->setDeliveryType($deliveryType)
             ->setPickupAddressFromCheckout($checkoutData)
             ->setPackageType($packageType)
-            ->setOnlyRecipient($this->getValueOfOption($options, 'only_recipient'))
             ->setSignature($this->getValueOfOption($options, 'signature'))
-            ->setReturn($this->getValueOfOption($options, 'return'))
-            ->setLargeFormat($this->getValueOfOption($options, 'large_format'))
-            ->setAgeCheck($this->getValueOfOption($options, 'age_check'))
             ->setInsurance($options['insurance'] !== null ? $options['insurance'] : self::$defaultOptions->getDefaultInsurance());
-
-        $this->convertDataForCdCountry($magentoTrack)
-             ->calculateTotalWeight($magentoTrack, $totalWeight);
 
         return $this;
     }
