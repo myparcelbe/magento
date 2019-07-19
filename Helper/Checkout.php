@@ -243,12 +243,12 @@ class Checkout extends Data
      */
     public function getCheckoutConfig($code, $canBeNull = false)
     {
-        $value = $this->getConfigValue(self::XML_PATH_CHECKOUT . $code);
+        $value = $this->getConfigValue(self::XML_PATH_BPOST_SETTINGS . $code);
         if (null != $value || $canBeNull) {
             return $value;
         }
 
-        $this->_logger->critical('Can\'t get setting with path:' . self::XML_PATH_CHECKOUT . $code);
+        $this->_logger->critical('Can\'t get setting with path:' . self::XML_PATH_BPOST_SETTINGS . $code);
     }
 
     /**

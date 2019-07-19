@@ -160,7 +160,7 @@ class Result extends \Magento\Shipping\Model\Rate\Result
         }
 
         foreach ($this->getAllowedMethods() as $alias => $settingPath) {
-            $settingActive = $this->myParcelHelper->getConfigValue(Data::XML_PATH_CHECKOUT . $settingPath . 'active');
+            $settingActive = $this->myParcelHelper->getConfigValue(Data::XML_PATH_BPOST_SETTINGS . $settingPath . 'active');
             $active        = $settingActive === '1' || $settingActive === null;
             if ($active) {
                 $method = $this->getShippingMethod($alias, $settingPath, $parentRate);
@@ -204,7 +204,7 @@ class Result extends \Magento\Shipping\Model\Rate\Result
      */
     private function createTitle($settingPath)
     {
-        $title = $this->myParcelHelper->getConfigValue(Data::XML_PATH_CHECKOUT . $settingPath . 'title');
+        $title = $this->myParcelHelper->getConfigValue(Data::XML_PATH_BPOST_SETTINGS . $settingPath . 'title');
 
         if ($title === null) {
             $title = __($settingPath . 'title');

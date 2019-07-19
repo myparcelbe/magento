@@ -16,7 +16,7 @@
                 <methods>tablerate</methods>
             </shipping_methods>
         </myparcelbe_magento_general>
-        <myparcelbe_magento_checkout>
+        <myparcelbe_magento_bpost_settings>
             <options>
                 <signature_active>0</signature_active>
                 <signature_from_price>1</signature_from_price>
@@ -44,7 +44,7 @@
                 <title>Ophalen bij een Bpost locatie</title>
                 <fee>0</fee>
             </pickup>
-        </myparcelbe_magento_checkout>
+        </myparcelbe_magento_bpost_settings>
         <sales_email>
             <track>
                 <enabled>1</enabled>

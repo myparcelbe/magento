@@ -24,9 +24,9 @@ use MyParcelNL\Sdk\src\Services\CheckApiKeyService;
 
 class Data extends AbstractHelper
 {
-    const MODULE_NAME = 'MyParcelBE_Magento';
-    const XML_PATH_GENERAL = 'myparcelbe_magento_general/';
-    const XML_PATH_CHECKOUT = 'myparcelbe_magento_checkout/';
+    const MODULE_NAME             = 'MyParcelBE_Magento';
+    const XML_PATH_GENERAL        = 'myparcelbe_magento_general/';
+    const XML_PATH_BPOST_SETTINGS = 'myparcelbe_magento_bpost_settings/';
 
     /**
      * @var ModuleListInterface
@@ -92,7 +92,7 @@ class Data extends AbstractHelper
      */
     public function getStandardConfig($code = '', $storeId = null)
     {
-        return $this->getConfigValue(self::XML_PATH_CHECKOUT . $code, $storeId);
+        return $this->getConfigValue(self::XML_PATH_BPOST_SETTINGS . $code, $storeId);
     }
 
     /**
@@ -107,11 +107,11 @@ class Data extends AbstractHelper
     {
         $settings = $this->getTmpScope();
         if ($settings == null) {
-            $value = $this->getConfigValue(self::XML_PATH_CHECKOUT . $code);
+            $value = $this->getConfigValue(self::XML_PATH_BPOST_SETTINGS . $code);
             if ($value != null) {
                 return $value;
             } else {
-                $this->_logger->critical('Can\'t get setting with path:' . self::XML_PATH_CHECKOUT . $code);
+                $this->_logger->critical('Can\'t get setting with path:' . self::XML_PATH_BPOST_SETTINGS . $code);
             }
         }
 

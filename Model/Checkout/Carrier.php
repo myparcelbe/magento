@@ -177,7 +177,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
 
         foreach ($this->getAllowedMethods() as $alias => $settingPath) {
 
-            $active = $this->myParcelHelper->getConfigValue(Data::XML_PATH_CHECKOUT . $settingPath . 'active') === '1';
+            $active = $this->myParcelHelper->getConfigValue(Data::XML_PATH_BPOST_SETTINGS . $settingPath . 'active') === '1';
             if ($active) {
                 $method = $this->getShippingMethod($alias, $settingPath);
                 $result->append($method);
@@ -218,7 +218,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      */
     private function createTitle($settingPath)
     {
-        $title = $this->myParcelHelper->getConfigValue(Data::XML_PATH_CHECKOUT . $settingPath . 'title');
+        $title = $this->myParcelHelper->getConfigValue(Data::XML_PATH_BPOST_SETTINGS . $settingPath . 'title');
 
         if ($title === null) {
             $title = __($settingPath . 'title');
