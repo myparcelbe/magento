@@ -26,7 +26,6 @@ class Data extends AbstractHelper
 {
     const MODULE_NAME = 'MyParcelBE_Magento';
     const XML_PATH_GENERAL = 'myparcelbe_magento_general/';
-    const XML_PATH_STANDARD = 'myparcelbe_magento_standard/';
     const XML_PATH_CHECKOUT = 'myparcelbe_magento_checkout/';
 
     /**
@@ -93,7 +92,7 @@ class Data extends AbstractHelper
      */
     public function getStandardConfig($code = '', $storeId = null)
     {
-        return $this->getConfigValue(self::XML_PATH_STANDARD . $code, $storeId);
+        return $this->getConfigValue(self::XML_PATH_CHECKOUT . $code, $storeId);
     }
 
     /**

@@ -20,7 +20,6 @@
 
 namespace MyParcelBE\Magento\Model\Quote;
 
-
 use Magento\Framework\Event\ObserverInterface;
 use MyParcelBE\Magento\Helper\Checkout;
 use MyParcelBE\Magento\Model\Checkout\Carrier;
@@ -31,8 +30,8 @@ use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
 class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
 {
     const FIELD_DELIVERY_OPTIONS = 'delivery_options';
-    const FIELD_DROP_OFF_DAY = 'drop_off_day';
-    const FIELD_TRACK_STATUS = 'track_status';
+    const FIELD_DROP_OFF_DAY     = 'drop_off_day';
+    const FIELD_TRACK_STATUS     = 'track_status';
     /**
      * @var DeliveryRepository
      */
@@ -49,25 +48,24 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
     /**
      * SaveOrderBeforeSalesModelQuoteObserver constructor.
      *
-     * @param DeliveryRepository $delivery
+     * @param DeliveryRepository  $delivery
      * @param AbstractConsignment $consignment
-     * @param Checkout $checkoutHelper
+     * @param Checkout            $checkoutHelper
      */
     public function __construct(
         DeliveryRepository $delivery,
         AbstractConsignment $consignment,
         Checkout $checkoutHelper
     ) {
-        $this->delivery = $delivery;
+        $this->delivery    = $delivery;
         $this->consignment = $consignment;
-
-        $this->parentMethods = explode(',', $checkoutHelper->getCheckoutConfig('general/shipping_methods'));
-
+        $this->parentMethods = explode(',', $checkoutHelper->getGeneralConfig('shipping_methods/methods'));
     }
 
     /**
      *
      * @param \Magento\Framework\Event\Observer $observer
+     *
      * @return $this
      */
     public function execute(\Magento\Framework\Event\Observer $observer)
@@ -75,7 +73,7 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
         /* @var \Magento\Quote\Model\Quote $quote */
         $quote = $observer->getEvent()->getData('quote');
         /* @var \Magento\Sales\Model\Order $order */
-        $order = $observer->getEvent()->getData('order');
+        $order      = $observer->getEvent()->getData('order');
         $fullStreet = implode(' ', $order->getShippingAddress()->getStreet());
 
         $destinationCountry = $order->getShippingAddress()->getCountryId();
@@ -101,10 +99,11 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
      *
      * @return bool
      */
-    private function isMyParcelMethod($quote) {
+    private function isMyParcelMethod($quote)
+    {
         $myParcelMethods = array_keys(Carrier::getMethods());
         $shippingMethod  = $quote->getShippingAddress()->getShippingMethod();
-      
+
         if ($this->arrayLike($shippingMethod, $myParcelMethods)) {
             return true;
         }
@@ -122,11 +121,13 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
      *
      * @return bool
      */
-    private function arrayLike($input, $data) {
-        $result = array_filter($data, function ($item) use ($input) {
+    private function arrayLike($input, $data)
+    {
+        $result = array_filter($data, function($item) use ($input) {
             if (stripos($input, $item) !== false) {
                 return true;
             }
+
             return false;
         });
 

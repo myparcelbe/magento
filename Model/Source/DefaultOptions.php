@@ -43,7 +43,7 @@ class DefaultOptions
     public function __construct(Order $order, Data $helper)
     {
         self::$helper = $helper;
-        self::$order = $order;
+        self::$order  = $order;
 
         self::$chosenOptions = json_decode(self::$order->getData('delivery_options'), true);
     }
@@ -66,12 +66,12 @@ class DefaultOptions
             return true;
         }
 
-        $total = self::$order->getGrandTotal();
-        $settings = self::$helper->getStandardConfig('options');
+        $total    = self::$order->getGrandTotal();
+        $settings = self::$helper->getStandardConfig('default_options');
 
         if (isset($settings[$option . '_active']) &&
             $settings[$option . '_active'] == '1' &&
-            $total > (int)$settings[$option . '_from_price']
+            $total > (int) $settings[$option . '_from_price']
         ) {
             return true;
         }

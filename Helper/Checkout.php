@@ -142,7 +142,7 @@ class Checkout extends Data
             return null;
         }
 
-        $parentMethods = explode(',', $this->getCheckoutConfig('general/shipping_methods'));
+        $parentMethods = explode(',', $this->getGeneralConfig('shipping_methods/methods'));
 
         /**
          * @var \Magento\Quote\Api\Data\EstimateAddressInterface $estimatedAddress
