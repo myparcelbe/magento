@@ -18,9 +18,8 @@
 
 namespace MyParcelBE\Magento\Model\Source;
 
-
-use \Magento\Framework\App\Config\ScopeConfigInterface;
-use \Magento\Shipping\Model\Config;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Shipping\Model\Config;
 
 class ShippingMethods implements \Magento\Framework\Option\ArrayInterface
 {
@@ -40,8 +39,7 @@ class ShippingMethods implements \Magento\Framework\Option\ArrayInterface
     public function __construct(
         ScopeConfigInterface $scopeConfig,
         Config $deliveryModelConfig
-    )
-    {
+    ) {
         $this->scopeConfig = $scopeConfig;
         $this->deliveryModelConfig = $deliveryModelConfig;
     }

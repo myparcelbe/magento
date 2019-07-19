@@ -160,7 +160,7 @@ class TrackTraceHolder
             $this->objectManager->get('Psr\Log\LoggerInterface')->critical($errorHuman . '-' . $e);
         }
 
-        if ($address->getPostcode() == null && $address->getCountryId() == 'NL') {
+        if ($address->getPostcode() == null && $address->getCountryId() == 'BE') {
             $errorHuman = 'An error has occurred while validating the order number ' . $magentoTrack->getOrderId() . '. Postcode is required.';
             $this->messageManager->addErrorMessage($errorHuman . ' View log file for more information.');
             $this->objectManager->get('Psr\Log\LoggerInterface')->critical($errorHuman);
