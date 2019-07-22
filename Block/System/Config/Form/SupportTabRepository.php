@@ -18,6 +18,8 @@
 
 namespace MyParcelBE\Magento\Block\System\Config\Form;
 
+use MyParcelBE\Magento\Helper\Data;
+
 class SupportTabRepository extends \Magento\Sales\Block\Adminhtml\Order\AbstractOrder
 {/**
      * @var \Magento\Framework\Module\ModuleListInterface
@@ -65,7 +67,7 @@ class SupportTabRepository extends \Magento\Sales\Block\Adminhtml\Order\Abstract
      *
      * @return string
      */
-    public function getVersion()
+    public function getModuleVersion()
     {
         return $this->helper->getVersion();
     }
