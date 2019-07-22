@@ -146,11 +146,11 @@ class Checkout
     private function getCheckoutText()
     {
         return [
-            'delivery_title'            => $this->helper->getCheckoutConfig('delivery/delivery_title'),
-            'standard_delivery_title'   => $this->helper->getCheckoutConfig('delivery/standard_delivery_title'),
-            'signature_title'           => $this->helper->getCheckoutConfig('delivery/signature_title'),
-            'saturday_title'            => $this->helper->getCheckoutConfig('general/saturday_title'),
-            'pickup_title'              => $this->helper->getCheckoutConfig('pickup/title'),
+            'delivery_title'            => $this->helper->getCarrierConfig('delivery/delivery_title'),
+            'standard_delivery_title'   => $this->helper->getCarrierConfig('delivery/standard_delivery_title'),
+            'signature_title'           => $this->helper->getCarrierConfig('delivery/signature_title'),
+            'saturday_title'            => $this->helper->getCarrierConfig('general/saturday_title'),
+            'pickup_title'              => $this->helper->getCarrierConfig('pickup/title'),
 
             'all_data_not_found'        => __('Address details are not entered'),
             'pick_up_from'              => __('Pick up from'),

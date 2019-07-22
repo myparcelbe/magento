@@ -108,7 +108,7 @@ class Data extends AbstractHelper
      *
      * @return mixed
      */
-    public function getCheckoutConfig($code, $storeId = null)
+    public function getCarrierConfig($code, $storeId = null)
     {
         $settings = $this->getTmpScope();
         if ($settings == null) {
