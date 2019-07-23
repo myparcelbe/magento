@@ -18,7 +18,6 @@
 
 namespace MyParcelBE\Magento\Model\Sales\Repository;
 
-
 use MyParcelBE\Magento\Model\Sales\Delivery;
 
 class DeliveryRepository extends Delivery
@@ -27,9 +26,11 @@ class DeliveryRepository extends Delivery
      * Get drop off day with chosen options from checkout
      *
      * @param $jsonDeliveryOptions
+     *
      * @return string
      */
-    public function getDropOffDayFromJson($jsonDeliveryOptions) {
+    public function getDropOffDayFromJson($jsonDeliveryOptions)
+    {
         if ($jsonDeliveryOptions === null) {
             return null;
         }
@@ -44,7 +45,6 @@ class DeliveryRepository extends Delivery
 
         return null;
     }
-
 
     /**
      * Get drop off day
@@ -71,5 +71,26 @@ class DeliveryRepository extends Delivery
         }
 
         return $dropOff;
+    }
+
+    /**
+     * Get carrier with chosen options from checkout
+     *
+     * @param $jsonDeliveryOptions
+     *
+     * @return string
+     */
+    public function getCarrierFromJson($jsonDeliveryOptions)
+    {
+        if ($jsonDeliveryOptions === null) {
+            return null;
+        }
+
+        $deliveryOptions = json_decode($jsonDeliveryOptions, true);
+        if (key_exists('carrier', $deliveryOptions)) {
+            return $deliveryOptions['carrier'];
+        }
+
+        return null;
     }
 }

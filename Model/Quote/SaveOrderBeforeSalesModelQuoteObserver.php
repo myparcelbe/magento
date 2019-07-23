@@ -31,6 +31,7 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
 {
     const FIELD_DELIVERY_OPTIONS = 'delivery_options';
     const FIELD_DROP_OFF_DAY     = 'drop_off_day';
+    const FIELD_MYPARCEL_CARRIER = 'myparcel_carrier';
     const FIELD_TRACK_STATUS     = 'track_status';
     /**
      * @var DeliveryRepository
@@ -89,6 +90,9 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
 
             $dropOffDay = $this->delivery->getDropOffDayFromJson($jsonDeliveryOptions);
             $order->setData(self::FIELD_DROP_OFF_DAY, $dropOffDay);
+
+            $selectedCarrier = $this->delivery->getCarrierFromJson($jsonDeliveryOptions);
+            $order->setData(self::FIELD_MYPARCEL_CARRIER, $selectedCarrier);
         }
 
         return $this;
