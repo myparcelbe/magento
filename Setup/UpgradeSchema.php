@@ -153,6 +153,25 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 ]
             );
         }
+        if (version_compare($context->getVersion(), '2.4.19', '<=')) {
+            $connection =  $setup->getConnection();
+            $table =  $setup->getTable('core_config_data');
+            $select = $connection->select()->from(
+                $table,
+                ['config_id','path','value']
+            )->where(
+                '`path` LIKE "myparcelbe_magento_checkout/%"'
+            );
+
+            $data = $connection->fetchAll($select);
+            if ($data) {
+                foreach ($data as $value) {
+                    $bind = ['path' => '"myparcelbe_magento_checkout/%"', 'value' => $value['value']];
+                    $where = 'config_id = ' . $value['config_id'];
+                    $connection->update($table, $bind, $where);
+                }
+            }
+        }
 
         $setup->endSetup();
     }
