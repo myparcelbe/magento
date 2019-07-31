@@ -153,7 +153,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 ]
             );
         }
-        if (version_compare($context->getVersion(), '2.4.19', '<=')) {
+        if (version_compare($context->getVersion(), '2.4.27', '<=')) {
             $connection =  $setup->getConnection();
             $table =  $setup->getTable('core_config_data');
             $select = $connection->select()->from(
@@ -166,7 +166,13 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $data = $connection->fetchAll($select);
             if ($data) {
                 foreach ($data as $value) {
-                    $bind = ['path' => '"myparcelbe_magento_checkout/%"', 'value' => $value['value']];
+                    $path = $value['path'];
+                    $path = explode("/", $path);
+                    $path[0] = 'myparcelbe_magento_bpost_settings';
+
+                    $fullPath = implode("/", $path);
+
+                    $bind = ['path' => $fullPath, 'value' => $value['value']];
                     $where = 'config_id = ' . $value['config_id'];
                     $connection->update($table, $bind, $where);
                 }
