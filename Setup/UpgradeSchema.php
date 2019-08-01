@@ -153,32 +153,53 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 ]
             );
         }
-        if (version_compare($context->getVersion(), '2.4.27', '<=')) {
-            $connection =  $setup->getConnection();
-            $table =  $setup->getTable('core_config_data');
-            $select = $connection->select()->from(
+        if (version_compare($context->getVersion(), '3.0.0', '<=')) {
+            $connection = $setup->getConnection();
+            $table      = $setup->getTable('core_config_data');
+
+            /* ------ start migration shipping_methods settings ------*/
+            $selectShippingMethodSettings = $connection->select()->from(
                 $table,
-                ['config_id','path','value']
+                ['config_id', 'path', 'value']
+            )->where(
+                '`path` = "myparcelbe_magento_checkout/general/shipping_methods"'
+            );
+
+            $ShippingMethodData = $connection->fetchAll($selectShippingMethodSettings);
+            if ($ShippingMethodData) {
+                foreach ($ShippingMethodData as $value) {
+                    $fullPath = 'myparcelbe_magento_general/shipping_methods/methods';
+                    $bind     = ['path' => $fullPath, 'value' => $value['value']];
+                    $where    = 'config_id = ' . $value['config_id'];
+                    $connection->update($table, $bind, $where);
+                }
+            }
+            /* ------ end migration shipping_methods settings ------*/
+
+            /* ------ start migration checkout settings ------*/
+            $selectCheckoutSettings = $connection->select()->from(
+                $table,
+                ['config_id', 'path', 'value']
             )->where(
                 '`path` LIKE "myparcelbe_magento_checkout/%"'
             );
 
-            $data = $connection->fetchAll($select);
-            if ($data) {
-                foreach ($data as $value) {
-                    $path = $value['path'];
-                    $path = explode("/", $path);
+            $checkoutData = $connection->fetchAll($selectCheckoutSettings);
+            if ($checkoutData) {
+                foreach ($checkoutData as $value) {
+                    $path    = $value['path'];
+                    $path    = explode("/", $path);
                     $path[0] = 'myparcelbe_magento_bpost_settings';
 
                     $fullPath = implode("/", $path);
 
-                    $bind = ['path' => $fullPath, 'value' => $value['value']];
+                    $bind  = ['path' => $fullPath, 'value' => $value['value']];
                     $where = 'config_id = ' . $value['config_id'];
                     $connection->update($table, $bind, $where);
                 }
             }
+            /* ------ end migration checkout settings ------*/
         }
-
         $setup->endSetup();
     }
 }
