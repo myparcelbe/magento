@@ -28,7 +28,7 @@ class Data extends AbstractHelper
     const XML_PATH_GENERAL        = 'myparcelbe_magento_general/';
     const XML_PATH_BPOST_SETTINGS = 'myparcelbe_magento_bpost_settings/';
     const XML_PATH_DPD_SETTINGS   = 'myparcelbe_magento_dpd_settings/';
-    
+
     private $moduleList;
 
     /**
