@@ -36,49 +36,103 @@ class UpgradeData implements UpgradeDataInterface
         if (version_compare($context->getVersion(), '3.0.0', '<=')) {
             $connection = $setup->getConnection();
             $table      = $setup->getTable('core_config_data');
+            if ($connection->isTableExists($table) == true) {
+                /*
+                 * Move shipping_methods to myparcelbe_magento_general
+                 */
+                $selectShippingMethodSettings = $connection->select()->from(
+                    $table,
+                    ['config_id', 'path', 'value']
+                )->where(
+                    '`path` = "myparcelbe_magento_checkout/general/shipping_methods"'
+                );
 
-            /*
-             * Move shipping_methods to myparcelbe_magento_general
-             */
-            $selectShippingMethodSettings = $connection->select()->from(
-                $table,
-                ['config_id', 'path', 'value']
-            )->where(
-                '`path` = "myparcelbe_magento_checkout/general/shipping_methods"'
-            );
-
-            $ShippingMethodData = $connection->fetchAll($selectShippingMethodSettings);
-            if ($ShippingMethodData) {
-                foreach ($ShippingMethodData as $value) {
-                    $fullPath = 'myparcelbe_magento_general/shipping_methods/methods';
-                    $bind     = ['path' => $fullPath, 'value' => $value['value']];
-                    $where    = 'config_id = ' . $value['config_id'];
-                    $connection->update($table, $bind, $where);
+                $ShippingMethodData = $connection->fetchAll($selectShippingMethodSettings);
+                if ($ShippingMethodData) {
+                    foreach ($ShippingMethodData as $value) {
+                        $fullPath = 'myparcelbe_magento_general/shipping_methods/methods';
+                        $bind     = ['path' => $fullPath, 'value' => $value['value']];
+                        $where    = 'config_id = ' . $value['config_id'];
+                        $connection->update($table, $bind, $where);
+                    }
                 }
-            }
 
-            /*
-             * Move myparcelbe_magento_checkout to myparcelbe_magento_bpost_settings
-             */
-            $selectCheckoutSettings = $connection->select()->from(
-                $table,
-                ['config_id', 'path', 'value']
-            )->where(
-                '`path` LIKE "myparcelbe_magento_checkout/%"'
-            );
+                /*
+                 * Move insurance_500_active to carrier settings
+                 */
+                $selectShippingMethodSettings = $connection->select()->from(
+                    $table,
+                    ['config_id', 'path', 'value']
+                )->where(
+                    '`path` = "myparcelbe_magento_standard/options/insurance_500_active"'
+                );
 
-            $checkoutData = $connection->fetchAll($selectCheckoutSettings);
-            if ($checkoutData) {
-                foreach ($checkoutData as $value) {
-                    $path    = $value['path'];
-                    $path    = explode("/", $path);
-                    $path[0] = 'myparcelbe_magento_bpost_settings';
+                $ShippingMethodData = $connection->fetchAll($selectShippingMethodSettings);
+                if ($ShippingMethodData) {
+                    foreach ($ShippingMethodData as $value) {
+                        $fullPath = 'myparcelbe_magento_bpost_settings/default_options/insurance_500_active';
+                        $bind     = ['path' => $fullPath, 'value' => $value['value']];
+                        $where    = 'config_id = ' . $value['config_id'];
+                        $connection->update($table, $bind, $where);
+                    }
+                }
+                /*
+                * Move signature_active to carrier settings
+                */
+                $selectShippingMethodSettings = $connection->select()->from(
+                    $table,
+                    ['config_id', 'path', 'value']
+                )->where(
+                    '`path` = "myparcelbe_magento_standard/options/signature_active"'
+                );
 
-                    $fullPath = implode("/", $path);
+                $ShippingMethodData = $connection->fetchAll($selectShippingMethodSettings);
+                if ($ShippingMethodData) {
+                    foreach ($ShippingMethodData as $value) {
+                        $fullPath = 'myparcelbe_magento_bpost_settings/default_options/signature_active';
+                        $bind     = ['path' => $fullPath, 'value' => $value['value']];
+                        $where    = 'config_id = ' . $value['config_id'];
+                        $connection->update($table, $bind, $where);
+                    }
+                }
+                /*
+                 * Move myparcelbe_magento_checkout to myparcelbe_magento_bpost_settings
+                 */
+                $selectCheckoutSettings = $connection->select()->from(
+                    $table,
+                    ['config_id', 'path', 'value']
+                )->where(
+                    '`path` LIKE "myparcelbe_magento_checkout/%"'
+                );
 
-                    $bind  = ['path' => $fullPath, 'value' => $value['value']];
-                    $where = 'config_id = ' . $value['config_id'];
-                    $connection->update($table, $bind, $where);
+                $checkoutData = $connection->fetchAll($selectCheckoutSettings);
+                if ($checkoutData) {
+                    foreach ($checkoutData as $value) {
+                        $path    = $value['path'];
+                        $path    = explode("/", $path);
+                        $path[0] = 'myparcelbe_magento_bpost_settings';
+
+                        $fullPath = implode("/", $path);
+
+                        $bind  = ['path' => $fullPath, 'value' => $value['value']];
+                        $where = 'config_id = ' . $value['config_id'];
+                        $connection->update($table, $bind, $where);
+                    }
+                }
+
+                /*
+                 * Insert bpost enabled data
+                 */
+                if ($connection->isTableExists($table) == true) {
+                    $connection->insert(
+                        $table,
+                        [
+                            'scope'    => 'default',
+                            'scope_id' => 0,
+                            'path'     => 'myparcelbe_magento_bpost_settings/general/enabled',
+                            'value'    => 1
+                        ]
+                    );
                 }
             }
         }
