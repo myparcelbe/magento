@@ -47,8 +47,7 @@ class Data extends AbstractHelper
         Context $context,
         ModuleListInterface $moduleList,
         CheckApiKeyService $checkApiKeyService
-    )
-    {
+    ) {
         parent::__construct($context);
         $this->moduleList = $moduleList;
         $this->checkApiKeyService = $checkApiKeyService;
