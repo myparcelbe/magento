@@ -33,7 +33,7 @@ class TrackTraceHolder
     /**
      * Track title showing in Magento
      */
-    const MYPARCEL_TRACK_TITLE = 'MyParcel';
+    const MYPARCEL_TRACK_TITLE  = 'MyParcel';
     const MYPARCEL_CARRIER_CODE = 'myparcelbe';
 
     /**
@@ -78,8 +78,8 @@ class TrackTraceHolder
         Data $helper,
         Order $order
     ) {
-        $this->objectManager = $objectManager;
-        $this->helper = $helper;
+        $this->objectManager  = $objectManager;
+        $this->helper         = $helper;
         $this->messageManager = $this->objectManager->create('Magento\Framework\Message\ManagerInterface');
         self::$defaultOptions = new DefaultOptions(
             $order,
@@ -215,7 +215,7 @@ class TrackTraceHolder
      */
     private function convertDataForCdCountry($magentoTrack)
     {
-        if (!$this->consignment->isCdCountry()) {
+        if (! $this->isCdCountry()) {
             return $this;
         }
 
@@ -224,13 +224,13 @@ class TrackTraceHolder
 
             foreach ($products as $product) {
                 $myParcelProduct = (new MyParcelCustomsItem())
-                    ->setDescription($product->consignment->getName())
-                    ->setAmount($product->consignment->getQty())
-                    ->setWeight($product->consignment->getWeight() ?: 1)
-                    ->setItemValue($product->consignment->getPrice())
+                    ->setDescription($product->getName())
+                    ->setAmount($product->getQty())
+                    ->setWeight($product->getWeight() ?: 1)
+                    ->setItemValue($product->getPrice())
                     ->setClassification('0000')
                     ->setCountry('NL');
-                $this->consignment->addItem($myParcelProduct);
+                $this->addItem($myParcelProduct);
             }
         }
 
@@ -254,7 +254,7 @@ class TrackTraceHolder
     /**
      * Get default value if option === null
      *
-     * @param $options[]
+     * @param $options []
      * @param $optionKey
      *
      * @return bool
@@ -264,9 +264,9 @@ class TrackTraceHolder
     private function getValueOfOption($options, $optionKey)
     {
         if ($options[$optionKey] === null) {
-            return (bool)self::$defaultOptions->getDefault($optionKey);
+            return (bool) self::$defaultOptions->getDefault($optionKey);
         } else {
-            return (bool)$options[$optionKey];
+            return (bool) $options[$optionKey];
         }
     }
 
@@ -279,13 +279,13 @@ class TrackTraceHolder
     {
         /** @var \Magento\Framework\App\ResourceConnection $connection */
         $connection = $this->objectManager->create('\Magento\Framework\App\ResourceConnection');
-        $conn = $connection->getConnection();
-        $select = $conn->select()
-            ->from(
-                ['main_table' => $connection->getTableName('sales_shipment_item')]
-            )
-            ->where('main_table.parent_id=?', $shipmentId);
-        $items = $conn->fetchAll($select);
+        $conn       = $connection->getConnection();
+        $select     = $conn->select()
+                           ->from(
+                               ['main_table' => $connection->getTableName('sales_shipment_item')]
+                           )
+                           ->where('main_table.parent_id=?', $shipmentId);
+        $items      = $conn->fetchAll($select);
 
         return $items;
     }
@@ -310,7 +310,7 @@ class TrackTraceHolder
             return $this;
         }
 
-        $weightFromSettings = (int)self::$defaultOptions->getDigitalStampWeight();
+        $weightFromSettings = (int) self::$defaultOptions->getDigitalStampWeight();
         if ($weightFromSettings) {
             $this->consignment->setPhysicalProperties(["weight" => $weightFromSettings]);
 
