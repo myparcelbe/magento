@@ -58,8 +58,8 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
         AbstractConsignment $consignment,
         Checkout $checkoutHelper
     ) {
-        $this->delivery    = $delivery;
-        $this->consignment  = $consignment;
+        $this->delivery      = $delivery;
+        $this->consignment   = $consignment;
         $this->parentMethods = explode(',', $checkoutHelper->getGeneralConfig('shipping_methods/methods'));
     }
 
