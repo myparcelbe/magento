@@ -15,6 +15,9 @@
 namespace MyParcelBE\Magento\Block\Sales;
 
 use Magento\Backend\Block\Template\Context;
+use Magento\Framework\Registry;
+use Magento\Sales\Model\Order\Shipment;
+use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
 
 class ShipmentAction extends OrdersAction
 {
@@ -40,9 +43,9 @@ class ShipmentAction extends OrdersAction
      */
     public function __construct(
         Context $context,
-        \Magento\Framework\Registry $registry,
-        \Magento\Sales\Model\Order\Shipment $shipment,
-        \MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment $consignment,
+        Registry $registry,
+        Shipment $shipment,
+        AbstractConsignment $consignment,
         array $data = []
     ) {
         // Set shipment and order
