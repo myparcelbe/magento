@@ -36,7 +36,7 @@ class UpgradeData implements UpgradeDataInterface
         if (version_compare($context->getVersion(), '3.0.0', '<=')) {
             $connection = $setup->getConnection();
             $table      = $setup->getTable('core_config_data');
-            if ($connection->isTableExists($table) == true) {
+            if ($connection->isTableExists($table)) {
                 /*
                  * Move shipping_methods to myparcelbe_magento_general
                  */
