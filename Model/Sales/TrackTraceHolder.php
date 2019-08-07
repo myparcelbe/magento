@@ -287,7 +287,7 @@ class TrackTraceHolder
      * @throws LocalizedException
      * @throws \Exception
      */
-    private function calculateTotalWeight($magentoTrack, $totalWeight = 0)
+    private function calculateTotalWeight($magentoTrack, int $totalWeight = 0): self
     {
         if ($this->consignment->getPackageType() !== AbstractConsignment::PACKAGE_TYPE_DIGITAL_STAMP) {
             return $this;
