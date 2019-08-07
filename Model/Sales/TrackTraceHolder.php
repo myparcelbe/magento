@@ -78,8 +78,8 @@ class TrackTraceHolder
         Data $helper,
         Order $order
     ) {
-        $this->objectManager  = $objectManager;
-        $this->helper         = $helper;
+        $this->objectManager = $objectManager;
+        $this->helper = $helper;
         $this->messageManager = $this->objectManager->create('Magento\Framework\Message\ManagerInterface');
         self::$defaultOptions = new DefaultOptions(
             $order,
