@@ -133,7 +133,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 ]
             );
         }
-        if (version_compare($context->getVersion(), '2.4.3', '<=')) {
+        if (version_compare($context->getVersion(), '3.0.0', '<')) {
             $setup->getConnection()->addColumn(
                 $setup->getTable('sales_order'),
                 'myparcel_carrier',
