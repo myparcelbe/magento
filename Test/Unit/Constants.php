@@ -169,7 +169,7 @@ class Constants extends \PHPUnit_Framework_TestCase
                 "firstname" => "asdf",
                 "lastname" => "MyParcel- asdfsd",
                 "saveInAddressBook" => null,
-                "email" => "reindert-test@sendmyparcel.be",
+                "email" => "richard-test@sendmyparcel.be",
             ], "shipping_method_code" => "flatrate",
             "shipping_carrier_code" => "flatrate",
         ]];
