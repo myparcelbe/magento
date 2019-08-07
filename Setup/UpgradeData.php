@@ -37,9 +37,8 @@ class UpgradeData implements UpgradeDataInterface
             $connection = $setup->getConnection();
             $table      = $setup->getTable('core_config_data');
             if ($connection->isTableExists($table) == true) {
-                /*
-                 * Move shipping_methods to myparcelbe_magento_general
-                 */
+
+                // Move shipping_methods to myparcelbe_magento_general
                 $selectShippingMethodSettings = $connection->select()->from(
                     $table,
                     ['config_id', 'path', 'value']
@@ -57,9 +56,7 @@ class UpgradeData implements UpgradeDataInterface
                     }
                 }
 
-                /*
-                 * Move insurance_500_active to carrier settings
-                 */
+                // Move insurance_500_active to carrier settings
                 $selectShippingMethodSettings = $connection->select()->from(
                     $table,
                     ['config_id', 'path', 'value']
@@ -76,9 +73,8 @@ class UpgradeData implements UpgradeDataInterface
                         $connection->update($table, $bind, $where);
                     }
                 }
-                /*
-                * Move signature_active to carrier settings
-                */
+
+                // Move signature_active to carrier settings
                 $selectShippingMethodSettings = $connection->select()->from(
                     $table,
                     ['config_id', 'path', 'value']
@@ -95,9 +91,8 @@ class UpgradeData implements UpgradeDataInterface
                         $connection->update($table, $bind, $where);
                     }
                 }
-                /*
-                 * Move myparcelbe_magento_checkout to myparcelbe_magento_bpost_settings
-                 */
+
+                // Move myparcelbe_magento_checkout to myparcelbe_magento_bpost_settings
                 $selectCheckoutSettings = $connection->select()->from(
                     $table,
                     ['config_id', 'path', 'value']
@@ -120,20 +115,16 @@ class UpgradeData implements UpgradeDataInterface
                     }
                 }
 
-                /*
-                 * Insert bpost enabled data
-                 */
-                if ($connection->isTableExists($table) == true) {
-                    $connection->insert(
-                        $table,
-                        [
-                            'scope'    => 'default',
-                            'scope_id' => 0,
-                            'path'     => 'myparcelbe_magento_bpost_settings/general/enabled',
-                            'value'    => 1
-                        ]
-                    );
-                }
+                // Insert bpost enabled data
+                $connection->insert(
+                    $table,
+                    [
+                        'scope'    => 'default',
+                        'scope_id' => 0,
+                        'path'     => 'myparcelbe_magento_bpost_settings/general/enabled',
+                        'value'    => 1
+                    ]
+                );
             }
         }
     }
