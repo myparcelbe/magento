@@ -210,9 +210,7 @@ class TrackTraceHolder
             return $this;
         }
 
-        if ($magentoTrack->getShipment()->getData('items') != null) {
-            $products = $magentoTrack->getShipment()->getData('items');
-
+        if ($products = $magentoTrack->getShipment()->getData('items')) {
             foreach ($products as $product) {
                 $myParcelProduct = (new MyParcelCustomsItem())
                     ->setDescription($product->getName())
@@ -308,9 +306,7 @@ class TrackTraceHolder
             return $this;
         }
 
-        if ($magentoTrack->getShipment()->getData('items') != null) {
-            $products = $magentoTrack->getShipment()->getData('items');
-
+        if ($products = $magentoTrack->getShipment()->getData('items')) {
             foreach ($products as $product) {
                 $totalWeight += $product->consignment->getWeight();
             }
