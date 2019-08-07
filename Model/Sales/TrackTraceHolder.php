@@ -215,7 +215,7 @@ class TrackTraceHolder
      */
     private function convertDataForCdCountry($magentoTrack)
     {
-        if (!$this->consignment->isCdCountry()) {
+        if (! $this->consignment->isCdCountry()) {
             return $this;
         }
 
