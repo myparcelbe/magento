@@ -9,8 +9,8 @@
 
 namespace MyParcelBE\Magento\Plugin\Magento\Sales\Api\Data;
 
-use Magento\Framework\HTTP\PhpEnvironment\Request;
 use Magento\Framework\App\ObjectManager;
+use Magento\Framework\HTTP\PhpEnvironment\Request;
 use MyParcelNL\Sdk\src\Support\Arr;
 
 class OrderExtension
@@ -43,7 +43,7 @@ class OrderExtension
     /**
      * Use the delivery_options data from the sales_order table so it can be used in the magento rest api.
      *
-     * @return string
+     * @return string|null
      */
     public function afterGetDeliveryOptions()
     {
@@ -74,6 +74,10 @@ class OrderExtension
             ->where($searchColumn . ' = ' . (int) $searchValue);
 
         $result = $connection->fetchAll($sql); // Gives associated array, table fields as key in array.
+
+        if (empty($result)) {
+            return null;
+        }
 
         return $result[0]['delivery_options'];
     }
