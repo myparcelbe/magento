@@ -33,7 +33,7 @@ class Carrier extends Column
          * @var Order\Shipment\Track[] $tracks
          */
         if (isset($dataSource['data']['items'])) {
-            foreach ($dataSource['data']['items'] as & $item) {
+            foreach ($dataSource['data']['items'] as &$item) {
                 if (key_exists('carrier', $item)) {
                     $item[$this->getData('name')] = $item['carrier'];
                 }
