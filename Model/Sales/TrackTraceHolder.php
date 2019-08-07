@@ -234,7 +234,7 @@ class TrackTraceHolder
                 ->setWeight($product['weight'] ?: 1)
                 ->setItemValue($product['price'])
                 ->setClassification('0000')
-                ->setCountry('NL');
+                ->setCountry('BE');
 
             $this->consignment->addItem($myParcelProduct);
         }
