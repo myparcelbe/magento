@@ -1,6 +1,6 @@
 <?php
 /**
- * Show send date column
+ * Show carrier column
  *
  * If you want to add improvements, please create a fork in our GitHub:
  * https://github.com/myparcelbe
