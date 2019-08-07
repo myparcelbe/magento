@@ -46,7 +46,7 @@ class UpgradeData implements UpgradeDataInterface
                     '`path` = "myparcelbe_magento_checkout/general/shipping_methods"'
                 );
 
-                $ShippingMethodData = $connection->fetchAll($selectShippingMethodSettings);
+                $shippingMethodData = $connection->fetchAll($selectShippingMethodSettings);
                 if ($ShippingMethodData) {
                     foreach ($ShippingMethodData as $value) {
                         $fullPath = 'myparcelbe_magento_general/shipping_methods/methods';
