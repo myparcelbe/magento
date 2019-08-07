@@ -46,15 +46,14 @@ class UpgradeData implements UpgradeDataInterface
                     '`path` = "myparcelbe_magento_checkout/general/shipping_methods"'
                 );
 
-                $shippingMethodData = $connection->fetchAll($selectShippingMethodSettings);
-                if ($ShippingMethodData) {
-                    foreach ($ShippingMethodData as $value) {
-                        $fullPath = 'myparcelbe_magento_general/shipping_methods/methods';
-                        $bind     = ['path' => $fullPath, 'value' => $value['value']];
-                        $where    = 'config_id = ' . $value['config_id'];
-                        $connection->update($table, $bind, $where);
-                    }
+                $shippingMethodData = $connection->fetchAll($selectShippingMethodSettings) ?? [];
+                foreach ($shippingMethodData as $value) {
+                    $fullPath = 'myparcelbe_magento_general/shipping_methods/methods';
+                    $bind     = ['path' => $fullPath, 'value' => $value['value']];
+                    $where    = 'config_id = ' . $value['config_id'];
+                    $connection->update($table, $bind, $where);
                 }
+
 
                 // Move insurance_500_active to carrier settings
                 $selectShippingMethodSettings = $connection->select()->from(
@@ -64,14 +63,12 @@ class UpgradeData implements UpgradeDataInterface
                     '`path` = "myparcelbe_magento_standard/options/insurance_500_active"'
                 );
 
-                $ShippingMethodData = $connection->fetchAll($selectShippingMethodSettings);
-                if ($ShippingMethodData) {
-                    foreach ($ShippingMethodData as $value) {
-                        $fullPath = 'myparcelbe_magento_bpost_settings/default_options/insurance_500_active';
-                        $bind     = ['path' => $fullPath, 'value' => $value['value']];
-                        $where    = 'config_id = ' . $value['config_id'];
-                        $connection->update($table, $bind, $where);
-                    }
+                $shippingMethodData = $connection->fetchAll($selectShippingMethodSettings) ?? [];
+                foreach ($shippingMethodData as $value) {
+                    $fullPath = 'myparcelbe_magento_bpost_settings/default_options/insurance_500_active';
+                    $bind     = ['path' => $fullPath, 'value' => $value['value']];
+                    $where    = 'config_id = ' . $value['config_id'];
+                    $connection->update($table, $bind, $where);
                 }
 
                 // Move signature_active to carrier settings
@@ -82,14 +79,12 @@ class UpgradeData implements UpgradeDataInterface
                     '`path` = "myparcelbe_magento_standard/options/signature_active"'
                 );
 
-                $ShippingMethodData = $connection->fetchAll($selectShippingMethodSettings);
-                if ($ShippingMethodData) {
-                    foreach ($ShippingMethodData as $value) {
-                        $fullPath = 'myparcelbe_magento_bpost_settings/default_options/signature_active';
-                        $bind     = ['path' => $fullPath, 'value' => $value['value']];
-                        $where    = 'config_id = ' . $value['config_id'];
-                        $connection->update($table, $bind, $where);
-                    }
+                $shippingMethodData = $connection->fetchAll($selectShippingMethodSettings) ?? [];
+                foreach ($shippingMethodData as $value) {
+                    $fullPath = 'myparcelbe_magento_bpost_settings/default_options/signature_active';
+                    $bind     = ['path' => $fullPath, 'value' => $value['value']];
+                    $where    = 'config_id = ' . $value['config_id'];
+                    $connection->update($table, $bind, $where);
                 }
 
                 // Move myparcelbe_magento_checkout to myparcelbe_magento_bpost_settings
@@ -100,19 +95,17 @@ class UpgradeData implements UpgradeDataInterface
                     '`path` LIKE "myparcelbe_magento_checkout/%"'
                 );
 
-                $checkoutData = $connection->fetchAll($selectCheckoutSettings);
-                if ($checkoutData) {
-                    foreach ($checkoutData as $value) {
-                        $path    = $value['path'];
-                        $path    = explode("/", $path);
-                        $path[0] = 'myparcelbe_magento_bpost_settings';
+                $checkoutData = $connection->fetchAll($selectCheckoutSettings) ?? [];
+                foreach ($checkoutData as $value) {
+                    $path    = $value['path'];
+                    $path    = explode("/", $path);
+                    $path[0] = 'myparcelbe_magento_bpost_settings';
 
-                        $fullPath = implode("/", $path);
+                    $fullPath = implode("/", $path);
 
-                        $bind  = ['path' => $fullPath, 'value' => $value['value']];
-                        $where = 'config_id = ' . $value['config_id'];
-                        $connection->update($table, $bind, $where);
-                    }
+                    $bind  = ['path' => $fullPath, 'value' => $value['value']];
+                    $where = 'config_id = ' . $value['config_id'];
+                    $connection->update($table, $bind, $where);
                 }
 
                 // Insert bpost enabled data
