@@ -310,7 +310,7 @@ class TrackTraceHolder
             return $this;
         }
 
-        $weightFromSettings = (int)self::$defaultOptions->getDigitalStampWeight();
+        $weightFromSettings = (int) self::$defaultOptions->getDigitalStampWeight();
         if ($weightFromSettings) {
             $this->consignment->setPhysicalProperties(["weight" => $weightFromSettings]);
 
