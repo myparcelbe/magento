@@ -126,17 +126,7 @@ class TrackTraceHolder
         $address      = $shipment->getShippingAddress();
         $checkoutData = $shipment->getOrder()->getData('delivery_options');
         $deliveryType = $this->consignment->getDeliveryTypeFromCheckout($checkoutData);
-
-        if ($options['package_type'] === 'default') {
-            $packageType = self::$defaultOptions->getPackageType();
-        } else {
-            $packageType = (int) $options['package_type'] ?: 1;
-        }
-
-        if ($address->getCountryId() != 'NL' &&
-            ((int) $options['package_type'] == 2 || (int) $options['package_type'] == 4)) {
-            $options['package_type'] = 1;
-        }
+        $packageType = self::$defaultOptions->getPackageType();
 
         $apiKey = $this->helper->getGeneralConfig(
             'api/key',
