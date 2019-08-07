@@ -78,8 +78,8 @@ class TrackTraceHolder
         Data $helper,
         Order $order
     ) {
-        $this->objectManager = $objectManager;
-        $this->helper = $helper;
+        $this->objectManager  = $objectManager;
+        $this->helper         = $helper;
         $this->messageManager = $this->objectManager->create('Magento\Framework\Message\ManagerInterface');
         self::$defaultOptions = new DefaultOptions(
             $order,
@@ -122,8 +122,9 @@ class TrackTraceHolder
     {
         $this->consignment = ConsignmentFactory::createByCarrierId(BpostConsignment::CARRIER_ID);
 
-        $address      = $magentoTrack->getShipment()->getShippingAddress();
-        $checkoutData = $magentoTrack->getShipment()->getOrder()->getData('delivery_options');
+        $shipment     = $magentoTrack->getShipment();
+        $address      = $shipment->getShippingAddress();
+        $checkoutData = $shipment->getOrder()->getData('delivery_options');
         $deliveryType = $this->consignment->getDeliveryTypeFromCheckout($checkoutData);
 
         if ($options['package_type'] === 'default') {
@@ -139,14 +140,14 @@ class TrackTraceHolder
 
         $apiKey = $this->helper->getGeneralConfig(
             'api/key',
-            $magentoTrack->getShipment()->getOrder()->getStoreId()
+            $shipment->getOrder()->getStoreId()
         );
 
         $this->validateApiKey($apiKey);
 
         $this->consignment
             ->setApiKey($apiKey)
-            ->setReferenceId($magentoTrack->getShipment()->getEntityId())
+            ->setReferenceId($shipment->getEntityId())
             ->setConsignmentId($magentoTrack->getData('myparcel_consignment_id'))
             ->setCountry($address->getCountryId())
             ->setCompany($address->getCompany())
@@ -171,7 +172,7 @@ class TrackTraceHolder
             ->setCity($address->getCity())
             ->setPhone($address->getTelephone())
             ->setEmail($address->getEmail())
-            ->setLabelDescription($magentoTrack->getShipment()->getOrder()->getIncrementId())
+            ->setLabelDescription($shipment->getOrder()->getIncrementId())
             ->setDeliveryDateFromCheckout($checkoutData)
             ->setDeliveryType($deliveryType)
             ->setPickupAddressFromCheckout($checkoutData)
@@ -292,7 +293,7 @@ class TrackTraceHolder
 
     /**
      * @param Order\Shipment\Track $magentoTrack
-     * @param int $totalWeight
+     * @param int                  $totalWeight
      *
      * @return TrackTraceHolder
      * @throws LocalizedException
