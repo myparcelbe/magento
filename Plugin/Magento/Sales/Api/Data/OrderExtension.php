@@ -58,9 +58,11 @@ class OrderExtension
         $explodePath = explode('/', $path);
 
         if (empty($explodePath[self::ENTITY_ID_POSITION])) {
-            [$searchColumn, $searchValue] = $this->getIdByIncrementId();
+            $searchColumn = self::INCREMENT_ID;
+            $searchValue  = $this->getIdByIncrementId();
         } else {
-            [$searchColumn, $searchValue] = $this->getIdByEntityId($explodePath[self::ENTITY_ID_POSITION]);
+            $searchColumn = self::ENTITY_ID;
+            $searchValue  = $explodePath[self::ENTITY_ID_POSITION];
         }
 
         if (empty($searchValue)) {
@@ -93,13 +95,13 @@ class OrderExtension
     }
 
     /**
-     * @return array
+     * @return mixed
      */
     private function getIdByIncrementId()
     {
         $searchValue = $this->request->getQueryValue('searchCriteria');
         $searchValue = Arr::get($searchValue, 'filterGroups.0.filters.0.value');
 
-        return [self::INCREMENT_ID, $searchValue];
+        return $searchValue;
     }
 }
