@@ -73,14 +73,15 @@ class DeliveryRepository extends Delivery
         return $dropOff;
     }
 
+
     /**
-     *  Get carrier with chosen options from checkout
+     * Get carrier with chosen options from checkout
      *
-     * @param string $jsonDeliveryOptions
+     * @param string|null $jsonDeliveryOptions
      *
-     * @return string
+     * @return string|null
      */
-    public function getCarrierFromJson(string $jsonDeliveryOptions): string
+    public function getCarrierFromJson(?string $jsonDeliveryOptions): ?string
     {
         if ($jsonDeliveryOptions === null) {
             return null;

@@ -170,6 +170,8 @@ class TrackTraceHolder
             ->setSignature($this->getValueOfOption($options, 'signature'))
             ->setInsurance($options['insurance'] !== null ? $options['insurance'] : self::$defaultOptions->getDefaultInsurance());
 
+        $this->convertDataForCdCountry($magentoTrack);
+
         return $this;
     }
 
@@ -206,7 +208,7 @@ class TrackTraceHolder
      */
     private function convertDataForCdCountry($magentoTrack)
     {
-        if (! $this->isCdCountry()) {
+        if (! $this->consignment->isCdCountry()) {
             return $this;
         }
 
@@ -216,10 +218,10 @@ class TrackTraceHolder
                     ->setDescription($product->getName())
                     ->setAmount($product->getQty())
                     ->setWeight($product->getWeight() ?: 1)
-                    ->setItemValue($product->getPrice())
+                    ->setItemValue($this->calculateToCent($product->getPrice()))
                     ->setClassification('0000')
-                    ->setCountry('NL');
-                $this->addItem($myParcelProduct);
+                    ->setCountry('BE');
+                $this->consignment->addItem($myParcelProduct);
             }
         }
 
@@ -230,7 +232,7 @@ class TrackTraceHolder
                 ->setDescription($product['name'])
                 ->setAmount($product['qty'])
                 ->setWeight($product['weight'] ?: 1)
-                ->setItemValue($product['price'])
+                ->setItemValue($this->calculateToCent($product['price']))
                 ->setClassification('0000')
                 ->setCountry('BE');
 
@@ -327,5 +329,15 @@ class TrackTraceHolder
         ]);
 
         return $this;
+    }
+
+    /**
+     * @param float $price
+     *
+     * @return int
+     */
+    private function calculateToCent(float $price)
+    {
+        return  $price * 100;
     }
 }
