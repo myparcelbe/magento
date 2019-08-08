@@ -85,16 +85,6 @@ class OrderExtension
     }
 
     /**
-     * @param $entityId
-     *
-     * @return array
-     */
-    private function getIdByEntityId($entityId)
-    {
-        return [self::ENTITY_ID, $entityId];
-    }
-
-    /**
      * @return mixed
      */
     private function getIdByIncrementId()
