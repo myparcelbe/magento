@@ -200,11 +200,6 @@ class TrackTraceHolder
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \MyParcelNL\Sdk\src\Exception\MissingFieldException
      * @throws \Exception
-     * @todo Add setting to global setting and/or category (like magento 1)
-     * @todo Get Classification from setting and/or category
-     * @todo Get country of manufacture (get attribute from product)
-     * @todo Find out why the weight does not come on the label
-     * @todo Find out why the price does not come on the label
      */
     private function convertDataForCdCountry($magentoTrack)
     {
@@ -218,7 +213,7 @@ class TrackTraceHolder
                     ->setDescription($product->getName())
                     ->setAmount($product->getQty())
                     ->setWeight($product->getWeight() ?: 1)
-                    ->setItemValue($this->calculateToCent($product->getPrice()))
+                    ->setItemValue($this->getCentsByPrice($product->getPrice()))
                     ->setClassification('0000')
                     ->setCountry('BE');
                 $this->consignment->addItem($myParcelProduct);
@@ -232,7 +227,7 @@ class TrackTraceHolder
                 ->setDescription($product['name'])
                 ->setAmount($product['qty'])
                 ->setWeight($product['weight'] ?: 1)
-                ->setItemValue($this->calculateToCent($product['price']))
+                ->setItemValue($this->getCentsByPrice($product['price']))
                 ->setClassification('0000')
                 ->setCountry('BE');
 
@@ -336,8 +331,8 @@ class TrackTraceHolder
      *
      * @return int
      */
-    private function calculateToCent(float $price)
+    private function getCentsByPrice(float $price): int
     {
-        return  $price * 100;
+        return  (int) $price * 100;
     }
 }
