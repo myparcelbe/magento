@@ -11,7 +11,7 @@
  * https://github.com/myparcelbe
  *
  * @author      Reindert Vetter <info@sendmyparcel.be>
- * @copyright   2010-2017 MyParcel
+ * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
  * @since       File available since Release v0.1.0
@@ -23,7 +23,7 @@ use Magento\Framework\App\ObjectManager;
 use Magento\Sales\Api\Data\ShipmentTrackInterface;
 use Magento\Sales\Model\Order;
 use MyParcelBE\Magento\Model\Sales\MagentoOrderCollection;
-use MyParcelBE\Magento\Model\Sales\MyParcelTrackTrace;
+use MyParcelBE\Magento\Model\Sales\TrackTraceHolder;
 
 class UpdateStatus
 {
@@ -57,6 +57,7 @@ class UpdateStatus
      * Run the cron job
      *
      * @return $this
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function execute()
     {
@@ -99,7 +100,7 @@ class UpdateStatus
             ->addFieldToSelect('order_id')
             ->addAttributeToFilter('myparcel_status', [1, 2, 3, 4, 5, 6, 8])
             ->addAttributeToFilter('myparcel_consignment_id', ['notnull' => true])
-            ->addAttributeToFilter(ShipmentTrackInterface::CARRIER_CODE, MyParcelTrackTrace::MYPARCEL_CARRIER_CODE)
+            ->addAttributeToFilter(ShipmentTrackInterface::CARRIER_CODE, TrackTraceHolder::MYPARCEL_CARRIER_CODE)
             ->setPageSize(300)
             ->setOrder('order_id', 'DESC');
 

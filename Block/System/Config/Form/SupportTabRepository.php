@@ -10,13 +10,15 @@
  * https://github.com/myparcelbe
  *
  * @author      Reindert Vetter <info@sendmyparcel.be>
- * @copyright   2010-2017 MyParcel
+ * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
  * @since       File available since Release 0.1.0
  */
 
 namespace MyParcelBE\Magento\Block\System\Config\Form;
+
+use MyParcelBE\Magento\Helper\Data;
 
 class SupportTabRepository extends \Magento\Sales\Block\Adminhtml\Order\AbstractOrder
 {/**
@@ -32,9 +34,10 @@ class SupportTabRepository extends \Magento\Sales\Block\Adminhtml\Order\Abstract
      * MyParcelSupportTab constructor
      *
      * @param \Magento\Backend\Block\Template\Context $context
-     * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Sales\Helper\Admin $adminHelper
-     * @param array $data
+     * @param \Magento\Framework\Registry             $registry
+     * @param \Magento\Sales\Helper\Admin             $adminHelper
+     * @param \MyParcelBE\Magento\Helper\Data         $helper
+     * @param array                                   $data
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
@@ -64,7 +67,7 @@ class SupportTabRepository extends \Magento\Sales\Block\Adminhtml\Order\Abstract
      *
      * @return string
      */
-    public function getVersion()
+    public function getModuleVersion()
     {
         return $this->helper->getVersion();
     }

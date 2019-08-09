@@ -12,22 +12,23 @@
             <print>
                 <paper_type>A4</paper_type>
             </print>
+            <shipping_methods>
+                <methods>tablerate</methods>
+            </shipping_methods>
         </myparcelbe_magento_general>
-        <myparcelbe_magento_standard>
+        <myparcelbe_magento_bpost_settings>
             <options>
                 <signature_active>0</signature_active>
                 <signature_from_price>1</signature_from_price>
                 <insurance_500_active>0</insurance_500_active>
                 <insurance_500_from_price>1</insurance_500_from_price>
             </options>
-        </myparcelbe_magento_standard>
-        <myparcelbe_magento_checkout>
             <general>
+                <enabled>1</enabled>
                 <deliverydays_window>1</deliverydays_window>
                 <cutoff_time>15,30,00</cutoff_time>
                 <dropoff_days>1,2,3,4,5</dropoff_days>
                 <dropoff_delay>0</dropoff_delay>
-                <shipping_methods>tablerate</shipping_methods>
             </general>
             <delivery>
                 <delivery_title>Thuis of op het werk bezorgd</delivery_title>
@@ -44,7 +45,28 @@
                 <title>Ophalen bij een Bpost locatie</title>
                 <fee>0</fee>
             </pickup>
-        </myparcelbe_magento_checkout>
+        </myparcelbe_magento_bpost_settings>
+        <myparcelbe_magento_dpd_settings>
+            <general>
+                <enabled>0</enabled>
+                <deliverydays_window>1</deliverydays_window>
+                <cutoff_time>15,30,00</cutoff_time>
+                <dropoff_days>1,2,3,4,5</dropoff_days>
+                <dropoff_delay>0</dropoff_delay>
+            </general>
+            <delivery>
+                <delivery_title>Thuis of op het werk bezorgd</delivery_title>
+                <standard_delivery_title>Standaardlevering</standard_delivery_title>
+                <saturday_active>0</saturday_active>
+                <saturday_title>Zaterdaglevering</saturday_title>
+                <saturday_fee>2</saturday_fee>
+            </delivery>
+            <pickup>
+                <active>1</active>
+                <title>Ophalen bij een DPD locatie</title>
+                <fee>0</fee>
+            </pickup>
+        </myparcelbe_magento_dpd_settings>
         <sales_email>
             <track>
                 <enabled>1</enabled>

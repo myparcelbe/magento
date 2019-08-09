@@ -10,14 +10,13 @@
  * https://github.com/myparcelbe/magento
  *
  * @author      Reindert Vetter <info@sendmyparcel.be>
- * @copyright   2010-2017 MyParcel
+ * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
  * @since       File available since Release 2.0.0
  */
 
 namespace MyParcelBE\Magento\Model\Sales\Repository;
-
 
 use MyParcelBE\Magento\Model\Sales\Delivery;
 
@@ -27,9 +26,11 @@ class DeliveryRepository extends Delivery
      * Get drop off day with chosen options from checkout
      *
      * @param $jsonDeliveryOptions
+     *
      * @return string
      */
-    public function getDropOffDayFromJson($jsonDeliveryOptions) {
+    public function getDropOffDayFromJson($jsonDeliveryOptions)
+    {
         if ($jsonDeliveryOptions === null) {
             return null;
         }
@@ -44,7 +45,6 @@ class DeliveryRepository extends Delivery
 
         return null;
     }
-
 
     /**
      * Get drop off day
@@ -71,5 +71,27 @@ class DeliveryRepository extends Delivery
         }
 
         return $dropOff;
+    }
+
+
+    /**
+     * Get carrier with chosen options from checkout
+     *
+     * @param string|null $jsonDeliveryOptions
+     *
+     * @return string|null
+     */
+    public function getCarrierFromJson(?string $jsonDeliveryOptions): ?string
+    {
+        if ($jsonDeliveryOptions === null) {
+            return null;
+        }
+
+        $deliveryOptions = json_decode($jsonDeliveryOptions, true);
+        if (key_exists('carrier', $deliveryOptions)) {
+            return $deliveryOptions['carrier'];
+        }
+
+        return null;
     }
 }

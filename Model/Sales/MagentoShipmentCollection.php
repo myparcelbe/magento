@@ -4,7 +4,7 @@
  * https://github.com/myparcelbe
  *
  * @author      Reindert Vetter <info@sendmyparcel.be>
- * @copyright   2010-2017 MyParcel
+ * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
  * @since       File available since Release v0.1.0
@@ -55,6 +55,7 @@ class MagentoShipmentCollection extends MagentoCollection
      * Create new Magento Track and save order
      *
      * @return $this
+     * @throws \Exception
      */
     public function setMagentoTrack()
     {
@@ -92,8 +93,8 @@ class MagentoShipmentCollection extends MagentoCollection
          */
         foreach ($this->shipments as $shipment) {
             foreach ($this->getTrackByShipment($shipment)->getItems() as $magentoTrack) {
-                if ($magentoTrack->getCarrierCode() == MyParcelTrackTrace::MYPARCEL_CARRIER_CODE) {
-                    $this->myParcelCollection->addConsignment($this->getMyParcelTrack($magentoTrack));
+                if ($magentoTrack->getCarrierCode() == TrackTraceHolder::MYPARCEL_CARRIER_CODE) {
+                    $this->myParcelCollection->addConsignment($this->createConsignmentAndGetTrackTraceHolder($magentoTrack));
                 }
             }
         }
@@ -105,6 +106,7 @@ class MagentoShipmentCollection extends MagentoCollection
      * Set PDF content and convert status 'Concept' to 'Registered'
      *
      * @return $this
+     * @throws \Exception
      */
     public function setPdfOfLabels()
     {
@@ -131,6 +133,9 @@ class MagentoShipmentCollection extends MagentoCollection
      * Create MyParcel concepts and update Magento Track
      *
      * @return $this
+     * @throws \MyParcelNL\Sdk\src\Exception\ApiException
+     * @throws \MyParcelNL\Sdk\src\Exception\MissingFieldException
+     * @throws \Exception
      */
     public function createMyParcelConcepts()
     {
@@ -144,7 +149,7 @@ class MagentoShipmentCollection extends MagentoCollection
         foreach ($this->getShipments() as $shipment) {
             foreach ($shipment->getTracksCollection() as $track) {
                 $myParcelTrack = $this
-                    ->myParcelCollection->getConsignmentByReferenceId($track->getId());
+                    ->myParcelCollection->getConsignmentsByReferenceId($shipment->getEntityId())->first();
 
                 $track
                     ->setData('myparcel_consignment_id', $myParcelTrack->getMyParcelConsignmentId())
@@ -160,6 +165,7 @@ class MagentoShipmentCollection extends MagentoCollection
      * Update MyParcel collection
      *
      * @return $this
+     * @throws \Exception
      */
     public function setLatestData()
     {
@@ -196,6 +202,7 @@ class MagentoShipmentCollection extends MagentoCollection
      *
      * @return $this
      * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Exception
      */
     public function updateMagentoTrack()
     {
@@ -231,6 +238,7 @@ class MagentoShipmentCollection extends MagentoCollection
      *
      * @return $this
      * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Exception
      */
     public function updateGridByShipment()
     {

@@ -10,7 +10,7 @@
  * https://github.com/myparcelbe
  *
  * @author      Reindert Vetter <info@sendmyparcel.be>
- * @copyright   2010-2017 MyParcel
+ * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
  * @since       File available since Release 0.1.0
@@ -18,14 +18,12 @@
 
 namespace MyParcelBE\Magento\Model\Checkout;
 
-use Magento\Quote\Model\Quote\Address\RateResult\Error;
+use Magento\Framework\DataObject;
+use Magento\Framework\Xml\Security;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Shipping\Model\Carrier\AbstractCarrierOnline;
 use Magento\Shipping\Model\Carrier\CarrierInterface;
-use Magento\Shipping\Model\Rate\Result;
-use Magento\Shipping\Model\Simplexml\Element;
 use Magento\Ups\Helper\Config;
-use Magento\Framework\Xml\Security;
 use MyParcelBE\Magento\Helper\Checkout;
 use MyParcelBE\Magento\Helper\Data;
 use MyParcelBE\Magento\Model\Sales\Repository\PackageRepository;
@@ -121,7 +119,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $this->package = $package;
     }
 
-    protected function _doShipmentRequest(\Magento\Framework\DataObject $request)
+    protected function _doShipmentRequest(DataObject $request)
     {
     }
 
@@ -134,7 +132,8 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         return $result;
     }
 
-    public function proccessAdditionalValidation(\Magento\Framework\DataObject $request) {
+    public function proccessAdditionalValidation(DataObject $request)
+    {
         return true;
     }
 
@@ -145,7 +144,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      */
     public static function getMethods()
     {
-	    $methods = [
+        $methods = [
             'signature' => 'delivery/signature_',
             'pickup' => 'pickup/',
         ];
@@ -171,13 +170,12 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     private function addShippingMethods($result)
     {
         $products = $this->quote->getAllItems($result);
-        if (count($products) > 0){
+        if (count($products) > 0) {
             $this->package->setWeightFromQuoteProducts($products);
         }
 
         foreach ($this->getAllowedMethods() as $alias => $settingPath) {
-
-            $active = $this->myParcelHelper->getConfigValue(Data::XML_PATH_CHECKOUT . $settingPath . 'active') === '1';
+            $active = $this->myParcelHelper->getConfigValue(Data::XML_PATH_BPOST_SETTINGS . $settingPath . 'active') === '1';
             if ($active) {
                 $method = $this->getShippingMethod($alias, $settingPath);
                 $result->append($method);
@@ -218,7 +216,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
      */
     private function createTitle($settingPath)
     {
-        $title = $this->myParcelHelper->getConfigValue(Data::XML_PATH_CHECKOUT . $settingPath . 'title');
+        $title = $this->myParcelHelper->getConfigValue(Data::XML_PATH_BPOST_SETTINGS . $settingPath . 'title');
 
         if ($title === null) {
             $title = __($settingPath . 'title');
@@ -227,19 +225,20 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         return $title;
     }
 
-	/**
-	 * Create price
-	 * Calculate price if multiple options are chosen
-	 *
-	 * @param $alias
-	 * @param $settingPath
-	 * @return float
-	 */
-	private function createPrice($alias, $settingPath) {
-		$price = 0;
+    /**
+     * Create price
+     * Calculate price if multiple options are chosen
+     *
+     * @param $alias
+     * @param $settingPath
+     * @return float
+     */
+    private function createPrice($alias, $settingPath)
+    {
+        $price = 0;
 
-		$price += $this->myParcelHelper->getMethodPrice($settingPath . 'fee', $alias);
+        $price += $this->myParcelHelper->getMethodPrice($settingPath . 'fee', $alias);
 
-		return $price;
-	}
+        return $price;
+    }
 }

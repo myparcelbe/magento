@@ -6,7 +6,7 @@
  * https://github.com/myparcelbe
  *
  * @author      Reindert Vetter <info@sendmyparcel.be>
- * @copyright   2010-2017 MyParcel
+ * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
  * @since       File available since Release v0.1.0
@@ -16,7 +16,6 @@ namespace MyParcelBE\Magento\Block\Sales;
 
 use Magento\Sales\Block\Adminhtml\Items\AbstractItems;
 use MyParcelBE\Magento\Model\Source\DefaultOptions;
-use Magento\Framework\App\ObjectManager;
 
 class NewShipment extends AbstractItems
 {
@@ -90,7 +89,6 @@ class NewShipment extends AbstractItems
 
     /**
      * @return string
-     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function getCountry()
     {

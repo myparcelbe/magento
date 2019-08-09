@@ -20,7 +20,7 @@ use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Module\ModuleListInterface;
 use Magento\Quote\Api\Data\EstimateAddressInterfaceFactory;
 use Magento\Quote\Model\ShippingMethodManagement;
-use MyParcelBE\Sdk\src\Services\CheckApiKeyService;
+use MyParcelNL\Sdk\src\Services\CheckApiKeyService;
 
 class Checkout extends Data
 {
@@ -142,7 +142,7 @@ class Checkout extends Data
             return null;
         }
 
-        $parentMethods = explode(',', $this->getCheckoutConfig('general/shipping_methods'));
+        $parentMethods = explode(',', $this->getGeneralConfig('shipping_methods/methods'));
 
         /**
          * @var \Magento\Quote\Api\Data\EstimateAddressInterface $estimatedAddress
@@ -176,7 +176,7 @@ class Checkout extends Data
      */
     public function getMethodPrice($key, $addBasePrice = true)
     {
-        $value = $this->getCheckoutConfig($key);
+        $value = $this->getCarrierConfig($key);
         if ($addBasePrice) {
             if ($value > 0) {
                 // Calculate value
@@ -241,14 +241,14 @@ class Checkout extends Data
      *
      * @return mixed
      */
-    public function getCheckoutConfig($code, $canBeNull = false)
+    public function getCarrierConfig($code, $canBeNull = false)
     {
-        $value = $this->getConfigValue(self::XML_PATH_CHECKOUT . $code);
+        $value = $this->getConfigValue(self::XML_PATH_BPOST_SETTINGS . $code);
         if (null != $value || $canBeNull) {
             return $value;
         }
 
-        $this->_logger->critical('Can\'t get setting with path:' . self::XML_PATH_CHECKOUT . $code);
+        $this->_logger->critical('Can\'t get setting with path:' . self::XML_PATH_BPOST_SETTINGS . $code);
     }
 
     /**
@@ -260,7 +260,7 @@ class Checkout extends Data
      */
     public function getBoolConfig($key)
     {
-        return $this->getCheckoutConfig($key) == "1" ? true : false;
+        return $this->getCarrierConfig($key) == "1" ? true : false;
     }
 
     /**
@@ -272,7 +272,7 @@ class Checkout extends Data
      */
     public function getTimeConfig($key)
     {
-        return str_replace(',', ':', $this->getCheckoutConfig($key));
+        return str_replace(',', ':', $this->getCarrierConfig($key));
     }
 
     /**
@@ -284,7 +284,7 @@ class Checkout extends Data
      */
     public function getArrayConfig($key)
     {
-        return str_replace(',', ';', $this->getCheckoutConfig($key));
+        return str_replace(',', ';', $this->getCarrierConfig($key));
     }
 
     /**
@@ -296,6 +296,6 @@ class Checkout extends Data
      */
     public function getIntergerConfig($key)
     {
-        return (float)$this->getCheckoutConfig($key);
+        return (float) $this->getCarrierConfig($key);
     }
 }
