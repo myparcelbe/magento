@@ -18,11 +18,11 @@
 
 namespace MyParcelBE\Magento\Model\Checkout;
 
+use Magento\Framework\DataObject;
 use Magento\Framework\Xml\Security;
 use Magento\Quote\Model\Quote\Address\RateRequest;
 use Magento\Shipping\Model\Carrier\AbstractCarrierOnline;
 use Magento\Shipping\Model\Carrier\CarrierInterface;
-use Magento\Shipping\Model\Rate\Result;
 use Magento\Ups\Helper\Config;
 use MyParcelBE\Magento\Helper\Checkout;
 use MyParcelBE\Magento\Helper\Data;
@@ -119,7 +119,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         $this->package = $package;
     }
 
-    protected function _doShipmentRequest(\Magento\Framework\DataObject $request)
+    protected function _doShipmentRequest(DataObject $request)
     {
     }
 
@@ -132,7 +132,7 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
         return $result;
     }
 
-    public function proccessAdditionalValidation(\Magento\Framework\DataObject $request)
+    public function proccessAdditionalValidation(DataObject $request)
     {
         return true;
     }
