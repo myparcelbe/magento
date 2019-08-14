@@ -34,8 +34,8 @@ class Carrier extends Column
          */
         if (isset($dataSource['data']['items'])) {
             foreach ($dataSource['data']['items'] as &$item) {
-                if (key_exists('carrier', $item)) {
-                    $item[$this->getData('name')] = $item['carrier'];
+                if (key_exists('myparcel_carrier', $item)) {
+                    $item[$this->getData('name')] = $item['myparcel_carrier'];
                 }
             }
         }
