@@ -83,7 +83,6 @@ class DeliveryRepository extends Delivery
      */
     public function getCarrierFromJson(?string $jsonDeliveryOptions): ?string
     {
-        $jsonDeliveryOptions.dd
         if ($jsonDeliveryOptions === null) {
             return null;
         }
