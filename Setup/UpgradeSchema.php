@@ -138,7 +138,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 $setup->getTable('sales_order'),
                 'myparcel_carrier',
                 [
-                    'type'     => Table::TYPE_INTEGER,
+                    'type'     => Table::TYPE_TEXT,
                     'nullable' => true,
                     'comment'  => 'MyParcel carrier',
                 ]
@@ -147,7 +147,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 $setup->getTable('sales_order_grid'),
                 'myparcel_carrier',
                 [
-                    'type'     => Table::TYPE_INTEGER,
+                    'type'     => Table::TYPE_TEXT,
                     'nullable' => true,
                     'comment'  => 'MyParcel carrier',
                 ]

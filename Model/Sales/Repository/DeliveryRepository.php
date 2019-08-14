@@ -83,13 +83,14 @@ class DeliveryRepository extends Delivery
      */
     public function getCarrierFromJson(?string $jsonDeliveryOptions): ?string
     {
+        $jsonDeliveryOptions.dd
         if ($jsonDeliveryOptions === null) {
             return null;
         }
 
         $deliveryOptions = json_decode($jsonDeliveryOptions, true);
-        if (key_exists('carrier', $deliveryOptions)) {
-            return $deliveryOptions['carrier'];
+        if (key_exists('carriers', $deliveryOptions)) {
+            return $deliveryOptions['carriers'];
         }
 
         return null;
