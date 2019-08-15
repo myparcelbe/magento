@@ -76,7 +76,7 @@ class UpgradeData implements UpgradeDataInterface
                     $connection->update($table, $bind, $where);
                 }
 
-                // Move insurance_500_active to carrier settings
+                // Move signature_active to carrier settings
                 $selectDefaultSignature = $connection->select()->from(
                     $table,
                     ['config_id', 'path', 'value']
