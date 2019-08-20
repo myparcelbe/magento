@@ -54,36 +54,47 @@ class UpgradeData implements UpgradeDataInterface
                     $connection->update($table, $bind, $where);
                 }
 
-
                 // Move insurance_500_active to carrier settings
-                $selectShippingMethodSettings = $connection->select()->from(
+                $selectDefaultInsurance = $connection->select()->from(
                     $table,
                     ['config_id', 'path', 'value']
                 )->where(
-                    '`path` = "myparcelbe_magento_standard/options/insurance_500_active"'
+                    '`path` LIKE "myparcelbe_magento_standard/options/insurance_500%"'
                 );
 
-                $shippingMethodData = $connection->fetchAll($selectShippingMethodSettings) ?? [];
-                foreach ($shippingMethodData as $value) {
-                    $fullPath = 'myparcelbe_magento_bpost_settings/default_options/insurance_500_active';
-                    $bind     = ['path' => $fullPath, 'value' => $value['value']];
-                    $where    = 'config_id = ' . $value['config_id'];
+                $insuranceData = $connection->fetchAll($selectDefaultInsurance) ?? [];
+                foreach ($insuranceData as $value) {
+                    $path    = $value['path'];
+                    $path    = explode("/", $path);
+                    $path[0] = 'myparcelbe_magento_bpost_settings';
+                    $path[1] = 'default_options';
+
+                    $fullPath = implode("/", $path);
+
+                    $bind  = ['path' => $fullPath, 'value' => $value['value']];
+                    $where = 'config_id = ' . $value['config_id'];
                     $connection->update($table, $bind, $where);
                 }
 
                 // Move signature_active to carrier settings
-                $selectShippingMethodSettings = $connection->select()->from(
+                $selectDefaultSignature = $connection->select()->from(
                     $table,
                     ['config_id', 'path', 'value']
                 )->where(
-                    '`path` = "myparcelbe_magento_standard/options/signature_active"'
+                    '`path` LIKE "myparcelbe_magento_standard/options/signature%"'
                 );
 
-                $shippingMethodData = $connection->fetchAll($selectShippingMethodSettings) ?? [];
-                foreach ($shippingMethodData as $value) {
-                    $fullPath = 'myparcelbe_magento_bpost_settings/default_options/signature_active';
-                    $bind     = ['path' => $fullPath, 'value' => $value['value']];
-                    $where    = 'config_id = ' . $value['config_id'];
+                $signatureeData = $connection->fetchAll($selectDefaultSignature) ?? [];
+                foreach ($signatureeData as $value) {
+                    $path    = $value['path'];
+                    $path    = explode("/", $path);
+                    $path[0] = 'myparcelbe_magento_bpost_settings';
+                    $path[1] = 'default_options';
+
+                    $fullPath = implode("/", $path);
+
+                    $bind  = ['path' => $fullPath, 'value' => $value['value']];
+                    $where = 'config_id = ' . $value['config_id'];
                     $connection->update($table, $bind, $where);
                 }
 
