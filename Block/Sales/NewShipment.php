@@ -104,4 +104,25 @@ class NewShipment extends AbstractItems
     {
         return json_decode($this->order->getData('delivery_options'), true);
     }
+
+    /**
+     * Get carrier with chosen options from checkout
+     *
+     * @param string|null $jsonDeliveryOptions
+     *
+     * @return string|null
+     */
+    public function getCarrierFromJson(?string $jsonDeliveryOptions): ?string
+    {
+        if ($jsonDeliveryOptions === null) {
+            return null;
+        }
+
+        $deliveryOptions = json_decode($jsonDeliveryOptions, true);
+        if (key_exists('carriers', $deliveryOptions)) {
+            return $deliveryOptions['carriers'];
+        }
+
+        return null;
+    }
 }
