@@ -20,7 +20,7 @@
     <div class="field field-mypa_carrier_bpost mypa-option-toggle" style="margin-top: 10px;">
         <div class="admin__field-control">
             <div class="admin__field admin__field-option">
-                <input type="radio" class="admin__control-radio" id="mypa_carrier_bpost" name="mypa_carrier_bpost" value="1" <?=$block->getCarrierFromJson($jsonDeliveryOptions) ;?>>
+                <input type="radio" class="admin__control-radio" id="mypa_carrier_bpost" name="mypa_carrier_bpost" value="1" <?=$block->getPackageType() !== 1 ?: 'checked="checked"';?>>
                 <label class="admin__field-label" for="mypa_carrier"><?=__('bpost');?></label>
             </div>
         </div>
