@@ -1,337 +1,332 @@
+/* eslint-disable no-underscore-dangle */
 define(
-    [
-        'mage/url',
-        'uiComponent',
-        'Magento_Checkout/js/model/quote',
-        'Magento_Customer/js/model/customer',
-        'Magento_Checkout/js/checkout-data',
-        'jquery',
-        'text!MyParcelBE_Magento/template/checkout/options.html',
-        'text!MyParcelBE_Magento/css/checkout/options-dynamic.min.css',
-        'MyParcelBE_Magento/js/lib/myparcel',
-        'Magento_Checkout/js/action/set-shipping-information'
-    ],
-    function(mageUrl, uiComponent, quote, customer, checkoutData,jQuery, optionsHtml, cssDynamic, moment, setShippingInformationAction) {
-        'use strict';
+  [
+    'mage/url',
+    'uiComponent',
+    'Magento_Checkout/js/model/quote',
+    'Magento_Customer/js/model/customer',
+    'Magento_Checkout/js/checkout-data',
+    'text!MyParcelBE_Magento/template/checkout/options.html',
+    'text!MyParcelBE_Magento/css/checkout/options-dynamic.min.css',
+    'MyParcelBE_Magento/js/lib/myparcel',
+    'Magento_Checkout/js/action/set-shipping-information',
+  ],
+  // eslint-disable-next-line max-params,max-lines-per-function
+  function(
+    mageUrl,
+    uiComponent,
+    quote,
+    customer,
+    checkoutData,
+    optionsHtml,
+    cssDynamic,
+    moment,
+    setShippingInformationAction
+  ) {
+    'use strict';
 
-        var  originalShippingRate, optionsContainer, isLoading, myparcel, delivery_options_input, myparcel_method_alias, myparcel_method_element, isLoadingAddress;
+    window.addEventListener('load', function() {
 
-        return {
-            loadOptions: loadOptions,
-            showOptions: showOptions,
-            hideOptions: hideOptions
-        };
+      if (!window.hasOwnProperty('MyParcel')) {
 
-        function loadOptions() {
-            if (typeof window.mypa === 'undefined') {
-                window.mypa = {isLoading: false, fn: {}};
-            }
-            window.mypa.fn.hideOptions = hideOptions;
-            window.mypa.moment = moment;
-            window.mypa.setShippingInformationAction = setShippingInformationAction;
+      }
 
-            if (window.mypa.isLoading === false) {
-                _hideRadios();
-                window.mypa.isLoading = true;
-                isLoading = setTimeout(function(){
-                    clearTimeout(isLoading);
-                    _hideRadios();
+      var MyParcelFrontend = {
+        split_street_regex: /(.*?)\s?(\d{1,4})[/\s-]{0,2}([A-z]\d{1,3}|-\d{1,4}|\d{2}\w{1,2}|[A-z][A-z\s]{0,3})?$/,
+        is_using_split_address_fields: parseInt(wcmp_display_settings.isUsingSplitAddressFields),
 
-                    jQuery.ajax({
-                        url: mageUrl.build('rest/V1/delivery_settings/get'),
-                        type: "GET",
-                        dataType: 'json',
-                        showLoader: true
-                    }).done(function (response) {
-                        window.mypa.data = response[0].data;
-                        init();
-                        window.mypa.isLoading = false;
-                    });
+        // checkout_updating: false,
+        shipping_method_changed: false,
+        force_update: false,
 
-                }, 50);
-            }
-        }
+        selected_shipping_method: false,
+        updated_shipping_method: false,
+        selected_country: false,
+        updated_country: false,
 
-        function init() {
-            if ((myparcel_method_alias = window.mypa.data.general.parent_carrier) === null) {
-                return void 0;
-            }
-
-            myparcel_method_element = "input[id^='s_method_" + myparcel_method_alias + "_']";
-            checkAddress();
-        }
-
-        function checkAddress() {
-            isLoadingAddress = setTimeout(function(){
-                clearTimeout(isLoadingAddress);
-                _setAddress();
-                _hideRadios();
-                if (_getCcIsLocal() && _getHouseNumber() !== null) {
-                    _appendTemplate();
-                    _setParameters();
-                    showOptions();
-                } else {
-                    jQuery(myparcel_method_element + ":first").parent().parent().show();
-                    hideOptions();
-                }
-
-                _observeFields();
-            }, 1000);
-        }
-
-        function _setAddress() {
-            if (customer.isLoggedIn() &&
-                typeof quote !== 'undefined' &&
-                typeof quote.shippingAddress !== 'undefined' &&
-                typeof quote.shippingAddress._latestValue !== 'undefined' &&
-                typeof quote.shippingAddress._latestValue.street !== 'undefined' &&
-                typeof quote.shippingAddress._latestValue.street[0] !== 'undefined'
-            ) {
-                var street0 = quote.shippingAddress._latestValue.street[0];
-                if (typeof street0 === 'undefined') street0 = '';
-                var street1 = quote.shippingAddress._latestValue.street[1];
-                if (typeof street1 === 'undefined') street1 = '';
-                var street2 = quote.shippingAddress._latestValue.street[2];
-                if (typeof street2 === 'undefined') street2 = '';
-                var country = quote.shippingAddress._latestValue.countryId;
-                if (typeof country === 'undefined') country = '';
-                var postcode = quote.shippingAddress._latestValue.postcode;
-                if (typeof postcode === 'undefined') postcode = '';
-                var city = quote.shippingAddress._latestValue.city;
-                if (typeof city === 'undefined') city = '';
-            } else {
-                var street0 = jQuery("input[name='street[0]']").val();
-                if (typeof street0 === 'undefined') street0 = '';
-                var street1 = jQuery("input[name='street[1]']").val();
-                if (typeof street1 === 'undefined') street1 = '';
-                var street2 = jQuery("input[name='street[2]']").val();
-                if (typeof street2 === 'undefined') street2 = '';
-                var country = jQuery("select[name='country_id']").val();
-                if (typeof country === 'undefined') country = '';
-                var postcode = jQuery("input[name='postcode']").val();
-                if (typeof postcode === 'undefined') postcode = '';
-                var city = jQuery("input[name='city']").val();
-                if (typeof city === 'undefined') city = '';
-            }
-
-            window.mypa.address = [];
-            window.mypa.address.street0 = street0.replace(/[<>=]/g,'');
-            window.mypa.address.street1 = street1.replace(/[<>=]/g,'');
-            window.mypa.address.street2 = street2.replace(/[<>=]/g,'');
-            window.mypa.address.cc = country.replace(/[<>=]/g,'');
-            window.mypa.address.postcode = postcode.replace(/[\s<>=]/g,'');
-            window.mypa.address.city = city.replace(/[<>=]/g,'');
-        }
+        shipping_methods: JSON.parse(wcmp_delivery_options.shipping_methods),
+        always_display: wcmp_delivery_options.always_display,
 
         /**
-         * Use the validated address data from POSTCODE.NL
-         * @returns {* | jQuery}
+         * @type {Element}
          */
-        function getPostcodeValidateAddress() {
-            var validatedAddress = jQuery(".postcode-valid-address").text();
+        shippingFields: document.querySelector('.woocommerce-shipping-fields'),
 
-            if (jQuery("select[name='country_id']").val() === 'BE') {
-                validatedAddress = jQuery('#shipping-be-street').val() + ' ' + jQuery('#shipping-be-house').val();
-            }
-            return validatedAddress
-        }
+        /**
+         * @type {String}
+         */
+        addressType: null,
 
-        function showOptions() {
-            originalShippingRate = jQuery("td[id^='label_carrier_" + window.mypa.data.general.parent_method + "']").parent();
-            optionsContainer.show();
+        /**
+         * Ship to different address field.
+         *
+         * @type {String}
+         */
+        shipToDifferentAddressField: '#ship-to-different-address-checkbox',
+        checkoutDataField: '#mypa-input',
 
-            if (typeof originalShippingRate !== 'undefined') {
-                originalShippingRate.hide();
-            }
-        }
+        houseNumberField: 'house_number',
+        addressField: 'address_1',
+        countryField: 'country',
+        postcodeField: 'postcode',
 
-        function hideOptions() {
-            if (typeof optionsContainer !== 'undefined') {
-                optionsContainer.hide();
-            }
-            jQuery(myparcel_method_element + ':first').parent().parent().show();
-        }
+        updateCheckoutEvent: 'myparcel_update_checkout',
+        updatedCheckoutEvent: 'myparcel_checkout_updated',
+        updatedAddressEvent: 'address_updated',
 
-        function _hideRadios() {
-            jQuery("td[id^='label_method_signature'],td[id^='label_method_pickup']").parent().hide();
-        }
+        /**
+         * Initialize the script.
+         */
+        init: function() {
+          MyParcelFrontend.addListeners();
 
-        function _getCcIsLocal() {
-            if (window.mypa.address.cc !== 'BE') {
-                return false;
-            }
+          document.querySelector(this.shipToDifferentAddressField).addEventListener('load', this.addListeners);
+          document.querySelector(this.shipToDifferentAddressField).addEventListener('change', this.addListeners);
 
+          document.addEventListener(this.updatedAddressEvent, function(event) {
+            this.setAddress(event.detail);
+          });
+
+          document.addEventListener(this.updatedCheckoutEvent, function() {
+            console.warn(MyParcelFrontend.updatedCheckoutEvent, document.querySelector(this.checkoutDataField).value);
+          });
+        },
+
+        /**
+         * Update the #mypa-input with new data.
+         *
+         * @param {Object} content - Content that will be converted to JSON string.
+         */
+        updateInput: function(content) {
+          content = content || '';
+          document.querySelector('#mypa-input').value = JSON.stringify(content);
+        },
+
+        /**
+         * If split fields are used add house number to the fields. Otherwise use address line 1.
+         *
+         * @return {string}
+         */
+        getSplitField: function() {
+          return this.is_using_split_address_fields ? MyParcelFrontend.houseNumberField : MyParcelFrontend.addressField;
+        },
+
+        updateCountry: function() {
+          MyParcelFrontend.updated_country = MyParcelFrontend.getField('country').value;
+        },
+
+        /**
+         * Add event listeners to the address fields. Remove them first if they already exist.
+         */
+        addListeners: function() {
+          // The fields to add listeners to.
+          var fields = [MyParcelFrontend.countryField, MyParcelFrontend.postcodeField, this.getSplitField()];
+
+          // If address type is already set, remove the existing listeners before adding new ones.
+          if (MyParcelFrontend.addressType) {
+            MyParcelFrontend.getField(MyParcelFrontend.countryField).removeEventListener(
+              'change',
+              MyParcelFrontend.updateCountry
+            );
+
+            fields.forEach(function(field) {
+              MyParcelFrontend.getField(field).removeEventListener('change', MyParcelFrontend.update_settings);
+            })
+          }
+
+          MyParcelFrontend.getAddressType();
+          MyParcelFrontend.selected_country = MyParcelFrontend.getField(MyParcelFrontend.countryField).value;
+
+          MyParcelFrontend.getField(MyParcelFrontend.countryField).addEventListener(
+            'change',
+            MyParcelFrontend.updateCountry
+          );
+
+          fields.forEach(function(field) {
+            MyParcelFrontend.getField(field).addEventListener('change', MyParcelFrontend.update_settings);
+          });
+
+          MyParcelFrontend.update_settings();
+        },
+
+        /**
+         * Get field by name. Will return element with this selector: "#<billing|shipping>_<name>".
+         *
+         * @param {string} name - The part after `shipping/billing` in the id of an element in WooCommerce.
+         *
+         * @returns {Element}
+         */
+        getField: function(name) {
+          return document.querySelector('#' + MyParcelFrontend.addressType + '_' + name);
+        },
+
+        /**
+         * Update address type.
+         */
+        getAddressType: function() {
+          this.addressType = document.querySelector(MyParcelFrontend.shipToDifferentAddressField).checked
+            ? 'shipping'
+            : 'billing';
+        },
+
+        /**
+         * Get the house number from either the house_number field or the address_1 field. If it's the address field use
+         * the split street regex to extract the house number.
+         *
+         * @return {String}
+         */
+        getHouseNumber: function() {
+          if (MyParcelFrontend.is_using_split_address_fields) {
+            return MyParcelFrontend.getField('house_number').value;
+          }
+
+          var address = MyParcelFrontend.getField('address_1').value;
+          var result = MyParcelFrontend.split_street_regex.exec(address);
+          var numberIndex = 2;
+
+          return result ? result[numberIndex] : null;
+        },
+
+        /**
+         * @return {boolean}
+         */
+        checkCountry: function() {
+          console.log('checkCountry');
+          if (MyParcelFrontend.updated_country !== false
+        && MyParcelFrontend.updated_country !== MyParcelFrontend.selected_country
+        // && !isEmptyObject(window.MyParcel.data)
+          ) {
+            this.update_settings();
+            MyParcelFrontend.triggerEvent(MyParcelFrontend.updateCheckoutEvent);
+            MyParcelFrontend.selected_country = MyParcelFrontend.updated_country;
+          }
+
+          if (MyParcelFrontend.selected_country !== 'NL' && MyParcelFrontend.selected_country !== 'BE') {
+            MyParcelFrontend.hideDeliveryOptions();
+            return false;
+          }
+
+          return true;
+        },
+
+        /**
+         *
+         * @return {*}
+         */
+        getShippingMethod: function() {
+          var shipping_method;
+          /* check if shipping is user choice or fixed */
+          if (document.querySelector('#order_review .shipping_method').length > 1) {
+            shipping_method = document.querySelector('#order_review .shipping_method:checked').value;
+          } else {
+            shipping_method = document.querySelector('#order_review .shipping_method').value;
+          }
+          return shipping_method;
+        },
+
+        /**
+         * Tell the checkout to hide itself.
+         */
+        hideDeliveryOptions: function() {
+          this.triggerEvent('myparcel_hide_checkout');
+          if (MyParcelFrontend.isUpdated()) {
+            this.triggerEvent('update_checkout');
+          }
+        },
+
+        /**
+         * Trigger an event on the document body.
+         *
+         * @param {String} identifier - Name of the event.
+         */
+        triggerEvent: function(identifier) {
+          var event = document.createEvent('HTMLEvents');
+          event.initEvent(identifier, true, false);
+          document.querySelector('body').dispatchEvent(event);
+        },
+
+        /**
+         *
+         * @returns {boolean}
+         */
+        isUpdated: function() {
+          if (MyParcelFrontend.updated_country !== MyParcelFrontend.selected_country
+        || MyParcelFrontend.force_update === true) {
+            MyParcelFrontend.force_update = false; /* only force once */
             return true;
-        }
+          }
 
-        function _getFullStreet() {
-            return (window.mypa.address.street0 + ' ' + window.mypa.address.street1 + ' ' + window.mypa.address.street2).trim();
-        }
+          return false;
+        },
 
-        function _getHouseNumber() {
-            var fullStreet = _getFullStreet();
-            var streetParts = fullStreet.match(/[^\d]+([0-9]{1,4})[^\d]*/);
-            if (streetParts !== null) {
-                return streetParts[1];
+        /**
+         * Get data from form fields and put it in the global MyParcelConfig.
+         */
+        update_settings: function() {
+          var data = JSON.parse(window.MyParcelConfig);
+
+          data.address = {
+            cc: MyParcelFrontend.getField('country').value,
+            postalCode: MyParcelFrontend.getField('postcode').value,
+            number: MyParcelFrontend.getHouseNumber(),
+            city: MyParcelFrontend.getField('city').value,
+          };
+
+          window.MyParcelConfig = JSON.stringify(data);
+          MyParcelFrontend.triggerEvent('myparcel_update_checkout');
+        },
+
+        /**
+         * Set the values of the WooCommerce fields.
+         *
+         * @param {Object} address
+         */
+        setAddress: function(address) {
+          if (!customer.isLoggedIn()
+              || typeof quote === 'undefined'
+              || typeof quote.shippingAddress === 'undefined'
+              || typeof quote.shippingAddress._latestValue === 'undefined'
+              || typeof quote.shippingAddress._latestValue.street === 'undefined'
+              || typeof quote.shippingAddress._latestValue.street[0] === 'undefined'
+          ) {
+            return;
+          }
+
+          if (address.postalCode) {
+            MyParcelFrontend.getField('postcode').value = address.postalCode;
+          }
+
+          if (address.city) {
+            MyParcelFrontend.getField('city').value = address.city
+          }
+
+          if (address.number) {
+            MyParcelFrontend.setHouseNumber(address.number);
+          }
+        },
+
+        /**
+         * Set the house number.
+         *
+         * @param {String|Number} number
+         */
+        setHouseNumber: function(number) {
+          if (MyParcelFrontend.is_using_split_address_fields) {
+            var address = MyParcelFrontend.getField('address_1').value;
+            var oldHouseNumber = MyParcelFrontend.getHouseNumber();
+
+            console.log(oldHouseNumber);
+            if (oldHouseNumber) {
+              MyParcelFrontend.getField('address_1').value = address.replace(oldHouseNumber, number);
             } else {
-                var streetParts = fullStreet.match(/(.*?)\s?(([\d]+)[\s|-]?([a-zA-Z/\s]{0,5}$|[0-9/]{0,5}$|\s[a-zA-Z]{1}[0-9]{0,3}$|\s[0-9]{2}[a-zA-Z]{0,3}$))$/);
-                return streetParts !== null ? streetParts[3] : null;
+              MyParcelFrontend.getField('address_1').value = address + number;
             }
-        }
+          } else {
+            MyParcelFrontend.getField('number').value = number;
+          }
+        },
+      };
 
-        function _observeFields() {
-            delivery_options_input = jQuery("input[name='delivery_options']");
-
-            jQuery("input[id^='s_method']").parent().on('change', function (event) {
-                setTimeout(function(){
-                    if (jQuery(myparcel_method_element + ':checked').length === 0) {
-                        delivery_options_input.val('');
-                        MyParcel.optionsHaveBeenModified();
-                    }
-                }, 50);
-            });
-
-            jQuery("input[name^='street'],input[name='postcode'],input[name^='pc_postcode'],select[name^='pc_postcode']").on('change', function (event) {
-                setTimeout(function(){
-                    checkAddress();
-                }, 100);
-            });
-
-            delivery_options_input.on('change', function (event) {
-                _checkShippingMethod();
-            });
-        }
-
-        function _setParameters() {
-            var data = {
-                address: {
-                    cc: window.mypa.address.cc,
-                    street: _getFullStreet(),
-                    postalCode: window.mypa.address.postcode,
-                    number: _getHouseNumber(),
-                    city: window.mypa.address.city
-                },
-                txtWeekDays: [
-                    'Zondag',
-                    'Maandag',
-                    'Dinsdag',
-                    'Woensdag',
-                    'Donderdag',
-                    'Vrijdag',
-                    'Zaterdag'
-                ],
-                translateENtoNL: {
-                    'monday': 'maandag',
-                    'tuesday': 'dindsag',
-                    'wednesday': 'woensdag',
-                    'thursday': 'donderdag',
-                    'friday': 'vrijdag',
-                    'saturday': 'zaterdag',
-                    'sunday': 'zondag'
-                },
-                config: {
-                    "apiBaseUrl": "https://api.myparcel.nl/",
-                    "carrier": "2",
-
-                    "priceStandardDelivery": window.mypa.data.general.base_price,
-                    "priceSignature": window.mypa.data.delivery.signature_fee,
-                    "pricePickup": window.mypa.data.pickup.fee,
-
-                    // "allowSaturdayDelivery": window.data.delivery.saturday_active,
-                    "allowSignature": window.mypa.data.delivery.signature_active,
-                    "allowPickupPoints": window.mypa.data.pickup.active,
-
-                    "dropOffDays": window.mypa.data.general.dropoff_days,
-                    "saturdayCutoffTime": window.mypa.data.general.saturday_cutoff_time,
-                    "cutoffTime": window.mypa.data.general.cutoff_time,
-                    "deliverydaysWindow": window.mypa.data.general.deliverydays_window,
-                    "dropoffDelay":window.mypa.data.general.dropoff_delay
-                },
-                textToTranslate: {
-                    "deliveryTitle": window.mypa.data.text.delivery_title,
-                    "deliveryStandardTitle": window.mypa.data.text.standard_delivery_title,
-                    "signatureTitle": window.mypa.data.text.signature_title,
-                    "pickupTitle": window.mypa.data.text.pickup_title,
-
-                    "allDataNotFound": window.mypa.data.text['all_data_not_found'],
-                    "pickUpFrom": window.mypa.data.text['pick_up_from'],
-                    "openingHours": window.mypa.data.text['opening_hours'],
-                    "closed": window.mypa.data.text['closed'],
-                    "postcode": window.mypa.data.text['postcode'],
-                    "houseNumber": window.mypa.data.text['house_number'],
-                    "city": window.mypa.data.text['city'],
-                    "again": window.mypa.data.text['again'],
-                    "wrongHouseNumberCity": window.mypa.data.text['wrong_house_number_city'],
-                    "quickDelivery":window.mypa.data.text['quick_delivery'],
-
-                    'sunday': window.mypa.data.text['sunday'],
-                    'monday': window.mypa.data.text['monday'],
-                    'tuesday': window.mypa.data.text['tuesday'],
-                    'wednesday': window.mypa.data.text['wednesday'],
-                    'thursday': window.mypa.data.text['thursday'],
-                    'friday': window.mypa.data.text['friday'],
-                    'saturday': window.mypa.data.text['saturday']
-                }
-
-            };
-            MyParcel.init(data);
-        }
-
-        function _appendTemplate() {
-            if (jQuery('#myparcel_td').length === 0) {
-                var data = window.mypa.data;
-                var baseColor = data.general.color_base;
-                var selectColor = data.general.color_select;
-                cssDynamic = cssDynamic.replace(/_base_color_/g, baseColor).replace(/_select_color_/g, selectColor);
-                optionsHtml = optionsHtml.replace('<css-dynamic/>', cssDynamic);
-
-                originalShippingRate = jQuery("td[id^='label_carrier_" + window.mypa.data.general.parent_method + "']").parent();
-                optionsContainer = originalShippingRate.parent().prepend('<tr><td colspan="5" id="myparcel_td" >Bezig met laden...</td></tr>').find('#myparcel_td');
-
-                optionsContainer.html(optionsHtml);
-                jQuery('#mypa-pickup_title').html(data.pickup.title);
-                jQuery('#mypa-delivery_title').html(data.delivery.delivery_title);
-
-            }
-        }
-
-        function _checkShippingMethod() {
-            var inputValue, json, type;
-
-            inputValue = delivery_options_input.val();
-            if (inputValue === '') {
-                return;
-            }
-
-            json = jQuery.parseJSON(inputValue);
-
-            if (typeof json.time[0].price_comment !== 'undefined') {
-                type = json.time[0].price_comment;
-            } else {
-                type = json.price_comment;
-            }
-
-            switch (type) {
-                case "standard":
-
-                    if (json.options.signature) {
-                        _checkMethod('input[value=' + myparcel_method_alias + '_signature' + ']');
-                    } else {
-                        _checkMethod('input[value=' + myparcel_method_alias + '_' + window.mypa.data.general.parent_method + ']');
-                    }
-
-                    myparcel.showDays();
-                    break;
-                case "retail":
-                    _checkMethod('input[value=' + myparcel_method_alias + '_pickup' + ']');
-                    myparcel.hideDays();
-                    break;
-            }
-        }
-
-        function _checkMethod(selector) {
-            jQuery(".col-method > input[type='radio']").prop("checked", false).change();
-            jQuery(selector).prop("checked", true).change().trigger('click');
-        }
-    }
+    });
+  }
 );
