@@ -1,4 +1,4 @@
-/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-underscore-dangle,id-match,no-undef */
 define(
   [
     'mage/url',
@@ -25,308 +25,166 @@ define(
   ) {
     'use strict';
 
-    window.addEventListener('load', function() {
+    var MyParcelFrontend = {
+      split_street_regex: /(.*?)\s?(\d{1,4})[/\s-]{0,2}([A-z]\d{1,3}|-\d{1,4}|\d{2}\w{1,2}|[A-z][A-z\s]{0,3})?$/,
 
-      if (!window.hasOwnProperty('MyParcel')) {
+      checkoutDataField: '#mypa-input',
 
-      }
+      updateCheckoutEvent: 'myparcel_update_checkout',
+      updatedCheckoutEvent: 'myparcel_checkout_updated',
+      updatedAddressEvent: 'address_updated',
 
-      var MyParcelFrontend = {
-        split_street_regex: /(.*?)\s?(\d{1,4})[/\s-]{0,2}([A-z]\d{1,3}|-\d{1,4}|\d{2}\w{1,2}|[A-z][A-z\s]{0,3})?$/,
-        is_using_split_address_fields: parseInt(wcmp_display_settings.isUsingSplitAddressFields),
-
-        // checkout_updating: false,
-        shipping_method_changed: false,
-        force_update: false,
-
-        selected_shipping_method: false,
-        updated_shipping_method: false,
-        selected_country: false,
-        updated_country: false,
-
-        shipping_methods: JSON.parse(wcmp_delivery_options.shipping_methods),
-        always_display: wcmp_delivery_options.always_display,
+      /**
+       * Initialize the script.
+       */
+      init: function() {
+        MyParcelFrontend.update_settings();
 
         /**
-         * @type {Element}
+         * Event from the checkout
          */
-        shippingFields: document.querySelector('.woocommerce-shipping-fields'),
+        document.addEventListener(this.updatedCheckoutEvent, function() {
+          console.warn(MyParcelFrontend.updatedCheckoutEvent, document.querySelector(this.checkoutDataField).value);
+        });
+      },
 
-        /**
-         * @type {String}
-         */
-        addressType: null,
+      /**
+       * Run the split street regex on the given full address to extract the house number and return it.
+       *
+       * @param {String} address - Full address.
+       *
+       * @returns {String|undefined} - The house number, if found. Otherwise null.
+       */
+      getHouseNumber: function(address) {
+        var result = this.split_street_regex.exec(address);
+        var numberIndex = 2;
 
-        /**
-         * Ship to different address field.
-         *
-         * @type {String}
-         */
-        shipToDifferentAddressField: '#ship-to-different-address-checkbox',
-        checkoutDataField: '#mypa-input',
+        return result ? result[numberIndex] : null;
+      },
 
-        houseNumberField: 'house_number',
-        addressField: 'address_1',
-        countryField: 'country',
-        postcodeField: 'postcode',
+      /**
+       * Tell the checkout to hide itself.
+       */
+      hideDeliveryOptions: function() {
+        this.triggerEvent('myparcel_hide_checkout');
+        if (MyParcelFrontend.isUpdated()) {
+          this.triggerEvent('update_checkout');
+        }
+      },
 
-        updateCheckoutEvent: 'myparcel_update_checkout',
-        updatedCheckoutEvent: 'myparcel_checkout_updated',
-        updatedAddressEvent: 'address_updated',
+      /**
+       * Trigger an event on the document body.
+       *
+       * @param {String} identifier - Name of the event.
+       */
+      triggerEvent: function(identifier) {
+        var event = document.createEvent('HTMLEvents');
+        event.initEvent(identifier, true, false);
+        document.querySelector('body').dispatchEvent(event);
+      },
 
-        /**
-         * Initialize the script.
-         */
-        init: function() {
-          MyParcelFrontend.addListeners();
+      /**
+       * Get data from form fields and put it in the global MyParcelConfig.
+       */
+      update_settings: function() {
+        var data = JSON.parse(window.MyParcelConfig);
 
-          document.querySelector(this.shipToDifferentAddressField).addEventListener('load', this.addListeners);
-          document.querySelector(this.shipToDifferentAddressField).addEventListener('change', this.addListeners);
+        data.address = {
+          cc: MyParcelFrontend.getField('country').value,
+          postalCode: MyParcelFrontend.getField('postcode').value,
+          number: MyParcelFrontend.getHouseNumber(),
+          city: MyParcelFrontend.getField('city').value,
+        };
 
-          document.addEventListener(this.updatedAddressEvent, function(event) {
-            this.setAddress(event.detail);
-          });
+        window.MyParcelConfig = JSON.stringify(data);
+        MyParcelFrontend.triggerEvent('myparcel_update_checkout');
+      },
 
-          document.addEventListener(this.updatedCheckoutEvent, function() {
-            console.warn(MyParcelFrontend.updatedCheckoutEvent, document.querySelector(this.checkoutDataField).value);
-          });
-        },
+      /**
+       * Get the address entered by the user depending on if they are logged in or not.
+       *
+       * @returns {Object}
+       */
+      getAddress: function() {
+        var address;
 
-        /**
-         * Update the #mypa-input with new data.
-         *
-         * @param {Object} content - Content that will be converted to JSON string.
-         */
-        updateInput: function(content) {
-          content = content || '';
-          document.querySelector('#mypa-input').value = JSON.stringify(content);
-        },
+        if (customer.isLoggedIn() &&
+                    typeof quote !== 'undefined' &&
+                    typeof quote.shippingAddress !== 'undefined' &&
+                    typeof quote.shippingAddress._latestValue !== 'undefined' &&
+                    typeof quote.shippingAddress._latestValue.street !== 'undefined' &&
+                    typeof quote.shippingAddress._latestValue.street[0] !== 'undefined'
+        ) {
+          address = this.getLoggedInAddress();
+        } else {
+          address = this.getNoLoggedInAddress();
+        }
 
-        /**
-         * If split fields are used add house number to the fields. Otherwise use address line 1.
-         *
-         * @return {string}
-         */
-        getSplitField: function() {
-          return this.is_using_split_address_fields ? MyParcelFrontend.houseNumberField : MyParcelFrontend.addressField;
-        },
+        var regExp = /[<>=]/g;
 
-        updateCountry: function() {
-          MyParcelFrontend.updated_country = MyParcelFrontend.getField('country').value;
-        },
+        var street = [
+          address.street0,
+          address.street1,
+          address.street2,
+        ].join(' ');
 
-        /**
-         * Add event listeners to the address fields. Remove them first if they already exist.
-         */
-        addListeners: function() {
-          // The fields to add listeners to.
-          var fields = [MyParcelFrontend.countryField, MyParcelFrontend.postcodeField, this.getSplitField()];
+        var number = this.getHouseNumber(street);
 
-          // If address type is already set, remove the existing listeners before adding new ones.
-          if (MyParcelFrontend.addressType) {
-            MyParcelFrontend.getField(MyParcelFrontend.countryField).removeEventListener(
-              'change',
-              MyParcelFrontend.updateCountry
-            );
+        return {
+          number: number,
+          cc: address.country.replace(regExp, ''),
+          postcode: address.postcode.replace(/[\s<>=]/g, ''),
+          city: address.city.replace(regExp, ''),
+        }
+      },
 
-            fields.forEach(function(field) {
-              MyParcelFrontend.getField(field).removeEventListener('change', MyParcelFrontend.update_settings);
-            })
-          }
+      /**
+       * Get the address for a logged in user.
+       *
+       * @returns {Object}
+       */
+      getLoggedInAddress: function() {
+        var street0 = quote.shippingAddress._latestValue.street[0];
+        var street1 = quote.shippingAddress._latestValue.street[1];
+        var street2 = quote.shippingAddress._latestValue.street[2];
+        var country = quote.shippingAddress._latestValue.countryId;
+        var postcode = quote.shippingAddress._latestValue.postcode;
+        var city = quote.shippingAddress._latestValue.postcode;
 
-          MyParcelFrontend.getAddressType();
-          MyParcelFrontend.selected_country = MyParcelFrontend.getField(MyParcelFrontend.countryField).value;
+        return {
+          street0: street0 ? street0 : '',
+          street1: street1 ? street1 : '',
+          street2: street2 ? street2 : '',
+          country: country ? country : '',
+          postcode: postcode ? postcode : '',
+          city: city ? city : '',
+        };
+      },
 
-          MyParcelFrontend.getField(MyParcelFrontend.countryField).addEventListener(
-            'change',
-            MyParcelFrontend.updateCountry
-          );
+      /**
+       * Get the address assuming the user is not logged in.
+       *
+       * @returns {Object}
+       */
+      getNoLoggedInAddress: function() {
+        var classPrefix = 'checkout.steps.shipping-step.shippingAddress.shipping-address-fieldset.';
 
-          fields.forEach(function(field) {
-            MyParcelFrontend.getField(field).addEventListener('change', MyParcelFrontend.update_settings);
-          });
+        var street0 = registry.get(classPrefix + 'street.0');
+        var street1 = registry.get(classPrefix + 'street.1');
+        var street2 = registry.get(classPrefix + 'street.2');
+        var country = registry.get(classPrefix + 'country_id');
+        var postcode = registry.get(classPrefix + 'postcode');
+        var city = registry.get(classPrefix + 'city');
 
-          MyParcelFrontend.update_settings();
-        },
-
-        /**
-         * Get field by name. Will return element with this selector: "#<billing|shipping>_<name>".
-         *
-         * @param {string} name - The part after `shipping/billing` in the id of an element in WooCommerce.
-         *
-         * @returns {Element}
-         */
-        getField: function(name) {
-          return document.querySelector('#' + MyParcelFrontend.addressType + '_' + name);
-        },
-
-        /**
-         * Update address type.
-         */
-        getAddressType: function() {
-          this.addressType = document.querySelector(MyParcelFrontend.shipToDifferentAddressField).checked
-            ? 'shipping'
-            : 'billing';
-        },
-
-        /**
-         * Get the house number from either the house_number field or the address_1 field. If it's the address field use
-         * the split street regex to extract the house number.
-         *
-         * @return {String}
-         */
-        getHouseNumber: function() {
-          if (MyParcelFrontend.is_using_split_address_fields) {
-            return MyParcelFrontend.getField('house_number').value;
-          }
-
-          var address = MyParcelFrontend.getField('address_1').value;
-          var result = MyParcelFrontend.split_street_regex.exec(address);
-          var numberIndex = 2;
-
-          return result ? result[numberIndex] : null;
-        },
-
-        /**
-         * @return {boolean}
-         */
-        checkCountry: function() {
-          console.log('checkCountry');
-          if (MyParcelFrontend.updated_country !== false
-        && MyParcelFrontend.updated_country !== MyParcelFrontend.selected_country
-        // && !isEmptyObject(window.MyParcel.data)
-          ) {
-            this.update_settings();
-            MyParcelFrontend.triggerEvent(MyParcelFrontend.updateCheckoutEvent);
-            MyParcelFrontend.selected_country = MyParcelFrontend.updated_country;
-          }
-
-          if (MyParcelFrontend.selected_country !== 'NL' && MyParcelFrontend.selected_country !== 'BE') {
-            MyParcelFrontend.hideDeliveryOptions();
-            return false;
-          }
-
-          return true;
-        },
-
-        /**
-         *
-         * @return {*}
-         */
-        getShippingMethod: function() {
-          var shipping_method;
-          /* check if shipping is user choice or fixed */
-          if (document.querySelector('#order_review .shipping_method').length > 1) {
-            shipping_method = document.querySelector('#order_review .shipping_method:checked').value;
-          } else {
-            shipping_method = document.querySelector('#order_review .shipping_method').value;
-          }
-          return shipping_method;
-        },
-
-        /**
-         * Tell the checkout to hide itself.
-         */
-        hideDeliveryOptions: function() {
-          this.triggerEvent('myparcel_hide_checkout');
-          if (MyParcelFrontend.isUpdated()) {
-            this.triggerEvent('update_checkout');
-          }
-        },
-
-        /**
-         * Trigger an event on the document body.
-         *
-         * @param {String} identifier - Name of the event.
-         */
-        triggerEvent: function(identifier) {
-          var event = document.createEvent('HTMLEvents');
-          event.initEvent(identifier, true, false);
-          document.querySelector('body').dispatchEvent(event);
-        },
-
-        /**
-         *
-         * @returns {boolean}
-         */
-        isUpdated: function() {
-          if (MyParcelFrontend.updated_country !== MyParcelFrontend.selected_country
-        || MyParcelFrontend.force_update === true) {
-            MyParcelFrontend.force_update = false; /* only force once */
-            return true;
-          }
-
-          return false;
-        },
-
-        /**
-         * Get data from form fields and put it in the global MyParcelConfig.
-         */
-        update_settings: function() {
-          var data = JSON.parse(window.MyParcelConfig);
-
-          data.address = {
-            cc: MyParcelFrontend.getField('country').value,
-            postalCode: MyParcelFrontend.getField('postcode').value,
-            number: MyParcelFrontend.getHouseNumber(),
-            city: MyParcelFrontend.getField('city').value,
-          };
-
-          window.MyParcelConfig = JSON.stringify(data);
-          MyParcelFrontend.triggerEvent('myparcel_update_checkout');
-        },
-
-        /**
-         * Set the values of the WooCommerce fields.
-         *
-         * @param {Object} address
-         */
-        setAddress: function(address) {
-          if (!customer.isLoggedIn()
-              || typeof quote === 'undefined'
-              || typeof quote.shippingAddress === 'undefined'
-              || typeof quote.shippingAddress._latestValue === 'undefined'
-              || typeof quote.shippingAddress._latestValue.street === 'undefined'
-              || typeof quote.shippingAddress._latestValue.street[0] === 'undefined'
-          ) {
-            return;
-          }
-
-          if (address.postalCode) {
-            MyParcelFrontend.getField('postcode').value = address.postalCode;
-          }
-
-          if (address.city) {
-            MyParcelFrontend.getField('city').value = address.city
-          }
-
-          if (address.number) {
-            MyParcelFrontend.setHouseNumber(address.number);
-          }
-        },
-
-        /**
-         * Set the house number.
-         *
-         * @param {String|Number} number
-         */
-        setHouseNumber: function(number) {
-          if (MyParcelFrontend.is_using_split_address_fields) {
-            var address = MyParcelFrontend.getField('address_1').value;
-            var oldHouseNumber = MyParcelFrontend.getHouseNumber();
-
-            console.log(oldHouseNumber);
-            if (oldHouseNumber) {
-              MyParcelFrontend.getField('address_1').value = address.replace(oldHouseNumber, number);
-            } else {
-              MyParcelFrontend.getField('address_1').value = address + number;
-            }
-          } else {
-            MyParcelFrontend.getField('number').value = number;
-          }
-        },
-      };
-
-    });
+        return {
+          street0: street0 ? street0.get('value') : '',
+          street1: street1 ? street1.get('value') : '',
+          street2: street2 ? street2.get('value') : '',
+          country: country ? country.get('value') : '',
+          postcode: postcode ? postcode.get('value') : '',
+          city: city ? city.get('value') : '',
+        };
+      },
+    };
   }
 );
