@@ -31,6 +31,19 @@ define(
                         "change",
                         function () {
                             if ($('#mypa_create_from_observer').prop('checked')) {
+                                console.log('mypa_create_from_observer yes');
+                                $('.mypa-option-toggle').slideDown();
+                                parentThis._checkPackageField();
+                            } else {
+                                $('.mypa-option-toggle').slideUp();
+                            }
+                        }
+                    );
+                    $("input[name='mypa_carrier']").click(
+                        function () {
+                            var selValue = $("input[name='mypa_carrier']").val();
+                            console.log(selValue);
+                            if ($('#mypa_carrier_bpost').prop("checked", true)) {
                                 $('.mypa-option-toggle').slideDown();
                                 parentThis._checkPackageField();
                             } else {
