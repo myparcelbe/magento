@@ -39,9 +39,9 @@ define(
                             }
                         }
                     );
-                    $("input[name='mypa_carrier']").click(
+                    $("#mypa_carrier_bpost").click(
                         function () {
-                            var selValue = $("input[name='mypa_carrier']").val();
+                            var selValue = $("#mypa_carrier_bpost").val();
                             console.log(selValue);
                             if ($('#mypa_carrier_bpost').prop("checked", true)) {
                                 $('.mypa-option-toggle').slideDown();
