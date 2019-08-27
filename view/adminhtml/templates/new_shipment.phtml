@@ -17,7 +17,7 @@
                for="mypa_create_from_observer">
             <span><?=__('Create MyParcel consignment') ?></span></label>
     </div>
-    <div class="field field-mypa_carrier_bpost mypa-option-toggle" style="margin-top: 10px;">
+    <div class="field field-mypa_carrier_bpost mypa_carrier-toggle" style="margin-top: 10px;">
         <div class="admin__field-control">
             <div class="admin__field admin__field-option">
                 <input type="radio" class="admin__control-radio" id="mypa_carrier_bpost" name="mypa_carrier" value="bpost">
@@ -25,36 +25,21 @@
             </div>
         </div>
     </div>
-    <div class="field field-mypa_carrier_DPD mypa-option-toggle" style="margin-top: 10px;">
-        <div class="admin__field-control">
-            <div class="admin__field admin__field-option">
-                <input type="radio" class="admin__control-radio" id="mypa_carrier_DPD" name="mypa_carrier" value="DPD">
-                <label class="admin__field-label" for="mypa_carrier"><?=__('DPD');?></label>
-            </div>
-        </div>
-    </div>
-    <div class="field field-mypa_package_type mypa-option-toggle" style="margin-top: 10px;">
-        <div class="admin__field-control">
-            <div class="admin__field admin__field-option">
-                <input type="radio" class="admin__control-radio" id="mypa_package_type-package" name="mypa_package_type" value="1" <?=$block->getPackageType() !== 1 ?: 'checked="checked"';?>>
-                <label class="admin__field-label" for="mypa_package_type-package"><?=__('Package');?></label>
-            </div>
-        </div>
-    </div>
+
 <?php if ($block->getCountry() == 'BE'): ?>
-    <div class="field choice admin__field admin__field-option field-mypa_signature mypa_package-toggle mypa-option-toggle" style="<?=$block->getPackageType() === 1 ?: 'display:none';?>">
+    <div class="field choice admin__field admin__field-option field-mypa_signature mypa_package-toggle mypa-option-toggle" style="display:none; padding-left: 30px;">
         <input id="mypa_signature"
                class="admin__control-checkbox"
                name="mypa_signature"
                value="1"
                type="checkbox"
-               <?= $block->getDefaultOption('signature') == true ? 'checked="checked"' : '';?>
+            <?= $block->getDefaultOption('signature') == true ? 'checked="checked"' : '';?>
         />
         <label class="admin__field-label"
                for="mypa_signature">
             <span><?=__('Signature on receipt') ?></span></label>
     </div>
-    <div class="field choice admin__field admin__field-option field-mypa_insurance mypa_package-toggle mypa-option-toggle" style="<?=$block->getPackageType() === 1 ?: 'display:none';?>">
+    <div class="field choice admin__field admin__field-option field-mypa_insurance mypa_package-toggle mypa-option-toggle" style="display:none; padding-left: 30px;">
         <label class="admin__field-label"
                for="mypa_insurance" style="display: block">
             <span><?=__('Insured up to:') ?></span></label>
@@ -83,3 +68,20 @@
        }
     </script>
 <?php endif; ?>
+
+    <div class="field field-mypa_carrier_DPD mypa_carrier-toggle" style="margin-top: 10px;">
+        <div class="admin__field-control">
+            <div class="admin__field admin__field-option">
+                <input type="radio" class="admin__control-radio" id="mypa_carrier_DPD" name="mypa_carrier" value="DPD">
+                <label class="admin__field-label" for="mypa_carrier"><?=__('DPD');?></label>
+            </div>
+        </div>
+    </div>
+    <div class="field field-mypa_package_type" style="margin-top: 10px;">
+        <div class="admin__field-control">
+            <div class="admin__field admin__field-option">
+                <input type="radio" class="admin__control-radio" id="mypa_package_type-package" name="mypa_package_type" value="1" <?=$block->getPackageType() !== 1 ?: 'checked="checked"';?>>
+                <label class="admin__field-label" for="mypa_package_type-package"><?=__('Package');?></label>
+            </div>
+        </div>
+    </div>
