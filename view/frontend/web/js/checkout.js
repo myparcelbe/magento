@@ -98,61 +98,10 @@ define(
           /**
            * Set window.MyParcelConfig with the given config. Puts all the data in the correct properties.
            *
-           * @param {Object} object - Response from the delivery_settings request.
-           * @param {Object} object.delivery
-           * @param {Object} object.general
-           * @param {Object} object.pickup
+           * @param {Object} config - Response from the delivery_settings request.
            */
-          setConfig: function(object) {
-            console.log(object);
-            window.MyParcelConfig = {
-              config: {
-                carriers: 'bpost,dpd', // todo
-                platform: 'belgie',
-                currency: quote.getPriceFormat(), // todo find "EUR" somewhere
-
-                allowRetry: true,
-                allowDeliveryOptions: object.delivery.active || true, // todo
-                allowPickupPoints: object.pickup.active,
-                allowSignature: object.delivery.signature_active,
-                allowSaturdayDelivery: object.delivery.saturday_active,
-
-                cutoffTime: object.general.cutoff_time,
-                deliveryDaysWindow: object.general.deliverydays_window,
-                dropOffDays: object.general.dropoff_days,
-                dropOffDelay: object.general.dropoff_delay,
-
-                pricePickup: object.pickup.fee,
-                priceSignature: object.delivery.signature_fee,
-                priceStandardDelivery: object.general.base_price,
-                priceSaturdayDelivery: object.delivery.saturday_fee,
-
-                carrierSettings: {},
-              },
-              strings: {
-                saturdayDeliveryTitle: 'saturdayDeliveryTitle',
-                wrongPostalCodeCity: 'wrongPostalCodeCity',
-                city: object.text.city,
-                postcode: object.text.postcode,
-                houseNumber: object.text.house_number,
-                addressNotFound: object.text.all_data_not_found,
-                closed: object.text.closed,
-                discount: 'discount',
-                free: 'free',
-                from: 'from',
-                loadMore: 'loadMore',
-                retry: object.text.again,
-                deliveryStandardTitle: object.text.standard_delivery_title,
-                deliveryTitle: object.text.delivery_title,
-                pickUpFrom: object.text.pick_up_from,
-                pickupTitle: object.text.pickup_title,
-                signatureTitle: object.text.signature_title,
-                openingHours: object.text.opening_hours,
-                postalCodeText: object.text.postcode,
-                numberText: object.text.house_number,
-                cityText: object.text.city,
-              },
-            }
+          setConfig: function(config) {
+            window.MyParcelConfig = config
           },
 
           /**
