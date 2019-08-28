@@ -6,7 +6,6 @@ define(
     'Magento_Customer/js/model/customer',
     'Magento_Checkout/js/model/quote',
     'Magento_Checkout/js/checkout-data',
-    'text!MyParcelBE_Magento/css/checkout/options-dynamic.min.css',
     'Magento_Checkout/js/action/set-shipping-information',
     'MyParcelBE_Magento/js/vendor/myparcel',
     'domReady!',
@@ -18,7 +17,6 @@ define(
     customer,
     quote,
     checkoutData,
-    cssDynamic,
     setShippingInformationAction
   ) {
     'use strict';
@@ -27,7 +25,6 @@ define(
       defaults: {
         template: 'MyParcelBE_Magento/checkout.html',
       },
-      customCSS: cssDynamic,
       initialize: function() {
         this._super();
         console.log('component loaded');
@@ -39,7 +36,6 @@ define(
           customer: customer,
           quote: quote,
           checkoutData: checkoutData,
-          cssDynamic: cssDynamic,
           setShippingInformationAction: setShippingInformationAction,
         });
 
