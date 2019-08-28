@@ -8,7 +8,6 @@
 
 namespace MyParcelBE\Magento\Model\Quote;
 
-
 use MyParcelBE\Magento\Model\Sales\Repository\PackageRepository;
 
 class Checkout
@@ -39,10 +38,11 @@ class Checkout
 
     /**
      * Checkout constructor.
-     * @param \Magento\Checkout\Model\Session $session
-     * @param \Magento\Checkout\Model\Cart $cart
+     *
+     * @param \Magento\Checkout\Model\Session     $session
+     * @param \Magento\Checkout\Model\Cart        $cart
      * @param \MyParcelBE\Magento\Helper\Checkout $helper
-     * @param PackageRepository $package
+     * @param PackageRepository                   $package
      */
     public function __construct(
         \Magento\Checkout\Model\Session $session,
@@ -50,10 +50,10 @@ class Checkout
         \MyParcelBE\Magento\Helper\Checkout $helper,
         PackageRepository $package
     ) {
-        $this->helper = $helper;
-        $this->quoteId = $session->getQuoteId();
+        $this->helper   = $helper;
+        $this->quoteId  = $session->getQuoteId();
         $this->products = $cart->getItems();
-        $this->package = $package;
+        $this->package  = $package;
     }
 
     /**
@@ -63,23 +63,25 @@ class Checkout
      */
     public function getCheckoutSettings()
     {
-
         $this->helper->setBasePriceFromQuote($this->quoteId);
 
         $this->data = [
-            'general' => $this->getGeneralData(),
-            'delivery' => $this->getDeliveryData(),
-            'pickup' => $this->getPickupData(),
-            'text' => $this->getCheckoutText(),
+            'config'  => array_merge(
+                $this->getGeneralData(),
+                $this->getDeliveryData(),
+                $this->getPickupData()
+            ),
+            'strings' => $this->getCheckoutStrings(),
         ];
 
-        $this
-            ->setExcludeDeliveryTypes();
+        $this->setExcludeDeliveryTypes();
 
-        return ['root' => [
-            'version' => (string)$this->helper->getVersion(),
-            'data' => (array)$this->data
-        ]];
+        return [
+            'root' => [
+                'version' => (string) $this->helper->getVersion(),
+                'data'    => (array) $this->data
+            ]
+        ];
     }
 
     /**
@@ -90,13 +92,16 @@ class Checkout
     private function getGeneralData()
     {
         return [
-            'base_price' => $this->helper->getMoneyFormat($this->helper->getBasePrice()),
-            'cutoff_time' => $this->helper->getTimeConfig('general/cutoff_time'),
-            'deliverydays_window' => $this->helper->getIntergerConfig('general/deliverydays_window'),
-            'dropoff_days' => $this->helper->getArrayConfig('general/dropoff_days'),
-            'dropoff_delay' => $this->helper->getIntergerConfig('general/dropoff_delay'),
-            'parent_carrier' => $this->helper->getParentCarrierNameFromQuote($this->quoteId),
-            'parent_method' => $this->helper->getParentMethodNameFromQuote($this->quoteId),
+            'carriers' => 'bpost,dpd', // todo
+            'platform' => 'belgie',
+            'currency' => 'EUR', // todo find "EUR" somewhere
+
+            'cutoffTime'         => $this->helper->getTimeConfig('general/cutoff_time'),
+            'deliveryDaysWindow' => $this->helper->getIntergerConfig('general/deliverydays_window'),
+            'dropOffDays'        => $this->helper->getArrayConfig('general/dropoff_days'),
+            'dropOffDelay'       => $this->helper->getIntergerConfig('general/dropoff_delay'),
+
+            'carrierSettings' => [], // todo
         ];
     }
 
@@ -107,22 +112,15 @@ class Checkout
      */
     private function getDeliveryData()
     {
-        $deliveryData = [
-            'signature_active' => $this->helper->getBoolConfig('delivery/signature_active'),
-            'signature_fee' => $this->helper->getMethodPriceFormat('delivery/signature_fee', false),
-            'saturday_active' => $this->helper->getBoolConfig('general/saturday_active'),
-            'saturday_fee' => $this->helper->getMethodPriceFormat('general/saturday_fee', false),
+        return [
+            'allowDeliveryOptions'  => true, // todo
+            'allowSignature'        => $this->helper->getBoolConfig('delivery/signature_active'),
+            'allowSaturdayDelivery' => $this->helper->getBoolConfig('general/saturday_active'),
+
+            'priceSignature'        => $this->helper->getMethodPriceFormat('delivery/signature_fee', false),
+            'priceStandardDelivery' => $this->helper->getMoneyFormat($this->helper->getBasePrice()),
+            'priceSaturdayDelivery' => $this->helper->getMethodPriceFormat('general/saturday_fee', false),
         ];
-
-        if ($deliveryData['signature_active'] === false) {
-            $deliveryData['signature_fee'] = 'disabled';
-        }
-
-        if ($deliveryData['saturday_active'] === false) {
-            $deliveryData['saturday_fee'] = 'disabled';
-        }
-
-        return $deliveryData;
     }
 
     /**
@@ -133,43 +131,45 @@ class Checkout
     private function getPickupData()
     {
         return [
-            'active' => $this->helper->getBoolConfig('pickup/active'),
-            'fee' => $this->helper->getMethodPriceFormat('pickup/fee', false),
+            'allowPickupPoints' => $this->helper->getBoolConfig('pickup/active'),
+            'pricePickup'       => $this->helper->getMethodPriceFormat('pickup/fee', false),
         ];
     }
 
     /**
      * Get checkout text
      *
-     * @return array)
+     * @return array
      */
-    private function getCheckoutText()
+    private function getCheckoutStrings()
     {
         return [
-            'delivery_title'            => $this->helper->getCarrierConfig('delivery/delivery_title'),
-            'standard_delivery_title'   => $this->helper->getCarrierConfig('delivery/standard_delivery_title'),
-            'signature_title'           => $this->helper->getCarrierConfig('delivery/signature_title'),
-            'saturday_title'            => $this->helper->getCarrierConfig('general/saturday_title'),
-            'pickup_title'              => $this->helper->getCarrierConfig('pickup/title'),
+            // 'quick_delivery'         => __('Deliver as quickly as possible'), // todo ???
 
-            'all_data_not_found'        => __('Address details are not entered'),
-            'pick_up_from'              => __('Pick up from'),
-            'opening_hours'             => __('Opening hours'),
-            'closed'                    => __('Closed'),
-            'postcode'                  => __('Postcode'),
-            'house_number'              => __('House number'),
-            'city'                      => __('City'),
-            'again'                     => __('Again'),
-            'wrong_house_number_city'   => __('Postcode/city combination unknown'),
-            'quick_delivery'            => __('Deliver as quickly as possible'),
+            // 'deliveryTitle'          => $this->helper->getCarrierConfig('delivery/delivery_title'), //todo check ff of dit wordt gebruikt
+            'deliveryStandardTitle' => $this->helper->getCarrierConfig('delivery/standard_delivery_title'),
+            'pickupTitle'           => $this->helper->getCarrierConfig('pickup/title'),
+            'signatureTitle'        => $this->helper->getCarrierConfig('delivery/signature_title'),
+            'saturdayDeliveryTitle' => $this->helper->getCarrierConfig('general/saturday_title'),
 
-            'sunday'                    => __('Monday'),
-            'monday'                    => __('Tuesday'),
-            'tuesday'                   => __('Wednesday'),
-            'wednesday'                 => __('Thursday'),
-            'thursday'                  => __('Friday'),
-            'friday'                    => __('Saturday'),
-            'saturday'                  => __('Sunday'),
+            'wrongPostalCodeCity'   => __('Postcode/city combination unknown'),
+            'addressNotFound'       => __('Address details are not entered'),
+            'closed'                => __('Closed'),
+            'discount'              => '', // todo = "€ x korting" <- geen hoofdletter!
+            'free'                  => '', // todo = "Gratis"
+            'from'                  => '', // todo = "Vanaf € x"
+            'loadMore'              => '', // todo
+            'retry'                 => __('Again'),
+            'pickUpFrom'            => __('Pick up from'),
+            'openingHours'          => __('Opening hours'),
+
+            // todo voor edie: wtf??
+            'cityText'              => __('City'),
+            'postalCodeText'        => __('Postcode'),
+            'numberText'            => __('House number'),
+            'city'                  => __('City'),
+            'postcode'              => __('Postcode'),
+            'houseNumber'           => __('House number'),
         ];
     }
 
