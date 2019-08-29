@@ -144,9 +144,8 @@ class Checkout
     private function getCheckoutStrings()
     {
         return [
-            // 'quick_delivery'         => __('Deliver as quickly as possible'), // todo ???
 
-            // 'deliveryTitle'          => $this->helper->getCarrierConfig('delivery/delivery_title'), //todo check ff of dit wordt gebruikt
+            'deliveryTitle'         => $this->helper->getCarrierConfig('delivery/delivery_title'),
             'deliveryStandardTitle' => $this->helper->getCarrierConfig('delivery/standard_delivery_title'),
             'pickupTitle'           => $this->helper->getCarrierConfig('pickup/title'),
             'signatureTitle'        => $this->helper->getCarrierConfig('delivery/signature_title'),
@@ -155,15 +154,10 @@ class Checkout
             'wrongPostalCodeCity'   => __('Postcode/city combination unknown'),
             'addressNotFound'       => __('Address details are not entered'),
             'closed'                => __('Closed'),
-            'discount'              => '', // todo = "€ x korting" <- geen hoofdletter!
-            'free'                  => '', // todo = "Gratis"
-            'from'                  => '', // todo = "Vanaf € x"
-            'loadMore'              => '', // todo
             'retry'                 => __('Again'),
             'pickUpFrom'            => __('Pick up from'),
             'openingHours'          => __('Opening hours'),
 
-            // todo voor edie: wtf??
             'cityText'              => __('City'),
             'postalCodeText'        => __('Postcode'),
             'numberText'            => __('House number'),
@@ -182,7 +176,7 @@ class Checkout
     {
         $excludeDeliveryTypes = [];
 
-        if ($this->data['pickup']['active'] == false) {
+        if ($this->data['config']['allowPickupPoints'] == false) {
             $excludeDeliveryTypes[] = '4';
         }
 
