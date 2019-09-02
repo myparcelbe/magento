@@ -214,7 +214,7 @@ class Checkout extends Data
      */
     public function getMoneyFormat($value) {
 
-        $value = number_format($value, 2, ',', '.');
+        $value = number_format($value, 2, '.', ',');
 
         return $value;
     }
