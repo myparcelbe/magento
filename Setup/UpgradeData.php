@@ -54,6 +54,70 @@ class UpgradeData implements UpgradeDataInterface
                     $connection->update($table, $bind, $where);
                 }
 
+                // Move default_delivery_title to general settings
+                $selectDefaultDeliveryTitle = $connection->select()->from(
+                    $table,
+                    ['config_id', 'path', 'value']
+                )->where(
+                    '`path` = "myparcelbe_magento_checkout/delivery/standard_delivery_title"'
+                );
+
+                $defaultDeliveryTitle = $connection->fetchAll($selectDefaultDeliveryTitle) ?? [];
+                foreach ($defaultDeliveryTitle as $value) {
+                    $fullPath = 'myparcelbe_magento_general/delivery_titles/standard_delivery_title';
+                    $bind     = ['path' => $fullPath, 'value' => $value['value']];
+                    $where    = 'config_id = ' . $value['config_id'];
+                    $connection->update($table, $bind, $where);
+                }
+
+                // Move delivery_title to general settings
+                $selectDeliveryTitle = $connection->select()->from(
+                    $table,
+                    ['config_id', 'path', 'value']
+                )->where(
+                    '`path` = "myparcelbe_magento_checkout/delivery/delivery_title"'
+                );
+
+                $deliveryTitle = $connection->fetchAll($selectDeliveryTitle) ?? [];
+                foreach ($deliveryTitle as $value) {
+                    $fullPath = 'myparcelbe_magento_general/delivery_titles/delivery_title';
+                    $bind     = ['path' => $fullPath, 'value' => $value['value']];
+                    $where    = 'config_id = ' . $value['config_id'];
+                    $connection->update($table, $bind, $where);
+                }
+
+                // Move signature_title to general settings
+                $selectSignatureTitle = $connection->select()->from(
+                    $table,
+                    ['config_id', 'path', 'value']
+                )->where(
+                    '`path` = "myparcelbe_magento_checkout/delivery/delivery_title"'
+                );
+
+                $signatureTitle = $connection->fetchAll($selectSignatureTitle) ?? [];
+                foreach ($signatureTitle as $value) {
+                    $fullPath = 'myparcelbe_magento_general/delivery_titles/signature_title';
+                    $bind     = ['path' => $fullPath, 'value' => $value['value']];
+                    $where    = 'config_id = ' . $value['config_id'];
+                    $connection->update($table, $bind, $where);
+                }
+
+                // Move pickup_title to general settings
+                $selectPickupTitle = $connection->select()->from(
+                    $table,
+                    ['config_id', 'path', 'value']
+                )->where(
+                    '`path` = "myparcelbe_magento_checkout/pickup/title"'
+                );
+
+                $pickupTitle = $connection->fetchAll($selectPickupTitle) ?? [];
+                foreach ($pickupTitle as $value) {
+                    $fullPath = 'myparcelbe_magento_general/delivery_titles/pickup_title';
+                    $bind     = ['path' => $fullPath, 'value' => $value['value']];
+                    $where    = 'config_id = ' . $value['config_id'];
+                    $connection->update($table, $bind, $where);
+                }
+                
                 // Move insurance_500_active to carrier settings
                 $selectDefaultInsurance = $connection->select()->from(
                     $table,
