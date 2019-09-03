@@ -169,14 +169,15 @@ class Checkout extends Data
      *
      *Check if total shipping price is not below 0 euro
      *
+     * @param        $carrier
      * @param string $key
-     * @param bool $addBasePrice
+     * @param bool   $addBasePrice
      *
      * @return float
      */
-    public function getMethodPrice($key, $addBasePrice = true)
+    public function getMethodPrice($carrier, $key, $addBasePrice = true)
     {
-        $value = $this->getCarrierConfig($key);
+        $value = $this->getCarrierConfig($key, $carrier);
         if ($addBasePrice) {
             if ($value > 0) {
                 // Calculate value
@@ -190,15 +191,16 @@ class Checkout extends Data
     /**
      * Get MyParcel method/option price with EU format
      *
+     * @param        $carrier
      * @param string $key
-     * @param bool $addBasePrice
+     * @param bool   $addBasePrice
      * @param string $prefix
      *
      * @return string
      */
-    public function getMethodPriceFormat($key, $addBasePrice = true, $prefix = '')
+    public function getMethodPriceFormat($carrier, $key, $addBasePrice = true, $prefix = '')
     {
-        $value = $this->getMethodPrice($key, $addBasePrice);
+        $value = $this->getMethodPrice($carrier, $key, $addBasePrice);
         $value = $this->getMoneyFormat($value);
         $value = $prefix . $value;
 
@@ -236,66 +238,71 @@ class Checkout extends Data
     /**
      * Get checkout setting
      *
+     * @param string $carrier
      * @param string $code
-     * @param bool $canBeNull
+     * @param bool   $canBeNull
      *
      * @return mixed
      */
-    public function getCarrierConfig($code, $canBeNull = false)
+    public function getCarrierConfig($code, $carrier = null, $canBeNull = false)
     {
-        $value = $this->getConfigValue(self::XML_PATH_BPOST_SETTINGS . $code);
+        $value = $this->getConfigValue($carrier . $code);
         if (null != $value || $canBeNull) {
             return $value;
         }
 
-        $this->_logger->critical('Can\'t get setting with path:' . self::XML_PATH_BPOST_SETTINGS . $code);
+        $this->_logger->critical('Can\'t get setting with path:' . $carrier . $code);
     }
 
     /**
      * Get bool of setting
      *
+     * @param string $carrier
      * @param string $key
      *
      * @return bool
      */
-    public function getBoolConfig($key)
+    public function getBoolConfig($carrier, $key)
     {
-        return $this->getCarrierConfig($key) == "1" ? true : false;
+        return $this->getCarrierConfig($key, $carrier) == "1" ? true : false;
     }
 
     /**
      * Get time for delivery endpoint
      *
+     * @param        $carrier
      * @param string $key
      *
      * @return string
      */
-    public function getTimeConfig($key)
+    public function getTimeConfig($carrier, $key)
     {
-        return str_replace(',', ':', $this->getCarrierConfig($key));
+        return str_replace(',', ':', $this->getCarrierConfig($key, $carrier));
     }
 
     /**
      * Get array for delivery endpoint
      *
+     * @param        $carrier
      * @param string $key
      *
      * @return string
      */
-    public function getArrayConfig($key)
+    public function getArrayConfig($carrier, $key)
     {
-        return str_replace(',', ';', $this->getCarrierConfig($key));
+        return str_replace(',', ';', $this->getCarrierConfig($key, $carrier));
     }
 
     /**
      * Get array for delivery endpoint
      *
+     * @param string $carrier
      * @param string $key
      *
      * @return float
      */
-    public function getIntergerConfig($key)
+    public function getIntergerConfig($carrier, $key)
     {
-        return (float) $this->getCarrierConfig($key);
+        return (float) $this->getCarrierConfig($key, $carrier);
     }
 }

@@ -18,6 +18,6 @@
   },
   "homepage": "https://github.com/myparcelbe/magento#readme",
   "dependencies": {
-    "@myparcel/checkout": "^3.0.3"
+    "@myparcel/checkout": "^3.0.4"
   }
 }
