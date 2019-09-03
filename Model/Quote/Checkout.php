@@ -137,7 +137,6 @@ class Checkout
                 'dropOffDays'        => $this->helper->getArrayConfig($carrier[self::carrierPath], 'general/dropoff_days'),
                 'dropOffDelay'       => $this->helper->getIntergerConfig($carrier[self::carrierPath], 'general/dropoff_delay'),
             ];
-
         }
 
         return $myParcelConfig;
@@ -150,7 +149,6 @@ class Checkout
      */
     private function get_carriers(): array
     {
-        $carriers[]       = '';
         $carriersSettings = [
             ['bpost', Data::XML_PATH_BPOST_SETTINGS],
             ['dpd', Data::XML_PATH_DPD_SETTINGS]
@@ -163,7 +161,6 @@ class Checkout
                 $carriers[] = $carrier;
             }
         }
-
         return $carriers;
     }
 
