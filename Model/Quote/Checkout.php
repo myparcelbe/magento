@@ -145,11 +145,11 @@ class Checkout
     {
         return [
 
-            'deliveryTitle'         => $this->helper->getCarrierConfig('delivery/delivery_title'),
-            'deliveryStandardTitle' => $this->helper->getCarrierConfig('delivery/standard_delivery_title'),
-            'pickupTitle'           => $this->helper->getCarrierConfig('pickup/title'),
-            'signatureTitle'        => $this->helper->getCarrierConfig('delivery/signature_title'),
-            'saturdayDeliveryTitle' => $this->helper->getCarrierConfig('general/saturday_title'),
+            'deliveryTitle'         => $this->helper->getGeneralConfig('delivery_titles/delivery_title'),
+            'deliveryStandardTitle' => $this->helper->getGeneralConfig('delivery_titles/standard_delivery_title'),
+            'pickupTitle'           => $this->helper->getGeneralConfig('delivery_titles/pickup_title'),
+            'signatureTitle'        => $this->helper->getGeneralConfig('delivery_titles/signature_title'),
+            'saturdayDeliveryTitle' => $this->helper->getGeneralConfig('delivery_titles/saturday_title'),
 
             'wrongPostalCodeCity'   => __('Postcode/city combination unknown'),
             'addressNotFound'       => __('Address details are not entered'),

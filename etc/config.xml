@@ -15,6 +15,12 @@
             <shipping_methods>
                 <methods>tablerate</methods>
             </shipping_methods>
+            <delivery_options>
+                <delivery_title>Thuis of op het werk bezorgd</delivery_title>
+                <standard_delivery_title>Standaardlevering</standard_delivery_title>
+                <signature_title>Handtekening voor ontvangst</signature_title>
+                <pickup_title>Ophalen bij een Bpost locatie</pickup_title>
+            </delivery_options>
         </myparcelbe_magento_general>
         <myparcelbe_magento_bpost_settings>
             <options>
@@ -31,10 +37,7 @@
                 <dropoff_delay>0</dropoff_delay>
             </general>
             <delivery>
-                <delivery_title>Thuis of op het werk bezorgd</delivery_title>
-                <standard_delivery_title>Standaardlevering</standard_delivery_title>
                 <signature_active>1</signature_active>
-                <signature_title>Handtekening voor ontvangst</signature_title>
                 <signature_fee>0.36</signature_fee>
                 <saturday_active>0</saturday_active>
                 <saturday_title>Zaterdaglevering</saturday_title>
@@ -42,7 +45,6 @@
             </delivery>
             <pickup>
                 <active>1</active>
-                <title>Ophalen bij een Bpost locatie</title>
                 <fee>0</fee>
             </pickup>
         </myparcelbe_magento_bpost_settings>
@@ -55,8 +57,6 @@
                 <dropoff_delay>0</dropoff_delay>
             </general>
             <delivery>
-                <delivery_title>Thuis of op het werk bezorgd</delivery_title>
-                <standard_delivery_title>Standaardlevering</standard_delivery_title>
                 <saturday_active>0</saturday_active>
                 <saturday_title>Zaterdaglevering</saturday_title>
                 <saturday_fee>2</saturday_fee>
