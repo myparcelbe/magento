@@ -9,6 +9,7 @@
 namespace MyParcelBE\Magento\Model\Quote;
 
 use MyParcelBE\Magento\Model\Sales\Repository\PackageRepository;
+use \Magento\Store\Model\StoreManagerInterface;
 
 class Checkout
 {
@@ -37,29 +38,38 @@ class Checkout
     private $products;
 
     /**
+     * @var \Magento\Store\Model\StoreManagerInterface
+     */
+    private $currency;
+
+    /**
      * Checkout constructor.
      *
-     * @param \Magento\Checkout\Model\Session     $session
-     * @param \Magento\Checkout\Model\Cart        $cart
-     * @param \MyParcelBE\Magento\Helper\Checkout $helper
-     * @param PackageRepository                   $package
+     * @param \Magento\Checkout\Model\Session            $session
+     * @param \Magento\Checkout\Model\Cart               $cart
+     * @param \MyParcelBE\Magento\Helper\Checkout        $helper
+     * @param PackageRepository                          $package
+     * @param \Magento\Store\Model\StoreManagerInterface $currency
      */
     public function __construct(
         \Magento\Checkout\Model\Session $session,
         \Magento\Checkout\Model\Cart $cart,
         \MyParcelBE\Magento\Helper\Checkout $helper,
-        PackageRepository $package
+        PackageRepository $package,
+        StoreManagerInterface $currency
     ) {
         $this->helper   = $helper;
         $this->quoteId  = $session->getQuoteId();
         $this->products = $cart->getItems();
         $this->package  = $package;
+        $this->currency = $currency;
     }
 
     /**
      * Get settings for MyParcel checkout
      *
      * @return array
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function getCheckoutSettings()
     {
@@ -88,13 +98,14 @@ class Checkout
      * Get general data
      *
      * @return array)
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     private function getGeneralData()
     {
         return [
             'carriers' => 'bpost,dpd', // todo
             'platform' => 'belgie',
-            'currency' => 'EUR', // todo find "EUR" somewhere
+            'currency' =>  $this->currency->getStore()->getCurrentCurrency()->getCode(),
 
             'cutoffTime'         => $this->helper->getTimeConfig('general/cutoff_time'),
             'deliveryDaysWindow' => $this->helper->getIntergerConfig('general/deliverydays_window'),
