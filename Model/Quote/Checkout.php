@@ -14,8 +14,9 @@ use \Magento\Store\Model\StoreManagerInterface;
 
 class Checkout
 {
-    const carrierPath = 1;
-    const carriers    = 0;
+    const selectCarriersArray = 0;
+    const selectCarrierPath   = 1;
+    const platform            = 'belgie';
 
     /**
      * @var array
@@ -105,8 +106,8 @@ class Checkout
     {
         return [
             'apiBaseUrl' => 'https://edie.api.staging.myparcel.nl/', // todo
-            'carriers'   => 'bpost,dpd',
-            'platform'   => 'belgie',
+            'carriers'   => array_column($this->get_carriers(), self::selectCarriersArray),
+            'platform'   => self::platform,
             'currency'   => $this->currency->getStore()->getCurrentCurrency()->getCode()
         ];
     }
@@ -123,19 +124,19 @@ class Checkout
 
         foreach ($carriersPath as $carrier) {
 
-            $myParcelConfig["carrierSettings"][$carrier[self::carriers]] = [
-                'allowDeliveryOptions' => $this->helper->getBoolConfig($carrier[self::carrierPath], 'general/enabled'),
-                'allowSignature'       => $this->helper->getBoolConfig($carrier[self::carrierPath], 'delivery/signature_active'),
-                'allowPickupLocations' => $this->helper->getBoolConfig($carrier[self::carrierPath], 'pickup/active'),
+            $myParcelConfig["carrierSettings"][$carrier[self::selectCarriersArray]] = [
+                'allowDeliveryOptions' => $this->helper->getBoolConfig($carrier[self::selectCarrierPath], 'general/enabled'),
+                'allowSignature'       => $this->helper->getBoolConfig($carrier[self::selectCarrierPath], 'delivery/signature_active'),
+                'allowPickupLocations' => $this->helper->getBoolConfig($carrier[self::selectCarrierPath], 'pickup/active'),
 
-                'priceSignature'        => $this->helper->getMethodPriceFormat($carrier[self::carrierPath], 'delivery/signature_fee', false),
+                'priceSignature'        => $this->helper->getMethodPriceFormat($carrier[self::selectCarrierPath], 'delivery/signature_fee', false),
                 'priceStandardDelivery' => $this->helper->getMoneyFormat($this->helper->getBasePrice()),
-                'pricePickup'           => $this->helper->getMethodPriceFormat($carrier[self::carrierPath], 'pickup/fee', false),
+                'pricePickup'           => $this->helper->getMethodPriceFormat($carrier[self::selectCarrierPath], 'pickup/fee', false),
 
-                'cutoffTime'         => $this->helper->getTimeConfig($carrier[self::carrierPath], 'general/cutoff_time'),
-                'deliveryDaysWindow' => $this->helper->getIntergerConfig($carrier[self::carrierPath], 'general/deliverydays_window'),
-                'dropOffDays'        => $this->helper->getArrayConfig($carrier[self::carrierPath], 'general/dropoff_days'),
-                'dropOffDelay'       => $this->helper->getIntergerConfig($carrier[self::carrierPath], 'general/dropoff_delay'),
+                'cutoffTime'         => $this->helper->getTimeConfig($carrier[self::selectCarrierPath], 'general/cutoff_time'),
+                'deliveryDaysWindow' => $this->helper->getIntergerConfig($carrier[self::selectCarrierPath], 'general/deliverydays_window'),
+                'dropOffDays'        => $this->helper->getArrayConfig($carrier[self::selectCarrierPath], 'general/dropoff_days'),
+                'dropOffDelay'       => $this->helper->getIntergerConfig($carrier[self::selectCarrierPath], 'general/dropoff_delay'),
             ];
         }
 
@@ -155,12 +156,13 @@ class Checkout
         ];
 
         foreach ($carriersSettings as $carrier) {
-            if ($this->helper->getBoolConfig("{$carrier[self::carrierPath]}", 'general/enabled') ||
-                $this->helper->getBoolConfig("{$carrier[self::carrierPath]}", 'pickup/active')
+            if ($this->helper->getBoolConfig("{$carrier[self::selectCarrierPath]}", 'general/enabled') ||
+                $this->helper->getBoolConfig("{$carrier[self::selectCarrierPath]}", 'pickup/active')
             ) {
                 $carriers[] = $carrier;
             }
         }
+
         return $carriers;
     }
 
