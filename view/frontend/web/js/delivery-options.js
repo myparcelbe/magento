@@ -61,11 +61,11 @@ define(
           updatedAddressEvent: 'myparcel_updated_address',
 
           /**
-           * The field we use to get the delivery options data into the order.
+           * The selector of the field we use to get the delivery options data into the order.
            *
-           * @type {Element}
+           * @type {String}
            */
-          hiddenDataInput: document.querySelector('[name="myparcel_delivery_options"]'),
+          hiddenDataInput: '[name="myparcel_delivery_options"]',
 
           postcodeField: 'postcode',
           countryField: 'country_id',
@@ -264,9 +264,13 @@ define(
             return request;
           },
 
-          onUpdatedDeliveryOptions: function(e) {
-            console.log('updated delivery options', e.detail);
-            MyParcelFrontend.hiddenDataInput.value = e.detail;
+          /**
+           * Triggered when the delivery options have been updated. Put the received data in the created data input.
+           *
+           * @param {CustomEvent} event - The event that was sent.
+           */
+          onUpdatedDeliveryOptions: function(event) {
+            document.querySelector(MyParcelFrontend.hiddenDataInput).value = JSON.stringify(event.detail);
           },
         };
       },
