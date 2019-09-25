@@ -105,7 +105,7 @@ class Checkout
     private function getGeneralData()
     {
         return [
-            'apiBaseUrl' => 'https://edie.api.staging.myparcel.nl/', // todo
+            'apiBaseUrl' => 'https://api.myparcel.nl/',
             'carriers'   => array_column($this->get_carriers(), self::selectCarriersArray),
             'platform'   => self::platform,
             'currency'   => $this->currency->getStore()->getCurrentCurrency()->getCode()
