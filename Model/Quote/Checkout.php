@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: reindert
- * Date: 01/06/2017
- * Time: 14:51
- */
 
 namespace MyParcelBE\Magento\Model\Quote;
 
@@ -71,12 +65,12 @@ class Checkout
     }
 
     /**
-     * Get settings for MyParcel checkout
+     * Get settings for MyParcel delivery options
      *
      * @return array
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getCheckoutSettings()
+    public function getDeliveryOptionsSettings()
     {
         $this->helper->setBasePriceFromQuote($this->quoteId);
 
@@ -85,7 +79,7 @@ class Checkout
                 $this->getGeneralData(),
                 $this->getDeliveryData()
             ),
-            'strings' => $this->getCheckoutStrings(),
+            'strings' => $this->getDeliveryOptionsStrings(),
         ];
 
         return [
@@ -105,9 +99,8 @@ class Checkout
     private function getGeneralData()
     {
         return [
-            'apiBaseUrl' => 'https://api.myparcel.nl/',
-            'carriers'   => array_column($this->get_carriers(), self::selectCarriersArray),
             'platform'   => self::platform,
+            'carriers'   => array_column($this->get_carriers(), self::selectCarriersArray),
             'currency'   => $this->currency->getStore()->getCurrentCurrency()->getCode()
         ];
     }
@@ -167,11 +160,11 @@ class Checkout
     }
 
     /**
-     * Get checkout text
+     * Get delivery options strings
      *
      * @return array
      */
-    private function getCheckoutStrings()
+    private function getDeliveryOptionsStrings()
     {
         return [
 

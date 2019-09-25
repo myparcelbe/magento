@@ -60,7 +60,7 @@ class LayoutProcessorPlugin
                             'options' => [],
                             'id' => 'myparcel-delivery-options',
                         ],
-                        'dataScope' => 'shippingAddress.delivery_options',
+                        'dataScope' => 'shippingAddress.myparcel_delivery_options',
                         'label' => 'Delivery Options',
                         'provider' => 'checkoutProvider',
                         'visible' => false,

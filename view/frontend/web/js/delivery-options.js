@@ -23,11 +23,10 @@ define(
 
     return Component.extend({
       defaults: {
-        template: 'MyParcelBE_Magento/checkout.html',
+        template: 'MyParcelBE_Magento/delivery-options.html',
       },
       initialize: function() {
         this._super();
-        console.log('component loaded');
 
         console.log({
           Component: Component,
@@ -39,6 +38,11 @@ define(
           setShippingInformationAction: setShippingInformationAction,
         });
 
+        /**
+         * "Wait" until the postal code field is present before we initialize the rest of the code.
+         *
+         * @type {number}
+         */
         var timer = setInterval(function() {
           if (MyParcelFrontend.getField('postcode')) {
             clearInterval(timer);
@@ -49,11 +53,19 @@ define(
         var MyParcelFrontend = {
           splitStreetRegex: /(.*?)\s?(\d{1,4})[/\s-]{0,2}([A-z]\d{1,3}|-\d{1,4}|\d{2}\w{1,2}|[A-z][A-z\s]{0,3})?$/,
 
-          checkoutDataField: '#mypa-input',
+          // todo
+          updateMagentoCheckoutEvent: 'update_checkout',
 
-          updateCheckoutEvent: 'myparcel_update_checkout',
-          updatedCheckoutEvent: 'myparcel_checkout_updated',
-          updatedAddressEvent: 'address_updated',
+          updateDeliveryOptionsEvent: 'myparcel_update_delivery_options',
+          updatedDeliveryOptionsEvent: 'myparcel_updated_delivery_options',
+          updatedAddressEvent: 'myparcel_updated_address',
+
+          /**
+           * The field we use to get the delivery options data into the order.
+           *
+           * @type {Element}
+           */
+          hiddenDataInput: document.querySelector('[name="myparcel_delivery_options"]'),
 
           postcodeField: 'postcode',
           countryField: 'country_id',
@@ -76,9 +88,7 @@ define(
             };
 
             // Event from the checkout
-            document.addEventListener(this.updatedCheckoutEvent, function() {
-              console.warn(MyParcelFrontend.updatedCheckoutEvent, document.querySelector(this.checkoutDataField).value);
-            });
+            document.addEventListener(this.updatedDeliveryOptionsEvent, MyParcelFrontend.onUpdatedDeliveryOptions);
           },
 
           /**
@@ -88,16 +98,16 @@ define(
             var fields = [this.postcodeField, this.countryField, this.cityField];
             fields.forEach(function(field) {
               MyParcelFrontend.getField(field).addEventListener('change', MyParcelFrontend.updateAddress);
-            })
+            });
           },
 
           /**
            * Set window.MyParcelConfig with the given config. Puts all the data in the correct properties.
            *
-           * @param {Object} config - Response from the delivery_settings request.
+           * @param {Object} config - Response from the delivery_options request.
            */
           setConfig: function(config) {
-            window.MyParcelConfig = config
+            window.MyParcelConfig = config;
           },
 
           /**
@@ -126,16 +136,6 @@ define(
           },
 
           /**
-           * Tell the checkout to hide itself.
-           */
-          hideDeliveryOptions: function() {
-            this.triggerEvent('myparcel_hide_checkout');
-            if (MyParcelFrontend.isUpdated()) {
-              this.triggerEvent('update_checkout');
-            }
-          },
-
-          /**
            * Trigger an event on the document body.
            *
            * @param {String} identifier - Name of the event.
@@ -160,7 +160,7 @@ define(
             };
 
             window.MyParcelConfig = data;
-            MyParcelFrontend.triggerEvent('myparcel_update_checkout');
+            MyParcelFrontend.triggerEvent(MyParcelFrontend.updateDeliveryOptionsEvent);
           },
 
           /**
@@ -198,7 +198,7 @@ define(
               cc: address.country.replace(regExp, ''),
               postcode: address.postcode.replace(/[\s<>=]/g, ''),
               city: address.city.replace(regExp, ''),
-            }
+            };
           },
 
           /**
@@ -250,18 +250,23 @@ define(
           },
 
           /**
-           * Execute the delivery_settings request to retrieve the settings object.
+           * Execute the delivery_options request to retrieve the settings object.
            *
            * @returns {XMLHttpRequest}
            */
           getMagentoSettings: function() {
-            var url = mageUrl.build('rest/V1/delivery_settings/get');
+            var url = mageUrl.build('rest/V1/delivery_options/get');
 
             var request = new XMLHttpRequest();
             request.open('GET', url, true);
             request.send();
 
             return request;
+          },
+
+          onUpdatedDeliveryOptions: function(e) {
+            console.log('updated delivery options', e.detail);
+            MyParcelFrontend.hiddenDataInput.value = e.detail;
           },
         };
       },

@@ -39,7 +39,7 @@ define(
             shipping_method_code: quote.shippingMethod().method_code,
             shipping_carrier_code: quote.shippingMethod().carrier_code,
             extension_attributes: {
-              delivery_options: document.getElementById('mypa-input').value,
+              delivery_options: document.querySelector('[name="myparcel_delivery_options"]').value,
             },
           },
         };
