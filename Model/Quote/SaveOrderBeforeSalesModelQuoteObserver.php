@@ -83,7 +83,7 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
         ) {
             $order->setData(self::FIELD_TRACK_STATUS, __('⚠️&#160; Please check address'));
         }
-
+        // @todo check delivery options from quote (step 2)
         if ($quote->hasData(self::FIELD_DELIVERY_OPTIONS) && $this->isMyParcelMethod($quote)) {
             $jsonDeliveryOptions = $quote->getData(self::FIELD_DELIVERY_OPTIONS);
             $order->setData(self::FIELD_DELIVERY_OPTIONS, $jsonDeliveryOptions);

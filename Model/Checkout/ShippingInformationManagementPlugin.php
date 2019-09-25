@@ -24,7 +24,7 @@ class ShippingInformationManagementPlugin
         \Magento\Checkout\Api\Data\ShippingInformationInterface $addressInformation
     ) {
         $extAttributes = $addressInformation->getExtensionAttributes();
-
+        // @todo check delivery options from field (step 1)
         if (! empty($extAttributes) &&
             ! empty($extAttributes->getDeliveryOptions()) &&
             $extAttributes->getDeliveryOptions() != '{}'
