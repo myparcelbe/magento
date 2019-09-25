@@ -2,6 +2,8 @@
 
 namespace MyParcelBE\Magento\Model\Quote;
 
+use Magento\Checkout\Model\Cart;
+use Magento\Checkout\Model\Session;
 use MyParcelBE\Magento\Helper\Data;
 use MyParcelBE\Magento\Model\Sales\Repository\PackageRepository;
 use \Magento\Store\Model\StoreManagerInterface;
@@ -51,8 +53,8 @@ class Checkout
      * @param \Magento\Store\Model\StoreManagerInterface $currency
      */
     public function __construct(
-        \Magento\Checkout\Model\Session $session,
-        \Magento\Checkout\Model\Cart $cart,
+        Session $session,
+        Cart $cart,
         \MyParcelBE\Magento\Helper\Checkout $helper,
         PackageRepository $package,
         StoreManagerInterface $currency
