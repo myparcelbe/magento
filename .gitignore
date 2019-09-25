@@ -1,5 +1,4 @@
 .idea
 .DS_Store
 _config.yml
-package-lock.json
 node_modules

@@ -1,15 +1,11 @@
 {
-  "parserOptions": {
-    "ecmaVersion": 3
-  },
-  "extends": "/Users/richardperdaan/myparcel.nl/myparcel-core/dmp-standards/eslint/eslint.config.js",
+  "extends": "@myparcel/eslint-config/preset-default",
   "globals": {
     "MyParcel": "writable",
     "MyParcelConfig": "writable",
     "define": "readonly"
   },
   "rules": {
-    "no-var": "off",
     "max-params": "off",
     "max-lines-per-function": "off"
   }
