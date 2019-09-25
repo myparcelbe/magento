@@ -15,10 +15,10 @@
 namespace MyParcelBE\Magento\Model\Checkout;
 
 
-use MyParcelBE\Magento\Api\DeliverySettingsInterface;
+use MyParcelBE\Magento\Api\DeliveryOptionsInterface;
 use MyParcelBE\Magento\Model\Quote\Checkout;
 
-class DeliverySettings implements DeliverySettingsInterface
+class DeliveryOptions implements DeliveryOptionsInterface
 {
     /**
      * @var Checkout
@@ -37,6 +37,6 @@ class DeliverySettings implements DeliverySettingsInterface
 
     public function get()
     {
-        return $this->settings->getCheckoutSettings();
+        return $this->settings->getDeliveryOptionsSettings();
     }
 }

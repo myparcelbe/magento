@@ -1,6 +1,6 @@
 <?php
 /**
- * The delivery_settings interface
+ * The delivery_options interface
  *
  * If you want to add improvements, please create a fork in our GitHub:
  * https://github.com/myparcelbe
@@ -16,15 +16,15 @@ namespace MyParcelBE\Magento\Api;
 
 
 /**
- * Get delivery settings
+ * Get delivery options
  */
-Interface DeliverySettingsInterface
+Interface DeliveryOptionsInterface
 {
     /**
-     * Return all delivery Settings settings
+     * Return all delivery options
      *
      * @api
-     * @return mixed[] All Settings
+     * @return mixed[] All options
      */
     public function get();
 }

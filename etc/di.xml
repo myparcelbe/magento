@@ -12,8 +12,8 @@
         </arguments>
     </virtualType>
     <!-- API delivery settings -->
-    <preference for="MyParcelBE\Magento\Api\DeliverySettingsInterface"
-                type="MyParcelBE\Magento\Model\Checkout\DeliverySettings" />
+    <preference for="MyParcelBE\Magento\Api\DeliveryOptionsInterface"
+                type="MyParcelBE\Magento\Model\Checkout\DeliveryOptions" />
     <!-- Add print label button in order view -->
     <type name="Magento\Sales\Block\Adminhtml\Order\View">
         <plugin name="mypa-massaction-button" sortOrder="10" type="MyParcelBE\Magento\Plugin\Block\Adminhtml\Order\View"/>
