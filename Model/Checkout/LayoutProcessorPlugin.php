@@ -58,7 +58,7 @@ class LayoutProcessorPlugin
                             'template' => 'ui/form/field',
                             'elementTmpl' => 'ui/form/element/input',
                             'options' => [],
-                            'id' => 'delivery-options',
+                            'id' => 'myparcel-delivery-options',
                         ],
                         'dataScope' => 'shippingAddress.delivery_options',
                         'label' => 'Delivery Options',
@@ -66,7 +66,7 @@ class LayoutProcessorPlugin
                         'visible' => false,
                         'validation' => [],
                         'sortOrder' => 200,
-                        'id' => 'delivery-options',
+                        'id' => 'myparcel-delivery-options',
                     ],
                 ]
             );
