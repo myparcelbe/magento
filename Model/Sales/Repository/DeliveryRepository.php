@@ -88,8 +88,8 @@ class DeliveryRepository extends Delivery
         }
 
         $deliveryOptions = json_decode($jsonDeliveryOptions, true);
-        if (key_exists('carriers', $deliveryOptions)) {
-            return $deliveryOptions['carriers'];
+        if (key_exists('myparcel_carrier', $deliveryOptions)) {
+            return $deliveryOptions['myparcel_carrier'];
         }
 
         return null;

@@ -28,7 +28,7 @@ define(
         console.log('saveShippingInformation');
         var payload;
 
-        if (!quote.billingAddress()) {
+        if (!quote.billingAddress() && quote.shippingAddress().canUseForBilling()) {
           selectBillingAddressAction(quote.shippingAddress());
         }
 
@@ -39,7 +39,7 @@ define(
             shipping_method_code: quote.shippingMethod().method_code,
             shipping_carrier_code: quote.shippingMethod().carrier_code,
             extension_attributes: {
-              delivery_options: document.querySelector('[name="myparcel_delivery_options"]').value,
+              myparcel_delivery_options: document.querySelector('[name="myparcel_delivery_options"]').value,
             },
           },
         };

@@ -15,6 +15,7 @@
 namespace MyParcelBE\Magento\Model\Source;
 
 use Magento\Sales\Model\Order;
+use MyParcelBE\Magento\Helper\Checkout;
 use MyParcelBE\Magento\Helper\Data;
 
 class DefaultOptions
@@ -45,7 +46,7 @@ class DefaultOptions
         self::$helper = $helper;
         self::$order  = $order;
 
-        self::$chosenOptions = json_decode(self::$order->getData('delivery_options'), true);
+        self::$chosenOptions = json_decode(self::$order->getData(Checkout::FIELD_DELIVERY_OPTIONS), true);
     }
 
     /**

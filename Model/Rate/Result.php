@@ -159,14 +159,14 @@ class Result extends \Magento\Shipping\Model\Rate\Result
             $this->package->setWeightFromQuoteProducts($this->products);
         }
 
-        foreach ($this->getAllowedMethods() as $alias => $settingPath) {
-            $settingActive = $this->myParcelHelper->getConfigValue(Data::XML_PATH_BPOST_SETTINGS . $settingPath . 'active');
-            $active        = $settingActive === '1' || $settingActive === null;
-            if ($active) {
-                $method = $this->getShippingMethod($alias, $settingPath, $parentRate);
-                $this->append($method);
-            }
-        }
+//        foreach ($this->getAllowedMethods() as $alias => $settingPath) {
+//            $settingActive = $this->myParcelHelper->getConfigValue(Data::XML_PATH_BPOST_SETTINGS . $settingPath . 'active');
+//            $active        = $settingActive === '1' || $settingActive === null;
+//            if ($active) {
+//                $method = $this->getShippingMethod($alias, $settingPath, $parentRate);
+//                $this->append($method);
+//            }
+//        }
 
         $this->myParcelRatesAlreadyAdded = true;
     }

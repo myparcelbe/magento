@@ -20,19 +20,18 @@
 
 namespace MyParcelBE\Magento\Model\Quote;
 
+use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use MyParcelBE\Magento\Helper\Checkout;
 use MyParcelBE\Magento\Model\Checkout\Carrier;
+use MyParcelBE\Magento\Model\Checkout\DeliveryOptions;
+use MyParcelBE\Magento\Helper\Checkout as CheckoutAlias;
 use MyParcelBE\Magento\Model\Sales\Repository\DeliveryRepository;
 use MyParcelNL\Sdk\src\Helper\SplitStreet;
 use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
 
 class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
 {
-    const FIELD_DELIVERY_OPTIONS = 'delivery_options';
-    const FIELD_DROP_OFF_DAY     = 'drop_off_day';
-    const FIELD_MYPARCEL_CARRIER = 'myparcel_carrier';
-    const FIELD_TRACK_STATUS     = 'track_status';
     /**
      * @var DeliveryRepository
      */
@@ -69,10 +68,12 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
      *
      * @return $this
      */
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    public function execute(Observer $observer)
     {
         /* @var \Magento\Quote\Model\Quote $quote */
         $quote = $observer->getEvent()->getData('quote');
+        file_put_contents(time() . '_quote.json', json_encode($quote->getData()));
+
         /* @var \Magento\Sales\Model\Order $order */
         $order      = $observer->getEvent()->getData('order');
         $fullStreet = implode(' ', $order->getShippingAddress()->getStreet());
@@ -81,60 +82,64 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
         if ($destinationCountry == AbstractConsignment::CC_BE &&
             ! SplitStreet::isCorrectStreet($fullStreet, AbstractConsignment::CC_BE, $destinationCountry)
         ) {
-            $order->setData(self::FIELD_TRACK_STATUS, __('⚠️&#160; Please check address'));
+            $order->setData(CheckoutAlias::FIELD_TRACK_STATUS, __('⚠️&#160; Please check address'));
         }
         // @todo check delivery options from quote (step 2)
-        if ($quote->hasData(self::FIELD_DELIVERY_OPTIONS) && $this->isMyParcelMethod($quote)) {
-            $jsonDeliveryOptions = $quote->getData(self::FIELD_DELIVERY_OPTIONS);
-            $order->setData(self::FIELD_DELIVERY_OPTIONS, $jsonDeliveryOptions);
+        if ($quote->hasData(Checkout::FIELD_DELIVERY_OPTIONS)) {
+            $jsonDeliveryOptions = $quote->getData(Checkout::FIELD_DELIVERY_OPTIONS);
 
-            $dropOffDay = $this->delivery->getDropOffDayFromJson($jsonDeliveryOptions);
-            $order->setData(self::FIELD_DROP_OFF_DAY, $dropOffDay);
+//            $class = new DeliveryOptions($jsonDeliveryOptions);
 
-            $selectedCarrier = $this->delivery->getCarrierFromJson($jsonDeliveryOptions);
-            $order->setData(self::FIELD_MYPARCEL_CARRIER, $selectedCarrier);
+            $order->setData(Checkout::FIELD_DELIVERY_OPTIONS, $jsonDeliveryOptions);
+
+//            $dropOffDay = $this->delivery->getDropOffDayFromJson($jsonDeliveryOptions);
+//            $order->setData(Checkout::FIELD_DROP_OFF_DAY, $dropOffDay);
+//
+//            $selectedCarrier = $this->delivery->getCarrierFromJson($jsonDeliveryOptions);
+//            $order->setData(Checkout::FIELD_MYPARCEL_CARRIER, $selectedCarrier);
         }
 
         return $this;
     }
 
-    /**
-     * @param $quote
-     *
-     * @return bool
-     */
-    private function isMyParcelMethod($quote)
-    {
-        $myParcelMethods = array_keys(Carrier::getMethods());
-        $shippingMethod  = $quote->getShippingAddress()->getShippingMethod();
+//    /**
+//     * @param \Magento\Quote\Model\Quote $quote
+//     *
+//     * @return bool
+//     */
+//    private function hasMyParcelDeliveryOptions($quote)
+//    {
+//        file_put_contents(time() . '_quote.json', json_encode($quote->getData()));
+////        $myParcelMethods = array_keys(Carrier::getMethods());
+////        $shippingMethod  = $quote->getShippingAddress()->getShippingMethod();
+////
+////        if ($this->arrayLike($shippingMethod, $myParcelMethods)) {
+////            return true;
+////        }
+////
+////        if ($this->arrayLike($shippingMethod, $this->parentMethods)) {
+////            return true;
+////        }
+//
+//        return array_key_exists('myparcel_delivery_options', $quote->getData());
+//    }
 
-        if ($this->arrayLike($shippingMethod, $myParcelMethods)) {
-            return true;
-        }
-
-        if ($this->arrayLike($shippingMethod, $this->parentMethods)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * @param $input
-     * @param $data
-     *
-     * @return bool
-     */
-    private function arrayLike($input, $data)
-    {
-        $result = array_filter($data, function($item) use ($input) {
-            if (stripos($input, $item) !== false) {
-                return true;
-            }
-
-            return false;
-        });
-
-        return count($result) > 0;
-    }
+//    /**
+//     * @param $input
+//     * @param $data
+//     *
+//     * @return bool
+//     */
+//    private function arrayLike($input, $data)
+//    {
+//        $result = array_filter($data, function($item) use ($input) {
+//            if (stripos($input, $item) !== false) {
+//                return true;
+//            }
+//
+//            return false;
+//        });
+//
+//        return count($result) > 0;
+//    }
 }

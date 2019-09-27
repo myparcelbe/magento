@@ -10,9 +10,9 @@ use \Magento\Store\Model\StoreManagerInterface;
 
 class Checkout
 {
-    const selectCarriersArray = 0;
-    const selectCarrierPath   = 1;
-    const platform            = 'belgie';
+    const selectCarriersArray           = 0;
+    const selectCarrierPath             = 1;
+    const platform                      = 'belgie';
 
     /**
      * @var array
@@ -72,7 +72,7 @@ class Checkout
      * @return array
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getDeliveryOptionsSettings()
+    public function getDeliveryOptions()
     {
         $this->helper->setBasePriceFromQuote($this->quoteId);
 

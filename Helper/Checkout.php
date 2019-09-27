@@ -24,6 +24,11 @@ use MyParcelNL\Sdk\src\Services\CheckApiKeyService;
 
 class Checkout extends Data
 {
+    public const FIELD_DROP_OFF_DAY     = 'drop_off_day';
+    public const FIELD_MYPARCEL_CARRIER = 'myparcel_carrier';
+    public const FIELD_DELIVERY_OPTIONS = 'myparcel_delivery_options';
+    public const FIELD_TRACK_STATUS     = 'track_status';
+
     private $base_price = 0;
 
     /**

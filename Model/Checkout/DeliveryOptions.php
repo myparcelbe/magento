@@ -37,6 +37,6 @@ class DeliveryOptions implements DeliveryOptionsInterface
 
     public function get()
     {
-        return $this->settings->getDeliveryOptionsSettings();
+        return $this->settings->getDeliveryOptions();
     }
 }

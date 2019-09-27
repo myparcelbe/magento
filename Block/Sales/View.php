@@ -19,8 +19,11 @@
 namespace MyParcelBE\Magento\Block\Sales;
 
 use Magento\Framework\App\ObjectManager;
+use Magento\Sales\Block\Adminhtml\Order\AbstractOrder;
+use MyParcelBE\Magento\Helper\Checkout as CheckoutHelper;
+use MyParcelBE\Magento\Model\Quote\Checkout;
 
-class View extends \Magento\Sales\Block\Adminhtml\Order\AbstractOrder
+class View extends AbstractOrder
 {
     /**
      * @var \Magento\Framework\ObjectManagerInterface
@@ -35,9 +38,10 @@ class View extends \Magento\Sales\Block\Adminhtml\Order\AbstractOrder
     /**
      * Constructor
      */
-    public function _construct() {
+    public function _construct()
+    {
         $this->objectManager = ObjectManager::getInstance();
-        $this->helper = $this->objectManager->get('\MyParcelBE\Magento\Helper\Order');
+        $this->helper        = $this->objectManager->get('\MyParcelBE\Magento\Helper\Order');
         parent::_construct();
     }
 
@@ -53,7 +57,7 @@ class View extends \Magento\Sales\Block\Adminhtml\Order\AbstractOrder
         $order = $this->getOrder();
 
         /** @var object $data Data from checkout */
-        $data = $order->getData('delivery_options') !== null ? json_decode($order->getData('delivery_options'), true) : false;
+        $data = $order->getData(CheckoutHelper::FIELD_DELIVERY_OPTIONS) !== null ? json_decode($order->getData(CheckoutHelper::FIELD_DELIVERY_OPTIONS), true) : false;
         $shippingMethod = $order->getShippingMethod();
 
         if ($this->helper->isPickupLocation($shippingMethod))

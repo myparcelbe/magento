@@ -14,9 +14,11 @@
 
 namespace MyParcelBE\Magento\Model\Sales;
 
+use Exception;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Sales\Model\Order;
+use MyParcelBE\Magento\Helper\Checkout;
 use MyParcelBE\Magento\Helper\Data;
 use MyParcelBE\Magento\Model\Source\DefaultOptions;
 use MyParcelNL\Sdk\src\Factory\ConsignmentFactory;
@@ -124,7 +126,7 @@ class TrackTraceHolder
 
         $shipment     = $magentoTrack->getShipment();
         $address      = $shipment->getShippingAddress();
-        $checkoutData = $shipment->getOrder()->getData('delivery_options');
+        $checkoutData = $shipment->getOrder()->getData(Checkout::FIELD_DELIVERY_OPTIONS);
         $deliveryType = $this->consignment->getDeliveryTypeFromCheckout($checkoutData);
         $packageType = self::$defaultOptions->getPackageType();
 
@@ -145,7 +147,7 @@ class TrackTraceHolder
 
         try {
             $this->consignment->setFullStreet($address->getData('street'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $errorHuman = 'An error has occurred while validating the address: ' . $address->getData('street') . '. Check number and number suffix.';
             $this->messageManager->addErrorMessage($errorHuman . ' View log file for more information.');
             $this->objectManager->get('Psr\Log\LoggerInterface')->critical($errorHuman . '-' . $e);
@@ -316,7 +318,7 @@ class TrackTraceHolder
         }
 
         if ($totalWeight == 0) {
-            throw new \Exception('The order with digital stamp can not be exported, no weights have been entered');
+            throw new Exception('The order with digital stamp can not be exported, no weights have been entered');
         }
 
         $this->consignment->setPhysicalProperties([

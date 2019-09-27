@@ -22,7 +22,7 @@
 }
 
 #mypa-select-date {
-    width:100%;
+    width: 100%;
 }
 
 .mypa-error label {
@@ -35,6 +35,7 @@
     list-style-type: none;
     padding: 2px 0px 0px 0px;
 }
+
 #mypa-pickup-location-selector ul:last-child,
 #mypa-delivery-option-form ul:last-child {
     margin-top: 10px;
@@ -44,12 +45,13 @@
     display: none;
 }
 
-#mypa-delivery-option-form label{
+#mypa-delivery-option-form label {
     display: inline-block;
     width: 80%;
     margin: 0;
 }
-#mypa-error-try-again{
+
+#mypa-error-try-again {
     margin-top: 18px;
 }
 
@@ -58,7 +60,7 @@
     margin-top: 20px;
 }
 
-#mypa-delivery-selector li{
+#mypa-delivery-selector li {
     margin: 15px 0 0;
     display: inline-block;
     width: 100%;
@@ -83,11 +85,12 @@
     margin-bottom: 1px;
     padding-bottom: 2px;
 }
+
 #mypa-pickup-location-selector li:nth-last-of-type(-n+2) {
     margin-left: 30px;
 }
 
-#mypa-pickup-location{
+#mypa-pickup-location {
     width: calc(100% - 25px);
 }
 
@@ -105,13 +108,14 @@
 .mypa-pickup-location-details-location,
 .mypa-pickup-location-details-phone,
 .mypa-pickup-location-details-city,
-.mypa-pickup-location-details-time  {
+.mypa-pickup-location-details-time {
     margin-bottom: 5px;
     display: inline-block;
     width: 69%;
     float: left;
 }
-.mypa-openings-title{
+
+.mypa-openings-title {
     width: 200px;
     height: auto;
 }
@@ -130,7 +134,7 @@
     margin-bottom: -3px;
 }
 
-.mypa-fa-times{
+.mypa-fa-times {
     width: 16px;
     float: right;
 }
@@ -138,18 +142,22 @@
 .mypa-delivery-option-table {
     width: 100%;
 }
+
 .mypa-delivery-option-table tr td:first-child {
     white-space: nowrap;
     width: 20px;
 }
-.mypa-delivery-option input{
+
+.mypa-delivery-option input {
     width: 20px;
 }
+
 .mypa-delivery-option-table tr td:last-child {
     white-space: nowrap;
-    vertical-align:top;
+    vertical-align: top;
 }
-.mypa-bpost-logo{
+
+.mypa-bpost-logo {
     width: 100px;
     float: right;
     margin: 45px 8px 0 0;
@@ -165,18 +173,20 @@
     display: none;
     background-color: white;
 }
-#mypa-delivery-date-text{
+
+#mypa-delivery-date-text {
     display: none;
 }
 
-#mypa-list-bpost-pickup option{
+#mypa-list-bpost-pickup option {
     padding: 5px 0px 5px 0px;
 }
-.mypa-bold-price{
+
+.mypa-bold-price {
     font-weight: bold;
 }
 
-.colorGreen{
+.colorGreen {
     color: green;
 }
 
@@ -186,7 +196,7 @@
     margin: auto auto;
 }
 
-#mypa-spinner-model svg{
+#mypa-spinner-model svg {
     position: absolute;
     top: 19%;
     left: 22%;
@@ -206,8 +216,12 @@
 }
 
 @keyframes mypa-spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 @media only screen and (max-width: 400px) {
@@ -215,11 +229,13 @@
     .mypa-delivery-option-table tr {
         height: 30px !important;
     }
-    .mypa-bpost-logo{
+
+    .mypa-bpost-logo {
         float: none;
         margin: 0 100% 0 0;
 
     }
+
     .mypa-extra-delivery-options-padding-top {
         padding: 15px 0px 10px 0px;
     }
@@ -232,4 +248,20 @@
 /* hide shipping block in card */
 div#block-shipping {
     display: none;
+}
+
+
+/*
+ * Make the shipping options table full width (todo: this might just be luma theme specific)
+ */
+@media screen and (min-width: 768px) {
+    .table-checkout-shipping-method {
+        width: 100%;
+    }
+}
+
+@media (min-width: 768px), print {
+    .table-checkout-shipping-method {
+        width: 100%;
+    }
 }
