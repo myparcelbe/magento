@@ -85,61 +85,59 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
             $order->setData(CheckoutAlias::FIELD_TRACK_STATUS, __('⚠️&#160; Please check address'));
         }
         // @todo check delivery options from quote (step 2)
-        if ($quote->hasData(Checkout::FIELD_DELIVERY_OPTIONS)) {
+        if ($quote->hasData(Checkout::FIELD_DELIVERY_OPTIONS && $this->hasMyParcelDeliveryOptions($quote))) {
             $jsonDeliveryOptions = $quote->getData(Checkout::FIELD_DELIVERY_OPTIONS);
-
-//            $class = new DeliveryOptions($jsonDeliveryOptions);
 
             $order->setData(Checkout::FIELD_DELIVERY_OPTIONS, $jsonDeliveryOptions);
 
-//            $dropOffDay = $this->delivery->getDropOffDayFromJson($jsonDeliveryOptions);
-//            $order->setData(Checkout::FIELD_DROP_OFF_DAY, $dropOffDay);
-//
-//            $selectedCarrier = $this->delivery->getCarrierFromJson($jsonDeliveryOptions);
-//            $order->setData(Checkout::FIELD_MYPARCEL_CARRIER, $selectedCarrier);
+            $dropOffDay = $this->delivery->getDropOffDayFromJson($jsonDeliveryOptions);
+            $order->setData(Checkout::FIELD_DROP_OFF_DAY, $dropOffDay);
+
+            $selectedCarrier = $this->delivery->getCarrierFromJson($jsonDeliveryOptions);
+            $order->setData(Checkout::FIELD_MYPARCEL_CARRIER, $selectedCarrier);
         }
 
         return $this;
     }
 
-//    /**
-//     * @param \Magento\Quote\Model\Quote $quote
-//     *
-//     * @return bool
-//     */
-//    private function hasMyParcelDeliveryOptions($quote)
-//    {
-//        file_put_contents(time() . '_quote.json', json_encode($quote->getData()));
-////        $myParcelMethods = array_keys(Carrier::getMethods());
-////        $shippingMethod  = $quote->getShippingAddress()->getShippingMethod();
-////
-////        if ($this->arrayLike($shippingMethod, $myParcelMethods)) {
-////            return true;
-////        }
-////
-////        if ($this->arrayLike($shippingMethod, $this->parentMethods)) {
-////            return true;
-////        }
-//
-//        return array_key_exists('myparcel_delivery_options', $quote->getData());
-//    }
+    /**
+     * @param \Magento\Quote\Model\Quote $quote
+     *
+     * @return bool
+     */
+    private function hasMyParcelDeliveryOptions($quote)
+    {
+        file_put_contents(time() . '_hasMyParcelDeliveryOptions.json', json_encode($quote->getData()));
+        $myParcelMethods = array_keys(Carrier::getMethods());
+        $shippingMethod  = $quote->getShippingAddress()->getShippingMethod();
 
-//    /**
-//     * @param $input
-//     * @param $data
-//     *
-//     * @return bool
-//     */
-//    private function arrayLike($input, $data)
-//    {
-//        $result = array_filter($data, function($item) use ($input) {
-//            if (stripos($input, $item) !== false) {
-//                return true;
-//            }
-//
-//            return false;
-//        });
-//
-//        return count($result) > 0;
-//    }
+        if ($this->arrayLike($shippingMethod, $myParcelMethods)) {
+            return true;
+        }
+
+        if ($this->arrayLike($shippingMethod, $this->parentMethods)) {
+            return true;
+        }
+
+        return array_key_exists('myparcel_delivery_options', $quote->getData());
+    }
+
+    /**
+     * @param $input
+     * @param $data
+     *
+     * @return bool
+     */
+    private function arrayLike($input, $data)
+    {
+        $result = array_filter($data, function($item) use ($input) {
+            if (stripos($input, $item) !== false) {
+                return true;
+            }
+
+            return false;
+        });
+
+        return count($result) > 0;
+    }
 }

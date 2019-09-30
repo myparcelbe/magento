@@ -37,6 +37,7 @@
     <div class="admin__page-section-item-content">
         <pre>
             <?php print_r($order->getData('myparcel_delivery_options')); ?>
+            <?= $block->getCheckoutOptionsHtml();?>
         </pre>
     </div>
     <div class="admin__page-section-item-content">

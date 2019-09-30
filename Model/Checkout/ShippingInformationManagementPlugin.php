@@ -35,9 +35,10 @@ class ShippingInformationManagementPlugin
             ! empty($extAttributes->getMyparcelDeliveryOptions()) &&
             $extAttributes->getMyparcelDeliveryOptions() != '{}'
         ) {
+
             $deliveryOptions = $extAttributes->getMyparcelDeliveryOptions();
             $quote = $this->quoteRepository->getActive($cartId);
-            $quote->setDeliveryOptions($deliveryOptions);
+            $quote->setMyparcelDeliveryOptions($deliveryOptions);
         }
     }
 }

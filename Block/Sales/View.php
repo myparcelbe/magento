@@ -62,7 +62,7 @@ class View extends AbstractOrder
 
         if ($this->helper->isPickupLocation($shippingMethod))
         {
-            if(is_array($data) && key_exists('location', $data)){
+            if(is_array($data) && key_exists('pickupLocation', $data)){
 
                 $dateTime = date('d-m-Y H:i', strtotime($data['date'] . ' ' . $data['start_time']));
 
