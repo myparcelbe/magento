@@ -53,45 +53,51 @@ class View extends AbstractOrder
      */
     public function getCheckoutOptionsHtml()
     {
-        $html = false;
+        $html  = false;
         $order = $this->getOrder();
 
         /** @var object $data Data from checkout */
         $data = $order->getData(CheckoutHelper::FIELD_DELIVERY_OPTIONS) !== null ? json_decode($order->getData(CheckoutHelper::FIELD_DELIVERY_OPTIONS), true) : false;
-        $shippingMethod = $order->getShippingMethod();
+//        $shippingMethod = $order->getShippingMethod();
 
-        if ($this->helper->isPickupLocation($shippingMethod))
-        {
-            if(is_array($data) && key_exists('pickupLocation', $data)){
+        if ($this->helper->isPickupLocation($data)) {
+            if (is_array($data) && key_exists('pickupLocation', $data)) {
+            // todo: get the time from the delivery
+//          $dateTime = date('d-m-Y H:i', strtotime($data['date'] . ' ' . $data['start_time']));
+                $dateTime = '';
 
-                $dateTime = date('d-m-Y H:i', strtotime($data['date'] . ' ' . $data['start_time']));
-
-                $html .= __('Bpost location:') . ' ' . $dateTime;
-                if($data['price_comment'] != 'retail')
-                    $html .= ', ' . __($data['price_comment']);
-                $html .= ', ' . $data['location']. ', ' . $data['city']. ' (' . $data['postal_code']. ')';
+                $html .= __($data['carrier'] . ' location:') . ' ' . $dateTime;
+                if ($data['deliveryType'] != 'pickup') {
+                    $html .= ', ' . __($data['deliveryType']);
+                }
+                $html .= ', ' . $data['pickupLocation']['location_name'] . ', ' . $data['pickupLocation']['city'] . ' (' . $data['pickupLocation']['postal_code'] . ')';
             } else {
                 /** Old data from orders before version 1.6.0 */
                 $html .= __('MyParcel options data not found');
             }
+
+
         } else {
-            if(is_array($data) && key_exists('date', $data)){
+            if (is_array($data) && key_exists('deliveryDate', $data)) {
+                // todo: get the time from the delivery
+                $dateTime = date('d-m-Y H:i', strtotime($data['deliveryDate']));
+//                $dateTime = date('d-m-Y H:i', strtotime($data['deliveryDate']. ' ' . $data['time'][0]['start']));
+                $html .= __('Deliver:') . ' ' . $dateTime;
 
-                $dateTime = date('d-m-Y H:i', strtotime($data['date']. ' ' . $data['time'][0]['start']));
-                $html .= __('Deliver:') .' ' . $dateTime;
+//                if(isset($data['time'][0]['deliveryType']) && $data['time'][0]['deliveryType'] != 'standard')
+//                    $html .=  ', ' . __($data['time'][0]['deliveryType']);
 
-                if(isset($data['time'][0]['price_comment']) && $data['time'][0]['price_comment'] != 'standard')
-                    $html .=  ', ' . __($data['time'][0]['price_comment']);
-
-                if (key_exists('options', $data)) {
-                    if(key_exists('signature', $data['options']) && $data['options']['signature'])
-                        $html .=  ', ' . strtolower(__('Signature on receipt'));
+                if (key_exists('shipmentOptions', $data)) {
+                    if (key_exists('signature', $data['shipmentOptions']) && $data['shipmentOptions']['signature']) {
+                        $html .= ', ' . __('Signature on receipt');
+                    }
                 }
             }
         }
 
-        if (is_array($data) && key_exists('browser', $data))
-            $html = ' <span title="'.$data['browser'].'">' . $html . '</span>';
+        if (is_array($data) && key_exists('browser', $data)) {
+            $html = ' <span title="' . $data['browser'] . '">' . $html . '</span>';
+        }
 
         return $html !== false ? '<br>' . $html : '';
     }

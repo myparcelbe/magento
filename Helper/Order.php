@@ -23,13 +23,13 @@ class Order extends AbstractHelper
     /**
      * Checks if the given shipping method is a pickup location
      *
-     * @param $method
+     * @param $myparcelDeliveryOptions
      *
      * @return bool
      */
-    public function isPickupLocation($method)
+    public function isPickupLocation($myparcelDeliveryOptions)
     {
-        if (strpos($method, 'isPickup') !== false) {
+        if(is_array($myparcelDeliveryOptions) && key_exists('isPickup', $myparcelDeliveryOptions) && $myparcelDeliveryOptions['isPickup']){
             return true;
         }
 

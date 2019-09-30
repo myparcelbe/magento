@@ -35,10 +35,7 @@
         <?php endif; ?>
     </div>
     <div class="admin__page-section-item-content">
-        <pre>
-            <?php print_r($order->getData('myparcel_delivery_options')); ?>
-            <?= $block->getCheckoutOptionsHtml();?>
-        </pre>
+        <?=$block->getCheckoutOptionsHtml();?>
     </div>
     <div class="admin__page-section-item-content">
         <div style="float: left; margin-right: 10px;">
