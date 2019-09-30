@@ -18,6 +18,7 @@
 
 namespace MyParcelBE\Magento\Model\Rate;
 
+use Countable;
 use Magento\Checkout\Model\Session;
 use MyParcelBE\Magento\Helper\Checkout;
 use MyParcelBE\Magento\Helper\Data;
@@ -63,10 +64,12 @@ class Result extends \Magento\Shipping\Model\Rate\Result
      *
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Magento\Backend\Model\Session\Quote       $quote
-     * @param Checkout                                   $myParcelHelper
      * @param Session                                    $session
+     * @param Checkout                                   $myParcelHelper
      * @param PackageRepository                          $package
      *
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      * @internal param \Magento\Checkout\Model\Session $session
      */
     public function __construct(
@@ -84,7 +87,8 @@ class Result extends \Magento\Shipping\Model\Rate\Result
         $this->quote          = $quote;
 
         $this->parentMethods = explode(',', $this->myParcelHelper->getGeneralConfig('shipping_methods/methods', true));
-        $this->products      = $this->getProductsFromCardAndSession();
+        $this->package->setCurrentCountry($this->getQuoteFromCardOrSession()->getShippingAddress()->getCountryId());
+        $this->products = $this->getQuoteFromCardOrSession()->getItems();
     }
 
     /**
@@ -230,13 +234,20 @@ class Result extends \Magento\Shipping\Model\Rate\Result
     /**
      * Can't get quote from session\Magento\Checkout\Model\Session::getQuote()
      * To fix a conflict with buckeroo, use \Magento\Checkout\Model\Cart::getQuote() like the following
+     *
+     * @return \Magento\Quote\Model\Quote
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    private function getProductsFromCardAndSession()
-    {
-        if ($this->quote->getQuoteId() != null && count($this->quote->getQuote()->getItems())) {
-            return $this->quote->getQuote()->getItems();
+    private function getQuoteFromCardOrSession() {
+        if ($this->quote->getQuoteId() != null &&
+            $this->quote->getQuote() &&
+            $this->quote->getQuote() instanceof Countable &&
+            count($this->quote->getQuote())
+        ){
+            return $this->quote->getQuote();
         }
 
-        return $this->session->getQuote()->getItems();
+        return $this->session->getQuote();
     }
 }

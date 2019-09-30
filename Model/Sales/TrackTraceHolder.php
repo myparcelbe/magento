@@ -122,13 +122,14 @@ class TrackTraceHolder
      */
     public function convertDataFromMagentoToApi($magentoTrack, $options)
     {
-        $this->consignment = ConsignmentFactory::createByCarrierId(BpostConsignment::CARRIER_ID);
-
         $shipment     = $magentoTrack->getShipment();
         $address      = $shipment->getShippingAddress();
         $checkoutData = $shipment->getOrder()->getData(Checkout::FIELD_DELIVERY_OPTIONS);
+
+        $this->consignment = ConsignmentFactory::createByCarrierName($this->getCarrierFromDeliveryOptions($checkoutData));
+
         $deliveryType = $this->consignment->getDeliveryTypeFromCheckout($checkoutData);
-        $packageType = self::$defaultOptions->getPackageType();
+        $packageType  = self::$defaultOptions->getPackageType();
 
         $apiKey = $this->helper->getGeneralConfig(
             'api/key',
@@ -335,6 +336,13 @@ class TrackTraceHolder
      */
     private function getCentsByPrice(float $price): int
     {
-        return  (int) $price * 100;
+        return (int) $price * 100;
+    }
+
+    private function getCarrierFromDeliveryOptions($checkoutData)
+    {
+        $aCheckoutData = json_decode($checkoutData, true);
+
+        return $aCheckoutData['carrier'];
     }
 }
