@@ -36,8 +36,8 @@ class DeliveryRepository extends Delivery
         }
 
         $deliveryOptions = json_decode($jsonDeliveryOptions, true);
-        if (key_exists('deliveryDate', $deliveryOptions)) {
-            $this->setDeliveryDateTime(strtotime($deliveryOptions['deliveryDate'] . ' 00:00:00'));
+        if (key_exists('date', $deliveryOptions)) {
+            $this->setDeliveryDateTime(strtotime($deliveryOptions['date']));
             $dropOffDate = $this->getDropOffDay();
 
             return date("Y-m-d", $dropOffDate);
