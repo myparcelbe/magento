@@ -58,13 +58,11 @@ class View extends AbstractOrder
 
         /** @var object $data Data from checkout */
         $data = $order->getData(CheckoutHelper::FIELD_DELIVERY_OPTIONS) !== null ? json_decode($order->getData(CheckoutHelper::FIELD_DELIVERY_OPTIONS), true) : false;
-//        $shippingMethod = $order->getShippingMethod();
 
         if ($this->helper->isPickupLocation($data)) {
             if (is_array($data) && key_exists('pickupLocation', $data)) {
-            // todo: get the time from the delivery
-//          $dateTime = date('d-m-Y H:i', strtotime($data['date'] . ' ' . $data['start_time']));
-                $dateTime = '';
+
+                $dateTime = date('d-m-Y H:i', strtotime($data['date']));
 
                 $html .= __($data['carrier'] . ' location:') . ' ' . $dateTime;
                 if ($data['deliveryType'] != 'pickup') {
@@ -78,14 +76,9 @@ class View extends AbstractOrder
 
 
         } else {
-            if (is_array($data) && key_exists('deliveryDate', $data)) {
-                // todo: get the time from the delivery
-                $dateTime = date('d-m-Y H:i', strtotime($data['deliveryDate']));
-//                $dateTime = date('d-m-Y H:i', strtotime($data['deliveryDate']. ' ' . $data['time'][0]['start']));
+            if (is_array($data) && key_exists('date', $data)) {
+                $dateTime = date('d-m-Y H:i', strtotime($data['date']));
                 $html .= __('Deliver:') . ' ' . $dateTime;
-
-//                if(isset($data['time'][0]['deliveryType']) && $data['time'][0]['deliveryType'] != 'standard')
-//                    $html .=  ', ' . __($data['time'][0]['deliveryType']);
 
                 if (key_exists('shipmentOptions', $data)) {
                     if (key_exists('signature', $data['shipmentOptions']) && $data['shipmentOptions']['signature']) {
