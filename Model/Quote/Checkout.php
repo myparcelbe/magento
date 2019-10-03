@@ -10,9 +10,9 @@ use \Magento\Store\Model\StoreManagerInterface;
 
 class Checkout
 {
-    const selectCarriersArray           = 0;
-    const selectCarrierPath             = 1;
-    const platform                      = 'belgie';
+    const selectCarriersArray = 0;
+    const selectCarrierPath   = 1;
+    const platform            = 'belgie';
 
     /**
      * @var array
@@ -100,10 +100,17 @@ class Checkout
      */
     private function getGeneralData()
     {
+        $deliveryMethod[] = explode(';', $this->getDeliveryMethods());
+
+        foreach ($deliveryMethod as $method) {
+            $deliveryMethod = $method;
+        }
+
         return [
-            'platform'   => self::platform,
-            'carriers'   => array_column($this->get_carriers(), self::selectCarriersArray),
-            'currency'   => $this->currency->getStore()->getCurrentCurrency()->getCode()
+            'platform' => self::platform,
+            'carriers' => array_column($this->get_carriers(), self::selectCarriersArray),
+            'method'   => $deliveryMethod,
+            'currency' => $this->currency->getStore()->getCurrentCurrency()->getCode()
         ];
     }
 
@@ -137,6 +144,17 @@ class Checkout
 
         return $myParcelConfig;
     }
+
+    /**
+     * Get the a list of the shipping methods.
+     *
+     * @return string
+     */
+    private function getDeliveryMethods(): string
+    {
+        return $this->helper->getArrayConfig(Data::XML_PATH_GENERAL, 'shipping_methods/methods');
+    }
+
 
     /**
      * Get the array of enabled carriers by checking if they have either delivery or pickup enabled.
