@@ -134,24 +134,24 @@ class UpgradeSchema implements UpgradeSchemaInterface
             );
         }
         if (version_compare($context->getVersion(), '3.0.0', '<')) {
-//            $setup->getConnection()->addColumn(
-//                $setup->getTable('sales_order'),
-//                'myparcel_carrier',
-//                [
-//                    'type'     => Table::TYPE_TEXT,
-//                    'nullable' => true,
-//                    'comment'  => 'MyParcel carrier',
-//                ]
-//            );
-//            $setup->getConnection()->addColumn(
-//                $setup->getTable('sales_order_grid'),
-//                'myparcel_carrier',
-//                [
-//                    'type'     => Table::TYPE_TEXT,
-//                    'nullable' => true,
-//                    'comment'  => 'MyParcel carrier',
-//                ]
-//            );
+            $setup->getConnection()->addColumn(
+                $setup->getTable('sales_order'),
+                'myparcel_carrier',
+                [
+                    'type'     => Table::TYPE_TEXT,
+                    'nullable' => true,
+                    'comment'  => 'MyParcel carrier',
+                ]
+            );
+            $setup->getConnection()->addColumn(
+                $setup->getTable('sales_order_grid'),
+                'myparcel_carrier',
+                [
+                    'type'     => Table::TYPE_TEXT,
+                    'nullable' => true,
+                    'comment'  => 'MyParcel carrier',
+                ]
+            );
             if ($setup->getConnection()->isTableExists('quote') == true) {
                 $setup->getConnection()->changeColumn(
                     $setup->getTable('quote'),
