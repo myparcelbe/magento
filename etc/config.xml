@@ -15,12 +15,12 @@
             <shipping_methods>
                 <methods>tablerate</methods>
             </shipping_methods>
-            <delivery_options>
+            <delivery_titles>
                 <delivery_title>Thuis of op het werk bezorgd</delivery_title>
                 <standard_delivery_title>Standaardlevering</standard_delivery_title>
                 <signature_title>Handtekening voor ontvangst</signature_title>
                 <pickup_title>Ophalen bij een Bpost locatie</pickup_title>
-            </delivery_options>
+            </delivery_titles>
         </myparcelbe_magento_general>
         <myparcelbe_magento_bpost_settings>
             <options>
