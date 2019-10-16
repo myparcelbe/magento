@@ -20,20 +20,29 @@ define(
         },
 
         /**
-         * MyParcel action observer.
+         * MyParcel action observer
          *
          * @protected
          */
         _setOptionsObserver: function () {
           var parentThis = this;
+          $("input[name='mypa_create_from_observer']").on(
+            "change",
+            function () {
+              if ($('#mypa_create_from_observer').prop('checked')) {
+                $('.mypa_carrier-toggle').slideDown();
+                parentThis._checkCarrierField();
+                parentThis._checkOptionsField();
+              } else {
+                $('.mypa-option-toggle').slideUp();
+                $('.mypa_carrier-toggle').slideUp();
+              }
+            }
+          );
 
-          if ($('#mypa_create_from_observer').prop('checked')) {
-            $('.mypa_carrier-toggle').slideDown();
+          if ($("input[name='mypa_create_from_observer']").is(':checked') === true){
             parentThis._checkCarrierField();
             parentThis._checkOptionsField();
-          } else {
-            $('.mypa-option-toggle').slideUp();
-            $('.mypa_carrier-toggle').slideUp();
           }
 
           $("#mypa_carrier_bpost").click(
@@ -61,7 +70,8 @@ define(
         },
 
         _checkOptionsField: function () {
-          if ($('#mypa_carrier_bpost').prop("checked", true)) {
+          if ($('#mypa_carrier_bpost').is(':checked') === true) {
+            console.log('hier kom ik in');
             $('.mypa-option-toggle').slideDown();
           }
         },
