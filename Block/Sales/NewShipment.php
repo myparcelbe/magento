@@ -108,6 +108,6 @@ class NewShipment extends AbstractItems
      */
     public function getChosenOptions()
     {
-        return json_decode($this->order->getData(Checkout::FIELD_DELIVERY_OPTIONS), true);
+        return json_decode($this->order->getData(Checkout::FIELD_DELIVERY_OPTIONS));
     }
 }
