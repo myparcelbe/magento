@@ -138,7 +138,6 @@ class TrackTraceHolder
         } catch (\BadMethodCallException $e) {
             // create new instance from unknown json data
             $deliveryOptions = (new ConsignmentNormalizer($deliveryOptions))->normalize();
-
             $deliveryOptionsAdapter = new DeliveryOptionsFromOrderAdapter($deliveryOptions);
         }
 

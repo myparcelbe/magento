@@ -11,7 +11,7 @@ class DeliveryOptionsFromOrderAdapter extends AbstractDeliveryOptionsAdapter
     /**
      * WCMP_DeliveryOptionsFromOrderAdapter constructor.
      *
-     * @param array                               $inputData
+     * @param array $inputData
      */
     public function __construct(array $inputData = [])
     {

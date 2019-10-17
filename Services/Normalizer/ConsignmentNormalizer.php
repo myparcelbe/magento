@@ -1,8 +1,8 @@
 <?php
 
+declare(strict_types=1);
 
 namespace MyparcelBE\Magento\Services\Normalizer;
-
 
 use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
 use MyParcelNL\Sdk\src\Model\Consignment\BpostConsignment;
