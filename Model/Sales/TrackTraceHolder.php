@@ -18,7 +18,7 @@ use Exception;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Sales\Model\Order;
-use MyParcelBE\Magento\Adapter\deliveryOptionsFromAdapter;
+use MyParcelBE\Magento\Adapter\DeliveryOptionsFromOrderAdapter;
 use MyParcelBE\Magento\Helper\Checkout;
 use MyParcelBE\Magento\Helper\Data;
 use MyParcelBE\Magento\Model\Source\DefaultOptions;
@@ -139,7 +139,7 @@ class TrackTraceHolder
             // create new instance from unknown json data
             $deliveryOptions = (new ConsignmentNormalizer($deliveryOptions))->normalize();
 
-            $deliveryOptionsAdapter = new DeliveryOptionsFromAdapter(null, $deliveryOptions);
+            $deliveryOptionsAdapter = new DeliveryOptionsFromOrderAdapter($deliveryOptions);
         }
 
         $pickupLocationAdapter  = $deliveryOptionsAdapter->getPickupLocation();

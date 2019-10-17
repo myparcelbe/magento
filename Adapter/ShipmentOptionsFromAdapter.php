@@ -14,14 +14,12 @@ class ShipmentOptionsFromAdapter extends AbstractShipmentOptionsAdapter
     /**
      * WCMP_ShipmentOptionsFromOrderAdapter constructor.
      *
-     * @param AbstractDeliveryOptionsAdapter|null $originAdapter
-     * @param array                               $inputData
+     * @param array $inputData
      */
-    public function __construct(?AbstractDeliveryOptionsAdapter $originAdapter, array $inputData)
+    public function __construct(array $inputData)
     {
-        $shipmentOptionsAdapter = $originAdapter ? $originAdapter->getShipmentOptions() : null;
         $options                = $inputData['shipment_options'] ?? [];
-        $this->signature        = (bool) ($options['signature'] ?? $shipmentOptionsAdapter ? $shipmentOptionsAdapter->hasSignature() : false);
-        $this->insurance        = (int) ($options['insurance'] ?? $shipmentOptionsAdapter ? $shipmentOptionsAdapter->getInsurance() : self::DEFAULT_INSURANCE);
+        $this->signature        = (bool) ($options['signature'] ?? false);
+        $this->insurance        = (int) ($options['insurance'] ?? self::DEFAULT_INSURANCE);
     }
 }
