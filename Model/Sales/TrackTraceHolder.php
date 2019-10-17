@@ -125,7 +125,7 @@ class TrackTraceHolder
     {
         $shipment     = $magentoTrack->getShipment();
         $address      = $shipment->getShippingAddress();
-        $checkoutData = $shipment->getOrder()->getData(Checkout::FIELD_DELIVERY_OPTIONS);
+        $checkoutData = json_decode($shipment->getOrder()->getData(Checkout::FIELD_DELIVERY_OPTIONS), true);
         $packageType  = self::$defaultOptions->getPackageType();
 
         $deliveryOptionsAdapter = DeliveryOptionsAdapterFactory::create($checkoutData);
@@ -277,11 +277,11 @@ class TrackTraceHolder
     /**
      * @param bool|null $signature
      *
-     * @return bool|null
+     * @return bool
      */
-    protected function isSignature(?bool $signature)
+    protected function isSignature(?bool $signature): bool
     {
-        if ($signature === null) {
+        if ($signature !== null) {
             return $signature;
         }
 
