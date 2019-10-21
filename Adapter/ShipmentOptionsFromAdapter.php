@@ -12,8 +12,6 @@ class ShipmentOptionsFromAdapter extends AbstractShipmentOptionsAdapter
     const DEFAULT_INSURANCE = 0;
 
     /**
-     * WCMP_ShipmentOptionsFromOrderAdapter constructor.
-     *
      * @param array $inputData
      */
     public function __construct(array $inputData)

@@ -21,8 +21,8 @@ class ConsignmentNormalizer
 
     public function normalize(): array
     {
-        $data = $this->data;
-        $data['carrier'] = $data['carrier'] ?? BpostConsignment::CARRIER_NAME;
+        $data                 = $this->data;
+        $data['carrier']      = $data['carrier'] ?? BpostConsignment::CARRIER_NAME;
         $data['deliveryType'] = $data['deliveryType'] ?? AbstractConsignment::DELIVERY_TYPE_STANDARD_NAME;
 
         return $data;

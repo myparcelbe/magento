@@ -9,8 +9,6 @@ use MyParcelNL\Sdk\src\Adapter\DeliveryOptions\AbstractDeliveryOptionsAdapter;
 class DeliveryOptionsFromOrderAdapter extends AbstractDeliveryOptionsAdapter
 {
     /**
-     * WCMP_DeliveryOptionsFromOrderAdapter constructor.
-     *
      * @param array $inputData
      */
     public function __construct(array $inputData = [])
