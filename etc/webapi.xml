@@ -7,8 +7,8 @@
             <resource ref="anonymous"/>
         </resources>
     </route>
-    <route url="/V1/delivery_options/convert" method="POST">
-        <service class="MyParcelBE\Magento\Api\DeliveryOptionsInterface" method="convertToShippingMethod"/>
+    <route url="/V1/shipping_methods" method="POST">
+        <service class="MyParcelBE\Magento\Api\ShippingMethodsInterface" method="getFromDeliveryOptions"/>
         <resources>
             <resource ref="anonymous"/>
         </resources>

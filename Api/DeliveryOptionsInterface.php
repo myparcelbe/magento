@@ -25,12 +25,4 @@ interface DeliveryOptionsInterface
      * @api
      */
     public function get();
-
-    /**
-     * @param mixed $deliveryOptions
-     *
-     * @return array
-     * @api
-     */
-    public function convertToShippingMethod($deliveryOptions): array;
 }
