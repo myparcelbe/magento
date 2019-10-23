@@ -15,8 +15,10 @@
 namespace MyParcelBE\Magento\Model\Checkout;
 
 
+use Exception;
 use MyParcelBE\Magento\Api\DeliveryOptionsInterface;
 use MyParcelBE\Magento\Model\Quote\Checkout;
+use MyParcelNL\Sdk\src\Factory\DeliveryOptionsAdapterFactory;
 
 class DeliveryOptions implements DeliveryOptionsInterface
 {
@@ -38,5 +40,36 @@ class DeliveryOptions implements DeliveryOptionsInterface
     public function get()
     {
         return $this->settings->getDeliveryOptions();
+    }
+
+    /**
+     * @param mixed $deliveryOptions
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function convertToShippingMethod($deliveryOptions): array
+    {
+        $response = [];
+
+        try {
+            foreach ($deliveryOptions as $value) {
+                $newDeliveryOptions = DeliveryOptionsAdapterFactory::create($value);
+
+                $response[] = $newDeliveryOptions->toArray();
+            }
+
+            $response = [
+                "code"    => "200",
+                "data"    => json_encode($response),
+            ];
+        } catch (Exception $e) {
+            $response = [
+                "code"    => "422",
+                "message" => $e->getMessage(),
+            ];
+        }
+
+        return $response;
     }
 }
