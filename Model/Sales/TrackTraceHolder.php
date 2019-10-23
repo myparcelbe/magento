@@ -18,13 +18,16 @@ use Exception;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Sales\Model\Order;
+use MyParcelBE\Magento\Adapter\DeliveryOptionsFromOrderAdapter;
 use MyParcelBE\Magento\Helper\Checkout;
 use MyParcelBE\Magento\Helper\Data;
 use MyParcelBE\Magento\Model\Source\DefaultOptions;
+use MyparcelBE\Magento\Services\Normalizer\ConsignmentNormalizer;
 use MyParcelNL\Sdk\src\Adapter\DeliveryOptions\AbstractShipmentOptionsAdapter;
 use MyParcelNL\Sdk\src\Factory\ConsignmentFactory;
 use MyParcelNL\Sdk\src\Factory\DeliveryOptionsAdapterFactory;
 use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
+use MyParcelNL\Sdk\src\Model\Consignment\BpostConsignment;
 use MyParcelNL\Sdk\src\Model\MyParcelCustomsItem;
 
 /**
@@ -123,14 +126,23 @@ class TrackTraceHolder
      */
     public function convertDataFromMagentoToApi($magentoTrack, $options)
     {
-        $shipment     = $magentoTrack->getShipment();
-        $address      = $shipment->getShippingAddress();
-        $checkoutData = json_decode($shipment->getOrder()->getData(Checkout::FIELD_DELIVERY_OPTIONS), true);
-        $packageType  = self::$defaultOptions->getPackageType();
+        $shipment        = $magentoTrack->getShipment();
+        $address         = $shipment->getShippingAddress();
+        $checkoutData    = $shipment->getOrder()->getData(Checkout::FIELD_DELIVERY_OPTIONS);
+        $packageType     = self::$defaultOptions->getPackageType();
+        $deliveryOptions = json_decode($checkoutData, true);
 
-        $deliveryOptionsAdapter = DeliveryOptionsAdapterFactory::create($checkoutData);
+        try {
+            // create new instance from known json
+            $deliveryOptionsAdapter = DeliveryOptionsAdapterFactory::create((array) $deliveryOptions);
+        } catch (\BadMethodCallException $e) {
+            // create new instance from unknown json data
+            $deliveryOptions = (new ConsignmentNormalizer($deliveryOptions))->normalize();
+            $deliveryOptionsAdapter = new DeliveryOptionsFromOrderAdapter($deliveryOptions);
+        }
+
         $pickupLocationAdapter  = $deliveryOptionsAdapter->getPickupLocation();
-        $shippingOptionsAdapter  = $deliveryOptionsAdapter->getShipmentOptions();
+        $shippingOptionsAdapter = $deliveryOptionsAdapter->getShipmentOptions();
 
         $this->consignment = ConsignmentFactory::createByCarrierName($deliveryOptionsAdapter->getCarrier());
 
@@ -282,7 +294,7 @@ class TrackTraceHolder
     protected function isSignature(?bool $signature): bool
     {
         if ($signature !== null) {
-            return $signature;
+            return (bool) $signature;
         }
 
         return (bool) self::$defaultOptions->getDefault('signature');
