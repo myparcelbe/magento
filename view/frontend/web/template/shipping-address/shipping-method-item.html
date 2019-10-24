@@ -4,7 +4,10 @@
  */
 -->
 <tr
-    attr="'class': 'row ' + element.shippingMethodRowClass + ' ' + element.shippingMethodRowClass + '__' + method.method_code"
+    attr="
+        'class': 'row ' + element.shippingMethodRowClass,
+        'id': method.method_code,
+    "
     click="element.selectShippingMethod"
     afterRender="function(elements) { element.afterRenderShippingMethod(elements, element.rates()) }">
     <td class="col col-method">

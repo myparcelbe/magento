@@ -49,7 +49,7 @@ define([
    */
   function afterRenderShippingMethod(elements, rates) {
     if (document.querySelectorAll('.' + shippingMethodRowClass).length === rates.length) {
-      MyParcelFrontend.init();
+      MyParcelFrontend.initialize();
     }
   }
 

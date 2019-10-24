@@ -1,6 +1,6 @@
 /*
  * Hide our custom shipping methods on the checkout page.
  */
-.form.methods-shipping .shipping-methods__row[class*="shipping-methods__row__myparcel"] {
+.form.methods-shipping .shipping-methods__row[id*="myparcel"] {
   display: none;
 }

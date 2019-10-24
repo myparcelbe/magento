@@ -1,3 +1,6 @@
+var STATUS_SUCCESS = 200;
+var STATUS_ERROR = 400;
+
 define(
   [
     'ko',
@@ -7,6 +10,7 @@ define(
     'Magento_Checkout/js/checkout-data',
     'Magento_Checkout/js/action/set-shipping-information',
     'MyParcelBE_Magento/js/vendor/myparcel',
+    'MyParcelBE_Magento/js/polyfill/object_assign',
     'domReady!',
   ],
   function(
@@ -41,33 +45,20 @@ define(
       cityField: 'city',
 
       /**
-       * Initialize the script.
+       * Initialize the script. Start by requesting the plugin settings, then initialize listeners.
        */
-      init: function() {
-        // MyParcelFrontend.insertDeliveryOptionsDiv();
-        // MyParcelFrontend.hideShippingMethods();
-
-        MyParcelFrontend.getMagentoSettings().onload = function() {
-          var response = JSON.parse(this.response);
-
-          console.log(response);
-          if (this.status >= 200 && this.status < 400) {
+      initialize: function() {
+        doRequest(MyParcelFrontend.getMagentoSettings, {
+          onSuccess: function(response) {
             MyParcelFrontend.setConfig(response[0].data);
-
             MyParcelFrontend.addListeners();
             MyParcelFrontend.updateAddress();
-          }
-        };
-
-        // Event from the checkout
-        document.addEventListener(
-          MyParcelFrontend.updatedDeliveryOptionsEvent,
-          MyParcelFrontend.onUpdatedDeliveryOptions
-        );
+          },
+        });
       },
 
       /**
-       * Add event listeners to Magento's address fields and update the address on change/.
+       * Add event listeners to Magento's address fields updating the address on change.
        */
       addListeners: function() {
         var fields = [MyParcelFrontend.postcodeField, MyParcelFrontend.countryField, MyParcelFrontend.cityField];
@@ -75,6 +66,11 @@ define(
         fields.forEach(function(field) {
           MyParcelFrontend.getField(field).addEventListener('change', MyParcelFrontend.updateAddress);
         });
+
+        document.addEventListener(
+          MyParcelFrontend.updatedDeliveryOptionsEvent,
+          MyParcelFrontend.onUpdatedDeliveryOptions
+        );
       },
 
       /**
@@ -107,7 +103,6 @@ define(
       getHouseNumber: function(address) {
         var result = this.splitStreetRegex.exec(address);
         var numberIndex = 2;
-        console.log('regex', address, result);
         return result ? result[numberIndex] : null;
       },
 
@@ -149,28 +144,25 @@ define(
        */
       getAddress: function() {
         var address;
-
-        if (customer.isLoggedIn() &&
-              typeof quote !== 'undefined' &&
-              typeof quote.shippingAddress !== 'undefined' &&
-              typeof quote.shippingAddress._latestValue !== 'undefined' &&
-              typeof quote.shippingAddress._latestValue.street !== 'undefined' &&
-              typeof quote.shippingAddress._latestValue.street[0] !== 'undefined'
-        ) {
-          address = this.getLoggedInAddress();
-        } else {
-          address = this.getNoLoggedInAddress();
-        }
-
         var regExp = /[<>=]/g;
-
         var street = [
           address.street0,
           address.street1,
           address.street2,
         ].join(' ');
-
         var number = this.getHouseNumber(street);
+
+        if (customer.isLoggedIn() &&
+          typeof quote !== 'undefined' &&
+          typeof quote.shippingAddress !== 'undefined' &&
+          typeof quote.shippingAddress._latestValue !== 'undefined' &&
+          typeof quote.shippingAddress._latestValue.street !== 'undefined' &&
+          typeof quote.shippingAddress._latestValue.street[0] !== 'undefined'
+        ) {
+          address = this.getLoggedInAddress();
+        } else {
+          address = this.getNoLoggedInAddress();
+        }
 
         return {
           number: number,
@@ -234,13 +226,20 @@ define(
        * @returns {XMLHttpRequest}
        */
       getMagentoSettings: function() {
-        var url = mageUrl.build('rest/V1/delivery_options/get');
+        return sendRequest('rest/V1/delivery_options/get');
+      },
 
-        var request = new XMLHttpRequest();
-        request.open('GET', url, true);
-        request.send();
-
-        return request;
+      /**
+       * Execute the shipping_methods request to convert delivery options to a shipping method id.
+       *
+       * @returns {XMLHttpRequest}
+       */
+      convertDeliveryOptionsToShippingMethod: function() {
+        return sendRequest(
+          'rest/V1/shipping_methods',
+          'POST',
+          JSON.stringify({deliveryOptions: [MyParcelFrontend.deliveryOptions]})
+        );
       },
 
       /**
@@ -249,7 +248,26 @@ define(
        * @param {CustomEvent} event - The event that was sent.
        */
       onUpdatedDeliveryOptions: function(event) {
+        MyParcelFrontend.deliveryOptions = event.detail;
         document.querySelector(MyParcelFrontend.hiddenDataInput).value = JSON.stringify(event.detail);
+
+        doRequest(MyParcelFrontend.convertDeliveryOptionsToShippingMethod, {
+          onSuccess: function(response) {
+            var shippingMethod = response[0].element_id;
+            var respectiveInput = document.querySelector('[id="' + shippingMethod + '"] input');
+
+            if (respectiveInput) {
+              respectiveInput.checked = true;
+
+              /**
+               * Manually trigger the shipping method update event.
+               */
+              MyParcelFrontend.onShippingMethodUpdate(shippingMethod);
+            } else {
+              console.warn('No matching element found for ' + shippingMethod + '.');
+            }
+          },
+        });
       },
 
       /**
@@ -258,10 +276,70 @@ define(
       onShippingMethodUpdate: function(newShippingMethod) {
         if (JSON.stringify(MyParcelFrontend.shippingMethod) !== JSON.stringify(newShippingMethod)) {
           MyParcelFrontend.shippingMethod = newShippingMethod;
+          console.log(newShippingMethod);
           console.log('shipping method changed to ' + newShippingMethod);
         }
       },
     };
+
+    /**
+     * Request function. Executes a request and given handlers.
+     *
+     * @param {function} request - The request to execute.
+     * @param {Object} handlers - Object with handlers to run on different outcomes of the request.
+     * @property {function} handlers.onSuccess - Function to run on Success handler.
+     * @property {function} handlers.onError - Function to run on Error handler.
+     * @property {function} handlers.always - Function to always run.
+     */
+    function doRequest(request, handlers) {
+      /**
+       * Execute a given handler by name if it exists in handlers.
+       *
+       * @param {string} handlerName - Name of the handler to check for.
+       * @param {*?} params - Parameters to pass to the handler.
+       * @returns {*}
+       */
+      handlers.doHandler = function(handlerName, params) {
+        if (handlers.hasOwnProperty(handlerName) && typeof handlers[handlerName] === 'function') {
+          return handlers[handlerName](params);
+        }
+      };
+
+      request().onload = function() {
+        var response = JSON.parse(this.response);
+
+        if (this.status >= STATUS_SUCCESS && this.status < STATUS_ERROR) {
+          handlers.doHandler('onSuccess', response);
+        } else {
+          handlers.doHandler('onError', response);
+        }
+
+        handlers.doHandler('always', response);
+      };
+    }
+
+    /**
+     * Send a request to given endpoint.
+     *
+     * @param {String} endpoint - Endpoint to use.
+     * @param {String} [method='GET'] - Request method.
+     * @param {String} [body={}] - Request body.
+     *
+     * @returns {XMLHttpRequest}
+     */
+    function sendRequest(endpoint, method, body) {
+      var url = mageUrl.build(endpoint);
+      var request = new XMLHttpRequest();
+
+      method = method || 'GET';
+      body = body || {};
+
+      request.open(method, url, true);
+      request.setRequestHeader('Content-Type', 'application/json');
+      request.send(body);
+
+      return request;
+    }
 
     return MyParcelFrontend;
   }
