@@ -253,17 +253,6 @@ define(
       },
 
       /**
-       * Hide the shipping methods.
-       */
-      hideShippingMethods: function() {
-        var cols = document.querySelectorAll('td.col-method[id*="myparcelbe_magento"]');
-
-        cols.forEach(function(col) {
-          col.parentElement.style.display = 'none';
-        });
-      },
-
-      /**
        * @param {Object} newShippingMethod - The shipping method that was selected.
        */
       onShippingMethodUpdate: function(newShippingMethod) {
@@ -271,17 +260,6 @@ define(
           MyParcelFrontend.shippingMethod = newShippingMethod;
           console.log('shipping method changed to ' + newShippingMethod);
         }
-      },
-
-      /**
-       * Insert the delivery options div above the shipping methods.
-       */
-      insertDeliveryOptionsDiv: function() {
-        var shippingMethods = document.querySelector('.checkout-shipping-method > .step-title');
-        var deliveryOptionsDiv = document.createElement('div');
-
-        deliveryOptionsDiv.setAttribute('id', 'myparcel-delivery-options');
-        shippingMethods.insertAdjacentElement('afterend', deliveryOptionsDiv);
       },
     };
 
