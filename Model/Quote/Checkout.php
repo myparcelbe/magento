@@ -72,7 +72,7 @@ class Checkout
      * @return array
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getDeliveryOptions()
+    public function getDeliveryOptions(): array
     {
         $this->helper->setBasePriceFromQuote($this->quoteId);
 
@@ -117,9 +117,9 @@ class Checkout
     /**
      * Get delivery data
      *
-     * @return array)
+     * @return array
      */
-    private function getDeliveryData()
+    private function getDeliveryData(): array
     {
         $carriersPath   = $this->get_carriers();
         $myParcelConfig = [];

@@ -22,7 +22,7 @@ class ShippingMethods implements ShippingMethodsInterface
             $shipping = new DeliveryOptionsToShippingMethods($deliveryOptions[0]);
 
             $response = [
-                "data" => [
+                "root" => [
                     "element_id" => $shipping->getShippingMethod(),
                 ],
             ];
