@@ -19,27 +19,6 @@ define(
   ) {
     'use strict';
 
-    console.log({
-      ko: ko,
-      mageUrl: mageUrl,
-      customer: customer,
-      quote: quote,
-      checkoutData: checkoutData,
-      setShippingInformationAction: setShippingInformationAction,
-    });
-
-    /**
-     * "Wait" until the postal code field is present before we initialize the rest of the code.
-     *
-     * @type {number}
-     */
-    var timer = setInterval(function() {
-      if (MyParcelFrontend.getField('postcode')) {
-        clearInterval(timer);
-        MyParcelFrontend.init();
-      }
-    }, 300);
-
     var MyParcelFrontend = {
       splitStreetRegex: /(.*?)\s?(\d{1,4})[/\s-]{0,2}([A-z]\d{1,3}|-\d{1,4}|\d{2}\w{1,2}|[A-z][A-z\s]{0,3})?$/,
 
@@ -65,27 +44,34 @@ define(
        * Initialize the script.
        */
       init: function() {
-        MyParcelFrontend.addListeners();
-        MyParcelFrontend.hideShippingMethods();
+        // MyParcelFrontend.insertDeliveryOptionsDiv();
+        // MyParcelFrontend.hideShippingMethods();
 
         MyParcelFrontend.getMagentoSettings().onload = function() {
-          if (this.status >= 200 && this.status < 400) {
-            var response = JSON.parse(this.response);
+          var response = JSON.parse(this.response);
 
+          console.log(response);
+          if (this.status >= 200 && this.status < 400) {
             MyParcelFrontend.setConfig(response[0].data);
+
+            MyParcelFrontend.addListeners();
             MyParcelFrontend.updateAddress();
           }
         };
 
         // Event from the checkout
-        document.addEventListener(this.updatedDeliveryOptionsEvent, MyParcelFrontend.onUpdatedDeliveryOptions);
+        document.addEventListener(
+          MyParcelFrontend.updatedDeliveryOptionsEvent,
+          MyParcelFrontend.onUpdatedDeliveryOptions
+        );
       },
 
       /**
        * Add event listeners to Magento's address fields and update the address on change/.
        */
       addListeners: function() {
-        var fields = [this.postcodeField, this.countryField, this.cityField];
+        var fields = [MyParcelFrontend.postcodeField, MyParcelFrontend.countryField, MyParcelFrontend.cityField];
+
         fields.forEach(function(field) {
           MyParcelFrontend.getField(field).addEventListener('change', MyParcelFrontend.updateAddress);
         });
@@ -138,8 +124,10 @@ define(
 
       /**
        * Get data from form fields and put it in the global MyParcelConfig.
+       *
+       * @param e
        */
-      updateAddress: function(e) {
+      updateAddress: function() {
         var data = window.MyParcelConfig;
 
         data.address = {
@@ -150,6 +138,7 @@ define(
         };
 
         window.MyParcelConfig = data;
+        console.log('triggering ' + MyParcelFrontend.updateDeliveryOptionsEvent);
         MyParcelFrontend.triggerEvent(MyParcelFrontend.updateDeliveryOptionsEvent);
       },
 
@@ -266,9 +255,36 @@ define(
       /**
        * Hide the shipping methods.
        */
-      hideShippingMethods: function () {
+      hideShippingMethods: function() {
+        var cols = document.querySelectorAll('td.col-method[id*="myparcelbe_magento"]');
 
-      }
+        cols.forEach(function(col) {
+          col.parentElement.style.display = 'none';
+        });
+      },
+
+      /**
+       * @param {Object} newShippingMethod - The shipping method that was selected.
+       */
+      onShippingMethodUpdate: function(newShippingMethod) {
+        if (JSON.stringify(MyParcelFrontend.shippingMethod) !== JSON.stringify(newShippingMethod)) {
+          MyParcelFrontend.shippingMethod = newShippingMethod;
+          console.log('shipping method changed to ' + newShippingMethod);
+        }
+      },
+
+      /**
+       * Insert the delivery options div above the shipping methods.
+       */
+      insertDeliveryOptionsDiv: function() {
+        var shippingMethods = document.querySelector('.checkout-shipping-method > .step-title');
+        var deliveryOptionsDiv = document.createElement('div');
+
+        deliveryOptionsDiv.setAttribute('id', 'myparcel-delivery-options');
+        shippingMethods.insertAdjacentElement('afterend', deliveryOptionsDiv);
+      },
     };
+
+    return MyParcelFrontend;
   }
 );
