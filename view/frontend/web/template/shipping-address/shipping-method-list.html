@@ -4,8 +4,9 @@
  */
 -->
 <div id="checkout-shipping-method-load">
-
-    <div id="myparcel-delivery-options"></div>
+    <!-- ko if: (hasMyParcelDeliveryOptions()) -->
+        <div id="myparcel-delivery-options"></div>
+    <!-- /ko -->
 
     <table class="table-checkout-shipping-method">
         <thead>

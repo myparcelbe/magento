@@ -1,28 +1,23 @@
-var STATUS_SUCCESS = 200;
-var STATUS_ERROR = 400;
-
 define(
   [
     'ko',
-    'mage/url',
     'uiRegistry',
     'Magento_Customer/js/model/customer',
     'Magento_Checkout/js/model/quote',
-    'Magento_Checkout/js/model/shipping-service',
+    'MyParcelBE_Magento/js/model/checkout',
     'MyParcelBE_Magento/js/polyfill/array_prototype_find',
     'MyParcelBE_Magento/js/vendor/myparcel',
   ],
   function(
     ko,
-    mageUrl,
     registry,
     customer,
     quote,
-    shippingService
+    checkout
   ) {
     'use strict';
 
-    var MyParcelFrontend = {
+    var deliveryOptions = {
       splitStreetRegex: /(.*?)\s?(\d{1,4})[/\s-]{0,2}([A-z]\d{1,3}|-\d{1,4}|\d{2}\w{1,2}|[A-z][A-z\s]{0,3})?$/,
 
       updateDeliveryOptionsEvent: 'myparcel_update_delivery_options',
@@ -42,42 +37,24 @@ define(
        * Initialize the script. Start by requesting the plugin settings, then initialize listeners.
        */
       initialize: function() {
-        doRequest(MyParcelFrontend.getMagentoSettings, {
-          onSuccess: function(response) {
-            MyParcelFrontend.setConfig(response[0].data);
-            MyParcelFrontend.hideShippingMethods();
-            MyParcelFrontend.addListeners();
-            MyParcelFrontend.updateAddress();
-          },
-        });
+        checkout.allowedShippingMethods.subscribe(deliveryOptions.hideShippingMethods);
+
+        deliveryOptions.hideShippingMethods();
+        deliveryOptions.addListeners();
+        deliveryOptions.updateAddress();
       },
 
       /**
        * Add event listeners to shipping methods and address as well as the delivery options module.
        */
       addListeners: function() {
-        MyParcelFrontend.rates = shippingService.getShippingRates()();
-
-        shippingService.getShippingRates().subscribe(function(rates) {
-          MyParcelFrontend.rates = rates;
-        });
-
-        quote.shippingAddress.subscribe(MyParcelFrontend.updateAddress);
-        quote.shippingMethod.subscribe(MyParcelFrontend.onShippingMethodUpdate);
+        quote.shippingAddress.subscribe(deliveryOptions.updateAddress);
+        quote.shippingMethod.subscribe(deliveryOptions.onShippingMethodUpdate);
 
         document.addEventListener(
-          MyParcelFrontend.updatedDeliveryOptionsEvent,
-          MyParcelFrontend.onUpdatedDeliveryOptions
+          deliveryOptions.updatedDeliveryOptionsEvent,
+          deliveryOptions.onUpdatedDeliveryOptions
         );
-      },
-
-      /**
-       * Set window.MyParcelConfig with the given config. Puts all the data in the correct properties.
-       *
-       * @param {Object} config - Response from the delivery_options request.
-       */
-      setConfig: function(config) {
-        window.MyParcelConfig = config;
       },
 
       /**
@@ -110,8 +87,8 @@ define(
        * @param {Object?} address - Quote.shippingAddress from Magento.
        */
       updateAddress: function(address) {
-        window.MyParcelConfig.address = MyParcelFrontend.getAddress(address);
-        MyParcelFrontend.triggerEvent(MyParcelFrontend.updateDeliveryOptionsEvent);
+        window.MyParcelConfig.address = deliveryOptions.getAddress(address);
+        deliveryOptions.triggerEvent(deliveryOptions.updateDeliveryOptionsEvent);
       },
 
       /**
@@ -124,33 +101,11 @@ define(
         address = address || quote.shippingAddress();
 
         return {
-          number: address.street ? MyParcelFrontend.getHouseNumber(address.street.join(' ')) : '',
+          number: address.street ? deliveryOptions.getHouseNumber(address.street.join(' ')) : '',
           cc: address.countryId || '',
           postalCode: address.postcode || '',
           city: address.city || '',
         };
-      },
-
-      /**
-       * Execute the delivery_options request to retrieve the settings object.
-       *
-       * @returns {XMLHttpRequest}
-       */
-      getMagentoSettings: function() {
-        return sendRequest('rest/V1/delivery_options/get');
-      },
-
-      /**
-       * Execute the shipping_methods request to convert delivery options to a shipping method id.
-       *
-       * @returns {XMLHttpRequest}
-       */
-      convertDeliveryOptionsToShippingMethod: function() {
-        return sendRequest(
-          'rest/V1/shipping_methods',
-          'POST',
-          JSON.stringify({deliveryOptions: [MyParcelFrontend.deliveryOptions]})
-        );
       },
 
       /**
@@ -160,19 +115,19 @@ define(
        * @param {CustomEvent} event - The event that was sent.
        */
       onUpdatedDeliveryOptions: function(event) {
-        MyParcelFrontend.deliveryOptions = event.detail;
-        document.querySelector(MyParcelFrontend.hiddenDataInput).value = JSON.stringify(event.detail);
+        deliveryOptions.deliveryOptions = event.detail;
+        document.querySelector(deliveryOptions.hiddenDataInput).value = JSON.stringify(event.detail);
 
         /**
          * If the delivery options were emptied, don't request a new shipping method.
          */
-        if (JSON.stringify(MyParcelFrontend.deliveryOptions) === '{}') {
+        if (JSON.stringify(deliveryOptions.deliveryOptions) === '{}') {
           return;
         }
 
-        doRequest(MyParcelFrontend.convertDeliveryOptionsToShippingMethod, {
+        checkout.convertDeliveryOptionsToShippingMethod(event.detail, {
           onSuccess: function(response) {
-            quote.shippingMethod(MyParcelFrontend.getNewShippingMethod(response[0].element_id));
+            quote.shippingMethod(deliveryOptions.getNewShippingMethod(response[0].element_id));
           },
         });
       },
@@ -186,11 +141,11 @@ define(
         var methodIsAllowed = window.MyParcelConfig.methods.indexOf(newShippingMethod.method_code) > -1;
         var isMyParcelMethod = newShippingMethod.method_code.indexOf('myparcel') > -1;
 
-        if (JSON.stringify(MyParcelFrontend.shippingMethod) !== JSON.stringify(newShippingMethod)) {
-          MyParcelFrontend.shippingMethod = newShippingMethod;
+        if (JSON.stringify(deliveryOptions.shippingMethod) !== JSON.stringify(newShippingMethod)) {
+          deliveryOptions.shippingMethod = newShippingMethod;
 
           if (!isMyParcelMethod && !methodIsAllowed) {
-            MyParcelFrontend.triggerEvent(MyParcelFrontend.disableDeliveryOptionsEvent);
+            deliveryOptions.triggerEvent(deliveryOptions.disableDeliveryOptionsEvent);
           }
         }
       },
@@ -199,8 +154,8 @@ define(
        * Hide the shipping methods the delivery options should replace.
        */
       hideShippingMethods: function() {
-        window.MyParcelConfig.methods.forEach(function(shippingMethod) {
-          var element = MyParcelFrontend.getShippingMethodRow(shippingMethod);
+        checkout.allowedShippingMethods().forEach(function(shippingMethod) {
+          var element = deliveryOptions.getShippingMethodRow(shippingMethod);
 
           if (!element) {
             return;
@@ -222,12 +177,6 @@ define(
         return document.querySelector(classSelector + childSelector);
       },
 
-      findRateByMethodCode: function(methodCode) {
-        return MyParcelFrontend.rates.find(function(rate) {
-          return rate.method_code === methodCode;
-        });
-      },
-
       /**
        * Get the new shipping method that should be saved.
        *
@@ -237,7 +186,7 @@ define(
        */
       getNewShippingMethod: function(methodCode) {
         var newShippingMethod = [];
-        var matchingShippingMethod = MyParcelFrontend.findRateByMethodCode(methodCode);
+        var matchingShippingMethod = checkout.findRateByMethodCode(methodCode);
 
         if (matchingShippingMethod) {
           return matchingShippingMethod;
@@ -247,7 +196,7 @@ define(
            *  matches.
            */
           window.MyParcelConfig.methods.forEach(function(method) {
-            var foundMethod = MyParcelFrontend.findRateByMethodCode(method);
+            var foundMethod = checkout.findRateByMethodCode(method);
 
             if (foundMethod) {
               newShippingMethod.push(foundMethod);
@@ -259,65 +208,6 @@ define(
       },
     };
 
-    /**
-     * Request function. Executes a request and given handlers.
-     *
-     * @param {function} request - The request to execute.
-     * @param {Object} handlers - Object with handlers to run on different outcomes of the request.
-     * @property {function} handlers.onSuccess - Function to run on Success handler.
-     * @property {function} handlers.onError - Function to run on Error handler.
-     * @property {function} handlers.always - Function to always run.
-     */
-    function doRequest(request, handlers) {
-      /**
-       * Execute a given handler by name if it exists in handlers.
-       *
-       * @param {string} handlerName - Name of the handler to check for.
-       * @param {*?} params - Parameters to pass to the handler.
-       * @returns {*}
-       */
-      handlers.doHandler = function(handlerName, params) {
-        if (handlers.hasOwnProperty(handlerName) && typeof handlers[handlerName] === 'function') {
-          return handlers[handlerName](params);
-        }
-      };
-
-      request().onload = function() {
-        var response = JSON.parse(this.response);
-
-        if (this.status >= STATUS_SUCCESS && this.status < STATUS_ERROR) {
-          handlers.doHandler('onSuccess', response);
-        } else {
-          handlers.doHandler('onError', response);
-        }
-
-        handlers.doHandler('always', response);
-      };
-    }
-
-    /**
-     * Send a request to given endpoint.
-     *
-     * @param {String} endpoint - Endpoint to use.
-     * @param {String} [method='GET'] - Request method.
-     * @param {String} [body={}] - Request body.
-     *
-     * @returns {XMLHttpRequest}
-     */
-    function sendRequest(endpoint, method, body) {
-      var url = mageUrl.build(endpoint);
-      var request = new XMLHttpRequest();
-
-      method = method || 'GET';
-      body = body || {};
-
-      request.open(method, url, true);
-      request.setRequestHeader('Content-Type', 'application/json');
-      request.send(body);
-
-      return request;
-    }
-
-    return MyParcelFrontend;
+    return deliveryOptions;
   }
 );

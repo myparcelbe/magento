@@ -1,7 +1,11 @@
 define([
-  '../delivery-options',
+  'ko',
+  'MyParcelBE_Magento/js/view/delivery-options',
+  'MyParcelBE_Magento/js/model/checkout',
 ], function(
-  MyParcelFrontend
+  ko,
+  deliveryOptions,
+  checkout
 ) {
   'use strict';
 
@@ -25,13 +29,39 @@ define([
     initialize: function() {
       this._super();
 
+      /**
+       * Bind the boolean dictating whether the delivery options can be showed or not. Influences whether the delivery
+       *  options div is rendered.
+       *
+       * @type {Boolean}
+       *
+       * @see template/shipping-method-list.html
+       */
+      this.hasMyParcelDeliveryOptions = checkout.hasDeliveryOptions;
+
+      /**
+       * Handler used in afterRender attribute of shipping methods.
+       *
+       * @type {function}
+       *
+       * @see template/shipping-method-item.html
+       */
       this.afterRenderShippingMethod = afterRenderShippingMethod;
+
+      /**
+       * To not have to repeat a string multiple times and put it hard coded into templates.
+       *
+       * @type {String}
+       *
+       * @see template/shipping-method-item.html
+       */
       this.shippingMethodRowClass = shippingMethodRowClass;
     },
   };
 
   /**
-   * Triggered after each shipping method is rendered. Once they are all loaded, initialize the MyParcelFrontend script.
+   * Triggered after each shipping method is rendered. Once they are all loaded, initialize the checkout script and
+   *  based on that initialize the delivery options (or not.
    *
    * @see MyparcelBE/Magento/view/frontend/web/template/shipping-address/shipping-method-list.html
    *
@@ -39,9 +69,20 @@ define([
    * @param {Array.<Object>} rates - All rates that will be rendered.
    */
   function afterRenderShippingMethod(elements, rates) {
-    if (document.querySelectorAll('.' + shippingMethodRowClass).length === rates.length) {
-      MyParcelFrontend.initialize();
+    var allRatesRendered = document.querySelectorAll('.' + shippingMethodRowClass).length === rates.length;
+
+    if (allRatesRendered) {
+      checkout.initialize();
     }
+
+    /**
+     * Subscribe to the hasDeliveryOptions boolean. If it is true, initialize the delivery options module.
+     */
+    checkout.hasDeliveryOptions.subscribe(function(bool) {
+      if (bool === true) {
+        deliveryOptions.initialize();
+      }
+    });
   }
 
   /**
