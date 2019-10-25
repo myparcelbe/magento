@@ -77,6 +77,7 @@ class Checkout
         $this->helper->setBasePriceFromQuote($this->quoteId);
 
         $this->data = [
+            'methods' => explode(';', $this->getDeliveryMethods()),
             'config'  => array_merge(
                 $this->getGeneralData(),
                 $this->getDeliveryData()
@@ -100,16 +101,9 @@ class Checkout
      */
     private function getGeneralData()
     {
-        $deliveryMethod[] = explode(';', $this->getDeliveryMethods());
-
-        foreach ($deliveryMethod as $method) {
-            $deliveryMethod = $method;
-        }
-
         return [
             'platform' => self::platform,
             'carriers' => array_column($this->get_carriers(), self::selectCarriersArray),
-            'method'   => $deliveryMethod,
             'currency' => $this->currency->getStore()->getCurrentCurrency()->getCode()
         ];
     }
