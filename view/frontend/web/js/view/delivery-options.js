@@ -138,7 +138,7 @@ define(
        * @param {Object} newShippingMethod - The shipping method that was selected.
        */
       onShippingMethodUpdate: function(newShippingMethod) {
-        var methodIsAllowed = window.MyParcelConfig.methods.indexOf(newShippingMethod.method_code) > -1;
+        var methodIsAllowed = checkout.allowedShippingMethods().indexOf(newShippingMethod.method_code) > -1;
         var isMyParcelMethod = newShippingMethod.method_code.indexOf('myparcel') > -1;
 
         if (JSON.stringify(deliveryOptions.shippingMethod) !== JSON.stringify(newShippingMethod)) {
