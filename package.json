@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/myparcelbe/magento#readme",
   "dependencies": {
-    "@myparcel/checkout": "^3.0.20"
+    "@myparcel/checkout": "^3.0.22"
   },
   "devDependencies": {
     "@myparcel/eslint-config": "^1.0.3"
