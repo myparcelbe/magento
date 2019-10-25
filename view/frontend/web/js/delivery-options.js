@@ -5,31 +5,29 @@ define(
   [
     'ko',
     'mage/url',
+    'uiRegistry',
     'Magento_Customer/js/model/customer',
     'Magento_Checkout/js/model/quote',
-    'Magento_Checkout/js/checkout-data',
-    'Magento_Checkout/js/action/set-shipping-information',
+    'Magento_Checkout/js/model/shipping-service',
+    'MyParcelBE_Magento/js/polyfill/array_prototype_find',
     'MyParcelBE_Magento/js/vendor/myparcel',
-    'MyParcelBE_Magento/js/polyfill/object_assign',
-    'domReady!',
   ],
   function(
     ko,
     mageUrl,
+    registry,
     customer,
     quote,
-    checkoutData,
-    setShippingInformationAction
+    shippingService
   ) {
     'use strict';
 
     var MyParcelFrontend = {
       splitStreetRegex: /(.*?)\s?(\d{1,4})[/\s-]{0,2}([A-z]\d{1,3}|-\d{1,4}|\d{2}\w{1,2}|[A-z][A-z\s]{0,3})?$/,
 
-      // todo
-      updateMagentoCheckoutEvent: 'update_checkout',
-
       updateDeliveryOptionsEvent: 'myparcel_update_delivery_options',
+      disableDeliveryOptionsEvent: 'myparcel_disable_delivery_options',
+
       updatedDeliveryOptionsEvent: 'myparcel_updated_delivery_options',
       updatedAddressEvent: 'myparcel_updated_address',
 
@@ -40,10 +38,6 @@ define(
        */
       hiddenDataInput: '[name="myparcel_delivery_options"]',
 
-      postcodeField: 'postcode',
-      countryField: 'country_id',
-      cityField: 'city',
-
       /**
        * Initialize the script. Start by requesting the plugin settings, then initialize listeners.
        */
@@ -51,6 +45,7 @@ define(
         doRequest(MyParcelFrontend.getMagentoSettings, {
           onSuccess: function(response) {
             MyParcelFrontend.setConfig(response[0].data);
+            MyParcelFrontend.hideShippingMethods();
             MyParcelFrontend.addListeners();
             MyParcelFrontend.updateAddress();
           },
@@ -58,14 +53,17 @@ define(
       },
 
       /**
-       * Add event listeners to Magento's address fields updating the address on change.
+       * Add event listeners to shipping methods and address as well as the delivery options module.
        */
       addListeners: function() {
-        var fields = [MyParcelFrontend.postcodeField, MyParcelFrontend.countryField, MyParcelFrontend.cityField];
+        MyParcelFrontend.rates = shippingService.getShippingRates()();
 
-        fields.forEach(function(field) {
-          MyParcelFrontend.getField(field).addEventListener('change', MyParcelFrontend.updateAddress);
+        shippingService.getShippingRates().subscribe(function(rates) {
+          MyParcelFrontend.rates = rates;
         });
+
+        quote.shippingAddress.subscribe(MyParcelFrontend.updateAddress);
+        quote.shippingMethod.subscribe(MyParcelFrontend.onShippingMethodUpdate);
 
         document.addEventListener(
           MyParcelFrontend.updatedDeliveryOptionsEvent,
@@ -80,17 +78,6 @@ define(
        */
       setConfig: function(config) {
         window.MyParcelConfig = config;
-      },
-
-      /**
-       * Get field by name. Will return element with this selector: "#<billing|shipping>_<name>".
-       *
-       * @param {string} name - The part after `shipping/billing` in the id of an element in WooCommerce.
-       *
-       * @returns {Element}
-       */
-      getField: function(name) {
-        return document.querySelector('[name=' + name + ']');
       },
 
       /**
@@ -118,22 +105,12 @@ define(
       },
 
       /**
-       * Get data from form fields and put it in the global MyParcelConfig.
+       * Get address data and put it in the global MyParcelConfig.
        *
-       * @param e
+       * @param {Object?} address - Quote.shippingAddress from Magento.
        */
-      updateAddress: function() {
-        var data = window.MyParcelConfig;
-
-        data.address = {
-          cc: MyParcelFrontend.getField(MyParcelFrontend.countryField).value,
-          postalCode: MyParcelFrontend.getField(MyParcelFrontend.postcodeField).value,
-          number: MyParcelFrontend.getHouseNumber(),
-          city: MyParcelFrontend.getField(MyParcelFrontend.cityField).value,
-        };
-
-        window.MyParcelConfig = data;
-        console.log('triggering ' + MyParcelFrontend.updateDeliveryOptionsEvent);
+      updateAddress: function(address) {
+        window.MyParcelConfig.address = MyParcelFrontend.getAddress(address);
         MyParcelFrontend.triggerEvent(MyParcelFrontend.updateDeliveryOptionsEvent);
       },
 
@@ -141,82 +118,16 @@ define(
        * Get the address entered by the user depending on if they are logged in or not.
        *
        * @returns {Object}
+       * @param {Object} address - Quote.shippingAddress from Magento.
        */
-      getAddress: function() {
-        var address;
-        var regExp = /[<>=]/g;
-        var street = [
-          address.street0,
-          address.street1,
-          address.street2,
-        ].join(' ');
-        var number = this.getHouseNumber(street);
-
-        if (customer.isLoggedIn() &&
-          typeof quote !== 'undefined' &&
-          typeof quote.shippingAddress !== 'undefined' &&
-          typeof quote.shippingAddress._latestValue !== 'undefined' &&
-          typeof quote.shippingAddress._latestValue.street !== 'undefined' &&
-          typeof quote.shippingAddress._latestValue.street[0] !== 'undefined'
-        ) {
-          address = this.getLoggedInAddress();
-        } else {
-          address = this.getNoLoggedInAddress();
-        }
+      getAddress: function(address) {
+        address = address || quote.shippingAddress();
 
         return {
-          number: number,
-          cc: address.country.replace(regExp, ''),
-          postcode: address.postcode.replace(/[\s<>=]/g, ''),
-          city: address.city.replace(regExp, ''),
-        };
-      },
-
-      /**
-       * Get the address for a logged in user.
-       *
-       * @returns {Object}
-       */
-      getLoggedInAddress: function() {
-        var street0 = quote.shippingAddress._latestValue.street[0];
-        var street1 = quote.shippingAddress._latestValue.street[1];
-        var street2 = quote.shippingAddress._latestValue.street[2];
-        var country = quote.shippingAddress._latestValue.countryId;
-        var postcode = quote.shippingAddress._latestValue.postcode;
-        var city = quote.shippingAddress._latestValue.postcode;
-
-        return {
-          street0: street0 ? street0 : '',
-          street1: street1 ? street1 : '',
-          street2: street2 ? street2 : '',
-          country: country ? country : '',
-          postcode: postcode ? postcode : '',
-          city: city ? city : '',
-        };
-      },
-
-      /**
-       * Get the address assuming the user is not logged in.
-       *
-       * @returns {Object}
-       */
-      getNoLoggedInAddress: function() {
-        var classPrefix = 'checkout.steps.shipping-step.shippingAddress.shipping-address-fieldset.';
-
-        var street0 = registry.get(classPrefix + 'street.0');
-        var street1 = registry.get(classPrefix + 'street.1');
-        var street2 = registry.get(classPrefix + 'street.2');
-        var country = registry.get(classPrefix + 'country_id');
-        var postcode = registry.get(classPrefix + 'postcode');
-        var city = registry.get(classPrefix + 'city');
-
-        return {
-          street0: street0 ? street0.get('value') : '',
-          street1: street1 ? street1.get('value') : '',
-          street2: street2 ? street2.get('value') : '',
-          country: country ? country.get('value') : '',
-          postcode: postcode ? postcode.get('value') : '',
-          city: city ? city.get('value') : '',
+          number: address.street ? MyParcelFrontend.getHouseNumber(address.street.join(' ')) : '',
+          cc: address.countryId || '',
+          postalCode: address.postcode || '',
+          city: address.city || '',
         };
       },
 
@@ -243,7 +154,8 @@ define(
       },
 
       /**
-       * Triggered when the delivery options have been updated. Put the received data in the created data input.
+       * Triggered when the delivery options have been updated. Put the received data in the created data input. Then
+       *  do the request that tells us which shipping method needs to be selected.
        *
        * @param {CustomEvent} event - The event that was sent.
        */
@@ -251,33 +163,98 @@ define(
         MyParcelFrontend.deliveryOptions = event.detail;
         document.querySelector(MyParcelFrontend.hiddenDataInput).value = JSON.stringify(event.detail);
 
+        /**
+         * If the delivery options were emptied, don't request a new shipping method.
+         */
+        if (JSON.stringify(MyParcelFrontend.deliveryOptions) === '{}') {
+          return;
+        }
+
         doRequest(MyParcelFrontend.convertDeliveryOptionsToShippingMethod, {
           onSuccess: function(response) {
-            var shippingMethod = response[0].element_id;
-            var respectiveInput = document.querySelector('[id="' + shippingMethod + '"] input');
-
-            if (respectiveInput) {
-              respectiveInput.checked = true;
-
-              /**
-               * Manually trigger the shipping method update event.
-               */
-              MyParcelFrontend.onShippingMethodUpdate(shippingMethod);
-            } else {
-              console.warn('No matching element found for ' + shippingMethod + '.');
-            }
+            quote.shippingMethod(MyParcelFrontend.getNewShippingMethod(response[0].element_id));
           },
         });
       },
 
       /**
+       * Change the shipping method and disable the delivery options if needed.
+       *
        * @param {Object} newShippingMethod - The shipping method that was selected.
        */
       onShippingMethodUpdate: function(newShippingMethod) {
+        var methodIsAllowed = window.MyParcelConfig.methods.indexOf(newShippingMethod.method_code) > -1;
+        var isMyParcelMethod = newShippingMethod.method_code.indexOf('myparcel') > -1;
+
         if (JSON.stringify(MyParcelFrontend.shippingMethod) !== JSON.stringify(newShippingMethod)) {
           MyParcelFrontend.shippingMethod = newShippingMethod;
-          console.log(newShippingMethod);
-          console.log('shipping method changed to ' + newShippingMethod);
+
+          if (!isMyParcelMethod && !methodIsAllowed) {
+            MyParcelFrontend.triggerEvent(MyParcelFrontend.disableDeliveryOptionsEvent);
+          }
+        }
+      },
+
+      /**
+       * Hide the shipping methods the delivery options should replace.
+       */
+      hideShippingMethods: function() {
+        window.MyParcelConfig.methods.forEach(function(shippingMethod) {
+          var element = MyParcelFrontend.getShippingMethodRow(shippingMethod);
+
+          if (!element) {
+            return;
+          }
+
+          element.style.display = 'none';
+        });
+      },
+
+      /**
+       * @param {String} shippingMethod - Shipping method to get the row of.
+       * @param {String?} child - Any additional selector string.
+       *
+       * @returns {Element}
+       */
+      getShippingMethodRow: function(shippingMethod, child) {
+        var classSelector = '[class*="shipping-method--' + shippingMethod + '"]';
+        var childSelector = (child ? ' ' + child : '');
+        return document.querySelector(classSelector + childSelector);
+      },
+
+      findRateByMethodCode: function(methodCode) {
+        return MyParcelFrontend.rates.find(function(rate) {
+          return rate.method_code === methodCode;
+        });
+      },
+
+      /**
+       * Get the new shipping method that should be saved.
+       *
+       * @param {String} methodCode - Method code to use to find a method.
+       *
+       * @returns {Object}
+       */
+      getNewShippingMethod: function(methodCode) {
+        var newShippingMethod = [];
+        var matchingShippingMethod = MyParcelFrontend.findRateByMethodCode(methodCode);
+
+        if (matchingShippingMethod) {
+          return matchingShippingMethod;
+        } else {
+          /**
+           * If the method doesn't exist, loop through the allowed shipping methods and return the first one that
+           *  matches.
+           */
+          window.MyParcelConfig.methods.forEach(function(method) {
+            var foundMethod = MyParcelFrontend.findRateByMethodCode(method);
+
+            if (foundMethod) {
+              newShippingMethod.push(foundMethod);
+            }
+          });
+
+          return newShippingMethod.length ? newShippingMethod[0] : null;
         }
       },
     };

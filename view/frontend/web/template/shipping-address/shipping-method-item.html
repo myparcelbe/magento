@@ -5,20 +5,20 @@
 -->
 <tr
     attr="
-        'class': 'row ' + element.shippingMethodRowClass,
-        'id': method.method_code,
+        'class': 'row ' + element.shippingMethodRowClass + ' shipping-method--' + method.method_code,
     "
     click="element.selectShippingMethod"
     afterRender="function(elements) { element.afterRenderShippingMethod(elements, element.rates()) }">
     <td class="col col-method">
         <input
             type="radio"
-            class="radio"
             ifnot="method.error_message"
             ko-checked="element.isSelected"
             ko-value="method.carrier_code + '_' + method.method_code"
             attr="'aria-labelledby': 'label_method_' + method.method_code + '_' + method.carrier_code + ' ' + 'label_carrier_' + method.method_code + '_' + method.carrier_code,
-                    'checked': element.rates().length == 1 || element.isSelected"/>
+                  'checked': element.rates().length == 1 || element.isSelected,
+                  'class': 'radio ' + element.shippingMethodRowClass + '__radio ' + element.shippingMethodRowClass + '__radio--' + method.method_code
+            "/>
     </td>
     <td class="col col-price">
         <each

@@ -1,10 +1,6 @@
 define([
-  'mage/utils/wrapper',
-  'uiRegistry',
   '../delivery-options',
 ], function(
-  wrapper,
-  uiRegistry,
   MyParcelFrontend
 ) {
   'use strict';
@@ -22,20 +18,15 @@ define([
       shippingMethodItemTemplate: 'MyParcelBE_Magento/shipping-address/shipping-method-item',
     },
 
+    /**
+     * Override the initialize module, using it to add new properties to the original module. Without this they can't
+     *  be called from the shipping method item template, for example.
+     */
     initialize: function() {
       this._super();
 
-      /*
-       * Add properties to the module.
-       */
-
       this.afterRenderShippingMethod = afterRenderShippingMethod;
       this.shippingMethodRowClass = shippingMethodRowClass;
-    },
-
-    selectShippingMethod: function(newShippingMethod) {
-      MyParcelFrontend.onShippingMethodUpdate(newShippingMethod);
-      this._super();
     },
   };
 
