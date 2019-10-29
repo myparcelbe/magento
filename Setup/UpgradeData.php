@@ -190,7 +190,7 @@ class UpgradeData implements UpgradeDataInterface
                     [
                         'scope'    => 'default',
                         'scope_id' => 0,
-                        'path'     => 'myparcelbe_magento_bpost_settings/general/enabled',
+                        'path'     => 'myparcelbe_magento_bpost_settings/delivery/active',
                         'value'    => 1
                     ]
                 );
