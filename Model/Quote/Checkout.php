@@ -72,11 +72,12 @@ class Checkout
      * @return array
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getDeliveryOptions()
+    public function getDeliveryOptions(): array
     {
         $this->helper->setBasePriceFromQuote($this->quoteId);
 
         $this->data = [
+            'methods' => explode(';', $this->getDeliveryMethods()),
             'config'  => array_merge(
                 $this->getGeneralData(),
                 $this->getDeliveryData()
@@ -100,16 +101,9 @@ class Checkout
      */
     private function getGeneralData()
     {
-        $deliveryMethod[] = explode(';', $this->getDeliveryMethods());
-
-        foreach ($deliveryMethod as $method) {
-            $deliveryMethod = $method;
-        }
-
         return [
             'platform' => self::platform,
             'carriers' => array_column($this->get_carriers(), self::selectCarriersArray),
-            'method'   => $deliveryMethod,
             'currency' => $this->currency->getStore()->getCurrentCurrency()->getCode()
         ];
     }
@@ -117,9 +111,9 @@ class Checkout
     /**
      * Get delivery data
      *
-     * @return array)
+     * @return array
      */
-    private function getDeliveryData()
+    private function getDeliveryData(): array
     {
         $carriersPath   = $this->get_carriers();
         $myParcelConfig = [];

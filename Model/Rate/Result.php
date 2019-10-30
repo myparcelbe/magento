@@ -166,7 +166,7 @@ class Result extends \Magento\Shipping\Model\Rate\Result
                 }
 
                 $method = $this->getShippingMethod(
-                    $this->getSettingPath($map, $settingPath),
+                    $this->getFullSettingPath($map, $settingPath),
                     $parentRate
                 );
 
@@ -188,7 +188,7 @@ class Result extends \Magento\Shipping\Model\Rate\Result
      */
     private function isSettingActive(string $map, string $settingPath): bool
     {
-        $settingName   = $this->getSettingPath($map, $settingPath);
+        $settingName   = $this->getFullSettingPath($map, $settingPath);
         $settingActive = $this->myParcelHelper->getConfigValue($settingName . 'active');
         $baseSettingActive = '1';
 
@@ -207,7 +207,7 @@ class Result extends \Magento\Shipping\Model\Rate\Result
      *
      * @return string
      */
-    private function getSettingPath(string $map, string $settingPath): string
+    private function getFullSettingPath(string $map, string $settingPath): string
     {
         $separator = $this->isBaseSetting($settingPath) ? '/' : '_';
 
@@ -240,7 +240,8 @@ class Result extends \Magento\Shipping\Model\Rate\Result
 
         $method->setData('carrier_title', $title);
         $method->setData('cost', 0);
-        $method->setData('method', $title);
+        // Trim the separator off the end of the settings path
+        $method->setData('method', substr($settingPath, 0, -1));
         $method->setData('method_title', $title);
         $method->setPrice($price);
 
