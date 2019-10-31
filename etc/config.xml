@@ -30,13 +30,13 @@
                 <insurance_500_from_price>1</insurance_500_from_price>
             </options>
             <general>
-                <enabled>1</enabled>
                 <deliverydays_window>1</deliverydays_window>
                 <cutoff_time>15,30,00</cutoff_time>
                 <dropoff_days>1,2,3,4,5</dropoff_days>
                 <dropoff_delay>0</dropoff_delay>
             </general>
             <delivery>
+                <active>1</active>
                 <signature_active>1</signature_active>
                 <signature_fee>0.36</signature_fee>
                 <saturday_active>0</saturday_active>
@@ -50,16 +50,13 @@
         </myparcelbe_magento_bpost_settings>
         <myparcelbe_magento_dpd_settings>
             <general>
-                <enabled>0</enabled>
                 <deliverydays_window>1</deliverydays_window>
                 <cutoff_time>15,30,00</cutoff_time>
                 <dropoff_days>1,2,3,4,5</dropoff_days>
                 <dropoff_delay>0</dropoff_delay>
             </general>
             <delivery>
-                <saturday_active>0</saturday_active>
-                <saturday_title>Zaterdaglevering</saturday_title>
-                <saturday_fee>2</saturday_fee>
+                <active>0</active>
             </delivery>
             <pickup>
                 <active>1</active>
