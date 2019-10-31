@@ -179,7 +179,7 @@ class Result extends \Magento\Shipping\Model\Rate\Result
 
     /**
      * Check if a given map/setting combination is active. If the setting is not a top level setting its parent group
-     *  will be checked for an "active" setting. If this is disabled this will return false;
+     * will be checked for an "active" setting. If this is disabled this will return false;
      *
      * @param        $map
      * @param string $settingPath
