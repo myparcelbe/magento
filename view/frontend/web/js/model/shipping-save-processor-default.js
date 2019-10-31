@@ -25,7 +25,6 @@ define(
 
     return {
       saveShippingInformation: function() {
-        console.log('saveShippingInformation');
         var payload;
 
         if (!quote.billingAddress() && quote.shippingAddress().canUseForBilling()) {
