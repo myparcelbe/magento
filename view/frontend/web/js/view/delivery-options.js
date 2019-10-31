@@ -1,17 +1,17 @@
 define(
   [
+    'underscore',
     'ko',
-    'uiRegistry',
-    'Magento_Customer/js/model/customer',
+    'Magento_Checkout/js/model/shipping-rate-registry',
     'Magento_Checkout/js/model/quote',
     'MyParcelBE_Magento/js/model/checkout',
     'MyParcelBE_Magento/js/polyfill/array_prototype_find',
     'MyParcelBE_Magento/js/vendor/myparcel',
   ],
   function(
+    _,
     ko,
-    registry,
-    customer,
+    shippingRateRegistry,
     quote,
     checkout
   ) {
@@ -20,8 +20,11 @@ define(
     var deliveryOptions = {
       splitStreetRegex: /(.*?)\s?(\d{1,4})[/\s-]{0,2}([A-z]\d{1,3}|-\d{1,4}|\d{2}\w{1,2}|[A-z][A-z\s]{0,3})?$/,
 
-      updateDeliveryOptionsEvent: 'myparcel_update_delivery_options',
       disableDeliveryOptionsEvent: 'myparcel_disable_delivery_options',
+      hideDeliveryOptionsEvent: 'myparcel_hide_delivery_options',
+      renderDeliveryOptionsEvent: 'myparcel_render_delivery_options',
+      showDeliveryOptionsEvent: 'myparcel_show_delivery_options',
+      updateDeliveryOptionsEvent: 'myparcel_update_delivery_options',
 
       updatedDeliveryOptionsEvent: 'myparcel_updated_delivery_options',
       updatedAddressEvent: 'myparcel_updated_address',
@@ -38,22 +41,38 @@ define(
        */
       initialize: function() {
         deliveryOptions.render();
-        checkout.allowedShippingMethods.subscribe(deliveryOptions.hideShippingMethods);
-
         deliveryOptions.hideShippingMethods();
         deliveryOptions.addListeners();
         deliveryOptions.updateAddress();
       },
 
+      destroy: function() {
+        deliveryOptions.triggerEvent(deliveryOptions.hideDeliveryOptionsEvent);
+        document.querySelector(deliveryOptions.hiddenDataInput).value = '';
+
+        document.removeEventListener(
+          deliveryOptions.updatedDeliveryOptionsEvent,
+          deliveryOptions.onUpdatedDeliveryOptions
+        );
+      },
+
       /**
-       * Create the div the delivery options will be rendered in.
+       * Create the div the delivery options will be rendered in, if it doesn't exist yet.
        */
       render: function() {
-        var deliveryOptionsDiv = document.createElement('div');
-        deliveryOptionsDiv.setAttribute('id', 'myparcel-delivery-options');
-
+        var hasUnrenderedDiv = document.querySelector('#myparcel-delivery-options');
+        var hasRenderedDeliveryOptions = document.querySelector('.myparcel-delivery-options__table');
         var shippingMethodDiv = document.querySelector('#checkout-shipping-method-load');
-        shippingMethodDiv.insertBefore(deliveryOptionsDiv, shippingMethodDiv.firstChild);
+        var deliveryOptionsDiv = document.createElement('div');
+
+        if (hasUnrenderedDiv || hasRenderedDeliveryOptions) {
+          deliveryOptions.triggerEvent(deliveryOptions.updateDeliveryOptionsEvent);
+        } else if (!hasUnrenderedDiv) {
+          deliveryOptionsDiv.setAttribute('id', 'myparcel-delivery-options');
+          shippingMethodDiv.insertBefore(deliveryOptionsDiv, shippingMethodDiv.firstChild);
+
+          deliveryOptions.triggerEvent(deliveryOptions.renderDeliveryOptionsEvent);
+        }
       },
 
       /**
@@ -61,7 +80,7 @@ define(
        */
       addListeners: function() {
         quote.shippingAddress.subscribe(deliveryOptions.updateAddress);
-        quote.shippingMethod.subscribe(deliveryOptions.onShippingMethodUpdate);
+        quote.shippingMethod.subscribe(_.debounce(deliveryOptions.onShippingMethodUpdate));
 
         document.addEventListener(
           deliveryOptions.updatedDeliveryOptionsEvent,
@@ -99,7 +118,8 @@ define(
        * @param {Object?} address - Quote.shippingAddress from Magento.
        */
       updateAddress: function(address) {
-        window.MyParcelConfig.address = deliveryOptions.getAddress(address);
+        window.MyParcelConfig.address = deliveryOptions.getAddress(address || quote.shippingAddress());
+
         deliveryOptions.triggerEvent(deliveryOptions.updateDeliveryOptionsEvent);
       },
 
@@ -110,8 +130,6 @@ define(
        * @param {Object} address - Quote.shippingAddress from Magento.
        */
       getAddress: function(address) {
-        address = address || quote.shippingAddress();
-
         return {
           number: address.street ? deliveryOptions.getHouseNumber(address.street.join(' ')) : '',
           cc: address.countryId || '',
@@ -150,13 +168,24 @@ define(
        * @param {Object} newShippingMethod - The shipping method that was selected.
        */
       onShippingMethodUpdate: function(newShippingMethod) {
-        var methodIsAllowed = checkout.allowedShippingMethods().indexOf(newShippingMethod.method_code) > -1;
-        var isMyParcelMethod = newShippingMethod.method_code.indexOf('myparcel') > -1;
+        var available = newShippingMethod.available;
+        var methodEnabled = checkout.allowedShippingMethods().indexOf(newShippingMethod.method_code) > -1;
+        var isMyParcelMethod = available ? newShippingMethod.method_code.indexOf('myparcel') > -1 : false;
+
+        deliveryOptions.hideShippingMethods();
+
+        if (!checkout.hasDeliveryOptions()) {
+          return;
+        }
+
+        if (!available) {
+          return;
+        }
 
         if (JSON.stringify(deliveryOptions.shippingMethod) !== JSON.stringify(newShippingMethod)) {
           deliveryOptions.shippingMethod = newShippingMethod;
 
-          if (!isMyParcelMethod && !methodIsAllowed) {
+          if (!isMyParcelMethod && !methodEnabled) {
             deliveryOptions.triggerEvent(deliveryOptions.disableDeliveryOptionsEvent);
           }
         }
@@ -169,6 +198,10 @@ define(
         var rowsToHide = [];
 
         checkout.rates().forEach(function(rate) {
+          if (!rate.available) {
+            return;
+          }
+
           if (rate.method_code.indexOf('myparcel') > -1) {
             rowsToHide.push(deliveryOptions.getShippingMethodRow(rate.method_code));
           }

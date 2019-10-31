@@ -27,13 +27,16 @@ define([
       this._super();
 
       checkout.initialize();
+      checkout.rates = this.rates;
 
       /**
        * Subscribe to the hasDeliveryOptions boolean. If it is true, initialize the delivery options module.
        */
-      checkout.hasDeliveryOptions.subscribe(function(bool) {
-        if (bool === true) {
+      checkout.hasDeliveryOptions.subscribe(function(enabled) {
+        if (enabled) {
           deliveryOptions.initialize();
+        } else {
+          deliveryOptions.destroy();
         }
       });
     },

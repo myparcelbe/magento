@@ -2,14 +2,14 @@ var STATUS_SUCCESS = 200;
 var STATUS_ERROR = 400;
 
 define([
+  'underscore',
   'ko',
   'mage/url',
-  'Magento_Checkout/js/model/shipping-service',
 ],
 function(
+  _,
   ko,
-  mageUrl,
-  shippingService
+  mageUrl
 ) {
   'use strict';
 
@@ -17,12 +17,12 @@ function(
     /**
      * Bind the observer to this model.
      */
-    rates: shippingService.getShippingRates(),
+    rates: null,
 
     /**
      * The allowed and present shipping methods for which the delivery options would be shown.
      */
-    allowedShippingMethods: ko.observable(null),
+    allowedShippingMethods: ko.observableArray([]),
 
     /**
      * Whether the delivery options will be shown or not.
@@ -50,13 +50,12 @@ function(
         return !!Model.findRateByMethodCode(rate);
       });
 
-      Model.allowedShippingMethods(allowedShippingMethods);
-
       window.MyParcelConfig = response[0].data;
 
-      if (allowedShippingMethods.length) {
-        Model.hasDeliveryOptions(true);
-      }
+      Model.allowedShippingMethods.subscribe(_.debounce(updateAllowedShippingMethods));
+      Model.rates.subscribe(_.debounce(updateAllowedShippingMethods));
+
+      Model.allowedShippingMethods(allowedShippingMethods);
     },
 
     /**
@@ -101,6 +100,20 @@ function(
   };
 
   return Model;
+
+  function updateAllowedShippingMethods() {
+    var isAllowed = false;
+
+    Model.allowedShippingMethods().forEach(function(methodCode) {
+      var rate = Model.findRateByMethodCode(methodCode);
+
+      if (rate && rate.available) {
+        isAllowed = true;
+      }
+    });
+
+    Model.hasDeliveryOptions(isAllowed);
+  }
 
   /**
    * Request function. Executes a request and given handlers.
