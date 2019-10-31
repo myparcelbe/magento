@@ -14,7 +14,6 @@
 
 namespace MyParcelBE\Magento\Model\Checkout;
 
-
 use MyParcelBE\Magento\Api\DeliveryOptionsInterface;
 use MyParcelBE\Magento\Model\Quote\Checkout;
 
@@ -27,6 +26,7 @@ class DeliveryOptions implements DeliveryOptionsInterface
 
     /**
      * Checkout constructor.
+     *
      * @param Checkout $settings
      */
     public function __construct(
@@ -35,6 +35,10 @@ class DeliveryOptions implements DeliveryOptionsInterface
         $this->settings = $settings;
     }
 
+    /**
+     * @return array|mixed[]
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
     public function get()
     {
         return $this->settings->getDeliveryOptions();
