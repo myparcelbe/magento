@@ -34,14 +34,26 @@ define(
       hiddenDataInput: '[name="myparcel_delivery_options"]',
 
       /**
-       * Initialize the script. Start by requesting the plugin settings, then initialize listeners.
+       * Initialize the script. Render the delivery options div, request the plugin settings, then initialize listeners.
        */
       initialize: function() {
+        deliveryOptions.render();
         checkout.allowedShippingMethods.subscribe(deliveryOptions.hideShippingMethods);
 
         deliveryOptions.hideShippingMethods();
         deliveryOptions.addListeners();
         deliveryOptions.updateAddress();
+      },
+
+      /**
+       * Create the div the delivery options will be rendered in.
+       */
+      render: function() {
+        var deliveryOptionsDiv = document.createElement('div');
+        deliveryOptionsDiv.setAttribute('id', 'myparcel-delivery-options');
+
+        var shippingMethodDiv = document.querySelector('#checkout-shipping-method-load');
+        shippingMethodDiv.insertBefore(deliveryOptionsDiv, shippingMethodDiv.firstChild);
       },
 
       /**
@@ -154,27 +166,38 @@ define(
        * Hide the shipping methods the delivery options should replace.
        */
       hideShippingMethods: function() {
-        checkout.allowedShippingMethods().forEach(function(shippingMethod) {
-          var element = deliveryOptions.getShippingMethodRow(shippingMethod);
+        var rowsToHide = [];
 
-          if (!element) {
-            return;
+        checkout.rates().forEach(function(rate) {
+          if (rate.method_code.indexOf('myparcel') > -1) {
+            rowsToHide.push(deliveryOptions.getShippingMethodRow(rate.method_code));
           }
+        });
 
-          element.style.display = 'none';
+        checkout.allowedShippingMethods().forEach(function(shippingMethod) {
+          rowsToHide.push(deliveryOptions.getShippingMethodRow(shippingMethod));
+        });
+
+        rowsToHide.forEach(function(row) {
+          row.style.display = 'none';
         });
       },
 
       /**
+       * Get a shipping method row by finding the column with a matching method_code and grabbing its parent.
+       *
        * @param {String} shippingMethod - Shipping method to get the row of.
-       * @param {String?} child - Any additional selector string.
        *
        * @returns {Element}
        */
-      getShippingMethodRow: function(shippingMethod, child) {
-        var classSelector = '[class*="shipping-method--' + shippingMethod + '"]';
-        var childSelector = (child ? ' ' + child : '');
-        return document.querySelector(classSelector + childSelector);
+      getShippingMethodRow: function(shippingMethod) {
+        var classSelector = '.col.col-method[id*="' + shippingMethod + '"]';
+        var column = document.querySelector(classSelector);
+
+        /**
+         * Return column if it is undefined or else there would be an error trying to get the parentElement.
+         */
+        return column ? column.parentElement : column;
       },
 
       /**
