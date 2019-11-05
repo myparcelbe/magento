@@ -23,6 +23,11 @@ status_38,Inactief - Zending afgehaald op afhaallocatie
 status_39,Inactief - Retourzending afgeleverd
 status_40,Inactief - Retourzending op afhaallocactie
 status_99,Inactief - Onbekende status
+myparcelbe_magento_bpost_settings/delivery_title, bpost bezorging
+myparcelbe_magento_bpost_settings/pickup_title, bpost ophaallocatie
+myparcelbe_magento_bpost_settings/delivery/signature_title, bpost bezorging met handtekening
+myparcelbe_magento_dpd_settings/delivery_title,  DPD bezorging
+myparcelbe_magento_dpd_settings/pickup_title, DPD ophaallocatie
 Version and support,Versie en support
 General settings,Algemene instellingen
 API settings,API instellingen
