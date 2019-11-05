@@ -238,7 +238,6 @@ class Result extends \Magento\Shipping\Model\Rate\Result
         $title = $this->createTitle($settingPath);
         $price = $this->getPrice($settingPath);
 
-        $method->setData('carrier_title', $title);
         $method->setData('cost', 0);
         // Trim the separator off the end of the settings path
         $method->setData('method', substr($settingPath, 0, -1));
