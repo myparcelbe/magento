@@ -1,6 +1,0 @@
-/*
- * Hide our custom shipping methods on the checkout page.
- */
-.form.methods-shipping [class*="shipping-method--myparcel"] {
-  display: none;
-}
