@@ -121,7 +121,7 @@ class Checkout
         foreach ($carriersPath as $carrier) {
 
             $myParcelConfig["carrierSettings"][$carrier[self::selectCarriersArray]] = [
-                'allowDeliveryOptions' => $this->helper->getBoolConfig($carrier[self::selectCarrierPath], 'general/enabled'),
+                'allowDeliveryOptions' => $this->helper->getBoolConfig($carrier[self::selectCarrierPath], 'delivery/active'),
                 'allowSignature'       => $this->helper->getBoolConfig($carrier[self::selectCarrierPath], 'delivery/signature_active'),
                 'allowPickupLocations' => $this->helper->getBoolConfig($carrier[self::selectCarrierPath], 'pickup/active'),
 
