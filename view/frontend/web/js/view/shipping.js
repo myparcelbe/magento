@@ -26,13 +26,15 @@ define([
     initialize: function() {
       this._super();
 
-      checkout.initialize();
       checkout.rates = this.rates;
+      checkout.initialize();
 
       /**
        * Subscribe to the hasDeliveryOptions boolean. If it is true, initialize the delivery options module.
        */
       checkout.hasDeliveryOptions.subscribe(function(enabled) {
+        checkout.hideShippingMethods();
+
         if (enabled) {
           deliveryOptions.initialize();
         } else {

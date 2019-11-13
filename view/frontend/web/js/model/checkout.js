@@ -72,6 +72,54 @@ function(
     },
 
     /**
+     * Hide the shipping methods the delivery options should replace.
+     */
+    hideShippingMethods: function() {
+      var rowsToHide = [];
+
+      Model.rates().forEach(function(rate) {
+        var row = Model.getShippingMethodRow(rate.method_code);
+
+        if (!rate.available) {
+          return;
+        }
+
+        if (rate.method_code.indexOf('myparcel') > -1 && row) {
+          rowsToHide.push(Model.getShippingMethodRow(rate.method_code));
+        }
+      });
+
+      Model.allowedShippingMethods().forEach(function(shippingMethod) {
+        var row = Model.getShippingMethodRow(shippingMethod);
+
+        if (row) {
+          rowsToHide.push(row);
+        }
+      });
+
+      rowsToHide.forEach(function(row) {
+        row.style.display = 'none';
+      });
+    },
+
+    /**
+     * Get a shipping method row by finding the column with a matching method_code and grabbing its parent.
+     *
+     * @param {String} shippingMethod - Shipping method to get the row of.
+     *
+     * @returns {Element}
+     */
+    getShippingMethodRow: function(shippingMethod) {
+      var classSelector = '.col.col-method[id*="' + shippingMethod + '"]';
+      var column = document.querySelector(classSelector);
+
+      /**
+       * Return column if it is undefined or else there would be an error trying to get the parentElement.
+       */
+      return column ? column.parentElement : column;
+    },
+
+    /**
      * Execute the delivery_options request to retrieve the settings object.
      *
      * @returns {XMLHttpRequest}
