@@ -1,1 +1,0 @@
-/Users/edie/projects/myparcel/checkout-be/dist/myparcel.js
