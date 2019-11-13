@@ -42,7 +42,7 @@ define(
        */
       initialize: function() {
         deliveryOptions.render();
-        deliveryOptions.hideShippingMethods();
+        checkout.hideShippingMethods();
         deliveryOptions.addListeners();
         deliveryOptions.updateAddress();
       },
@@ -166,14 +166,15 @@ define(
       /**
        * Change the shipping method and disable the delivery options if needed.
        *
-       * @param {Object} newShippingMethod - The shipping method that was selected.
+       * @param {Object} selectedShippingMethod - The shipping method that was selected.
        */
-      onShippingMethodUpdate: function(newShippingMethod) {
-        var available = newShippingMethod.available;
+      onShippingMethodUpdate: function(selectedShippingMethod) {
+        var newShippingMethod = selectedShippingMethod || {};
+        var available = newShippingMethod.available || false;
         var methodEnabled = checkout.allowedShippingMethods().indexOf(newShippingMethod.method_code) > -1;
         var isMyParcelMethod = available ? newShippingMethod.method_code.indexOf('myparcel') > -1 : false;
 
-        deliveryOptions.hideShippingMethods();
+        checkout.hideShippingMethods();
 
         if (!checkout.hasDeliveryOptions()) {
           return;
@@ -190,48 +191,6 @@ define(
             deliveryOptions.triggerEvent(deliveryOptions.disableDeliveryOptionsEvent);
           }
         }
-      },
-
-      /**
-       * Hide the shipping methods the delivery options should replace.
-       */
-      hideShippingMethods: function() {
-        var rowsToHide = [];
-
-        checkout.rates().forEach(function(rate) {
-          if (!rate.available) {
-            return;
-          }
-
-          if (rate.method_code.indexOf('myparcel') > -1) {
-            rowsToHide.push(deliveryOptions.getShippingMethodRow(rate.method_code));
-          }
-        });
-
-        checkout.allowedShippingMethods().forEach(function(shippingMethod) {
-          rowsToHide.push(deliveryOptions.getShippingMethodRow(shippingMethod));
-        });
-
-        rowsToHide.forEach(function(row) {
-          row.style.display = 'none';
-        });
-      },
-
-      /**
-       * Get a shipping method row by finding the column with a matching method_code and grabbing its parent.
-       *
-       * @param {String} shippingMethod - Shipping method to get the row of.
-       *
-       * @returns {Element}
-       */
-      getShippingMethodRow: function(shippingMethod) {
-        var classSelector = '.col.col-method[id*="' + shippingMethod + '"]';
-        var column = document.querySelector(classSelector);
-
-        /**
-         * Return column if it is undefined or else there would be an error trying to get the parentElement.
-         */
-        return column ? column.parentElement : column;
       },
 
       /**
