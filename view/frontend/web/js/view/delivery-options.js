@@ -7,6 +7,7 @@ define(
     'MyParcelBE_Magento/js/model/checkout',
     'MyParcelBE_Magento/js/polyfill/array_prototype_find',
     'MyParcelBE_Magento/js/vendor/myparcel',
+    'MyParcelBE_Magento/js/vendor/polyfill-custom-event',
   ],
   function(
     _,

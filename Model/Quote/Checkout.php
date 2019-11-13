@@ -102,9 +102,10 @@ class Checkout
     private function getGeneralData()
     {
         return [
-            'platform' => self::platform,
-            'carriers' => array_column($this->get_carriers(), self::selectCarriersArray),
-            'currency' => $this->currency->getStore()->getCurrentCurrency()->getCode()
+            'allowRetry' => false,
+            'platform'   => self::platform,
+            'carriers'   => array_column($this->get_carriers(), self::selectCarriersArray),
+            'currency'   => $this->currency->getStore()->getCurrentCurrency()->getCode(),
         ];
     }
 
@@ -119,7 +120,6 @@ class Checkout
         $myParcelConfig = [];
 
         foreach ($carriersPath as $carrier) {
-
             $myParcelConfig["carrierSettings"][$carrier[self::selectCarriersArray]] = [
                 'allowDeliveryOptions' => $this->helper->getBoolConfig($carrier[self::selectCarrierPath], 'delivery/active'),
                 'allowSignature'       => $this->helper->getBoolConfig($carrier[self::selectCarrierPath], 'delivery/signature_active'),
