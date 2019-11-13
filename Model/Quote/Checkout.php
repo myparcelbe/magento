@@ -102,7 +102,7 @@ class Checkout
     private function getGeneralData()
     {
         return [
-            'allowRetry' => true,
+            'allowRetry' => false,
             'platform'   => self::platform,
             'carriers'   => array_column($this->get_carriers(), self::selectCarriersArray),
             'currency'   => $this->currency->getStore()->getCurrentCurrency()->getCode(),
