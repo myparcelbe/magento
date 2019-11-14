@@ -18,10 +18,11 @@
   },
   "homepage": "https://github.com/myparcelbe/magento#readme",
   "dependencies": {
-    "@myparcel/checkout": "^3.0.26",
+    "@myparcel/checkout": "^3.0.27",
     "custom-event-polyfill": "^1.0.7"
   },
   "devDependencies": {
-    "@myparcel/eslint-config": "^1.0.4"
+    "@myparcel/eslint-config": "^1.0.4",
+    "@types/knockout": "^3.4.66"
   }
 }
