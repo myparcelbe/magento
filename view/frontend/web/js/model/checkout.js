@@ -180,7 +180,7 @@ function(
   }
 
   function updateHasDeliveryOptions() {
-    var allowedCountries = ['NL', 'BE'];
+    var allowedCountries = ['BE'];
     var isAllowed = false;
 
     Model.allowedShippingMethods().forEach(function(methodCode) {
