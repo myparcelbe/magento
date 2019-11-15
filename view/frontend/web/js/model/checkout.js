@@ -14,6 +14,8 @@ function(
   'use strict';
 
   var Model = {
+    configuration: ko.observable(null),
+
     /**
      * Bind the observer to this model.
      */
@@ -33,29 +35,40 @@ function(
      * Initialize by requesting the MyParcel settings configuration from Magento.
      */
     initialize: function() {
+      Model.compute = ko.computed(function() {
+        var configuration = Model.configuration();
+        var rates = Model.rates();
+
+        if (!configuration || !rates.length) {
+          return false;
+        }
+
+        return {configuration: configuration, rates: rates};
+      });
+
+      Model.compute.subscribe(function(a) {
+        if (!a) {
+          return;
+        }
+
+        updateAllowedShippingMethods();
+      });
+
+      Model.compute.subscribe(_.debounce(Model.hideShippingMethods));
+      Model.allowedShippingMethods.subscribe(_.debounce(updateHasDeliveryOptions));
+
       doRequest(Model.getMagentoSettings, {onSuccess: Model.onInitializeSuccess});
     },
 
     /**
-     * Fill in the observable variables and decide whether the delivery options should be showed or not.
+     * Fill in the configuration, hide shipping methods and update the allowedShippingMethods array.
      *
      * @param {Array} response - Response from request.
      */
     onInitializeSuccess: function(response) {
-      /**
-       * Filter the allowed shipping methods by checking if they are actually present in the checkout. If not they will
-       *  be filtered out.
-       */
-      var allowedShippingMethods = response[0].data.methods.filter(function(rate) {
-        return !!Model.findRateByMethodCode(rate);
-      });
-
       window.MyParcelConfig = response[0].data;
-
-      Model.allowedShippingMethods.subscribe(_.debounce(updateAllowedShippingMethods));
-      Model.rates.subscribe(_.debounce(updateAllowedShippingMethods));
-
-      Model.allowedShippingMethods(allowedShippingMethods);
+      Model.configuration(response[0].data);
+      Model.hideShippingMethods();
     },
 
     /**
@@ -89,13 +102,18 @@ function(
         }
       });
 
-      Model.allowedShippingMethods().forEach(function(shippingMethod) {
-        var row = Model.getShippingMethodRow(shippingMethod);
+      /**
+       * Only hide the allowed shipping method if the delivery options are present.
+       */
+      if (Model.hasDeliveryOptions()) {
+        Model.allowedShippingMethods().forEach(function(shippingMethod) {
+          var row = Model.getShippingMethodRow(shippingMethod);
 
-        if (row) {
-          rowsToHide.push(row);
-        }
-      });
+          if (row) {
+            rowsToHide.push(row);
+          }
+        });
+      }
 
       rowsToHide.forEach(function(row) {
         row.style.display = 'none';
@@ -150,6 +168,16 @@ function(
   return Model;
 
   function updateAllowedShippingMethods() {
+    /**
+     * Filter the allowed shipping methods by checking if they are actually present in the checkout. If not they will
+     *  be left out.
+     */
+    Model.allowedShippingMethods(Model.configuration().methods.filter(function(rate) {
+      return !!Model.findRateByMethodCode(rate);
+    }));
+  }
+
+  function updateHasDeliveryOptions() {
     var isAllowed = false;
 
     Model.allowedShippingMethods().forEach(function(methodCode) {

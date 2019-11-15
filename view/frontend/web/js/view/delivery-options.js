@@ -19,6 +19,8 @@ define(
     'use strict';
 
     var deliveryOptions = {
+      rendered: ko.observable(false),
+
       splitStreetRegex: /(.*?)\s?(\d{1,4})[/\s-]{0,2}([A-z]\d{1,3}|-\d{1,4}|\d{2}\w{1,2}|[A-z][A-z\s]{0,3})?$/,
 
       disableDeliveryOptionsEvent: 'myparcel_disable_delivery_options',
@@ -41,10 +43,15 @@ define(
        * Initialize the script. Render the delivery options div, request the plugin settings, then initialize listeners.
        */
       initialize: function() {
+        window.MyParcelConfig.address = deliveryOptions.getAddress(quote.shippingAddress());
         deliveryOptions.render();
-        checkout.hideShippingMethods();
         deliveryOptions.addListeners();
-        deliveryOptions.updateAddress();
+
+        deliveryOptions.rendered.subscribe(function(bool) {
+          if (bool) {
+            deliveryOptions.updateAddress();
+          }
+        });
       },
 
       destroy: function() {
@@ -66,14 +73,27 @@ define(
         var shippingMethodDiv = document.querySelector('#checkout-shipping-method-load');
         var deliveryOptionsDiv = document.createElement('div');
 
+        deliveryOptions.rendered(false);
+
+        /**
+         * Sometimes the shipping method div doesn't exist yet. Retry in 100ms if it happens.
+         */
+        if (!shippingMethodDiv) {
+          setTimeout(function() {
+            deliveryOptions.render();
+          }, 100);
+          return;
+        }
+
         if (hasUnrenderedDiv || hasRenderedDeliveryOptions) {
           deliveryOptions.triggerEvent(deliveryOptions.updateDeliveryOptionsEvent);
         } else if (!hasUnrenderedDiv) {
           deliveryOptionsDiv.setAttribute('id', 'myparcel-delivery-options');
           shippingMethodDiv.insertBefore(deliveryOptionsDiv, shippingMethodDiv.firstChild);
-
           deliveryOptions.triggerEvent(deliveryOptions.renderDeliveryOptionsEvent);
         }
+
+        deliveryOptions.rendered(true);
       },
 
       /**
