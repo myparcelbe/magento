@@ -5,11 +5,13 @@ define([
   'underscore',
   'ko',
   'mage/url',
+  'Magento_Checkout/js/model/quote',
 ],
 function(
   _,
   ko,
-  mageUrl
+  mageUrl,
+  quote
 ) {
   'use strict';
 
@@ -178,6 +180,7 @@ function(
   }
 
   function updateHasDeliveryOptions() {
+    var allowedCountries = ['NL', 'BE'];
     var isAllowed = false;
 
     Model.allowedShippingMethods().forEach(function(methodCode) {
@@ -188,7 +191,12 @@ function(
       }
     });
 
+    if (allowedCountries.indexOf(quote.shippingAddress().countryId) === -1) {
+      isAllowed = false;
+    }
+
     Model.hasDeliveryOptions(isAllowed);
+    Model.hideShippingMethods();
   }
 
   /**
