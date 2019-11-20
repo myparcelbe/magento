@@ -147,15 +147,9 @@ class Result extends \Magento\Shipping\Model\Rate\Result
             return;
         }
 
-        if (count($this->products) > 0) {
+        if (empty($this->products)) {
             $this->package->setWeightFromQuoteProducts($this->products);
         }
-
-        /**
-         * todo:
-         *  - general/enabled must be moved to delivery/active for both carriers
-         *  - translations for the different combinations of delivery options
-         */
 
         foreach ($this->getMethods() as $alias => $settingPath) {
             foreach (Data::CARRIERS as $carrier) {
