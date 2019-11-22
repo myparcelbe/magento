@@ -129,8 +129,8 @@ class TrackTraceHolder
         $address      = $magentoTrack->getShipment()->getShippingAddress();
         $checkoutData = $magentoTrack->getShipment()->getOrder()->getData('myparcel_delivery_options');
         $packageType  = self::$defaultOptions->getPackageType();
-
         $deliveryOptions = json_decode($checkoutData, true);
+
         try {
             // create new instance from known json
             $deliveryOptionsAdapter = DeliveryOptionsAdapterFactory::create((array) $deliveryOptions);
@@ -180,8 +180,8 @@ class TrackTraceHolder
             ->setDeliveryDate($deliveryOptionsAdapter->getDate())
             ->setDeliveryType($deliveryOptionsAdapter->getDeliveryTypeId())
             ->setPackageType($packageType)
-            ->setSignature($this->getValueOfOption($options, 'signature')) // todo uit $shippingOptionsAdapter
-            ->setInsurance($options['insurance'] !== null ? $options['insurance'] : self::$defaultOptions->getDefaultInsurance()) // todo uit $shippingOptionsAdapter
+            ->setSignature($shippingOptionsAdapter->hasSignature())
+            ->setInsurance($shippingOptionsAdapter->getInsurance())
             ->setInvoice('');
 
         if ($deliveryOptionsAdapter->isPickup()) {
