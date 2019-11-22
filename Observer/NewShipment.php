@@ -23,6 +23,7 @@ use MyParcelBE\Magento\Model\Sales\TrackTraceHolder;
 
 class NewShipment implements ObserverInterface
 {
+    const DEFAULT_LABEL_AMOUNT = 1;
     /**
      * @var \Magento\Framework\App\ObjectManager
      */
@@ -88,27 +89,39 @@ class NewShipment implements ObserverInterface
     {
         $options = $this->orderCollection->setOptionsFromParameters()->getOptions();
 
-        // Set MyParcel options
-        $myParcelTrack = (new TrackTraceHolder($this->objectManager, $this->helper, $shipment->getOrder()))
-            ->createTrackTraceFromShipment($shipment);
-        $myParcelTrack->convertDataFromMagentoToApi($myParcelTrack->mageTrack, $options);
+        // The reason that $amount is hard coded is because this is part of multicollo, this is not possible in the Belguim plugin. However, a preparation has been made for this.
+        $amount  = 1;
+        /** @var \MyParcelBE\Magento\Model\Sales\TrackTraceHolder[] $trackTraceHolders */
+        $trackTraceHolders = [];
+        $i                 = 1;
 
-        // Do the request
+        while ($i <= $amount) {
+
+            // Set MyParcel options
+            $trackTraceHolder = (new TrackTraceHolder($this->objectManager, $this->helper, $shipment->getOrder()))
+                ->createTrackTraceFromShipment($shipment);
+            $trackTraceHolder->convertDataFromMagentoToApi($trackTraceHolder->mageTrack, $options);
+
+            $trackTraceHolders[] = $trackTraceHolder;
+
+            $i ++;
+        }
+
+        // All multicollo holders are the same, so use the first for the SDK
+        $firstTrackTraceHolder = $trackTraceHolders[0];
+
         $this->orderCollection->myParcelCollection
-            ->addConsignment($myParcelTrack)
+            ->addMultiCollo($firstTrackTraceHolder->consignment, $amount ?? self::DEFAULT_LABEL_AMOUNT)
             ->createConcepts()
             ->setLatestData();
 
-        $consignmentId = $this
-            ->orderCollection
-            ->myParcelCollection
-            ->getConsignmentsByReferenceId($shipment->getEntityId())->first()
-            ->getMyParcelConsignmentId();
-
-        $myParcelTrack->mageTrack
-            ->setData('myparcel_consignment_id', $consignmentId)
-            ->setData('myparcel_status', 1);
-        $shipment->addTrack($myParcelTrack->mageTrack);
+        foreach ($this->orderCollection->myParcelCollection as $consignment) {
+            $trackTraceHolder = array_pop($trackTraceHolders);
+            $trackTraceHolder->mageTrack
+                ->setData('myparcel_consignment_id', $consignment->getConsignmentId())
+                ->setData('myparcel_status', 1);
+            $shipment->addTrack($trackTraceHolder->mageTrack);
+        }
 
         $this->updateTrackGrid($shipment);
     }

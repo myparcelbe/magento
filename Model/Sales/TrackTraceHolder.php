@@ -128,7 +128,7 @@ class TrackTraceHolder
     {
         $shipment        = $magentoTrack->getShipment();
         $address         = $shipment->getShippingAddress();
-        $checkoutData    = $shipment->getOrder()->getData(Checkout::FIELD_DELIVERY_OPTIONS);
+        $checkoutData    = $shipment->getOrder()->getData('myparcel_delivery_options');
         $packageType     = self::$defaultOptions->getPackageType();
         $deliveryOptions = json_decode($checkoutData, true);
 
@@ -137,14 +137,11 @@ class TrackTraceHolder
             $deliveryOptionsAdapter = DeliveryOptionsAdapterFactory::create((array) $deliveryOptions);
         } catch (\BadMethodCallException $e) {
             // create new instance from unknown json data
-            $deliveryOptions = (new ConsignmentNormalizer($deliveryOptions))->normalize();
+            $deliveryOptions        = (new ConsignmentNormalizer((array) $deliveryOptions + $options))->normalize();
             $deliveryOptionsAdapter = new DeliveryOptionsFromOrderAdapter($deliveryOptions);
         }
-
         $pickupLocationAdapter  = $deliveryOptionsAdapter->getPickupLocation();
         $shippingOptionsAdapter = $deliveryOptionsAdapter->getShipmentOptions();
-
-        $this->consignment = ConsignmentFactory::createByCarrierName($deliveryOptionsAdapter->getCarrier());
 
         $apiKey = $this->helper->getGeneralConfig(
             'api/key',
@@ -153,7 +150,7 @@ class TrackTraceHolder
 
         $this->validateApiKey($apiKey);
 
-        $this->consignment
+        $this->consignment = (ConsignmentFactory::createByCarrierName($deliveryOptionsAdapter->getCarrier()))
             ->setApiKey($apiKey)
             ->setReferenceId($shipment->getEntityId())
             ->setConsignmentId($magentoTrack->getData('myparcel_consignment_id'))
@@ -163,7 +160,7 @@ class TrackTraceHolder
 
         try {
             $this->consignment->setFullStreet($address->getData('street'));
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $errorHuman = 'An error has occurred while validating the address: ' . $address->getData('street') . '. Check number and number suffix.';
             $this->messageManager->addErrorMessage($errorHuman . ' View log file for more information.');
             $this->objectManager->get('Psr\Log\LoggerInterface')->critical($errorHuman . '-' . $e);
@@ -184,8 +181,9 @@ class TrackTraceHolder
             ->setDeliveryDate($deliveryOptionsAdapter->getDate())
             ->setDeliveryType($deliveryOptionsAdapter->getDeliveryTypeId())
             ->setPackageType($packageType)
-            ->setSignature($this->isSignature($shippingOptionsAdapter->hasSignature()))
-            ->setInsurance($this->hasInsurance($shippingOptionsAdapter));
+            ->setSignature($shippingOptionsAdapter->hasSignature())
+            ->setInsurance($shippingOptionsAdapter->getInsurance())
+            ->setInvoice('');
 
         if ($deliveryOptionsAdapter->isPickup()) {
             $this->consignment
@@ -199,7 +197,8 @@ class TrackTraceHolder
                 ->setPickupNetworkId($pickupLocationAdapter->getPickupNetworkId());
         }
 
-        $this->convertDataForCdCountry($magentoTrack);
+        $this->convertDataForCdCountry($magentoTrack)
+             ->calculateTotalWeight($magentoTrack);
 
         return $this;
     }
@@ -265,6 +264,26 @@ class TrackTraceHolder
 
         return $this;
     }
+
+    /**
+     * Get default value if option === null
+     *
+     * @param $options []
+     * @param $optionKey
+     *
+     * @return bool
+     * @internal param $option
+     *
+     */
+    private function getValueOfOption($options, $optionKey)
+    {
+        if ($options[$optionKey] === null) {
+            return (bool) self::$defaultOptions->getDefault($optionKey);
+        } else {
+            return (bool) $options[$optionKey];
+        }
+    }
+
 
     /**
      * @param $shipmentId
