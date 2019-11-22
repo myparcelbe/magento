@@ -126,8 +126,9 @@ class TrackTraceHolder
      */
     public function convertDataFromMagentoToApi($magentoTrack, $options)
     {
-        $address      = $magentoTrack->getShipment()->getShippingAddress();
-        $checkoutData = $magentoTrack->getShipment()->getOrder()->getData('myparcel_delivery_options');
+        $shipment        = $magentoTrack->getShipment();
+        $address      = $shipment->getShippingAddress();
+        $checkoutData = $shipment->getOrder()->getData('myparcel_delivery_options');
         $packageType  = self::$defaultOptions->getPackageType();
         $deliveryOptions = json_decode($checkoutData, true);
 
@@ -144,14 +145,14 @@ class TrackTraceHolder
 
         $apiKey = $this->helper->getGeneralConfig(
             'api/key',
-            $magentoTrack->getShipment()->getOrder()->getStoreId()
+            $shipment->getOrder()->getStoreId()
         );
 
         $this->validateApiKey($apiKey);
 
         $this->consignment = (ConsignmentFactory::createByCarrierName($deliveryOptionsAdapter->getCarrier()))
             ->setApiKey($apiKey)
-            ->setReferenceId($magentoTrack->getShipment()->getEntityId())
+            ->setReferenceId($shipment->getEntityId())
             ->setConsignmentId($magentoTrack->getData('myparcel_consignment_id'))
             ->setCountry($address->getCountryId())
             ->setCompany($address->getCompany())
@@ -176,7 +177,7 @@ class TrackTraceHolder
             ->setCity($address->getCity())
             ->setPhone($address->getTelephone())
             ->setEmail($address->getEmail())
-            ->setLabelDescription($magentoTrack->getShipment()->getOrder()->getIncrementId())
+            ->setLabelDescription($shipment->getOrder()->getIncrementId())
             ->setDeliveryDate($deliveryOptionsAdapter->getDate())
             ->setDeliveryType($deliveryOptionsAdapter->getDeliveryTypeId())
             ->setPackageType($packageType)
