@@ -127,9 +127,9 @@ class TrackTraceHolder
     public function convertDataFromMagentoToApi($magentoTrack, $options)
     {
         $shipment        = $magentoTrack->getShipment();
-        $address      = $shipment->getShippingAddress();
-        $checkoutData = $shipment->getOrder()->getData('myparcel_delivery_options');
-        $packageType  = self::$defaultOptions->getPackageType();
+        $address         = $shipment->getShippingAddress();
+        $checkoutData    = $shipment->getOrder()->getData('myparcel_delivery_options');
+        $packageType     = self::$defaultOptions->getPackageType();
         $deliveryOptions = json_decode($checkoutData, true);
 
         try {
@@ -137,7 +137,7 @@ class TrackTraceHolder
             $deliveryOptionsAdapter = DeliveryOptionsAdapterFactory::create((array) $deliveryOptions);
         } catch (\BadMethodCallException $e) {
             // create new instance from unknown json data
-            $deliveryOptions = (new ConsignmentNormalizer((array) $deliveryOptions + $options))->normalize();
+            $deliveryOptions        = (new ConsignmentNormalizer((array) $deliveryOptions + $options))->normalize();
             $deliveryOptionsAdapter = new DeliveryOptionsFromOrderAdapter($deliveryOptions);
         }
         $pickupLocationAdapter  = $deliveryOptionsAdapter->getPickupLocation();
@@ -264,10 +264,11 @@ class TrackTraceHolder
 
         return $this;
     }
+
     /**
      * Get default value if option === null
      *
-     * @param $options[]
+     * @param $options []
      * @param $optionKey
      *
      * @return bool
