@@ -278,7 +278,7 @@ class TrackTraceHolder
         if ($options[$optionKey] === null) {
             return (bool)self::$defaultOptions->getDefault($optionKey);
         } else {
-            return (bool)$options[$optionKey];
+            return (bool) $options[$optionKey];
         }
     }
 
