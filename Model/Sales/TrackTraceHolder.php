@@ -152,7 +152,7 @@ class TrackTraceHolder
         $this->consignment = (ConsignmentFactory::createByCarrierName($deliveryOptionsAdapter->getCarrier()))
             ->setApiKey($apiKey)
             ->setReferenceId($magentoTrack->getShipment()->getEntityId())
-            ->setConsignmentId($magentoTrack->getData(Checkout::FIELD_DELIVERY_OPTIONS))
+            ->setConsignmentId($magentoTrack->getData('myparcel_consignment_id'))
             ->setCountry($address->getCountryId())
             ->setCompany($address->getCompany())
             ->setPerson($address->getName());
