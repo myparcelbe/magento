@@ -276,7 +276,7 @@ class TrackTraceHolder
     private function getValueOfOption($options, $optionKey)
     {
         if ($options[$optionKey] === null) {
-            return (bool)self::$defaultOptions->getDefault($optionKey);
+            return (bool) self::$defaultOptions->getDefault($optionKey);
         } else {
             return (bool) $options[$optionKey];
         }
