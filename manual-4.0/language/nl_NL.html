@@ -24,182 +24,184 @@
 
     <h1>Inhoud</h1>
     <div class="menu"></div>
-        <h1 id="1">1 Installatie en update</h1>
-        <h2 id="1_1">1.1 Technische vereisten</h2>
-        <p>Om de MyParcel België Magento 2 extensie te gebruiken dient uw server aan één van de volgende onderstaande
-            vereisten te voldoen:</p>
-        <ul>
-            <li>PHP versie 7 of hoger</li>
-        </ul>
-        <p>De onderstaande Magento versie wordt ondersteund:</p>
-        <ul>
-            <li>Community 2.x</li>
-        </ul>
+    <h1 id="1">1 Installatie en update</h1>
+    <h2 id="1_1">1.1 Technische vereisten</h2>
+    <p>Om de MyParcel België Magento 2 extensie te gebruiken dient uw server aan één van de volgende onderstaande
+        vereisten te voldoen:</p>
+    <ul>
+        <li>PHP versie 7 of hoger</li>
+    </ul>
+    <p>De onderstaande Magento versie wordt ondersteund:</p>
+    <ul>
+        <li>Community 2.x</li>
+    </ul>
 
-        <h2 id="1_2">1.2 Installatie</h2>
-        <p>De MyParcel België Magento 2 extensie is niet te downloaden via de Magento Marketplace.<br><br>
+    <h2 id="1_2">1.2 Installatie</h2>
+    <p>De MyParcel België Magento 2 extensie is niet te downloaden via de Magento Marketplace.<br><br>
 
-            Voor het installeren adviseren wij om een backup te maken van jouw Magento 2 omgeving. De extensie is te
-            verkrijgen via de terminal, raadpleeg jouw webbeheerder. Jouw webbeheerder kan het volgende commando in de
-            root van de website (in bv. public_html) uitvoeren om de MyParcel België extensie te installeren:<br>
-            <span class="nice">composer require myparcelbe/magento</span><br><br>
+        Voor het installeren adviseren wij om een backup te maken van jouw Magento 2 omgeving. De extensie is te
+        verkrijgen via de terminal, raadpleeg jouw webbeheerder. Jouw webbeheerder kan het volgende commando in de
+        root van de website (in bv. public_html) uitvoeren om de MyParcel België extensie te installeren:<br>
+        <span class="nice">composer require myparcelbe/magento</span><br><br>
 
-        <div class="accordion">
-            <a style="cursor:pointer; outline: none;"><img src="media/icons/ic_arrow_drop_down_black_24dp_1x.png"
-                                                           style="margin-bottom: -5px;"> Installeer je voor het eerst
-                een extensie in jouw Magento omgeving?</a>
-            <div style="margin-top:10px">
-                Dan bestaat de kans dat je de volgende melding krijgt:<br><br>
-                <img src="media/composerupdate.png"><br><br>
-                Om de Username en Password te verkrijgen ga je naar <a href="https://marketplace.magento.com"
-                                                                       target="_blank">https://marketplace.magento.com</a>.
-                Hier kun je een account aanmaken en inloggen. Ga daarna in <span class="nice">My Account</span> naar
-                <span class="nice">Marketplace</span>. Klik vervolgens op <span class="nice">My Access Keys</span> en op
-                <span class="nice">Magento 2</span>.
-                <img src="media/magento_marketplace_start.png"><br><br>
-                Hier zie je public key en een private key. De public key kan je in de terminal gebruiken als username en
-                de private key kan je gebruiken als Password. Zie je de keys nog niet? Klik dan op Create A New Access
-                Key.<br><br>
-                <img src="media/marketplace_key.png">
-            </div>
+    <div class="accordion">
+        <a style="cursor:pointer; outline: none;"><img src="media/icons/ic_arrow_drop_down_black_24dp_1x.png"
+                                                       style="margin-bottom: -5px;"> Installeer je voor het eerst
+            een extensie in jouw Magento omgeving?</a>
+        <div style="margin-top:10px">
+            Dan bestaat de kans dat je de volgende melding krijgt:<br><br>
+            <img src="media/composerupdate.png"><br><br>
+            Om de Username en Password te verkrijgen ga je naar <a href="https://marketplace.magento.com"
+                                                                   target="_blank">https://marketplace.magento.com</a>.
+            Hier kun je een account aanmaken en inloggen. Ga daarna in <span class="nice">My Account</span> naar
+            <span class="nice">Marketplace</span>. Klik vervolgens op <span class="nice">My Access Keys</span> en op
+            <span class="nice">Magento 2</span>.
+            <img src="media/magento_marketplace_start.png"><br><br>
+            Hier zie je public key en een private key. De public key kan je in de terminal gebruiken als username en
+            de private key kan je gebruiken als Password. Zie je de keys nog niet? Klik dan op Create A New Access
+            Key.<br><br>
+            <img src="media/marketplace_key.png">
         </div>
-        <br><br>
+    </div>
+    <br><br>
+
+    Om de cache te legen en andere benodigde acties van Magento 2 uit te voeren gebruik het volgende commando:
+    <span class="nice">rm -rf var/di/*; rm -rf pub/static/*; rm -rf var/cache/*; rm -rf var/pagecache/*; rm -rf var/generation/*; rm -rf var/dir/*; rm -rf var/view_preprocessed/*; php bin/magento cache:flush && php bin/magento setup:upgrade && php bin/magento setup:static-content:deploy && php bin/magento setup:static-content:deploy nl_NL && php bin/magento indexer:reindex</span>
+    </p>
+    <h2 id="1_3">1.3 Update</h2>
+    <p>Om een update uit te voeren kun je het volgende commando gebruiken:<br>
+        <span class="nice">composer update myparcelbe/magento</span><br><br>
+
+        Maak je momenteel gebruik van de MyParcel België versie 1.x en zou je hem graag willen updaten naar een
+        nieuwere versie 2.x, dan zou je de onderstaande commando moeten gebruiken om laatste versie te
+        installeren:<br>
+        <span class="nice">composer require myparcelbe/magento "~2.1"</span><br><br>
 
         Om de cache te legen en andere benodigde acties van Magento 2 uit te voeren gebruik het volgende commando:
         <span class="nice">rm -rf var/di/*; rm -rf pub/static/*; rm -rf var/cache/*; rm -rf var/pagecache/*; rm -rf var/generation/*; rm -rf var/dir/*; rm -rf var/view_preprocessed/*; php bin/magento cache:flush && php bin/magento setup:upgrade && php bin/magento setup:static-content:deploy && php bin/magento setup:static-content:deploy nl_NL && php bin/magento indexer:reindex</span>
-        </p>
-        <h2 id="1_3">1.3 Update</h2>
-        <p>Om een update uit te voeren kun je het volgende commando gebruiken:<br>
-            <span class="nice">composer update myparcelbe/magento</span><br><br>
+    </p>
 
-            Maak je momenteel gebruik van de MyParcel België versie 1.x en zou je hem graag willen updaten naar een
-            nieuwere versie 2.x, dan zou je de onderstaande commando moeten gebruiken om laatste versie te
-            installeren:<br>
-            <span class="nice">composer require myparcelbe/magento "~2.1"</span><br><br>
+    <h1 id="2">2 Configuratie</h1>
+    <p>Ga naar het menu <span class="nice">Stores → Configuration → MyParcel </span> om de MyParcel België extensie
+        te configureren.<br></p>
+    <img src="media/config.png">
+    <p>
+        Verder zie je 4 tabbladen om uit te kiezen. Op het tabblad 'versie en support' kun je zien welke versie van
+        de plugin er is geinstalleerd.
+        Op het tabblad 'Algemene instellingen' kun je de volgende onderdelen instellen:
+    <ul>
+        <li>De MyParcel BE API key</li>
+        <li>jouw printer voorkeur</li>
+        <li>De verzendmethoden waar je MyParcel aan wilt koppelen</li>
+        <li>De teksten die te zien zijn aan de voorkant van de website, bij de bezorgopties</li>
+    </ul>
+    Daarnaast heb je nog twee tabbladen 'bpost instellingen' en 'DPD instellingen'. Op deze tabbladen is het
+    mogelijk om instellingen aan te passen aan de hand van de specifieke bezorger.
+    </p>
 
-            Om de cache te legen en andere benodigde acties van Magento 2 uit te voeren gebruik het volgende commando:
-            <span class="nice">rm -rf var/di/*; rm -rf pub/static/*; rm -rf var/cache/*; rm -rf var/pagecache/*; rm -rf var/generation/*; rm -rf var/dir/*; rm -rf var/view_preprocessed/*; php bin/magento cache:flush && php bin/magento setup:upgrade && php bin/magento setup:static-content:deploy && php bin/magento setup:static-content:deploy nl_NL && php bin/magento indexer:reindex</span>
-        </p>
+    <h2 id="2_1">2.1 Algemene instellingen</h2>
+    <h3 id="2_1_1">2.1.1 API key instellen</h3>
+    <p>
+        Hier kun je jouw API Key invullen. Deze zijn nodig om de zendingen door te kunnen zetten naar MyParcel
+        België.
+        Deze gegevens kun je vinden in jouw MyParcel België account op <a
+            href="https://backoffice.sendmyparcel.be/settings" target="_blank">backoffice.sendmyparcel.be</a> en ga
+        vervolgens naar <span class="nice">Instellingen → Algemeen</span>
+    </p>
+    <img src="media/api_key.png">
 
-        <h1 id="2">2 Configuratie</h1>
-        <p>Ga naar het menu <span class="nice">Stores → Configuration → MyParcel </span> om de MyParcel België extensie
-            te configureren.<br></p>
-        <img src="media/config.png">
-        <p>
-            Verder zie je 4 tabbladen om uit te kiezen. Op het tabblad 'versie en support' kun je zien welke versie van
-            de plugin er is geinstalleerd.
-            Op het tabblad 'Algemene instellingen' kun je de volgende onderdelen instellen:
-        <ul>
-            <li>De MyParcel BE API key</li>
-            <li>jouw printer voorkeur</li>
-            <li>De verzendmethoden waar je MyParcel aan wilt koppelen</li>
-            <li>De teksten die te zien zijn aan de voorkant van de website, bij de bezorgopties</li>
-        </ul>
-        Daarnaast heb je nog twee tabbladen 'bpost instellingen' en 'DPD instellingen'. Op deze tabbladen is het
-        mogelijk om instellingen aan te passen aan de hand van de specifieke bezorger.
-        </p>
+    <h3 id="2_1_2">2.1.2 Print oriëntatie</h3>
+    <p>
+        Kies de <span class="nice">Print oriëntatie</span>, .ls je kiest voor A4 formaat zullen vier verzendlabels
+        per A4 vel geprint worden.
+        Als je kiest voor A6 formaat zijn de verzendlabels geschikt voor het printen met een speciale
+        labelprinter zoals een Zebra of Dymo 4XL.<br><br>
+    </p>
+    <img src="media/print_opties.png">
 
-        <h2 id="2_1">2.1 Algemene instellingen</h2>
-        <h3 id="2_1_1">2.1.1 API key instellen</h3>
-        <p>
-            Hier kun je jouw API Key invullen. Deze zijn nodig om de zendingen door te kunnen zetten naar MyParcel
-            België.
-            Deze gegevens kun je vinden in jouw MyParcel België account op <a
-                href="https://backoffice.sendmyparcel.be/settings" target="_blank">backoffice.sendmyparcel.be</a> en ga
-            vervolgens naar <span class="nice">Instellingen → Algemeen</span>
-        </p>
-        <img src="media/api_key.png">
+    <h3 id="2_1_3">2.1.3 Bezorgmethoden</h3>
+    <p>
+        Kies de gewenste bezorgmethoden, waar je de MyParcel mee wilt koppelen.
+        De verzendmethoden zal dan wel bij <span class="nice">Verkoop → verzendmethoden</span> geactiveerd moeten
+        zijn.
+        Hierdoor zal de bezoropties samen werken met de gekozen verzendmethoden.
+        <br><br>
+    </p>
+    <img src="media/selected_delivery_method.png">
 
-        <h3 id="2_1_2">2.1.2 Print oriëntatie</h3>
-        <p>
-            Kies de <span class="nice">Print oriëntatie</span>, .ls je kiest voor A4 formaat zullen vier verzendlabels
-            per A4 vel geprint worden.
-            Als je kiest voor A6 formaat zijn de verzendlabels geschikt voor het printen met een speciale
-            labelprinter zoals een Zebra of Dymo 4XL.<br><br>
-        </p>
-        <img src="media/print_opties.png">
+    <h3 id="2_1_4">2.1.4 Bezoropties teksten</h3>
+    <p>
+        Het is mogelijk de teksten die aan de voorkant van de webiste te zien zijn, aan te passen naar keuzen.
+        Dit is mogelijk aan de hand van de velden die te vinden zijn onder de
+        <span class="nice">Delivery settings</span>. Bij standaard bezog titel is het mogelijk om het veld leeg te
+        laten, hierdoor zullen de bezogtijden zichtbaar zijn.
+        <br><br>
+    </p>
+    <img src="media/delivery_tekst_settings.png">
 
-        <h3 id="2_1_3">2.1.3 Bezorgmethoden</h3>
-        <p>
-            Kies de gewenste bezorgmethoden, waar je de MyParcel mee wilt koppelen.
-            De verzendmethoden zal dan wel bij <span class="nice">Verkoop → verzendmethoden</span> geactiveerd moeten
-            zijn.
-            Hierdoor zal de bezoropties samen werken met de gekozen verzendmethoden.
-            <br><br>
-        </p>
-        <img src="media/selected_delivery_method.png">
+    <h2 id="2_2">2.2 bpost instellingen</h2>
+    <p>
+        Bij <span class="nice">bpost instellingen</span> kan je specifieke instellingen configureren die bedoeld zijn
+        voor bpost zendingen.
+        Er zijn vier onderdelen te vinden, om de bpost mogelijkheden mogelijk te maken:
+    <ul>
+        <li>Standaard verzendopties</li>
+        <li>Basis instellingen</li>
+        <li>Bezorg instellingen</li>
+        <li>bpost ophaal locaties</li>
+    </ul>
+    </p>
+    <img src="media/bpost_settings.png">
 
-        <h3 id="2_1_4">2.1.4 Bezoropties teksten</h3>
-        <p>
-            Het is mogelijk de teksten die aan de voorkant van de webiste te zien zijn, aan te passen naar keuzen.
-            Dit is mogelijk aan de hand van de velden die te vinden zijn onder de
-            <span class="nice">Delivery settings</span>. Bij standaard bezog titel is het mogelijk om het veld leeg te
-            laten, hierdoor zullen de bezogtijden zichtbaar zijn.
-            <br><br>
-        </p>
-        <img src="media/delivery_tekst_settings.png">
+    <h3 id="2_2_1">2.2.1 Standaard verzendopties</h3>
+    <p>Onder het onderdeel standaard verzendopties zijn voor bpost opties te vinden namelijk:</p>
+    <ul>
+        <li>Geautomatiseerd handtekening bij ontvangst</li>
+        <li>Geautomatiseerd verzekerd tot € 500</li>
+    </ul>
+    <p>
+        Op basis van de ingevulde orderwaarde worden de opties geactiveerd. Voorbeeld: Indien je bij
+        <span class="nice">Verzekerd tot € 500</span> bijvoorbeeld de waarde 100 invult, worden orders met een
+        verkoopwaarde boven de € 100 automatisch verzekerd tot een waarde van € 500.
 
-        <h2 id="2_2">2.2 bpost instellingen</h2>
-        <p>
-            Bij <span class="nice">bpost instellingen</span> kan je specifieke instellingen configureren die bedoeld zijn voor bpost zendingen.
-            Er zijn vier onderdelen te vinden, om de bpost mogelijkheden mogelijk te maken:
-            <ul>
-                <li>Standaard verzendopties</li>
-                <li>Basis instellingen</li>
-                <li>Bezorg instellingen</li>
-                <li>bpost ophaal locaties</li>
-            </ul>
-        </p>
-        <img src="media/bpost_settings.png">
+        Let op: Op het moment dat <span class="nice">Nee</span> ingevuld staat, is de optie niet geactiveerd. Bij
+        invullen van <span class="nice">Ja</span> staat de optie actief.
+        Wanneer er bij 'Vanaf prijs' een 0 wordt ingevuld zal de optie ook actief zijn.
+    </p>
 
-        <h3 id="2_2_1">2.2.1 Standaard verzendopties</h3>
-        <p>Onder het onderdeel standaard verzendopties zijn voor bpost opties te vinden namelijk:</p>
-            <ul>
-                <li>Geautomatiseerd handtekening bij ontvangst</li>
-                <li>Geautomatiseerd verzekerd tot € 500</li>
-            </ul>
-        <p>
-            Op basis van de ingevulde orderwaarde worden de opties geactiveerd. Voorbeeld: Indien je bij
-            <span class="nice">Verzekerd tot € 500</span> bijvoorbeeld de waarde 100 invult, worden orders met een
-            verkoopwaarde boven de € 100 automatisch verzekerd tot een waarde van € 500.
+    <h3 id="2_2_2">2.2.2 Basis instellingen</h3>
+    <img src="media/MA2_basisinstellingen_checkoutBE.png">
+    <h4>Laatste bestelmoment</h4>
+    <p>
+        Hiermee kun je instellen tot welk moment het mogelijk is voor jou een bestelling klaar te maken voor
+        levering. Indien jij hier tot 16:00 uur instelt, zullen alle klanten na dit tijdstip een latere dag in hun
+        checkout te zien krijgen als eerste levermogelijkheid. <br>
+        Bijvoorbeeld: Jij hebt een verwerktijd van 1 dag en kunt tot 16:00 bestellingen verwerken. De bestelling
+        komt binnen op dinsdag 04 oktober om 16:02, de eerst volgende mogelijkheid voor jouw klant zou dan donderdag
+        06 oktober worden. Dit betekent voor jou dat je het pakket op woensdag zal inleveren bij een BPost punt.
+    </p><br><br>
 
-            Let op: Op het moment dat <span class="nice">Nee</span> ingevuld staat, is de optie niet geactiveerd. Bij
-            invullen van <span class="nice">Ja</span> staat de optie actief.
-            Wanneer er bij 'Vanaf prijs' een 0 wordt ingevuld zal de optie ook actief zijn.
-        </p>
+    <img src="media/MA2_laatste_bestelmoment.png">
 
-        <h3 id="2_2_2">2.2.2 Basis instellingen</h3>
-        <img src="media/MA2_basisinstellingen_checkoutBE.png">
-        <h4>Laatste bestelmoment</h4>
-        <p>
-            Hiermee kun je instellen tot welk moment het mogelijk is voor jou een bestelling klaar te maken voor
-            levering. Indien jij hier tot 16:00 uur instelt, zullen alle klanten na dit tijdstip een latere dag in hun
-            checkout te zien krijgen als eerste levermogelijkheid. <br>
-            Bijvoorbeeld: Jij hebt een verwerktijd van 1 dag en kunt tot 16:00 bestellingen verwerken. De bestelling
-            komt binnen op dinsdag 04 oktober om 16:02, de eerst volgende mogelijkheid voor jouw klant zou dan donderdag
-            06 oktober worden. Dit betekent voor jou dat je het pakket op woensdag zal inleveren bij een BPost punt.
-        </p><br><br>
+    <h4>Verzenddagen</h4>
+    <p>Bij de verzenddagen kun je invullen op welke dagen het voor jou mogelijk is pakketten in te leveren voor
+        collectie op dezelfde dag. In de checkout wordt hier rekening mee gehouden qua keuzes die worden getoond aan
+        jouw klant.</p>
+    <img src="media/MA2_verzenddagen.png">
 
-        <img src="media/MA2_laatste_bestelmoment.png">
-
-        <h4>Verzenddagen</h4>
-        <p>Bij de verzenddagen kun je invullen op welke dagen het voor jou mogelijk is pakketten in te leveren voor
-            collectie op dezelfde dag. In de checkout wordt hier rekening mee gehouden qua keuzes die worden getoond aan
-            jouw klant.</p>
-        <img src="media/MA2_verzenddagen.png">
-
-        <h4>Vertraging</h4>
-        <p>Indien jij een langere verwerkingstijd nodig hebt om tot leveren over te gaan kun je dat hier aangeven. Hier
-            zal rekening mee worden gehouden in het tonen van de beschikbare bezorgdagen in de checkout.</p>
-        <img src="media/MA2_vertragingBE.png">
+    <h4>Vertraging</h4>
+    <p>Indien jij een langere verwerkingstijd nodig hebt om tot leveren over te gaan kun je dat hier aangeven. Hier
+        zal rekening mee worden gehouden in het tonen van de beschikbare bezorgdagen in de checkout.</p>
+    <img src="media/MA2_vertragingBE.png">
 
 
-    <h2 id="2_3">2.3 Bezorging</h2>
+    <h3 id="2_2_3">2.2.3 Bezorging</h3>
     <img src="media/MA2_bezorging_checkoutBE.png">
 
     <h4>Bpost bezorging aan/uit</h4>
     <p>
-        Het is mogelijk om de optie bezorgen bij bpost uit of aan te zetten. Zodra je de keuze heb gemaakt om deze uit te
+        Het is mogelijk om de optie bezorgen bij bpost uit of aan te zetten. Zodra je de keuze heb gemaakt om deze uit
+        te
         zetten dan is hij ook niet aan de voorkant van de webiste te zien, bij de bezorgopties
     </p>
 
@@ -216,125 +218,178 @@
         inzicht invullen.
     </p>
 
-    <h2 id="2_4">2.4 Ophalen Bpost locatie</h2>
+    <h3 id="2_2_4">2.2.4 Ophalen Bpost locatie</h3>
     <p>
         Met deze optie kunnen jouw klanten kiezen om hun pakket bij een Bpost locatie op te halen. Deze locatie
         kunnen zij zelf kiezen in de checkout. Je kunt hier eventueel ook een meerprijs voor rekenen.
     </p>
     <img src="media/MA2_ophalen_bij_bpost.png">
 
-        <h1 id="3">3 Backend functionaliteiten</h1>
-        <h2 id="3_1">3.1 Verzending aanmaken</h2>
-        <p>Een MyParcel België zending aanmaken kan op twee manieren:</p>
+    <h2 id="2_3">2.3 DPD instellingen</h2>
+    <p>
+        Bij <span class="nice">DPD instellingen</span> kan je specifieke instellingen configureren die bedoeld zijn voor
+        DPD zendingen. Er zijn vier onderdelen te vinden, om de bpost mogelijkheden mogelijk te maken:
+    <ul>
+        <li>Basis instellingen</li>
+        <li>Bezorg instellingen</li>
+        <li>DPD ophaal locaties</li>
+    </ul>
+    </p>
+    <img src="media/dpd_settings.png">
 
-        <h4>1. Batch methode in het bestellingenoverzicht.</h4>
-        <ol>
-            <li>Selecteer de orders die je wilt exporteren naar MyParcel België.</li>
-            <br><br>
-            <img src="media/MA2_bestelling_overzicht.png"><br><br>
-            <li>Kies in de actie balk <span class="nice">Print MyParcel België labels</span></li>
-            <br>
-            <img src="media/MA2_actiemenu_bestellingen.png"><br><br>
-            <li>Kies voor de juiste printpositie, indien je voor A4 hebt gekozen.</li>
-            <img src="media/print_positionBE.png"><br><br>
-            <li>Het PDF verschijnt op je computer en is klaar om te printen.</li>
-            <br>
-            <li>
-                Wanneer je de instellingen in stap 3 wil overslaan, bijvoorbeeld omdat je via de ‘standaard
-                verzendinstellingen’
-                al de juiste verzendopties aan jouw bestellingen hebt meegegeven, dan kan je via ‘Print MyParcel labels
-                direct’
-                je labels direct downloaden.
-            </li>
-            <br><br>
-            <img src="media/MA2_actiemenu_bestellingen_2.png">
-        </ol>
+    <h3 id="2_3_2">2.3.2 Basis instellingen</h3>
+    <img src="media/MA2_basisinstellingen_checkout_dpd.png">
+    <h4>Laatste bestelmoment</h4>
+    <p>
+        Hiermee kun je instellen tot welk moment het mogelijk is voor jou een bestelling klaar te maken voor
+        levering. Indien jij hier tot 16:00 uur instelt, zullen alle klanten na dit tijdstip een latere dag in hun
+        checkout te zien krijgen als eerste levermogelijkheid. <br>
+        Bijvoorbeeld: Jij hebt een verwerktijd van 1 dag en kunt tot 16:00 bestellingen verwerken. De bestelling
+        komt binnen op dinsdag 04 oktober om 16:02, de eerst volgende mogelijkheid voor jouw klant zou dan donderdag
+        06 oktober worden. Dit betekent voor jou dat je het pakket op woensdag zal inleveren bij een BPost punt.
+    </p><br><br>
+
+    <img src="media/MA2_laatste_bestelmoment.png">
+
+    <h4>Verzenddagen</h4>
+    <p>Bij de verzenddagen kun je invullen op welke dagen het voor jou mogelijk is pakketten in te leveren voor
+        collectie op dezelfde dag. In de checkout wordt hier rekening mee gehouden qua keuzes die worden getoond aan
+        jouw klant.</p>
+    <img src="media/MA2_verzenddagen.png">
+
+    <h4>Vertraging</h4>
+    <p>Indien jij een langere verwerkingstijd nodig hebt om tot leveren over te gaan kun je dat hier aangeven. Hier
+        zal rekening mee worden gehouden in het tonen van de beschikbare bezorgdagen in de checkout.</p>
+    <img src="media/MA2_vertragingBE.png">
+
+
+    <h4>DPD bezorging aan/uit</h4>
+    <p>
+        Het is mogelijk om de optie bezorgen bij bpost uit of aan te zetten. Zodra je de keuze heb gemaakt om deze uit
+        te
+        zetten dan is hij ook niet aan de voorkant van de webiste te zien, bij de bezorgopties
+    </p>
+
+    <h3 id="2_3_3">2.3.3 Ophalen DPD locatie</h3>
+    <p>
+        Met deze optie kunnen jouw klanten kiezen om hun pakket bij een Bpost locatie op te halen. Deze locatie
+        kunnen zij zelf kiezen in de checkout. Je kunt hier eventueel ook een meerprijs voor rekenen.
+    </p>
+    <img src="media/MA2_ophalen_bij_dpd.png">
+
+    <h1 id="3">3 Backend functionaliteiten</h1>
+    <h2 id="3_1">3.1 Verzending aanmaken</h2>
+    <p>Een MyParcel België zending aanmaken kan op twee manieren:</p>
+
+    <h4>1. Batch methode in het bestellingenoverzicht.</h4>
+    <ol>
+        <li>Selecteer de orders die je wilt exporteren naar MyParcel België.</li>
+        <br><br>
+        <img src="media/MA2_bestelling_overzicht.png"><br><br>
+        <li>Kies in de actie balk <span class="nice">Print MyParcel België labels</span></li>
         <br>
+        <img src="media/MA2_actiemenu_bestellingen.png"><br><br>
+        <li>Kies voor de juiste printpositie, indien je voor A4 hebt gekozen.</li>
+        <img src="media/print_positionBE.png"><br><br>
+        <li>Het PDF verschijnt op je computer en is klaar om te printen.</li>
+        <br>
+        <li>
+            Wanneer je de instellingen in stap 3 wil overslaan, bijvoorbeeld omdat je via de ‘standaard
+            verzendinstellingen’
+            al de juiste verzendopties aan jouw bestellingen hebt meegegeven, dan kan je via ‘Print MyParcel labels
+            direct’
+            je labels direct downloaden.
+        </li>
+        <br><br>
+        <img src="media/MA2_actiemenu_bestellingen_2.png">
+    </ol>
+    <br>
 
 
-        <h4>2. Per bestelling als je een Magento zending aanmaakt.</h4>
-        <ol>
-            <li>Klik op de desbetreffende order en kies rechtsboven voor de knop <span class="nice">Verzenden</span>.
-            </li>
-            <img src="media/MA2_order_detailBE.png"><br><br>
-            <li>Rechts onderin verschijnt een vak. Hier kan je zowel het verzendtype aanpassen als de beschikbare
-                verzendopties per verzendtype.
-            </li>
-            <br><br>
-            <img src="media/MA2_aanpassing_verzendmethode_optiesBE.png"><br><br>
-            <li>Verstuur zending naar MyParcel België via <span class="nice">Verzending Inboeken</span>Dit zorgt ervoor
-                dat er een concept verzending wordt aangemaakt.
-            </li>
-            <br>
-            <li>Vervolgens kun je meteen het label printen in de order door rechtsboven op de knop <span class="nice">Print Label</span>
-                te klikken.
-            </li>
-            <br>
-            <img src="media/MA2_printlabel.png"><br><br>
-        </ol>
+    <h4>2. Per bestelling als je een Magento zending aanmaakt.</h4>
+    <ol>
+        <li>Klik op de desbetreffende order en kies rechtsboven voor de knop <span class="nice">Verzenden</span>.
+        </li>
+        <img src="media/MA2_order_detailBE.png"><br><br>
+        <li>Rechts onderin verschijnt een vak. Hier kan je zowel het verzendtype aanpassen als de beschikbare
+            verzendopties per verzendtype.
+        </li>
+        <br><br>
+        <img src="media/MA2_aanpassing_verzendmethode_optiesBE.png"><br><br>
+        <li>Verstuur zending naar MyParcel België via <span class="nice">Verzending Inboeken</span>Dit zorgt ervoor
+            dat er een concept verzending wordt aangemaakt.
+        </li>
+        <br>
+        <li>Vervolgens kun je meteen het label printen in de order door rechtsboven op de knop <span class="nice">Print Label</span>
+            te klikken.
+        </li>
+        <br>
+        <img src="media/MA2_printlabel.png"><br><br>
+    </ol>
 
-        <h2 id="3_2">3.2 Orderoverzicht</h2>
-        <p>Om je altijd inzicht te bieden in de status van jouw zendingen zijn er 3 nieuwe kolommen automatisch
-            toegevoegd aan het orderoverzicht nadat de MyParcel België plugin is geïnstalleerd.</p>
-        <img src="media/MA_trackstatus_tracknummer_actie.png"><br><br/>
-        <ul>
-            <li>Track status : Hier kun je de status van de zending zien, deze wordt altijd up to date gehouden.</li>
-            <br>
-            <li>Track nummer : Hier vind je de barcode van je zending.</li>
-            <br>
-            <li>
-                Track actie : Wanneer de order nog niet verzonden is en je klikt op 'Select', dan verschijnt er een
-                pop-up met download opties voor
-                verzendlabels. Mocht je order al verzonden zijn, dan kan je hier het label nogmaals downloaden.
-            </li>
-            <br><br/>
-        </ul>
+    <h2 id="3_2">3.2 Orderoverzicht</h2>
+    <p>Om je altijd inzicht te bieden in de status van jouw zendingen zijn er 3 nieuwe kolommen automatisch
+        toegevoegd aan het orderoverzicht nadat de MyParcel België plugin is geïnstalleerd.</p>
+    <img src="media/MA_trackstatus_tracknummer_actie.png"><br><br/>
+    <ul>
+        <li>Track status : Hier kun je de status van de zending zien, deze wordt altijd up to date gehouden.</li>
+        <br>
+        <li>Track nummer : Hier vind je de barcode van je zending.</li>
+        <br>
+        <li>
+            Track actie : Wanneer de order nog niet verzonden is en je klikt op 'Select', dan verschijnt er een
+            pop-up met download opties voor
+            verzendlabels. Mocht je order al verzonden zijn, dan kan je hier het label nogmaals downloaden.
+        </li>
+        <br><br/>
+    </ul>
 
-        <h2 id="3_3">3.3 Track&Trace e-mail template</h2>
-        <p>
-            Wanneer er een orderbevestigingsmail naar de klant gestuurd wordt vanuit Magento neemt deze de barcode van
-            de zending automatisch mee.
-            Dit hoeft nu niet apart ingesteld te worden. Mocht je nu toch een andere Track & Trace email willen willen
-            versturen naar de klant vanuit Magento 2, ga dan naar
-            <span class="nice">'Winkels' → 'Configuratie' → 'Verkopen' → 'E-mails voor verkoop' → 'MyParcel barcode'</span>
-            en stel hier je eigen template naar wens in.
-        </p>
+    <h2 id="3_3">3.3 Track&Trace e-mail template</h2>
+    <p>
+        Wanneer er een orderbevestigingsmail naar de klant gestuurd wordt vanuit Magento neemt deze de barcode van
+        de zending automatisch mee.
+        Dit hoeft nu niet apart ingesteld te worden. Mocht je nu toch een andere Track & Trace email willen willen
+        versturen naar de klant vanuit Magento 2, ga dan naar
+        <span class="nice">'Winkels' → 'Configuratie' → 'Verkopen' → 'E-mails voor verkoop' → 'MyParcel barcode'</span>
+        en stel hier je eigen template naar wens in.
+    </p>
 
-        <h1 id="4">4 Veel gestelde vragen</h1>
-        <h2 id="4_1">4.1 Ondersteunen jullie mijn checkout?</h2>
-        <p>De volgende checkouts zijn getest en worden ondersteund:</p>
-        <ul>
-            <li>OnePageCheckout, dit is de standaard checkout van Magento.</li>
-            <li><a href="https://www.mageplaza.com/magento-2-one-step-checkout-extension/" target="_blank">MagePlaza One
-                Step Checkout</a></li>
-        </ul>
+    <h1 id="4">4 Veel gestelde vragen</h1>
+    <h2 id="4_1">4.1 Ondersteunen jullie mijn checkout?</h2>
+    <p>De volgende checkouts zijn getest en worden ondersteund:</p>
+    <ul>
+        <li>OnePageCheckout, dit is de standaard checkout van Magento.</li>
+        <li><a href="https://www.mageplaza.com/magento-2-one-step-checkout-extension/" target="_blank">MagePlaza One
+            Step Checkout</a></li>
+    </ul>
 
-        <h2 id="4_2">4.2 Ik gebruik een postcodecheck extensie, is dat een probleem?</h2>
-        <p>
-            Het mogelijk een postcodecheck extensie te gebruiken in combinatie met de MyParcel België Magento 2
-            extensie. Doormiddel van de onderstaande link, kom jij op de site voor de door ons aanbevolen
-            extensie.<br><br>
-            <a href="http://www.postcode-checkout.nl/plug-ins/standaard/magento-2" target="_blank">Postcode Checkout
-                Magento Extensie</a>
-        </p>
+    <h2 id="4_2">4.2 Ik gebruik een postcodecheck extensie, is dat een probleem?</h2>
+    <p>
+        Het mogelijk een postcodecheck extensie te gebruiken in combinatie met de MyParcel België Magento 2
+        extensie. Doormiddel van de onderstaande link, kom jij op de site voor de door ons aanbevolen
+        extensie.<br><br>
+        <a href="http://www.postcode-checkout.nl/plug-ins/standaard/magento-2" target="_blank">Postcode Checkout
+            Magento Extensie</a>
+    </p>
 
-        <h2 id="4_3">4.3 Hoe kan ik gratis verzenden instellen?</h2>
-        <p>Naast de Table Rates kun je ook gratis verzenden instellen via Marketing > Winkelwagen prijsregels.</p>
-        <ol>
-            <li>Klik rechts bovenin op <span class="nice">Nieuwe regel toevoegen</span>.</li>
-            <li>
-                Bij <span class="nice">Regelgegevens</span> geef je de regel een naam (voorbeeld: ‘gratis verzenden
-                vanaf 50’). Zet de <span class="nice">status</span>
-                op <span class="nice">actief</span> en kies bij <span class="nice">websites</span> en <span
-                    class="nice">klantengroepen</span> alle opties.
-            </li>
-            <li>Klik links boven op <span class="nice">Voorwaarden</span> en schrijf zelf de regel door op <span
-                    class="nice">+</span> te klikken. (voorbeeld: Subtotaal gelijk aan of groter dan 50)
-            </li>
-            <li>Ga naar de volgende stap <span class="nice">acties</span> en geef bij <span class="nice">gratis verzending</span>
-                aan <span class="nice">Alleen voor betreffende artikelen</span>.
-            <li>Klik rechts bovenin op opslaan.</li>
-        </ol>
+    <h2 id="4_3">4.3 Hoe kan ik gratis verzenden instellen?</h2>
+    <p>Naast de Table Rates kun je ook gratis verzenden instellen via Marketing > Winkelwagen prijsregels.</p>
+    <ol>
+        <li>Klik rechts bovenin op <span class="nice">Nieuwe regel toevoegen</span>.</li>
+        <li>
+            Bij <span class="nice">Regelgegevens</span> geef je de regel een naam (voorbeeld: ‘gratis verzenden
+            vanaf 50’). Zet de <span class="nice">status</span>
+            op <span class="nice">actief</span> en kies bij <span class="nice">websites</span> en <span
+                class="nice">klantengroepen</span> alle opties.
+        </li>
+        <li>Klik links boven op <span class="nice">Voorwaarden</span> en schrijf zelf de regel door op <span
+                class="nice">+</span> te klikken. (voorbeeld: Subtotaal gelijk aan of groter dan 50)
+        </li>
+        <li>Ga naar de volgende stap <span class="nice">acties</span> en geef bij <span
+                class="nice">gratis verzending</span>
+            aan <span class="nice">Alleen voor betreffende artikelen</span>.
+        <li>Klik rechts bovenin op opslaan.</li>
+    </ol>
     </div>
 
     <footer class="site-footer">
