@@ -18,7 +18,8 @@
 
 namespace MyParcelBE\Magento\Model\Checkout;
 
-
+use Magento\Checkout\Block\Checkout\LayoutProcessor;
+use MyParcelBE\Magento\Helper\Checkout as CheckoutHelper;
 use MyParcelBE\Magento\Model\Quote\Checkout;
 
 class LayoutProcessorPlugin
@@ -41,32 +42,29 @@ class LayoutProcessorPlugin
      *
      * @return array
      */
-    public function afterProcess(
-        \Magento\Checkout\Block\Checkout\LayoutProcessor $subject,
-        array  $jsLayout
-    ) {
+    public function afterProcess(LayoutProcessor $subject, array  $jsLayout) {
         $jsLayout['components']['checkout']['children']['steps']['children']['shipping-step']
         ['children']['shippingAddress']['children']['before-shipping-method-form']['children'] =
             array_merge_recursive(
                 $jsLayout['components']['checkout']['children']['steps']['children']['shipping-step']
                 ['children']['shippingAddress']['children']['before-shipping-method-form']['children'],
                 [
-                    'delivery_options' => [
+                    CheckoutHelper::FIELD_DELIVERY_OPTIONS => [
                         'component' => 'Magento_Ui/js/form/element/abstract',
                         'config' => [
                             'customScope' => 'shippingAddress',
                             'template' => 'ui/form/field',
                             'elementTmpl' => 'ui/form/element/input',
                             'options' => [],
-                            'id' => 'delivery-options',
+                            'id' => 'myparcel-delivery-options',
                         ],
-                        'dataScope' => 'shippingAddress.delivery_options',
+                        'dataScope' => 'shippingAddress.' . CheckoutHelper::FIELD_DELIVERY_OPTIONS,
                         'label' => 'Delivery Options',
                         'provider' => 'checkoutProvider',
                         'visible' => false,
                         'validation' => [],
                         'sortOrder' => 200,
-                        'id' => 'delivery-options',
+                        'id' => 'myparcel-delivery-options',
                     ],
                 ]
             );

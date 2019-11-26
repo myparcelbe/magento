@@ -1,18 +1,19 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: reindert
- * Date: 01/06/2017
- * Time: 14:51
- */
 
 namespace MyParcelBE\Magento\Model\Quote;
 
-
+use Magento\Checkout\Model\Cart;
+use Magento\Checkout\Model\Session;
+use MyParcelBE\Magento\Helper\Data;
 use MyParcelBE\Magento\Model\Sales\Repository\PackageRepository;
+use \Magento\Store\Model\StoreManagerInterface;
 
 class Checkout
 {
+    const selectCarriersArray = 0;
+    const selectCarrierPath   = 1;
+    const platform            = 'belgie';
+
     /**
      * @var array
      */
@@ -38,158 +39,168 @@ class Checkout
     private $products;
 
     /**
+     * @var \Magento\Store\Model\StoreManagerInterface
+     */
+    private $currency;
+
+    /**
      * Checkout constructor.
-     * @param \Magento\Checkout\Model\Session $session
-     * @param \Magento\Checkout\Model\Cart $cart
-     * @param \MyParcelBE\Magento\Helper\Checkout $helper
-     * @param PackageRepository $package
+     *
+     * @param \Magento\Checkout\Model\Session            $session
+     * @param \Magento\Checkout\Model\Cart               $cart
+     * @param \MyParcelBE\Magento\Helper\Checkout        $helper
+     * @param PackageRepository                          $package
+     * @param \Magento\Store\Model\StoreManagerInterface $currency
      */
     public function __construct(
-        \Magento\Checkout\Model\Session $session,
-        \Magento\Checkout\Model\Cart $cart,
+        Session $session,
+        Cart $cart,
         \MyParcelBE\Magento\Helper\Checkout $helper,
-        PackageRepository $package
+        PackageRepository $package,
+        StoreManagerInterface $currency
     ) {
-        $this->helper = $helper;
-        $this->quoteId = $session->getQuoteId();
+        $this->helper   = $helper;
+        $this->quoteId  = $session->getQuoteId();
         $this->products = $cart->getItems();
-        $this->package = $package;
+        $this->package  = $package;
+        $this->currency = $currency;
     }
 
     /**
-     * Get settings for MyParcel checkout
+     * Get settings for MyParcel delivery options
      *
      * @return array
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getCheckoutSettings()
+    public function getDeliveryOptions(): array
     {
-
         $this->helper->setBasePriceFromQuote($this->quoteId);
 
         $this->data = [
-            'general' => $this->getGeneralData(),
-            'delivery' => $this->getDeliveryData(),
-            'pickup' => $this->getPickupData(),
-            'text' => $this->getCheckoutText(),
+            'methods' => explode(';', $this->getDeliveryMethods()),
+            'config'  => array_merge(
+                $this->getGeneralData(),
+                $this->getDeliveryData()
+            ),
+            'strings' => $this->getDeliveryOptionsStrings(),
         ];
 
-        $this
-            ->setExcludeDeliveryTypes();
-
-        return ['root' => [
-            'version' => (string)$this->helper->getVersion(),
-            'data' => (array)$this->data
-        ]];
+        return [
+            'root' => [
+                'version' => (string) $this->helper->getVersion(),
+                'data'    => (array) $this->data
+            ]
+        ];
     }
 
     /**
      * Get general data
      *
      * @return array)
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     private function getGeneralData()
     {
         return [
-            'base_price' => $this->helper->getMoneyFormat($this->helper->getBasePrice()),
-            'cutoff_time' => $this->helper->getTimeConfig('general/cutoff_time'),
-            'deliverydays_window' => $this->helper->getIntergerConfig('general/deliverydays_window'),
-            'dropoff_days' => $this->helper->getArrayConfig('general/dropoff_days'),
-            'dropoff_delay' => $this->helper->getIntergerConfig('general/dropoff_delay'),
-            'parent_carrier' => $this->helper->getParentCarrierNameFromQuote($this->quoteId),
-            'parent_method' => $this->helper->getParentMethodNameFromQuote($this->quoteId),
+            'allowRetry' => false,
+            'platform'   => self::platform,
+            'carriers'   => array_column($this->get_carriers(), self::selectCarriersArray),
+            'currency'   => $this->currency->getStore()->getCurrentCurrency()->getCode(),
         ];
     }
 
     /**
      * Get delivery data
      *
-     * @return array)
+     * @return array
      */
-    private function getDeliveryData()
+    private function getDeliveryData(): array
     {
-        $deliveryData = [
-            'signature_active' => $this->helper->getBoolConfig('delivery/signature_active'),
-            'signature_fee' => $this->helper->getMethodPriceFormat('delivery/signature_fee', false),
-            'saturday_active' => $this->helper->getBoolConfig('general/saturday_active'),
-            'saturday_fee' => $this->helper->getMethodPriceFormat('general/saturday_fee', false),
-        ];
+        $carriersPath   = $this->get_carriers();
+        $myParcelConfig = [];
 
-        if ($deliveryData['signature_active'] === false) {
-            $deliveryData['signature_fee'] = 'disabled';
+        foreach ($carriersPath as $carrier) {
+            $myParcelConfig["carrierSettings"][$carrier[self::selectCarriersArray]] = [
+                'allowDeliveryOptions' => $this->helper->getBoolConfig($carrier[self::selectCarrierPath], 'delivery/active'),
+                'allowSignature'       => $this->helper->getBoolConfig($carrier[self::selectCarrierPath], 'delivery/signature_active'),
+                'allowPickupLocations' => $this->helper->getBoolConfig($carrier[self::selectCarrierPath], 'pickup/active'),
+
+                'priceSignature'        => $this->helper->getMethodPriceFormat($carrier[self::selectCarrierPath], 'delivery/signature_fee', false),
+                'priceStandardDelivery' => $this->helper->getMoneyFormat($this->helper->getBasePrice()),
+                'pricePickup'           => $this->helper->getMethodPriceFormat($carrier[self::selectCarrierPath], 'pickup/fee', false),
+
+                'cutoffTime'         => $this->helper->getTimeConfig($carrier[self::selectCarrierPath], 'general/cutoff_time'),
+                'deliveryDaysWindow' => $this->helper->getIntergerConfig($carrier[self::selectCarrierPath], 'general/deliverydays_window'),
+                'dropOffDays'        => $this->helper->getArrayConfig($carrier[self::selectCarrierPath], 'general/dropoff_days'),
+                'dropOffDelay'       => $this->helper->getIntergerConfig($carrier[self::selectCarrierPath], 'general/dropoff_delay'),
+            ];
         }
 
-        if ($deliveryData['saturday_active'] === false) {
-            $deliveryData['saturday_fee'] = 'disabled';
-        }
-
-        return $deliveryData;
+        return $myParcelConfig;
     }
 
     /**
-     * Get pickup data
+     * Get the a list of the shipping methods.
      *
-     * @return array)
+     * @return string
      */
-    private function getPickupData()
+    private function getDeliveryMethods(): string
+    {
+        return $this->helper->getArrayConfig(Data::XML_PATH_GENERAL, 'shipping_methods/methods');
+    }
+
+
+    /**
+     * Get the array of enabled carriers by checking if they have either delivery or pickup enabled.
+     *
+     * @return array
+     */
+    private function get_carriers(): array
+    {
+        $carriersSettings = [
+            ['bpost', Data::XML_PATH_BPOST_SETTINGS],
+            ['dpd', Data::XML_PATH_DPD_SETTINGS]
+        ];
+
+        foreach ($carriersSettings as $carrier) {
+            if ($this->helper->getBoolConfig("{$carrier[self::selectCarrierPath]}", 'general/enabled') ||
+                $this->helper->getBoolConfig("{$carrier[self::selectCarrierPath]}", 'pickup/active')
+            ) {
+                $carriers[] = $carrier;
+            }
+        }
+
+        return $carriers;
+    }
+
+    /**
+     * Get delivery options strings
+     *
+     * @return array
+     */
+    private function getDeliveryOptionsStrings()
     {
         return [
-            'active' => $this->helper->getBoolConfig('pickup/active'),
-            'fee' => $this->helper->getMethodPriceFormat('pickup/fee', false),
+
+            'deliveryTitle'         => $this->helper->getGeneralConfig('delivery_titles/delivery_title'),
+            'deliveryStandardTitle' => $this->helper->getGeneralConfig('delivery_titles/standard_delivery_title'),
+            'pickupTitle'           => $this->helper->getGeneralConfig('delivery_titles/pickup_title'),
+            'signatureTitle'        => $this->helper->getGeneralConfig('delivery_titles/signature_title'),
+            'saturdayDeliveryTitle' => $this->helper->getGeneralConfig('delivery_titles/saturday_title'),
+
+            'wrongPostalCodeCity' => __('Postcode/city combination unknown'),
+            'addressNotFound'     => __('Address details are not entered'),
+            'closed'              => __('Closed'),
+            'retry'               => __('Again'),
+            'pickUpFrom'          => __('Pick up from'),
+            'openingHours'        => __('Opening hours'),
+
+            'cityText'       => __('City'),
+            'postalCodeText' => __('Postcode'),
+            'numberText'     => __('House number'),
+            'city'           => __('City'),
+            'postcode'       => __('Postcode'),
+            'houseNumber'    => __('House number'),
         ];
-    }
-
-    /**
-     * Get checkout text
-     *
-     * @return array)
-     */
-    private function getCheckoutText()
-    {
-        return [
-            'delivery_title'            => $this->helper->getCarrierConfig('delivery/delivery_title'),
-            'standard_delivery_title'   => $this->helper->getCarrierConfig('delivery/standard_delivery_title'),
-            'signature_title'           => $this->helper->getCarrierConfig('delivery/signature_title'),
-            'saturday_title'            => $this->helper->getCarrierConfig('general/saturday_title'),
-            'pickup_title'              => $this->helper->getCarrierConfig('pickup/title'),
-
-            'all_data_not_found'        => __('Address details are not entered'),
-            'pick_up_from'              => __('Pick up from'),
-            'opening_hours'             => __('Opening hours'),
-            'closed'                    => __('Closed'),
-            'postcode'                  => __('Postcode'),
-            'house_number'              => __('House number'),
-            'city'                      => __('City'),
-            'again'                     => __('Again'),
-            'wrong_house_number_city'   => __('Postcode/city combination unknown'),
-            'quick_delivery'            => __('Deliver as quickly as possible'),
-
-            'sunday'                    => __('Monday'),
-            'monday'                    => __('Tuesday'),
-            'tuesday'                   => __('Wednesday'),
-            'wednesday'                 => __('Thursday'),
-            'thursday'                  => __('Friday'),
-            'friday'                    => __('Saturday'),
-            'saturday'                  => __('Sunday'),
-        ];
-    }
-
-    /**
-     * This options allows the Merchant to exclude delivery types
-     *
-     * @return $this
-     */
-    private function setExcludeDeliveryTypes()
-    {
-        $excludeDeliveryTypes = [];
-
-        if ($this->data['pickup']['active'] == false) {
-            $excludeDeliveryTypes[] = '4';
-        }
-
-        $result = implode(';', $excludeDeliveryTypes);
-
-        $this->data['general']['exclude_delivery_types'] = $result;
-
-        return $this;
     }
 }

@@ -15,6 +15,7 @@
 namespace MyParcelBE\Magento\Model\Source;
 
 use Magento\Sales\Model\Order;
+use MyParcelBE\Magento\Helper\Checkout;
 use MyParcelBE\Magento\Helper\Data;
 
 class DefaultOptions
@@ -45,7 +46,7 @@ class DefaultOptions
         self::$helper = $helper;
         self::$order  = $order;
 
-        self::$chosenOptions = json_decode(self::$order->getData('delivery_options'), true);
+        self::$chosenOptions = json_decode(self::$order->getData(Checkout::FIELD_DELIVERY_OPTIONS), true);
     }
 
     /**
@@ -59,9 +60,9 @@ class DefaultOptions
     {
         // Check that the customer has already chosen this option in the checkout
         if (is_array(self::$chosenOptions) &&
-            key_exists('options', self::$chosenOptions) &&
-            key_exists($option, self::$chosenOptions['options']) &&
-            self::$chosenOptions['options'][$option] == true
+            key_exists('shipmentOptions', self::$chosenOptions) &&
+            key_exists($option, self::$chosenOptions['shipmentOptions']) &&
+            self::$chosenOptions['shipmentOptions'][$option] == true
         ) {
             return true;
         }

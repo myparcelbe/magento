@@ -14,12 +14,18 @@
 
 namespace MyParcelBE\Magento\Model\Sales;
 
+use Exception;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Sales\Model\Order;
+use MyParcelBE\Magento\Adapter\DeliveryOptionsFromOrderAdapter;
+use MyParcelBE\Magento\Helper\Checkout;
 use MyParcelBE\Magento\Helper\Data;
 use MyParcelBE\Magento\Model\Source\DefaultOptions;
+use MyparcelBE\Magento\Services\Normalizer\ConsignmentNormalizer;
+use MyParcelNL\Sdk\src\Adapter\DeliveryOptions\AbstractShipmentOptionsAdapter;
 use MyParcelNL\Sdk\src\Factory\ConsignmentFactory;
+use MyParcelNL\Sdk\src\Factory\DeliveryOptionsAdapterFactory;
 use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
 use MyParcelNL\Sdk\src\Model\Consignment\BpostConsignment;
 use MyParcelNL\Sdk\src\Model\MyParcelCustomsItem;
@@ -120,13 +126,22 @@ class TrackTraceHolder
      */
     public function convertDataFromMagentoToApi($magentoTrack, $options)
     {
-        $this->consignment = ConsignmentFactory::createByCarrierId(BpostConsignment::CARRIER_ID);
+        $shipment        = $magentoTrack->getShipment();
+        $address         = $shipment->getShippingAddress();
+        $checkoutData    = $shipment->getOrder()->getData('myparcel_delivery_options');
+        $packageType     = self::$defaultOptions->getPackageType();
+        $deliveryOptions = json_decode($checkoutData, true);
 
-        $shipment     = $magentoTrack->getShipment();
-        $address      = $shipment->getShippingAddress();
-        $checkoutData = $shipment->getOrder()->getData('delivery_options');
-        $deliveryType = $this->consignment->getDeliveryTypeFromCheckout($checkoutData);
-        $packageType = self::$defaultOptions->getPackageType();
+        try {
+            // create new instance from known json
+            $deliveryOptionsAdapter = DeliveryOptionsAdapterFactory::create((array) $deliveryOptions);
+        } catch (\BadMethodCallException $e) {
+            // create new instance from unknown json data
+            $deliveryOptions        = (new ConsignmentNormalizer((array) $deliveryOptions + $options))->normalize();
+            $deliveryOptionsAdapter = new DeliveryOptionsFromOrderAdapter($deliveryOptions);
+        }
+        $pickupLocationAdapter  = $deliveryOptionsAdapter->getPickupLocation();
+        $shippingOptionsAdapter = $deliveryOptionsAdapter->getShipmentOptions();
 
         $apiKey = $this->helper->getGeneralConfig(
             'api/key',
@@ -135,7 +150,7 @@ class TrackTraceHolder
 
         $this->validateApiKey($apiKey);
 
-        $this->consignment
+        $this->consignment = (ConsignmentFactory::createByCarrierName($deliveryOptionsAdapter->getCarrier()))
             ->setApiKey($apiKey)
             ->setReferenceId($shipment->getEntityId())
             ->setConsignmentId($magentoTrack->getData('myparcel_consignment_id'))
@@ -163,14 +178,27 @@ class TrackTraceHolder
             ->setPhone($address->getTelephone())
             ->setEmail($address->getEmail())
             ->setLabelDescription($shipment->getOrder()->getIncrementId())
-            ->setDeliveryDateFromCheckout($checkoutData)
-            ->setDeliveryType($deliveryType)
-            ->setPickupAddressFromCheckout($checkoutData)
+            ->setDeliveryDate($deliveryOptionsAdapter->getDate())
+            ->setDeliveryType($deliveryOptionsAdapter->getDeliveryTypeId())
             ->setPackageType($packageType)
-            ->setSignature($this->getValueOfOption($options, 'signature'))
-            ->setInsurance($options['insurance'] !== null ? $options['insurance'] : self::$defaultOptions->getDefaultInsurance());
+            ->setSignature($shippingOptionsAdapter->hasSignature())
+            ->setInsurance($shippingOptionsAdapter->getInsurance())
+            ->setInvoice('');
 
-        $this->convertDataForCdCountry($magentoTrack);
+        if ($deliveryOptionsAdapter->isPickup()) {
+            $this->consignment
+                ->setPickupPostalCode($pickupLocationAdapter->getPostalCode())
+                ->setPickupStreet($pickupLocationAdapter->getStreet())
+                ->setPickupCity($pickupLocationAdapter->getCity())
+                ->setPickupNumber($pickupLocationAdapter->getNumber())
+                ->setPickupCountry($pickupLocationAdapter->getCountry())
+                ->setPickupLocationName($pickupLocationAdapter->getLocationName())
+                ->setPickupLocationCode($pickupLocationAdapter->getLocationCode())
+                ->setPickupNetworkId($pickupLocationAdapter->getPickupNetworkId());
+        }
+
+        $this->convertDataForCdCountry($magentoTrack)
+             ->calculateTotalWeight($magentoTrack);
 
         return $this;
     }
@@ -256,6 +284,7 @@ class TrackTraceHolder
         }
     }
 
+
     /**
      * @param $shipmentId
      *
@@ -274,6 +303,34 @@ class TrackTraceHolder
         $items      = $conn->fetchAll($select);
 
         return $items;
+    }
+
+    /**
+     * @param bool|null $signature
+     *
+     * @return bool
+     */
+    protected function isSignature(?bool $signature): bool
+    {
+        if ($signature !== null) {
+            return (bool) $signature;
+        }
+
+        return (bool) self::$defaultOptions->getDefault('signature');
+    }
+
+    /**
+     * @param \MyParcelNL\Sdk\src\Adapter\DeliveryOptions\AbstractShipmentOptionsAdapter|null $shippingOptionsAdapter
+     *
+     * @return int|null
+     */
+    protected function hasInsurance(?AbstractShipmentOptionsAdapter $shippingOptionsAdapter)
+    {
+        if ($shippingOptionsAdapter->getInsurance() !== null) {
+            return $shippingOptionsAdapter->getInsurance();
+        }
+
+        return self::$defaultOptions->getDefaultInsurance();
     }
 
     /**
@@ -316,7 +373,7 @@ class TrackTraceHolder
         }
 
         if ($totalWeight == 0) {
-            throw new \Exception('The order with digital stamp can not be exported, no weights have been entered');
+            throw new Exception('The order with digital stamp can not be exported, no weights have been entered');
         }
 
         $this->consignment->setPhysicalProperties([
@@ -333,6 +390,6 @@ class TrackTraceHolder
      */
     private function getCentsByPrice(float $price): int
     {
-        return  (int) $price * 100;
+        return (int) $price * 100;
     }
 }

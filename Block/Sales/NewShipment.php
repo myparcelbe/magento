@@ -14,7 +14,13 @@
 
 namespace MyParcelBE\Magento\Block\Sales;
 
+use Magento\Backend\Block\Template\Context;
+use Magento\CatalogInventory\Api\StockConfigurationInterface;
+use Magento\CatalogInventory\Api\StockRegistryInterface;
+use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\Registry;
 use Magento\Sales\Block\Adminhtml\Items\AbstractItems;
+use MyParcelBE\Magento\Helper\Checkout;
 use MyParcelBE\Magento\Model\Source\DefaultOptions;
 
 class NewShipment extends AbstractItems
@@ -42,11 +48,11 @@ class NewShipment extends AbstractItems
      * @param \Magento\Framework\ObjectManagerInterface                 $objectManager
      */
     public function __construct(
-        \Magento\Backend\Block\Template\Context $context,
-        \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
-        \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration,
-        \Magento\Framework\Registry $registry,
-        \Magento\Framework\ObjectManagerInterface $objectManager
+        Context $context,
+        StockRegistryInterface $stockRegistry,
+        StockConfigurationInterface $stockConfiguration,
+        Registry $registry,
+        ObjectManagerInterface $objectManager
     ) {
         // Set order
         $this->order = $registry->registry('current_shipment')->getOrder();
@@ -102,6 +108,6 @@ class NewShipment extends AbstractItems
      */
     public function getChosenOptions()
     {
-        return json_decode($this->order->getData('delivery_options'), true);
+        return json_decode($this->order->getData(Checkout::FIELD_DELIVERY_OPTIONS), true);
     }
 }

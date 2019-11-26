@@ -20,6 +20,8 @@ use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Module\ModuleListInterface;
 use Magento\Store\Model\ScopeInterface;
+use MyParcelNL\Sdk\src\Model\Consignment\BpostConsignment;
+use MyParcelNL\Sdk\src\Model\Consignment\DPDConsignment;
 use MyParcelNL\Sdk\src\Services\CheckApiKeyService;
 
 class Data extends AbstractHelper
@@ -28,6 +30,13 @@ class Data extends AbstractHelper
     const XML_PATH_GENERAL        = 'myparcelbe_magento_general/';
     const XML_PATH_BPOST_SETTINGS = 'myparcelbe_magento_bpost_settings/';
     const XML_PATH_DPD_SETTINGS   = 'myparcelbe_magento_dpd_settings/';
+
+    public const CARRIERS = [BpostConsignment::CARRIER_NAME, DPDConsignment::CARRIER_NAME];
+
+    public const CARRIERS_XML_PATH_MAP = [
+        BpostConsignment::CARRIER_NAME => Data::XML_PATH_BPOST_SETTINGS,
+        DPDConsignment::CARRIER_NAME   => Data::XML_PATH_DPD_SETTINGS,
+    ];
 
     private $moduleList;
 

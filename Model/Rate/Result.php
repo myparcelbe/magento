@@ -18,7 +18,9 @@
 
 namespace MyParcelBE\Magento\Model\Rate;
 
+use Countable;
 use Magento\Checkout\Model\Session;
+use Magento\Quote\Model\Quote\Address\RateResult\Method;
 use MyParcelBE\Magento\Helper\Checkout;
 use MyParcelBE\Magento\Helper\Data;
 use MyParcelBE\Magento\Model\Sales\Repository\PackageRepository;
@@ -63,10 +65,12 @@ class Result extends \Magento\Shipping\Model\Rate\Result
      *
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Magento\Backend\Model\Session\Quote       $quote
-     * @param Checkout                                   $myParcelHelper
      * @param Session                                    $session
+     * @param Checkout                                   $myParcelHelper
      * @param PackageRepository                          $package
      *
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      * @internal param \Magento\Checkout\Model\Session $session
      */
     public function __construct(
@@ -84,7 +88,8 @@ class Result extends \Magento\Shipping\Model\Rate\Result
         $this->quote          = $quote;
 
         $this->parentMethods = explode(',', $this->myParcelHelper->getGeneralConfig('shipping_methods/methods', true));
-        $this->products      = $this->getProductsFromCardAndSession();
+        $this->package->setCurrentCountry($this->getQuoteFromCardOrSession()->getShippingAddress()->getCountryId());
+        $this->products = $this->getQuoteFromCardOrSession()->getItems();
     }
 
     /**
@@ -117,34 +122,21 @@ class Result extends \Magento\Shipping\Model\Rate\Result
      *
      * @return array
      */
-    private function getMethods()
+    private function getMethods(): array
     {
-        $methods = [
-            'signature' => 'delivery/signature_',
-            'pickup'    => 'pickup/',
+        return [
+            'pickup'             => 'pickup',
+            'standard'           => 'delivery',
+            'standard_signature' => 'delivery/signature',
         ];
-
-        return $methods;
     }
 
     /**
-     * Get allowed shipping methods
+     * Add MyParcel shipping rates.
      *
-     * @return array
+     * @param Method $parentRate
      */
-    private function getAllowedMethods()
-    {
-        $methods = $this->getMethods();
-
-        return $methods;
-    }
-
-    /**
-     * Add Myparcel shipping rates
-     *
-     * @param $parentRate \Magento\Quote\Model\Quote\Address\RateResult\Method
-     */
-    private function addMyParcelRates($parentRate)
+    private function addMyParcelRates($parentRate): void
     {
         if ($this->myParcelRatesAlreadyAdded) {
             return;
@@ -155,15 +147,23 @@ class Result extends \Magento\Shipping\Model\Rate\Result
             return;
         }
 
-        if (count($this->products) > 0) {
+        if (empty($this->products)) {
             $this->package->setWeightFromQuoteProducts($this->products);
         }
 
-        foreach ($this->getAllowedMethods() as $alias => $settingPath) {
-            $settingActive = $this->myParcelHelper->getConfigValue(Data::XML_PATH_BPOST_SETTINGS . $settingPath . 'active');
-            $active        = $settingActive === '1' || $settingActive === null;
-            if ($active) {
-                $method = $this->getShippingMethod($alias, $settingPath, $parentRate);
+        foreach ($this->getMethods() as $alias => $settingPath) {
+            foreach (Data::CARRIERS as $carrier) {
+                $map = Data::CARRIERS_XML_PATH_MAP[$carrier];
+
+                if (! $this->isSettingActive($map, $settingPath)) {
+                    continue;
+                }
+
+                $method = $this->getShippingMethod(
+                    $this->getFullSettingPath($map, $settingPath),
+                    $parentRate
+                );
+
                 $this->append($method);
             }
         }
@@ -172,24 +172,71 @@ class Result extends \Magento\Shipping\Model\Rate\Result
     }
 
     /**
-     * @param        $alias
-     * @param string $settingPath
-     * @param        $parentRate \Magento\Quote\Model\Quote\Address\RateResult\Method
+     * Check if a given map/setting combination is active. If the setting is not a top level setting its parent group
+     * will be checked for an "active" setting. If this is disabled this will return false;
      *
-     * @return \Magento\Quote\Model\Quote\Address\RateResult\Method
+     * @param        $map
+     * @param string $settingPath
+     *
+     * @return bool
      */
-    private function getShippingMethod($alias, $settingPath, $parentRate)
+    private function isSettingActive(string $map, string $settingPath): bool
+    {
+        $settingName   = $this->getFullSettingPath($map, $settingPath);
+        $settingActive = $this->myParcelHelper->getConfigValue($settingName . 'active');
+        $baseSettingActive = '1';
+
+        if (! $this->isBaseSetting($settingPath)) {
+            $baseSetting = $map . explode("/", $settingPath)[0];
+
+            $baseSettingActive = $this->myParcelHelper->getConfigValue($baseSetting . '/active');
+        }
+
+        return $settingActive === '1' && $baseSettingActive === '1';
+    }
+
+    /**
+     * @param string $map
+     * @param string $settingPath
+     *
+     * @return string
+     */
+    private function getFullSettingPath(string $map, string $settingPath): string
+    {
+        $separator = $this->isBaseSetting($settingPath) ? '/' : '_';
+
+        return $map . $settingPath . $separator;
+    }
+
+    /**
+     * @param string $settingPath
+     *
+     * @return bool
+     */
+    private function isBaseSetting(string $settingPath): bool
+    {
+        return strpos($settingPath, '/') === false;
+    }
+
+    /**
+     * @param string $settingPath
+     * @param Method $parentRate
+     *
+     * @return Method
+     */
+    private function getShippingMethod(string $settingPath, Method $parentRate): Method
     {
         $method = clone $parentRate;
-        $this->myParcelHelper->setBasePrice($parentRate->getPrice());
+        $this->myParcelHelper->setBasePrice($parentRate->getData('price'));
 
         $title = $this->createTitle($settingPath);
-        $price = $this->createPrice($alias, $settingPath);
-        $method->setCarrierTitle($alias);
-        $method->setMethod($alias);
-        $method->setMethodTitle($title);
+        $price = $this->getPrice($settingPath);
+
+        $method->setData('cost', 0);
+        // Trim the separator off the end of the settings path
+        $method->setData('method', substr($settingPath, 0, -1));
+        $method->setData('method_title', $title);
         $method->setPrice($price);
-        $method->setCost(0);
 
         return $method;
     }
@@ -207,7 +254,7 @@ class Result extends \Magento\Shipping\Model\Rate\Result
         $title = $this->myParcelHelper->getConfigValue(Data::XML_PATH_BPOST_SETTINGS . $settingPath . 'title');
 
         if ($title === null) {
-            $title = __($settingPath . 'title');
+            $title = __(substr($settingPath, 0, strlen($settingPath) - 1) . '_title');
         }
 
         return $title;
@@ -217,26 +264,35 @@ class Result extends \Magento\Shipping\Model\Rate\Result
      * Create price
      * Calculate price if multiple options are chosen
      *
-     * @param $alias
      * @param $settingPath
      *
      * @return float
      */
-    private function createPrice($alias, $settingPath)
+    private function getPrice($settingPath): float
     {
-        return $this->myParcelHelper->getMethodPrice($settingPath . 'fee', $alias);
+        $basePrice = $this->myParcelHelper->getBasePrice();
+        $settingFee = (float) $this->myParcelHelper->getConfigValue($settingPath . 'fee');
+
+        return $basePrice + $settingFee;
     }
 
     /**
      * Can't get quote from session\Magento\Checkout\Model\Session::getQuote()
      * To fix a conflict with buckeroo, use \Magento\Checkout\Model\Cart::getQuote() like the following
+     *
+     * @return \Magento\Quote\Model\Quote
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    private function getProductsFromCardAndSession()
-    {
-        if ($this->quote->getQuoteId() != null && count($this->quote->getQuote()->getItems())) {
-            return $this->quote->getQuote()->getItems();
+    private function getQuoteFromCardOrSession() {
+        if ($this->quote->getQuoteId() != null &&
+            $this->quote->getQuote() &&
+            $this->quote->getQuote() instanceof Countable &&
+            count($this->quote->getQuote())
+        ){
+            return $this->quote->getQuote();
         }
 
-        return $this->session->getQuote()->getItems();
+        return $this->session->getQuote();
     }
 }

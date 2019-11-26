@@ -71,7 +71,7 @@ class OrderExtension
 
         //Select Data from table
         $sql = $connection
-            ->select('delivery_options')
+            ->select('myparcel_delivery_options')
             ->from($tableName)
             ->where($searchColumn . ' = ' . (int) $searchValue);
 
@@ -81,7 +81,7 @@ class OrderExtension
             return null;
         }
 
-        return $result[0]['delivery_options'];
+        return $result[0]['myparcel_delivery_options'];
     }
 
     /**
