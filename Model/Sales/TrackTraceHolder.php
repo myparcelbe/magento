@@ -22,7 +22,7 @@ use MyParcelBE\Magento\Adapter\DeliveryOptionsFromOrderAdapter;
 use MyParcelBE\Magento\Helper\Checkout;
 use MyParcelBE\Magento\Helper\Data;
 use MyParcelBE\Magento\Model\Source\DefaultOptions;
-use MyparcelBE\Magento\Services\Normalizer\ConsignmentNormalizer;
+use MyParcelBE\Magento\Services\Normalizer\ConsignmentNormalizer;
 use MyParcelNL\Sdk\src\Adapter\DeliveryOptions\AbstractShipmentOptionsAdapter;
 use MyParcelNL\Sdk\src\Factory\ConsignmentFactory;
 use MyParcelNL\Sdk\src\Factory\DeliveryOptionsAdapterFactory;
