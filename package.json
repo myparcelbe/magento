@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "cp -f node_modules/@myparcel/checkout/dist/myparcel.js view/frontend/web/js/vendor && cp -f node_modules/custom-event-polyfill/polyfill.js view/frontend/web/js/vendor/polyfill-custom-event.js"
+    "postinstall": "node postinstall.js"
   },
   "repository": {
     "type": "git",
@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/myparcelbe/magento#readme",
   "dependencies": {
-    "@myparcel/checkout": "^3.0.27",
+    "@myparcel/checkout": "^3.1.0-alpha.8",
     "custom-event-polyfill": "^1.0.7"
   },
   "devDependencies": {
