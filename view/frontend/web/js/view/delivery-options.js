@@ -78,10 +78,10 @@ define(
        * Create the div the delivery options will be rendered in, if it doesn't exist yet.
        */
       render: function() {
-        const hasUnrenderedDiv = document.querySelector('#myparcel-delivery-options');
-        const hasRenderedDeliveryOptions = document.querySelector('.myparcel-delivery-options__table');
-        const shippingMethodDiv = document.querySelector('#checkout-shipping-method-load');
-        const deliveryOptionsDiv = document.createElement('div');
+        var hasUnrenderedDiv = document.querySelector('#myparcel-delivery-options');
+        var hasRenderedDeliveryOptions = document.querySelector('.myparcel-delivery-options__table');
+        var shippingMethodDiv = document.querySelector('#checkout-shipping-method-load');
+        var deliveryOptionsDiv = document.createElement('div');
 
         deliveryOptions.rendered(false);
 
@@ -127,8 +127,8 @@ define(
        * @returns {String|undefined} - The house number, if found. Otherwise null.
        */
       getHouseNumber: function(address) {
-        const result = this.splitStreetRegex.exec(address);
-        const numberIndex = 2;
+        var result = this.splitStreetRegex.exec(address);
+        var numberIndex = 2;
         return result ? result[numberIndex] : null;
       },
 
@@ -138,7 +138,7 @@ define(
        * @param {String} identifier - Name of the event.
        */
       triggerEvent: function(identifier) {
-        const event = document.createEvent('HTMLEvents');
+        var event = document.createEvent('HTMLEvents');
         event.initEvent(identifier, true, false);
         document.querySelector('body').dispatchEvent(event);
       },
@@ -199,10 +199,10 @@ define(
        * @param {Object} selectedShippingMethod - The shipping method that was selected.
        */
       onShippingMethodUpdate: function(selectedShippingMethod) {
-        const newShippingMethod = selectedShippingMethod || {};
-        const available = newShippingMethod.available || false;
-        const methodEnabled = checkout.allowedShippingMethods().indexOf(newShippingMethod.method_code) > -1;
-        const isMyParcelMethod = available ? newShippingMethod.method_code.indexOf('myparcel') > -1 : false;
+        var newShippingMethod = selectedShippingMethod || {};
+        var available = newShippingMethod.available || false;
+        var methodEnabled = checkout.allowedShippingMethods().indexOf(newShippingMethod.method_code) > -1;
+        var isMyParcelMethod = available ? newShippingMethod.method_code.indexOf('myparcel') > -1 : false;
 
         checkout.hideShippingMethods();
 
@@ -231,8 +231,8 @@ define(
        * @returns {Object}
        */
       getNewShippingMethod: function(methodCode) {
-        const newShippingMethod = [];
-        const matchingShippingMethod = checkout.findRateByMethodCode(methodCode);
+        var newShippingMethod = [];
+        var matchingShippingMethod = checkout.findRateByMethodCode(methodCode);
 
         if (matchingShippingMethod) {
           return matchingShippingMethod;
@@ -242,7 +242,7 @@ define(
            *  matches.
            */
           window.MyParcelConfig.methods.forEach(function(method) {
-            const foundMethod = checkout.findRateByMethodCode(method);
+            var foundMethod = checkout.findRateByMethodCode(method);
 
             if (foundMethod) {
               newShippingMethod.push(foundMethod);

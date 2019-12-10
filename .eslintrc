@@ -11,7 +11,8 @@
       },
       "rules": {
         "no-console": "off",
-        "max-len": "off"
+        "max-len": "off",
+        "no-var": "off"
       }
     }
   ]
