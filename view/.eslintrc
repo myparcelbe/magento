@@ -1,5 +1,4 @@
 {
-  "extends": "@myparcel/eslint-config/preset-default",
   "globals": {
     "MyParcel": "writable",
     "MyParcelConfig": "writable",

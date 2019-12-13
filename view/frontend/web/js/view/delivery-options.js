@@ -8,15 +8,25 @@ define(
     'MyParcelBE_Magento/js/polyfill/array_prototype_find',
     'MyParcelBE_Magento/js/vendor/myparcel',
     'MyParcelBE_Magento/js/vendor/polyfill-custom-event',
+    'leaflet',
+    'vue2leaflet',
   ],
   function(
     _,
     ko,
     shippingRateRegistry,
     quote,
-    checkout
+    checkout,
+    array_prototype_find,
+    myparcel,
+    CustomEvent,
+    leaflet,
+    vue2leaflet,
   ) {
     'use strict';
+
+    // HACK: without this the pickup locations map doesn't work as RequireJS messes with any global variables.
+    window.Vue2Leaflet = vue2leaflet;
 
     var deliveryOptions = {
       rendered: ko.observable(false),
@@ -60,7 +70,7 @@ define(
 
         document.removeEventListener(
           deliveryOptions.updatedDeliveryOptionsEvent,
-          deliveryOptions.onUpdatedDeliveryOptions
+          deliveryOptions.onUpdatedDeliveryOptions,
         );
       },
 
@@ -105,7 +115,7 @@ define(
 
         document.addEventListener(
           deliveryOptions.updatedDeliveryOptionsEvent,
-          deliveryOptions.onUpdatedDeliveryOptions
+          deliveryOptions.onUpdatedDeliveryOptions,
         );
       },
 
@@ -245,5 +255,5 @@ define(
     };
 
     return deliveryOptions;
-  }
+  },
 );
