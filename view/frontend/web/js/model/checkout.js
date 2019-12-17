@@ -180,7 +180,6 @@ function(
   }
 
   function updateHasDeliveryOptions() {
-    var allowedCountries = ['BE'];
     var isAllowed = false;
 
     Model.allowedShippingMethods().forEach(function(methodCode) {
@@ -190,10 +189,6 @@ function(
         isAllowed = true;
       }
     });
-
-    if (allowedCountries.indexOf(quote.shippingAddress().countryId) === -1) {
-      isAllowed = false;
-    }
 
     Model.hasDeliveryOptions(isAllowed);
     Model.hideShippingMethods();
