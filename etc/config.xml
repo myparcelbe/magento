@@ -20,6 +20,8 @@
                 <standard_delivery_title>Standaardlevering</standard_delivery_title>
                 <signature_title>Handtekening voor ontvangst</signature_title>
                 <pickup_title>Ophalen bij een Bpost locatie</pickup_title>
+                <pickup_list_button_title>List</pickup_list_button_title>
+                <pickup_map_button_title>Map</pickup_map_button_title>
             </delivery_titles>
         </myparcelbe_magento_general>
         <myparcelbe_magento_bpost_settings>

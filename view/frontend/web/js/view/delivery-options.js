@@ -21,7 +21,7 @@ define(
     myparcel,
     CustomEvent,
     leaflet,
-    vue2leaflet,
+    vue2leaflet
   ) {
     'use strict';
 
@@ -70,7 +70,7 @@ define(
 
         document.removeEventListener(
           deliveryOptions.updatedDeliveryOptionsEvent,
-          deliveryOptions.onUpdatedDeliveryOptions,
+          deliveryOptions.onUpdatedDeliveryOptions
         );
       },
 
@@ -115,7 +115,7 @@ define(
 
         document.addEventListener(
           deliveryOptions.updatedDeliveryOptionsEvent,
-          deliveryOptions.onUpdatedDeliveryOptions,
+          deliveryOptions.onUpdatedDeliveryOptions
         );
       },
 
@@ -255,5 +255,5 @@ define(
     };
 
     return deliveryOptions;
-  },
+  }
 );
