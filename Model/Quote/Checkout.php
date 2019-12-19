@@ -102,10 +102,11 @@ class Checkout
     private function getGeneralData()
     {
         return [
-            'allowRetry' => false,
-            'platform'   => self::platform,
-            'carriers'   => array_column($this->get_carriers(), self::selectCarriersArray),
-            'currency'   => $this->currency->getStore()->getCurrentCurrency()->getCode(),
+            'allowRetry'                 => false,
+            'platform'                   => self::platform,
+            'carriers'                   => array_column($this->get_carriers(), self::selectCarriersArray),
+            'currency'                   => $this->currency->getStore()->getCurrentCurrency()->getCode(),
+            'pickupLocationsDefaultView' => $this->helper->getArrayConfig(Data::XML_PATH_GENERAL, 'shipping_methods/pickup_locations_view')
         ];
     }
 
@@ -182,11 +183,13 @@ class Checkout
     {
         return [
 
-            'deliveryTitle'         => $this->helper->getGeneralConfig('delivery_titles/delivery_title'),
-            'deliveryStandardTitle' => $this->helper->getGeneralConfig('delivery_titles/standard_delivery_title'),
-            'pickupTitle'           => $this->helper->getGeneralConfig('delivery_titles/pickup_title'),
-            'signatureTitle'        => $this->helper->getGeneralConfig('delivery_titles/signature_title'),
-            'saturdayDeliveryTitle' => $this->helper->getGeneralConfig('delivery_titles/saturday_title'),
+            'deliveryTitle'             => $this->helper->getGeneralConfig('delivery_titles/delivery_title'),
+            'deliveryStandardTitle'     => $this->helper->getGeneralConfig('delivery_titles/standard_delivery_title'),
+            'pickupTitle'               => $this->helper->getGeneralConfig('delivery_titles/pickup_title'),
+            "pickupLocationsListButton" => $this->helper->getGeneralConfig('delivery_titles/pickup_list_button_title'),
+            "pickupLocationsMapButton"  => $this->helper->getGeneralConfig('delivery_titles/pickup_map_button_title'),
+            'signatureTitle'            => $this->helper->getGeneralConfig('delivery_titles/signature_title'),
+            'saturdayDeliveryTitle'     => $this->helper->getGeneralConfig('delivery_titles/saturday_title'),
 
             'wrongPostalCodeCity' => __('Postcode/city combination unknown'),
             'addressNotFound'     => __('Address details are not entered'),
