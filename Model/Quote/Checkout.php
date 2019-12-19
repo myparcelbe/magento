@@ -186,8 +186,8 @@ class Checkout
             'deliveryTitle'             => $this->helper->getGeneralConfig('delivery_titles/delivery_title'),
             'deliveryStandardTitle'     => $this->helper->getGeneralConfig('delivery_titles/standard_delivery_title'),
             'pickupTitle'               => $this->helper->getGeneralConfig('delivery_titles/pickup_title'),
-            "pickupLocationsListButton" => $this->helper->getGeneralConfig('delivery_titles/pickup_list_button_title'),
-            "pickupLocationsMapButton"  => $this->helper->getGeneralConfig('delivery_titles/pickup_map_button_title'),
+            'pickupLocationsListButton' => $this->helper->getGeneralConfig('delivery_titles/pickup_list_button_title'),
+            'pickupLocationsMapButton'  => $this->helper->getGeneralConfig('delivery_titles/pickup_map_button_title'),
             'signatureTitle'            => $this->helper->getGeneralConfig('delivery_titles/signature_title'),
             'saturdayDeliveryTitle'     => $this->helper->getGeneralConfig('delivery_titles/saturday_title'),
 

@@ -17,7 +17,10 @@ class PickupLocationsView implements ArrayInterface
      */
     public function toOptionArray()
     {
-        return [['value' => 'list', 'label' => __('Show list first')], ['value' => 'map', 'label' => __('Show map first')]];
+        return [
+            ['value' => 'list', 'label' => __('Show list first')],
+            ['value' => 'map', 'label' => __('Show map first')]
+        ];
     }
 
     /**
@@ -27,6 +30,9 @@ class PickupLocationsView implements ArrayInterface
      */
     public function toArray()
     {
-        return ['list' => __('Show list first'), 'map' => __('Show map first')];
+        return [
+            'list' => __('Show list first'),
+            'map'  => __('Show map first')
+        ];
     }
 }
