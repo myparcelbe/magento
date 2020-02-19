@@ -124,9 +124,11 @@ class Checkout
             $myParcelConfig["carrierSettings"][$carrier[self::selectCarriersArray]] = [
                 'allowDeliveryOptions' => $this->helper->getBoolConfig($carrier[self::selectCarrierPath], 'delivery/active'),
                 'allowSignature'       => $this->helper->getBoolConfig($carrier[self::selectCarrierPath], 'delivery/signature_active'),
+                'allowOnlyRecipient'   => $this->helper->getBoolConfig($carrier[self::selectCarrierPath], 'delivery/only_recipient_active'),
                 'allowPickupLocations' => $this->helper->getBoolConfig($carrier[self::selectCarrierPath], 'pickup/active'),
 
                 'priceSignature'        => $this->helper->getMethodPriceFormat($carrier[self::selectCarrierPath], 'delivery/signature_fee', false),
+                'priceOnlyRecipient'    => $this->helper->getMethodPriceFormat($carrier[self::selectCarrierPath], 'delivery/only_recipient_fee', false),
                 'priceStandardDelivery' => $this->helper->getMoneyFormat($this->helper->getBasePrice()),
                 'pricePickup'           => $this->helper->getMethodPriceFormat($carrier[self::selectCarrierPath], 'pickup/fee', false),
 
@@ -160,7 +162,8 @@ class Checkout
     {
         $carriersSettings = [
             ['bpost', Data::XML_PATH_BPOST_SETTINGS],
-            ['dpd', Data::XML_PATH_DPD_SETTINGS]
+            ['dpd', Data::XML_PATH_DPD_SETTINGS],
+            ['postnl', Data::XML_PATH_POSTNL_SETTINGS]
         ];
 
         foreach ($carriersSettings as $carrier) {
@@ -188,6 +191,7 @@ class Checkout
             'pickupTitle'               => $this->helper->getGeneralConfig('delivery_titles/pickup_title'),
             'pickupLocationsListButton' => $this->helper->getGeneralConfig('delivery_titles/pickup_list_button_title'),
             'pickupLocationsMapButton'  => $this->helper->getGeneralConfig('delivery_titles/pickup_map_button_title'),
+            'onlyRecipientTitle'        => $this->helper->getGeneralConfig('delivery_titles/only_recipient_title'),
             'signatureTitle'            => $this->helper->getGeneralConfig('delivery_titles/signature_title'),
             'saturdayDeliveryTitle'     => $this->helper->getGeneralConfig('delivery_titles/saturday_title'),
 

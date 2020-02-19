@@ -22,20 +22,27 @@ use Magento\Framework\Module\ModuleListInterface;
 use Magento\Store\Model\ScopeInterface;
 use MyParcelNL\Sdk\src\Model\Consignment\BpostConsignment;
 use MyParcelNL\Sdk\src\Model\Consignment\DPDConsignment;
+use MyParcelNL\Sdk\src\Model\Consignment\PostNLConsignment;
 use MyParcelNL\Sdk\src\Services\CheckApiKeyService;
 
 class Data extends AbstractHelper
 {
-    const MODULE_NAME             = 'MyParcelBE_Magento';
-    const XML_PATH_GENERAL        = 'myparcelbe_magento_general/';
-    const XML_PATH_BPOST_SETTINGS = 'myparcelbe_magento_bpost_settings/';
-    const XML_PATH_DPD_SETTINGS   = 'myparcelbe_magento_dpd_settings/';
+    const MODULE_NAME              = 'MyParcelBE_Magento';
+    const XML_PATH_GENERAL         = 'myparcelbe_magento_general/';
+    const XML_PATH_BPOST_SETTINGS  = 'myparcelbe_magento_bpost_settings/';
+    const XML_PATH_DPD_SETTINGS    = 'myparcelbe_magento_dpd_settings/';
+    const XML_PATH_POSTNL_SETTINGS = 'myparcelbe_magento_postnl_settings/';
 
-    public const CARRIERS = [BpostConsignment::CARRIER_NAME, DPDConsignment::CARRIER_NAME];
+    public const CARRIERS = [
+        BpostConsignment::CARRIER_NAME,
+        DPDConsignment::CARRIER_NAME,
+        PostNLConsignment::CARRIER_NAME
+    ];
 
     public const CARRIERS_XML_PATH_MAP = [
-        BpostConsignment::CARRIER_NAME => Data::XML_PATH_BPOST_SETTINGS,
-        DPDConsignment::CARRIER_NAME   => Data::XML_PATH_DPD_SETTINGS,
+        BpostConsignment::CARRIER_NAME  => Data::XML_PATH_BPOST_SETTINGS,
+        DPDConsignment::CARRIER_NAME    => Data::XML_PATH_DPD_SETTINGS,
+        PostNLConsignment::CARRIER_NAME => Data::XML_PATH_POSTNL_SETTINGS,
     ];
 
     private $moduleList;
@@ -48,9 +55,9 @@ class Data extends AbstractHelper
     /**
      * Get settings by field
      *
-     * @param Context $context
+     * @param Context             $context
      * @param ModuleListInterface $moduleList
-     * @param CheckApiKeyService $checkApiKeyService
+     * @param CheckApiKeyService  $checkApiKeyService
      */
     public function __construct(
         Context $context,
@@ -58,7 +65,7 @@ class Data extends AbstractHelper
         CheckApiKeyService $checkApiKeyService
     ) {
         parent::__construct($context);
-        $this->moduleList = $moduleList;
+        $this->moduleList         = $moduleList;
         $this->checkApiKeyService = $checkApiKeyService;
     }
 
@@ -121,11 +128,11 @@ class Data extends AbstractHelper
             }
         }
 
-        if (!is_array($settings)) {
+        if (! is_array($settings)) {
             $this->_logger->critical('No data in settings array');
         }
 
-        if (!key_exists($code, $settings)) {
+        if (! key_exists($code, $settings)) {
             $this->_logger->critical('Can\'t get setting ' . $code);
         }
 
@@ -142,7 +149,7 @@ class Data extends AbstractHelper
         $moduleCode = self::MODULE_NAME;
         $moduleInfo = $this->moduleList->getOne($moduleCode);
 
-        return (string)$moduleInfo['setup_version'];
+        return (string) $moduleInfo['setup_version'];
     }
 
     /**
@@ -151,7 +158,7 @@ class Data extends AbstractHelper
     public function apiKeyIsCorrect()
     {
         $defaultApiKey = $this->getGeneralConfig('api/key');
-        $keyIsCorrect = $this->checkApiKeyService->setApiKey($defaultApiKey)->apiKeyIsCorrect();
+        $keyIsCorrect  = $this->checkApiKeyService->setApiKey($defaultApiKey)->apiKeyIsCorrect();
 
         return $keyIsCorrect;
     }
