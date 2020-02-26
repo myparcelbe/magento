@@ -182,6 +182,7 @@ class TrackTraceHolder
             ->setDeliveryType($deliveryOptionsAdapter->getDeliveryTypeId())
             ->setPackageType($packageType)
             ->setSignature($shippingOptionsAdapter->hasSignature())
+            ->setOnlyRecipient($shippingOptionsAdapter->hasOnlyRecipient())
             ->setInsurance($shippingOptionsAdapter->getInsurance())
             ->setInvoice('');
 

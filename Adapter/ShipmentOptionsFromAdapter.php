@@ -18,6 +18,7 @@ class ShipmentOptionsFromAdapter extends AbstractShipmentOptionsAdapter
     {
         $options         = $inputData ?? [];
         $this->signature = (bool) ($options['signature'] ?? false);
+        $this->only_recipient = (bool) ($options['only_recipient'] ?? false);
         $this->insurance = (int) ($options['insurance'] ?? self::DEFAULT_INSURANCE);
     }
 }
