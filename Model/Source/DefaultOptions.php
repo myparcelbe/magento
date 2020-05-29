@@ -52,7 +52,7 @@ class DefaultOptions
     /**
      * Get default of the option
      *
-     * @param $option 'signature'
+     * @param $option 'only_recipient'|'signature'|'return'|'large_format'
      *
      * @return bool
      */

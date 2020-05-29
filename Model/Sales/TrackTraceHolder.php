@@ -15,6 +15,7 @@
 namespace MyParcelBE\Magento\Model\Sales;
 
 use Exception;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Sales\Model\Order;
@@ -181,10 +182,13 @@ class TrackTraceHolder
             ->setDeliveryDate($this->helper->convertDeliveryDate($deliveryOptionsAdapter->getDate()))
             ->setDeliveryType($deliveryOptionsAdapter->getDeliveryTypeId())
             ->setPackageType($packageType)
-            ->setSignature($shippingOptionsAdapter->hasSignature())
-            ->setOnlyRecipient($shippingOptionsAdapter->hasOnlyRecipient())
-            ->setInsurance($shippingOptionsAdapter->getInsurance())
-            ->setInvoice('');
+            ->setSignature($this->getValueOfOption($options, 'signature'))
+            ->setOnlyRecipient($this->getValueOfOption($options, 'only_recipient'))
+            ->setReturn($this->getValueOfOption($options, 'return'))
+            ->setInsurance(
+                $options['insurance'] !== null ? $options['insurance'] : self::$defaultOptions->getDefaultInsurance()
+            )
+            ->setInvoice($magentoTrack->getShipment()->getOrder()->getIncrementId());
 
         if ($deliveryOptionsAdapter->isPickup()) {
             $this->consignment
@@ -257,13 +261,81 @@ class TrackTraceHolder
                 ->setAmount($product['qty'])
                 ->setWeight($product['weight'] ?: 1)
                 ->setItemValue($this->getCentsByPrice($product['price']))
-                ->setClassification('0000')
+                ->setClassification(
+                    (int) $this->getAttributeValue('catalog_product_entity_int', $product['product_id'], 'classification')
+                )
                 ->setCountry('BE');
 
             $this->consignment->addItem($myParcelProduct);
         }
 
         return $this;
+    }
+
+    /**
+     * @param string $tableName
+     * @param string $entityId
+     * @param string $column
+     *
+     * @return string|null
+     */
+    private function getAttributeValue(string $tableName, string $entityId, string $column): ?string
+    {
+        $objectManager = ObjectManager::getInstance();
+        $resource      = $objectManager->get('Magento\Framework\App\ResourceConnection');
+        $connection    = $resource->getConnection();
+        $attributeId   = $this->getAttributeId(
+            $connection,
+            $resource->getTableName('eav_attribute'),
+            $column
+        );
+
+        $attributeValue = $this
+            ->getValueFromAttribute(
+                $connection,
+                $resource->getTableName($tableName),
+                $attributeId,
+                $entityId
+            );
+
+        return $attributeValue;
+    }
+
+    /**
+     * @param object $connection
+     * @param string $tableName
+     * @param string $databaseColumn
+     *
+     * @return mixed
+     */
+    private function getAttributeId(object $connection, string $tableName, string $databaseColumn): string
+    {
+        $sql = $connection
+            ->select('entity_type_id')
+            ->from($tableName)
+            ->where('attribute_code = ?', 'myparcel_' . $databaseColumn);
+
+        return $connection->fetchOne($sql);
+    }
+
+    /**
+     * @param object $connection
+     * @param string $tableName
+     *
+     * @param string $attributeId
+     * @param string $entityId
+     *
+     * @return string|null
+     */
+    private function getValueFromAttribute(object $connection, string $tableName, string $attributeId, string $entityId): ?string
+    {
+        $sql = $connection
+            ->select()
+            ->from($tableName, ['value'])
+            ->where('attribute_id = ?', $attributeId)
+            ->where('entity_id = ?', $entityId);
+
+        return $connection->fetchOne($sql);
     }
 
     /**
