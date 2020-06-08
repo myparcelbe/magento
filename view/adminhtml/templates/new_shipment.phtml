@@ -39,6 +39,18 @@
             <span><?=__('Signature on receipt') ?></span>
         </label>
     </div>
+    div class="field choice admin__field admin__field-option field-mypa_only_recipient mypa_package-toggle mypa-option-toggle" style="display:none; padding-left: 30px;">
+    <input id="mypa_only_recipient"
+           class="admin__control-checkbox"
+           name="mypa_only_recipient"
+           value="1"
+           type="checkbox"
+        <?= $block->getDefaultOption('only_recipient') == true ? 'checked="checked"' : '';?>
+    />
+    <label class="admin__field-label" for="mypa_only_recipient">
+        <span><?=__('Home address only') ?></span>
+    </label>
+    </div>
     <div class="field choice admin__field admin__field-option field-mypa_insurance mypa_package-toggle mypa-option-toggle" style="display:none; padding-left: 30px;">
         <label class="admin__field-label" for="mypa_insurance" style="display: block">
             <span><?=__('Insured up to:') ?></span>

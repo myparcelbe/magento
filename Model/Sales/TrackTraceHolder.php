@@ -180,10 +180,12 @@ class TrackTraceHolder
             ->setDeliveryDate($this->helper->convertDeliveryDate($deliveryOptionsAdapter->getDate()))
             ->setDeliveryType($deliveryOptionsAdapter->getDeliveryTypeId())
             ->setPackageType($packageType)
-            ->setSignature($shippingOptionsAdapter->hasSignature())
-            ->setOnlyRecipient($shippingOptionsAdapter->hasOnlyRecipient())
-            ->setInsurance($shippingOptionsAdapter->getInsurance())
-            ->setInvoice('');
+            ->setSignature($this->getValueOfOption($options, 'signature'))
+            ->setOnlyRecipient($this->getValueOfOption($options, 'only_recipient'))
+            ->setInsurance(
+                $options['insurance'] !== null ? $options['insurance'] : self::$defaultOptions->getDefaultInsurance()
+            )
+            ->setInvoice($magentoTrack->getShipment()->getOrder()->getIncrementId());
 
         if ($deliveryOptionsAdapter->isPickup()) {
             $this->consignment

@@ -125,9 +125,10 @@ class Result extends \Magento\Shipping\Model\Rate\Result
     private function getMethods(): array
     {
         return [
-            'pickup'             => 'pickup',
-            'standard'           => 'delivery',
-            'standard_signature' => 'delivery/signature',
+            'pickup'                  => 'pickup',
+            'standard'                => 'delivery',
+            'standard_signature'      => 'delivery/signature',
+            'standard_only_recipient' => 'delivery/only_recipient',
         ];
     }
 
