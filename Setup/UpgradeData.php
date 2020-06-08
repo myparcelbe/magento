@@ -70,7 +70,7 @@ class UpgradeData implements UpgradeDataInterface
      */
     public function upgrade(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
-        if (version_compare($context->getVersion(), '3.0.1', '<=')) {
+        if (version_compare($context->getVersion(), '3.0.0', '<=')) {
             $connection = $setup->getConnection();
             $table    = $setup->getTable('core_config_data');
 
@@ -236,7 +236,7 @@ class UpgradeData implements UpgradeDataInterface
                 );
 
                 // Set a new 'MyParcel options' group and place the option 'myparcel_fit_in_mailbox' standard on false by default
-                if (version_compare($context->getVersion(), '3.0.0', '<=')) {
+                if (version_compare($context->getVersion(), '3.0.1', '<=')) {
                     $setup->startSetup();
 
                     // get entity type id so that attribute are only assigned to catalog_product
