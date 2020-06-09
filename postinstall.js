@@ -7,7 +7,7 @@ const nodeModules = path.resolve(__dirname, 'node_modules');
 
 const copy = [
   [
-    `${nodeModules}/@myparcel/checkout/dist/myparcel.js`,
+    `${nodeModules}/@myparcel/delivery-option/dist/myparcel.js`,
     vendor,
   ],
   [
