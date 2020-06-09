@@ -39,7 +39,7 @@
             <span><?=__('Signature on receipt') ?></span>
         </label>
     </div>
-    div class="field choice admin__field admin__field-option field-mypa_only_recipient mypa_package-toggle mypa-option-toggle" style="display:none; padding-left: 30px;">
+    <div class="field choice admin__field admin__field-option field-mypa_only_recipient mypa_package-toggle mypa-option-toggle" style="display:none; padding-left: 30px;">
     <input id="mypa_only_recipient"
            class="admin__control-checkbox"
            name="mypa_only_recipient"
@@ -78,6 +78,14 @@
             </div>
         </div>
     </div>
+<div class="field field-mypa_carrier_PostNL mypa_carrier-toggle" style="margin-top: 10px;">
+    <div class="admin__field-control">
+        <div class="admin__field admin__field-option">
+            <input type="radio" class="admin__control-radio" id="mypa_carrier_PostNL" name="mypa_carrier" value="postnl">
+            <label class="admin__field-label" for="mypa_carrier"><?=__('PostNL');?></label>
+        </div>
+    </div>
+</div>
     <div class="field field-mypa_package_type" style="margin-top: 10px;">
         <div class="admin__field-control">
             <div class="admin__field admin__field-option">

@@ -83,6 +83,7 @@ class MagentoCollection implements MagentoCollectionInterface
         'signature'                         => null,
         'insurance'                         => null,
         'only_recipient'                    => null,
+        'large_format'                      => null,
     ];
 
     /**

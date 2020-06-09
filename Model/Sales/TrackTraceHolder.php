@@ -16,6 +16,7 @@ namespace MyParcelBE\Magento\Model\Sales;
 
 use Exception;
 use Magento\Framework\App\ObjectManager;
+use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Sales\Model\Order;
@@ -67,16 +68,16 @@ class TrackTraceHolder
     public $mageTrack;
 
     /**
-     * @var \MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment|null
+     * @var AbstractConsignment|null
      */
     public $consignment;
 
     /**
      * TrackTraceHolder constructor.
      *
-     * @param ObjectManagerInterface     $objectManager
-     * @param Data                       $helper
-     * @param \Magento\Sales\Model\Order $order
+     * @param ObjectManagerInterface $objectManager
+     * @param Data                   $helper
+     * @param Order                  $order
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
@@ -182,6 +183,7 @@ class TrackTraceHolder
             ->setPackageType($packageType)
             ->setSignature($this->getValueOfOption($options, 'signature'))
             ->setOnlyRecipient($this->getValueOfOption($options, 'only_recipient'))
+            ->setLargeFormat($this->getValueOfOption($options, 'large_format'))
             ->setInsurance(
                 $options['insurance'] !== null ? $options['insurance'] : self::$defaultOptions->getDefaultInsurance()
             )
@@ -363,7 +365,7 @@ class TrackTraceHolder
      */
     private function getItemsCollectionByShipmentId($shipmentId)
     {
-        /** @var \Magento\Framework\App\ResourceConnection $connection */
+        /** @var ResourceConnection $connection */
         $connection = $this->objectManager->create('\Magento\Framework\App\ResourceConnection');
         $conn       = $connection->getConnection();
         $select     = $conn->select()
@@ -391,7 +393,7 @@ class TrackTraceHolder
     }
 
     /**
-     * @param \MyParcelNL\Sdk\src\Adapter\DeliveryOptions\AbstractShipmentOptionsAdapter|null $shippingOptionsAdapter
+     * @param AbstractShipmentOptionsAdapter|null $shippingOptionsAdapter
      *
      * @return int|null
      */

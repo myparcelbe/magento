@@ -56,6 +56,13 @@ define(
                         }
                     );
 
+                  //   $("#mypa_carrier_PostNL").click(
+                  //   function () {
+                  //     parentThis._checkOptionsField();
+                  //   }
+                  //
+                  // );
+
                     $("input[name='mypa_carrier']").on(
                         "change",
                         function () {
