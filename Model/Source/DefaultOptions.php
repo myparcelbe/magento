@@ -23,17 +23,17 @@ class DefaultOptions
     /**
      * @var Data
      */
-    static private $helper;
+    private static $helper;
 
     /**
      * @var Order
      */
-    static private $order;
+    private static $order;
 
     /**
      * @var array
      */
-    static private $chosenOptions;
+    private static $chosenOptions;
 
     /**
      * Insurance constructor.
@@ -52,7 +52,7 @@ class DefaultOptions
     /**
      * Get default of the option
      *
-     * @param $option 'signature'
+     * @param $option 'only_recipient'|'signature'
      *
      * @return bool
      */
@@ -103,5 +103,17 @@ class DefaultOptions
     {
         return 1;
     }
+    /**
+     * Get default value of options without price check
+     *
+     * @param string $option
+     *
+     * @return bool
+     */
+    public function getDefaultOptionsWithoutPrice(string $option): bool
+    {
+        $settings = self::$helper->getStandardConfig('default_options');
 
+        return $settings[$option . '_active'] === '1';
+    }
 }

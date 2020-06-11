@@ -110,4 +110,16 @@ class NewShipment extends AbstractItems
     {
         return json_decode($this->order->getData(Checkout::FIELD_DELIVERY_OPTIONS), true);
     }
+
+    /**
+     * Get default value of age check
+     *
+     * @param string $option
+     *
+     * @return bool
+     */
+    public function getDefaultOptionsWithoutPrice(string $option): bool
+    {
+        return $this->defaultOptions->getDefaultOptionsWithoutPrice($option);
+    }
 }

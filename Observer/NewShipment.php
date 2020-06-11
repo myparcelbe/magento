@@ -14,6 +14,7 @@
 
 namespace MyParcelBE\Magento\Observer;
 
+use Exception;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
@@ -67,7 +68,7 @@ class NewShipment implements ObserverInterface
      * @param Observer $observer
      *
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
     public function execute(Observer $observer)
     {
@@ -81,9 +82,9 @@ class NewShipment implements ObserverInterface
     /**
      * Set MyParcel Tracks and update order grid
      *
-     * @param \Magento\Sales\Model\Order\Shipment $shipment
+     * @param Shipment $shipment
      *
-     * @throws \Exception
+     * @throws Exception
      */
     private function setMagentoAndMyParcelTrack(Shipment $shipment)
     {
@@ -91,7 +92,7 @@ class NewShipment implements ObserverInterface
 
         // The reason that $amount is hard coded is because this is part of multicollo, this is not possible in the Belguim plugin. However, a preparation has been made for this.
         $amount  = 1;
-        /** @var \MyParcelBE\Magento\Model\Sales\TrackTraceHolder[] $trackTraceHolders */
+        /** @var TrackTraceHolder[] $trackTraceHolders */
         $trackTraceHolders = [];
         $i                 = 1;
 
@@ -131,9 +132,9 @@ class NewShipment implements ObserverInterface
      *
      * Magento puts our two columns sales_order automatically to sales_order_grid
      *
-     * @param \Magento\Sales\Model\Order\Shipment $shipment
+     * @param Shipment $shipment
      *
-     * @throws \Exception
+     * @throws Exception
      */
     private function updateTrackGrid($shipment)
     {

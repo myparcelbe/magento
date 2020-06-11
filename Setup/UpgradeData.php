@@ -15,9 +15,15 @@
 
 namespace MyParcelBE\Magento\Setup;
 
+use Magento\Catalog\Setup\CategorySetupFactory;
+use Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
+use Magento\Eav\Setup\EavSetup;
+use Magento\Eav\Setup\EavSetupFactory;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\UpgradeDataInterface;
+use Zend_Validate_Exception;
 
 /**
  * Upgrade Data script
@@ -25,17 +31,51 @@ use Magento\Framework\Setup\UpgradeDataInterface;
  */
 class UpgradeData implements UpgradeDataInterface
 {
+    const groupName = 'MyParcelBE Options';
+
+    /**
+     * Category setup factory
+     *
+     * @var CategorySetupFactory
+     */
+    private $categorySetupFactory;
+
+    /**
+     * EAV setup factory
+     *
+     * @var EavSetupFactory
+     */
+    private $eavSetupFactory;
+
+    /**
+     * Init
+     *
+     * @param CategorySetupFactory $categorySetupFactory
+     * @param EavSetupFactory                             $eavSetupFactory
+     */
+    public function __construct(CategorySetupFactory $categorySetupFactory, EavSetupFactory $eavSetupFactory)
+    {
+        $this->categorySetupFactory = $categorySetupFactory;
+        $this->eavSetupFactory      = $eavSetupFactory;
+    }
+
     /**
      * Upgrades data for a module
      *
-     * @param \Magento\Framework\Setup\ModuleDataSetupInterface $setup
-     * @param \Magento\Framework\Setup\ModuleContextInterface   $context
+     * @param ModuleDataSetupInterface $setup
+     * @param ModuleContextInterface   $context
+     *
+     * @throws LocalizedException
+     * @throws Zend_Validate_Exception
      */
     public function upgrade(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
         if (version_compare($context->getVersion(), '3.0.0', '<=')) {
             $connection = $setup->getConnection();
             $table    = $setup->getTable('core_config_data');
+
+            /** @var EavSetup $eavSetup */
+            $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
 
             if ($connection->isTableExists($table) == true) {
 
@@ -193,6 +233,57 @@ class UpgradeData implements UpgradeDataInterface
                         'path'     => 'myparcelbe_magento_bpost_settings/delivery/active',
                         'value'    => 1
                     ]
+                );
+
+                // Set a new 'MyParcel options' group and place the option 'myparcel_fit_in_mailbox' standard on false by default
+                if (version_compare($context->getVersion(), '3.0.1', '<=')) {
+                    $setup->startSetup();
+
+                    // get entity type id so that attribute are only assigned to catalog_product
+                    $entityTypeId = $eavSetup->getEntityTypeId('catalog_product');
+                    // Here we have fetched all attribute set as we want attribute group to show under all attribute set
+                    $attributeSetIds = $eavSetup->getAllAttributeSetIds($entityTypeId);
+
+                    foreach ($attributeSetIds as $attributeSetId) {
+                        $eavSetup->addAttributeGroup($entityTypeId, $attributeSetId, self::groupName, 19);
+                        $attributeGroupId = $eavSetup->getAttributeGroupId($entityTypeId, $attributeSetId, self::groupName);
+
+                        // Add existing attribute to group
+                        $attributeId = $eavSetup->getAttributeId($entityTypeId, 'myparcelbe_classification');
+                        $eavSetup->addAttributeToGroup($entityTypeId, $attributeSetId, $attributeGroupId, $attributeId, null);
+                    }
+                }
+
+                // Add the option 'HS code for products'
+                $setup->startSetup();
+
+                // Add attributes to the eav/attribute
+                $eavSetup->addAttribute(
+                    \Magento\Catalog\Model\Product::ENTITY,
+                    'myparcelbe_classification',
+                    [
+                            'group'                   => self::groupName,
+                            'note'                    => 'HS Codes are used for MyParcel world shipments, you can find the appropriate code on the site of the Belgium Customs',
+                            'type'                    => 'int',
+                            'backend'                 => '',
+                            'frontend'                => '',
+                            'label'                   => 'HS code',
+                            'input'                   => 'text',
+                            'class'                   => '',
+                            'source'                  => '',
+                            'global'                  => ScopedAttributeInterface::SCOPE_GLOBAL,
+                            'visible'                 => true,
+                            'required'                => false,
+                            'user_defined'            => true,
+                            'default'                 => '0',
+                            'searchable'              => true,
+                            'filterable'              => true,
+                            'comparable'              => true,
+                            'visible_on_front'        => false,
+                            'used_in_product_listing' => true,
+                            'unique'                  => false,
+                            'apply_to'                => '',
+                        ]
                 );
             }
         }
