@@ -27,6 +27,11 @@ class PackageRepository extends Package
     const DEFAULT_WEIGHT = 2000;
 
     /**
+     * @var bool
+     */
+    public $deliveryOptionsDisabled = false;
+
+    /**
      * Get package type
      *
      * If package type is not set, calculate package type
@@ -59,6 +64,20 @@ class PackageRepository extends Package
         $this->setWeight(0);
         foreach ($products as $product) {
             $this->setWeightFromOneQuoteProduct($product);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param array $products
+     *
+     * @return PackageRepository
+     */
+    public function productWithoutDeliveryOptions(array $products)
+    {
+        foreach ($products as $product) {
+            $this->isDeliveryOptionsDisabled($product);
         }
 
         return $this;
@@ -180,6 +199,22 @@ class PackageRepository extends Package
             ->where('entity_id = ?', $entityId);
 
         return $connection->fetchOne($sql);
+    }
+
+    /**
+     * @param $products
+     *
+     * @return PackageRepository
+     */
+    public function isDeliveryOptionsDisabled($products)
+    {
+        $deliveryOptionsEnabled = $this->getAttributesProductsOptions($products, 'disable_checkout');
+
+        if ($deliveryOptionsEnabled) {
+            $this->deliveryOptionsDisabled = true;
+        }
+
+        return $this;
     }
 
 }

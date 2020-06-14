@@ -75,6 +75,7 @@ class Checkout
     public function getDeliveryOptions(): array
     {
         $this->helper->setBasePriceFromQuote($this->quoteId);
+        $this->hideDeliveryOptionsForProduct();
 
         $this->data = [
             'methods' => explode(';', $this->getDeliveryMethods()),
@@ -122,10 +123,10 @@ class Checkout
 
         foreach ($carriersPath as $carrier) {
             $myParcelConfig["carrierSettings"][$carrier[self::selectCarriersArray]] = [
-                'allowDeliveryOptions' => $this->helper->getBoolConfig($carrier[self::selectCarrierPath], 'delivery/active'),
+                'allowDeliveryOptions' => $this->package->deliveryOptionsDisabled ? false : $this->helper->getBoolConfig($carrier[self::selectCarrierPath], 'delivery/active'),
                 'allowSignature'       => $this->helper->getBoolConfig($carrier[self::selectCarrierPath], 'delivery/signature_active'),
                 'allowOnlyRecipient'   => $this->helper->getBoolConfig($carrier[self::selectCarrierPath], 'delivery/only_recipient_active'),
-                'allowPickupLocations' => $this->helper->getBoolConfig($carrier[self::selectCarrierPath], 'pickup/active'),
+                'allowPickupLocations' => $this->package->deliveryOptionsDisabled ? false : $this->helper->getBoolConfig($carrier[self::selectCarrierPath], 'pickup/active'),
 
                 'priceSignature'        => $this->helper->getMethodPriceFormat($carrier[self::selectCarrierPath], 'delivery/signature_fee', false),
                 'priceOnlyRecipient'    => $this->helper->getMethodPriceFormat($carrier[self::selectCarrierPath], 'delivery/only_recipient_fee', false),
@@ -209,5 +210,16 @@ class Checkout
             'postcode'       => __('Postcode'),
             'houseNumber'    => __('House number'),
         ];
+    }
+
+    /**
+     * @return $this
+     */
+    public function hideDeliveryOptionsForProduct()
+    {
+        $products = $this->cart->getAllItems();
+        $this->package->productWithoutDeliveryOptions($products);
+
+        return $this;
     }
 }
