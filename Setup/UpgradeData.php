@@ -236,7 +236,7 @@ class UpgradeData implements UpgradeDataInterface
                 );
 
                 // Set a new 'MyParcel options' group and place the option 'myparcel_fit_in_mailbox' standard on false by default
-                if (version_compare($context->getVersion(), '3.0.0', '<=')) {
+                if (version_compare($context->getVersion(), '4.1.0', '<=')) {
                     $setup->startSetup();
 
                     // get entity type id so that attribute are only assigned to catalog_product
