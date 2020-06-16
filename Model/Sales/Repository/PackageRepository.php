@@ -74,7 +74,7 @@ class PackageRepository extends Package
      *
      * @return PackageRepository
      */
-    public function productWithoutDeliveryOptions(array $products)
+    public function productWithoutDeliveryOptions(array $products): self
     {
         foreach ($products as $product) {
             $this->isDeliveryOptionsDisabled($product);
@@ -206,7 +206,7 @@ class PackageRepository extends Package
      *
      * @return PackageRepository
      */
-    public function isDeliveryOptionsDisabled($products)
+    public function isDeliveryOptionsDisabled(array $products): self
     {
         $deliveryOptionsEnabled = $this->getAttributesProductsOptions($products, 'disable_checkout');
 
