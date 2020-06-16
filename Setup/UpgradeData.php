@@ -236,7 +236,7 @@ class UpgradeData implements UpgradeDataInterface
                 );
 
                 // Set a new 'MyParcel options' group and place the option 'myparcel_fit_in_mailbox' standard on false by default
-                if (version_compare($context->getVersion(), '3.0.1', '<=')) {
+                if (version_compare($context->getVersion(), '4.1.0', '<=')) {
                     $setup->startSetup();
 
                     // get entity type id so that attribute are only assigned to catalog_product
@@ -284,6 +284,40 @@ class UpgradeData implements UpgradeDataInterface
                             'unique'                  => false,
                             'apply_to'                => '',
                         ]
+                );
+
+                // Enable / Disable checkout with this product.
+                $setup->startSetup();
+                /** @var EavSetup $eavSetup */
+                $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
+
+                // Add attributes to the eav/attribute
+                $eavSetup->addAttribute(
+                    \Magento\Catalog\Model\Product::ENTITY,
+                    'myparcelbe_disable_checkout',
+                    [
+                        'group'                   => self::groupName,
+                        'note'                    => 'With this option you can disable the delivery options for this product.',
+                        'type'                    => 'int',
+                        'backend'                 => '',
+                        'frontend'                => '',
+                        'label'                   => 'Disable checkout with this product',
+                        'input'                   => 'boolean',
+                        'class'                   => '',
+                        'source'                  => '',
+                        'global'                  => ScopedAttributeInterface::SCOPE_GLOBAL,
+                        'visible'                 => true,
+                        'required'                => false,
+                        'user_defined'            => true,
+                        'default'                 => 0,
+                        'searchable'              => true,
+                        'filterable'              => true,
+                        'comparable'              => true,
+                        'visible_on_front'        => false,
+                        'used_in_product_listing' => false,
+                        'unique'                  => false,
+                        'apply_to'                => '',
+                    ]
                 );
             }
         }
