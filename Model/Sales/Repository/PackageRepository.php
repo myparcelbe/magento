@@ -206,7 +206,7 @@ class PackageRepository extends Package
      *
      * @return PackageRepository
      */
-    public function isDeliveryOptionsDisabled(array $products): self
+    public function isDeliveryOptionsDisabled($products): self
     {
         $deliveryOptionsEnabled = $this->getAttributesProductsOptions($products, 'disable_checkout');
 

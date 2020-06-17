@@ -234,25 +234,26 @@ class UpgradeData implements UpgradeDataInterface
                         'value'    => 1
                     ]
                 );
+            }
 
-                // Set a new 'MyParcel options' group and place the option 'myparcel_fit_in_mailbox' standard on false by default
-                if (version_compare($context->getVersion(), '3.0.0', '<=')) {
-                    $setup->startSetup();
+            // Set a new 'MyParcel options' group and place the option 'myparcel_fit_in_mailbox' standard on false by default
+            if (version_compare($context->getVersion(), '3.1.0', '<=')) {
+                $setup->startSetup();
 
-                    // get entity type id so that attribute are only assigned to catalog_product
-                    $entityTypeId = $eavSetup->getEntityTypeId('catalog_product');
-                    // Here we have fetched all attribute set as we want attribute group to show under all attribute set
-                    $attributeSetIds = $eavSetup->getAllAttributeSetIds($entityTypeId);
+                // get entity type id so that attribute are only assigned to catalog_product
+                $entityTypeId = $eavSetup->getEntityTypeId('catalog_product');
+                // Here we have fetched all attribute set as we want attribute group to show under all attribute set
+                $attributeSetIds = $eavSetup->getAllAttributeSetIds($entityTypeId);
 
-                    foreach ($attributeSetIds as $attributeSetId) {
-                        $eavSetup->addAttributeGroup($entityTypeId, $attributeSetId, self::groupName, 19);
-                        $attributeGroupId = $eavSetup->getAttributeGroupId($entityTypeId, $attributeSetId, self::groupName);
+                foreach ($attributeSetIds as $attributeSetId) {
+                    $eavSetup->addAttributeGroup($entityTypeId, $attributeSetId, self::groupName, 19);
+                    $attributeGroupId = $eavSetup->getAttributeGroupId($entityTypeId, $attributeSetId, self::groupName);
 
-                        // Add existing attribute to group
-                        $attributeId = $eavSetup->getAttributeId($entityTypeId, 'myparcelbe_classification');
-                        $eavSetup->addAttributeToGroup($entityTypeId, $attributeSetId, $attributeGroupId, $attributeId, null);
-                    }
+                    // Add existing attribute to group
+                    $attributeId = $eavSetup->getAttributeId($entityTypeId, 'myparcelbe_classification');
+                    $eavSetup->addAttributeToGroup($entityTypeId, $attributeSetId, $attributeGroupId, $attributeId, null);
                 }
+
 
                 // Add the option 'HS code for products'
                 $setup->startSetup();
