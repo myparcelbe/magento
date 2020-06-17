@@ -62,6 +62,7 @@ class Checkout
         $this->helper   = $helper;
         $this->quoteId  = $session->getQuoteId();
         $this->products = $cart->getItems();
+        $this->cart     = $cart->getQuote();
         $this->package  = $package;
         $this->currency = $currency;
     }
