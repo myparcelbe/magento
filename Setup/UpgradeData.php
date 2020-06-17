@@ -245,6 +245,7 @@ class UpgradeData implements UpgradeDataInterface
                 // Here we have fetched all attribute set as we want attribute group to show under all attribute set
                 $attributeSetIds = $eavSetup->getAllAttributeSetIds($entityTypeId);
 
+                foreach ($attributeSetIds as $attributeSetId) {
                     $eavSetup->addAttributeGroup($entityTypeId, $attributeSetId, self::groupName, 19);
                     $attributeGroupId = $eavSetup->getAttributeGroupId($entityTypeId, $attributeSetId, self::groupName);
 
