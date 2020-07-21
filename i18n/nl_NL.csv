@@ -28,6 +28,63 @@ myparcelbe_magento_bpost_settings/pickup_title, bpost ophaallocatie
 myparcelbe_magento_bpost_settings/delivery/signature_title, bpost bezorging met handtekening
 myparcelbe_magento_dpd_settings/delivery_title,  DPD bezorging
 myparcelbe_magento_dpd_settings/pickup_title, DPD ophaallocatie
+During the transition phase the old Magento MyParcel BE extension can remain active. However, you do need to turn off PakjeGemak in the old MyParcel BE extension.,Tijdens de overgangsfase kan de oude Magento MyParcel-extensie actief blijven. U moet PakjeGemak echter wel uitschakelen in de oude MyParcel BE-extensie.
+Label description,Label omschrijving
+"This description will appear on the shipment label. The following parts can be used: %order_nr%, %delivery_date%, %product_id%, %product_name%, %product_qty%, %article_short_name%, %article_number_supplier%.","Deze beschrijving verschijnt op het verzendlabel. De volgende onderdelen kunnen worden gebruikt:% order_nr%,% delivery_date%,% product_id%,% product_name%,% product_qty%,% article_short_name%,% article_number_supplier%."
+Country of origin,Land van oorsprong
+"This country will appear on the international consignment labels. This is where your products are shipped from. You can use NL, BE, DE etc. This will be overridden by country of manufacture on product level.","Dit land zal op de internationale verzendlabels verschijnen. Dit is waar uw producten vandaan komen. U kunt NL, BE, DE etc gebruiken. Dit wordt op productniveau overschreven door het land van fabricage."
+Create Concept,Concept maken
+"Enable create label concept, when invoice is printed.","Maak een concept zenging aan, wanneer er voor een bestelling is betaald."
+Delivery methods,Verzendmethodes
+Preferred pickup locations view,Weergave van voorkeur voor ophaallocaties
+"When pickup locations are enabled, the user can choose between map or list view. This setting decides which option will be selected first, upon opening the pickup locations.","Wanneer ophaallocaties zijn ingeschakeld, kan de gebruiker kiezen tussen kaart- of lijstweergave. Deze instelling bepaalt welke optie als eerste wordt geselecteerd bij het openen van de ophaallocaties."
+Show list first,Toon lijst eerst
+Show map first,Toon map eerst
+Automate 'Home address only',Automatiseer 'Alleen huisadres'
+Automate 'Return if no answer',Automatiseer 'Retour bij geen gehoor'
+Automate 'Large format',Automatiseer 'Groot pakket'
+Automate 'Age check 18+',Automatiseer 'Leeftijdscontrole 18+'
+Automate 'Insurance € 100',Automatiseer 'Verzekerd tot €100'
+Automate 'Insurance € 250',Automatiseer 'Verzekerd tot €250'
+Note: Monday delivery is only possible when the package is delivered before 15.00 on Saturday at the designated PostNL locations.,Let op: Maandagbezorging is alleen mogelijk als het pakket op zaterdag voor 15.00 uur is afgeleverd op de daarvoor bestemde PostNL locaties.
+'Signature on receipt' operates above a certain order total amount,'Handtekening voor ontvangst' wordt geactiveerd als het totaal bedrag meer is dan bovenstaande bedrag
+"The age check is intended for parcel shipments for which the recipient must show 18+ by means of a proof of identity. With this shipping option Signature on receipt and Home address only are included. The age 18+ is further excluded from the delivery options morning and evening delivery.","De leeftijdscontrole is bedoeld voor pakketzendingen waarvoor de ontvanger 18+ dient te tonen door middel van een identiteitsbewijs. Bij deze verzendoptie zijn alleen handtekening op ontvangstbewijs en thuisadres inbegrepen. De leeftijd van 18+ is verder uitgesloten van de bezorgopties 's morgens en' s avonds."
+Select automatically digital stamp packages based on weight,Selecteer automatisch digitale postzegelpakketten op basis van gewicht
+Price depends on the weight. Are the weights correctly filled in for all products? Choose 'No standard weight' to let MyParcel calculate the weight itself. Select a standard weight here when the products do not contain correct weights.,Prijs is afhankelijk van het gewicht. Zijn de gewichten correct ingevuld voor alle producten? Kies 'Geen standaardgewicht' om MyParcel het gewicht zelf te laten berekenen. Selecteer hier een standaardgewicht als de producten niet de juiste gewichten bevatten.
+Enter a basic price for a digital stamp. The regular price will not affect this price.,Voer een basisprijs in voor een digitale postzegel. De normale prijs heeft geen invloed op deze prijs.
+Mailbox settings,Brievenbuspakket instellingen
+Automate mailbox,Automatiseer brievenbuspakket
+Select automatically mailbox packages based on weight or volume,Selecteer automatisch mailboxpakketten op basis van gewicht of volume
+Mailbox weight, Brievenbuspakket gewicht
+Mailbox fee, brievenbuspakket kosten
+Enter a basic price for a mailbox. The regular price will not affect this price.,Voer een basisprijs in voor een mailbox. De normale prijs heeft geen invloed op deze prijs.
+Morning delivery,Ochtendlevering
+Evening delivery,Avondlevering
+Evening delivery fee,Avondlevering kosten
+Morning delivery active,Ochtendlevering ingeschakeld
+If age check is active then the evening delivery is not possible,Als de leeftijdscontrole actief is dan is avondbezorging niet mogelijk
+Standard delivery Title,Standaard bezorg titel
+Signature on receipt title,Handtekening voor ontvangst titel
+Home address only title,Alleen huisadres titel
+Morning title,Ochtendlevering titel
+Evening title,Avondlevering titel
+Mailbox title,Brievenbuspakje titel
+Digital stamp title,Digitalepostzegel titel
+Pickup title,Ophalen bij locatie titel
+Pickup list button text,Lijst ophalen knop tekst
+Pickup map button text,Map ophalen knop tekst
+Morning delivery fee,Ochtendlevering kosten
+Evening delivery,Avondlevering
+Evening delivery active,Avondlevering ingeschakeld
+Monday delivery,Maandag levering
+Number of days,Aantal dagen
+Enabled PostNL delivery,PostNL levering ingeschakeld
+Home address only,Alleen huisadres
+Home address only fee,Alleen huisadres kosten
+Digital stamp settings,Digitalepostzegel instellingen
+Automate digital stamp,Automatiseer digitalepostzegel
+Default weight,Standaard gewicht
+Digital stamp fee,Digitalepostzegel kosten
 Version and support,Versie en support
 General settings,Algemene instellingen
 API settings,API instellingen
@@ -64,7 +121,7 @@ Use Shipment template,Gebruik Verzending template
 Enable this option to add the MyParcel barcode in the email.,Activeer deze optie om de MyParcel barcode toe te voegen in de email.
 MyParcel Shipment Email Template,Sjabloon e-mail voor een MyParcel zending
 MyParcel Shipment Email Template for Guest,Sjabloon e-mail voor een MyParcel zending voor gast
-Use Shipment email template when "Default" option is selected.,Gebruik Verzending template als er gekozen is voor "Gebruik systeemwaarde".
+Use Shipment email template when Default option is selected.,Gebruik Verzending template als er gekozen is voor Gebruik systeemwaarde.
 Action type,Actie
 Download label,Download label
 Open in new tab, Open in nieuw tabblad
@@ -102,12 +159,12 @@ Saturday active,Zaterdag actief
 Saturday title,Zaterdag titel
 Dropoff-delay,Vertraging
 No delay,Geen vertraging
-"This options allows you to set the number of days it takes you to pick, pack and hand in your parcels at Bpost when ordered before the cutoff time.","Stel hier het aantal dagen in die je nodig hebt om het product (te ontvangen,) te verpakken en aan te bieden bij Bpost, vanaf het moment dat de bestelling is geplaatst".
+"This options allows you to set the number of days it takes you to pick, pack and hand in your parcels at Bpost when ordered before the cutoff time.","Stel hier het aantal dagen in die je nodig hebt om het product (te ontvangen,) te verpakken en aan te bieden bij Bpost, vanaf het moment dat de bestelling is geplaatst."
 Methods,Verzendmethode
 The extra myparcel options are added to this shipping method,De extra myparcel opties worden bij deze verzendmethode toegevoegd.
 Delivery title,Bezorg titel
+PostNL settings,PostNL instellingen
 When pickup locations are enabled, the user can choose between map or list view. This setting decides which option will be selected first, upon opening the pickup locations.,Wanneer ophaallocaties zijn ingeschakeld, kan de gebruiker kiezen tussen kaart of lijst. Deze instelling bepaalt welke optie als eerste wordt geselecteerd bij het openen van de ophaallocaties.
-Delivery title,Bezorg titelOphalen bij een Bpost locatie
 Deliver the package only at address of the intended recipient.,Lever het pakket alleen aan het adres van de beoogde ontvanger.
 This will be added to the regular shipping price,Dit zal bij de normale verzendkosten worden opgeteld
 Not possible if Pickup at Bpost location is not active,Dit zal niet mogelijk zijn zodra ophalen bij een Bpost locatie niet geactiveerd is
@@ -121,6 +178,12 @@ This will be added to the regular shipping price,Dit zal bij de normale verzendk
 Pickup at Bpost location,Ophalen bij een Bpost locatie
 List,Lijst
 Map,Kaart
+Enabled DPD delivery,DPD levering
+Enabled bpost delivery,bpost levering
+Pickup at DPD location,Afhalen bij DPD locatie
+Pickup at PostNL location,Afhalen bij PostNL locatie
+DPD settings,DPD instellingen
+bpost settings,bpost instellingen
 Pickup active,Ophalen actief
 Pickup titel,Ophalen titel
 Pickup fee,Ophalen prijs
