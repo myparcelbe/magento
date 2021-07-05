@@ -13,7 +13,7 @@ use MyParcelBE\Magento\Model\Sales\MagentoOrderCollection;
  * If you want to add improvements, please create a fork in our GitHub:
  * https://github.com/myparcelbe
  *
- * @author      Reindert Vetter <info@sendmyparcel.be>
+ * @author      Reindert Vetter <info@myparcel.nl>
  * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
@@ -70,7 +70,7 @@ class SendMyParcelReturnMail extends \Magento\Framework\App\Action\Action
         error_reporting(E_ALL);
         ini_set('display_errors', 1);
         if ($this->orderCollection->apiKeyIsCorrect() !== true) {
-            $message = 'You not have entered the correct API key. Go to the general settings in the back office of MyParcel BE to generate the API Key.';
+            $message = 'You not have entered the correct API key. Go to the general settings in the back office of MyParcel to generate the API Key.';
             $this->messageManager->addErrorMessage(__($message));
             $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($message);
 
@@ -100,7 +100,7 @@ class SendMyParcelReturnMail extends \Magento\Framework\App\Action\Action
                 ->setLatestData()
                 ->sendReturnLabelMails();
         } catch (\Exception $e) {
-            if (count($this->messageManager->getMessages()) == 0) {
+            if (count($this->messageManager->getMessages()->getItems()) == 0) {
                 $this->messageManager->addErrorMessage(__('An error has occurred while sending mails with a return label. Please contact MyParcel.'));
                 $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
             }
@@ -108,7 +108,7 @@ class SendMyParcelReturnMail extends \Magento\Framework\App\Action\Action
             return $this;
         }
 
-        $message = 'Return label mail is send to customer.';
+        $message = 'Return label mail is sent to customer.';
         $this->messageManager->addSuccessMessage(__($message));
 
         return $this;

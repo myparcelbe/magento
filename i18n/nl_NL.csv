@@ -1,6 +1,6 @@
 status_1,Concept
 status_2,Voorgemeld
-status_3,Aangeboden aan Bpost
+status_3,Aangeboden aan PostNL
 status_4,In sorteerproces
 status_5,In distributie
 status_6,Zending bij douane
@@ -11,6 +11,7 @@ status_10,Retourzending afgeleverd
 status_11,Retourzending op afhaallocatie
 status_12,Ongefrankeerd label geprint
 status_13,Gecrediteerd
+status_14,Geprint - Digitale postzegel
 status_30,Inactief - Concept
 status_31,Inactief - Voorgemeld
 status_32,Inactief - Aangeboden bij MyParcel
@@ -23,12 +24,33 @@ status_38,Inactief - Zending afgehaald op afhaallocatie
 status_39,Inactief - Retourzending afgeleverd
 status_40,Inactief - Retourzending op afhaallocactie
 status_99,Inactief - Onbekende status
-myparcelbe_magento_bpost_settings/delivery_title, bpost bezorging
-myparcelbe_magento_bpost_settings/pickup_title, bpost ophaallocatie
-myparcelbe_magento_bpost_settings/delivery/signature_title, bpost bezorging met handtekening
+myparcelbe_magento_postnl_settings/delivery_title, postnl bezorging
+myparcelbe_magento_postnl_settings/pickup_title, postnl ophaallocatie
+myparcelbe_magento_postnl_settings/delivery/signature_title, postnl bezorging met handtekening
 myparcelbe_magento_dpd_settings/delivery_title,  DPD bezorging
 myparcelbe_magento_dpd_settings/pickup_title, DPD ophaallocatie
-During the transition phase the old Magento MyParcel BE extension can remain active. However, you do need to turn off PakjeGemak in the old MyParcel BE extension.,Tijdens de overgangsfase kan de oude Magento MyParcel-extensie actief blijven. U moet PakjeGemak echter wel uitschakelen in de oude MyParcel BE-extensie.
+myparcelbe_magento_dpd_settings/delivery,  DPD bezorging
+myparcelbe_magento_dpd_settings/pickup, DPD ophaallocatie
+myparcelbe_magento_postnl_settings/pickup, PostNL ophaal locatie
+myparcelbe_magento_postnl_settings/delivery, PostNL bezorging
+myparcelbe_magento_postnl_settings/delivery/signature, PostNL bezorging met handtekening voor ontvangst
+myparcelbe_magento_postnl_settings/delivery/only_recipient, PostNL bezorging met alleen huisadres
+myparcelbe_magento_postnl_settings/delivery/only_recipient/signature, PostNL bezorging met alleen huisadres en handtekening
+myparcelbe_magento_bpost_settings/pickup, bpost ophaal locatie
+myparcelbe_magento_bpost_settings/delivery, bpost bezorging
+myparcelbe_magento_bpost_settings/delivery/signature, Bpost bezorging met handtekening voor ontvangst
+Version and support,Versie en support
+General settings,Algemene instellingen
+API settings,API instellingen
+MyParcel NL Settings,MyParcel NL instellingen
+Go to the general settings in the back office of MyParcel to generate the API Key.,Ga naar de algemene instellingen in de backoffice van MyParcel om de API Key te genereren.
+The API Key,Stel hier de API key in
+Default shipment settings,Standaard verzendinstellingen
+"This description will appear on the shipment label. The following parts can be used: %order_nr%, %delivery_date%, %product_id%, %product_name%, %product_qty%.","Deze beschrijving verschijnt op het verzendlabel. De volgende onderdelen kunnen worden gebruikt: %order_nr%, %delivery_date%, %product_id%, %product_name%, %product_qty%."
+Print MyParcel labels directly,Print MyParcel labels direct
+Print settings,Print instellingen
+Paper type,Print oriëntatie
+Select a standard orientation for printing labels.,Selecteer een standaard print ori&euml;ntatie voor het printen van labels.
 Label description,Label omschrijving
 "This description will appear on the shipment label. The following parts can be used: %order_nr%, %delivery_date%, %product_id%, %product_name%, %product_qty%, %article_short_name%, %article_number_supplier%.","Deze beschrijving verschijnt op het verzendlabel. De volgende onderdelen kunnen worden gebruikt:% order_nr%,% delivery_date%,% product_id%,% product_name%,% product_qty%,% article_short_name%,% article_number_supplier%."
 Country of origin,Land van oorsprong
@@ -39,16 +61,21 @@ Delivery methods,Verzendmethodes
 Preferred pickup locations view,Weergave van voorkeur voor ophaallocaties
 "When pickup locations are enabled, the user can choose between map or list view. This setting decides which option will be selected first, upon opening the pickup locations.","Wanneer ophaallocaties zijn ingeschakeld, kan de gebruiker kiezen tussen kaart- of lijstweergave. Deze instelling bepaalt welke optie als eerste wordt geselecteerd bij het openen van de ophaallocaties."
 Show list first,Toon lijst eerst
-Show map first,Toon map eerst
+Show map first,Toon kaart eerst
+Default shipping options,Standaard verzendinstellingen
+"Fill in your preferences for a shipment. These settings will only apply for the mass actions in the order grid. When creating a single shipment, these settings can be changed manually. These settings will activate based on the order total amount.","Vul hier uw standaard voorkeuren in voor uw verzendopties. Deze instellingen worden als default op al uw zendingen toegepast, indien van toepassing. Deze opties zijn later, per zending, uiteraard nog wel aan te passen tijdens het verwerken."
+Automate 'Signature on receipt',Automatiseer 'Handtekening voor ontvangst'
 Automate 'Home address only',Automatiseer 'Alleen huisadres'
 Automate 'Return if no answer',Automatiseer 'Retour bij geen gehoor'
 Automate 'Large format',Automatiseer 'Groot pakket'
 Automate 'Age check 18+',Automatiseer 'Leeftijdscontrole 18+'
 Automate 'Insurance € 100',Automatiseer 'Verzekerd tot €100'
 Automate 'Insurance € 250',Automatiseer 'Verzekerd tot €250'
+Automate 'Insurance € 500',Automatiseer 'Verzekerd tot € 500'
 Note: Monday delivery is only possible when the package is delivered before 15.00 on Saturday at the designated PostNL locations.,Let op: Maandagbezorging is alleen mogelijk als het pakket op zaterdag voor 15.00 uur is afgeleverd op de daarvoor bestemde PostNL locaties.
 'Signature on receipt' operates above a certain order total amount,'Handtekening voor ontvangst' wordt geactiveerd als het totaal bedrag meer is dan bovenstaande bedrag
 "The age check is intended for parcel shipments for which the recipient must show 18+ by means of a proof of identity. With this shipping option Signature on receipt and Home address only are included. The age 18+ is further excluded from the delivery options morning and evening delivery.","De leeftijdscontrole is bedoeld voor pakketzendingen waarvoor de ontvanger 18+ dient te tonen door middel van een identiteitsbewijs. Bij deze verzendoptie zijn alleen handtekening op ontvangstbewijs en thuisadres inbegrepen. De leeftijd van 18+ is verder uitgesloten van de bezorgopties 's morgens en' s avonds."
+"'Insurance € 500' operates above a certain order total amount.","'Verzekerd tot € 500' wordt geactiveerd als het totaal bedrag meer is dan bovenstaande bedrag."
 Select automatically digital stamp packages based on weight,Selecteer automatisch digitale postzegelpakketten op basis van gewicht
 Price depends on the weight. Are the weights correctly filled in for all products? Choose 'No standard weight' to let MyParcel calculate the weight itself. Select a standard weight here when the products do not contain correct weights.,Prijs is afhankelijk van het gewicht. Zijn de gewichten correct ingevuld voor alle producten? Kies 'Geen standaardgewicht' om MyParcel het gewicht zelf te laten berekenen. Selecteer hier een standaardgewicht als de producten niet de juiste gewichten bevatten.
 Enter a basic price for a digital stamp. The regular price will not affect this price.,Voer een basisprijs in voor een digitale postzegel. De normale prijs heeft geen invloed op deze prijs.
@@ -63,16 +90,7 @@ Evening delivery,Avondlevering
 Evening delivery fee,Avondlevering kosten
 Morning delivery active,Ochtendlevering ingeschakeld
 If age check is active then the evening delivery is not possible,Als de leeftijdscontrole actief is dan is avondbezorging niet mogelijk
-Standard delivery Title,Standaard bezorg titel
-Signature on receipt title,Handtekening voor ontvangst titel
-Home address only title,Alleen huisadres titel
-Morning title,Ochtendlevering titel
-Evening title,Avondlevering titel
-Mailbox title,Brievenbuspakje titel
-Digital stamp title,Digitalepostzegel titel
-Pickup title,Ophalen bij locatie titel
-Pickup list button text,Lijst ophalen knop tekst
-Pickup map button text,Map ophalen knop tekst
+If age check is active then the morning delivery is not possible,Als de leeftijdscontrole actief is dan is ochtendbezorging niet mogelijk
 Morning delivery fee,Ochtendlevering kosten
 Evening delivery,Avondlevering
 Evening delivery active,Avondlevering ingeschakeld
@@ -85,22 +103,6 @@ Digital stamp settings,Digitalepostzegel instellingen
 Automate digital stamp,Automatiseer digitalepostzegel
 Default weight,Standaard gewicht
 Digital stamp fee,Digitalepostzegel kosten
-Version and support,Versie en support
-General settings,Algemene instellingen
-API settings,API instellingen
-Go to the general settings in the back office of MyParcel BE to generate the API Key.,Ga naar de algemene instellingen in de backoffice van MyParcel BE om de API Key te genereren.
-The API Key,Stel hier de API key in
-Default shipment settings,Standaard verzendinstellingen
-Print MyParcel labels directly,Print MyParcel labels direct
-Print settings,Print instellingen
-Paper type,Print oriëntatie
-Select a standard orientation for printing labels.,Selecteer een standaard print ori&euml;ntatie voor het printen van labels.
-Default shipping options,Standaard verzendinstellingen
-"Fill in your preferences for a shipment. These settings will only apply for the mass actions in the order grid. When creating a single shipment, these settings can be changed manually. These settings will activate based on the order total amount.","Vul hier uw standaard voorkeuren in voor uw verzendopties. Deze instellingen worden als default op al uw zendingen toegepast, indien van toepassing. Deze opties zijn later, per zending, uiteraard nog wel aan te passen tijdens het verwerken."
-Automate 'Signature on receipt',Automatiseer 'Handtekening voor ontvangst'
-'Signature on receipt' operates above a certain order total amount,'Handtekening voor ontvangst' wordt geactiveerd als het totaal bedrag meer is dan bovenstaande bedrag
-Automate 'Insurance € 500',Automatiseer 'Verzekerd tot € 500'
-"'Insurance € 500' operates above a certain order total amount.","'Verzekerd tot € 500' wordt geactiveerd als het totaal bedrag meer is dan bovenstaande bedrag."
 From price,Vanaf prijs
 Track number,Track nummer
 Track status,Track status
@@ -110,8 +112,12 @@ Package,Pakket
 Signature on receipt,Handtekening voor ontvangst
 Insured up to:,Verzekeren tot:
 Download package label,Download pakket label
+Download digital stamp label,Download digitalepostzegel label
+Download mailbox label,Download brievenbuspakje label
+Download letter label,Download ongefrankeerd label
 Create new concept,Creëer nieuw concept
 Create shipment,Zending aanmaken
+During the transition phase the old Magento MyParcel extension can remain active. However you do need to turn off PakjeGemak in the old MyParcel extension.,Tijdens de overgangsfase kan de oude Magento MyParcel-extensie actief blijven. U moet PakjeGemak echter wel uitschakelen in de oude MyParcel-extensie.
 Please select an item from the list,Selecteer eerst een order uit de lijst
 Please check address,Controleer het adres
 No key found. Go to Configuration and then to MyParcel to enter the key.,Geen API key gevonden. Ga naar Configuratie en vervolgens naar MyParcel om de API key in te voeren.
@@ -121,7 +127,7 @@ Use Shipment template,Gebruik Verzending template
 Enable this option to add the MyParcel barcode in the email.,Activeer deze optie om de MyParcel barcode toe te voegen in de email.
 MyParcel Shipment Email Template,Sjabloon e-mail voor een MyParcel zending
 MyParcel Shipment Email Template for Guest,Sjabloon e-mail voor een MyParcel zending voor gast
-Use Shipment email template when Default option is selected.,Gebruik Verzending template als er gekozen is voor Gebruik systeemwaarde.
+Use Shipment email template when "Default" option is selected.,Gebruik Verzending template als er gekozen is voor "Gebruik systeemwaarde".
 Action type,Actie
 Download label,Download label
 Open in new tab, Open in nieuw tabblad
@@ -132,7 +138,7 @@ MyParcel version,MyParcel versie
 "To read the instructions for the Magento extension, click %1 here %2.","Klik %1 hier %2 om de handleiding van de Magento extensie te bekijken."
 When using the extension please note:,Aandachtspunten bij het gebruik van deze extensie:
 To be able to configure the extension you need to possess and use an active account.,U dient een actief account te hebben om de extensie te kunnen configureren.
-During the transition phase the old Magento MyParcel BE extension can remain active. However, you do need to turn off PakjeGemak in the old MyParcel BE extension.,Indien u de oude MyParcel BE extensie gebruikt kan deze actief blijven in de overgangsfase. Wel dient u PakjeGemak in de oude MyParcel BE extensie uit te schakelen.
+During the transition phase the old Magento MyParcel extension can remain active. However, you do need to turn off PakjeGemak in the old MyParcel extension.,Indien u de oude MyParcel extensie gebruikt kan deze actief blijven in de overgangsfase. Wel dient u PakjeGemak in de oude MyParcel extensie uit te schakelen.
 Magento &amp; 3rd party version compatibility,Magento & derde partijen ondersteuning
 We cannot guarantee perfect functionality of the extension when you intend to use the extension on a version of Magento that is not supported or when you intend to use the extension together with a 3rd part extension that is not supported. If you have any questions please contact us.,Indien u de extensie wilt gebruiken op een niet-ondersteunde versie of editie van Magento, of als u de extensie wilt gebruiken samen met een 3rd party extensie die niet ondersteund wordt, kunnen wij niet garanderen dat de extensie feilloos zal functioneren. Voor vragen kunt u contact opnemen met ons.
 Questions and information about your account,Account vragen en informatie
@@ -159,15 +165,14 @@ Saturday active,Zaterdag actief
 Saturday title,Zaterdag titel
 Dropoff-delay,Vertraging
 No delay,Geen vertraging
-"This options allows you to set the number of days it takes you to pick, pack and hand in your parcels at Bpost when ordered before the cutoff time.","Stel hier het aantal dagen in die je nodig hebt om het product (te ontvangen,) te verpakken en aan te bieden bij Bpost, vanaf het moment dat de bestelling is geplaatst."
+"This options allows you to set the number of days it takes you to pick, pack and hand in your parcels at PostNL when ordered before the cutoff time.","Stel hier het aantal dagen in die je nodig hebt om het product (te ontvangen,) te verpakken en aan te bieden bij PostNL, vanaf het moment dat de bestelling is geplaatst".
 Methods,Verzendmethode
 The extra myparcel options are added to this shipping method,De extra myparcel opties worden bij deze verzendmethode toegevoegd.
 Delivery title,Bezorg titel
-PostNL settings,PostNL instellingen
 When pickup locations are enabled, the user can choose between map or list view. This setting decides which option will be selected first, upon opening the pickup locations.,Wanneer ophaallocaties zijn ingeschakeld, kan de gebruiker kiezen tussen kaart of lijst. Deze instelling bepaalt welke optie als eerste wordt geselecteerd bij het openen van de ophaallocaties.
 Deliver the package only at address of the intended recipient.,Lever het pakket alleen aan het adres van de beoogde ontvanger.
 This will be added to the regular shipping price,Dit zal bij de normale verzendkosten worden opgeteld
-Not possible if Pickup at Bpost location is not active,Dit zal niet mogelijk zijn zodra ophalen bij een Bpost locatie niet geactiveerd is
+Not possible if Pickup at PostNL location is not active,Dit zal niet mogelijk zijn zodra ophalen bij een PostNL locatie niet geactiveerd is
 Signature on receipt,Handtekening voor ontvangst
 Signature on receipt title, Handtekening voor ontvangst titel
 Signature on receipt fee, Handtekening voor ontvangst prijs
@@ -175,22 +180,25 @@ This will be added to the regular shipping price, Dit zal bij de normale verzend
 If both have been selected this price will be added to the regular shipping price. Leave empty for not using it.,Als beide geselecteerd zijn zal deze prijs bij de normale verzendkosten worden opgeteld. Laat leeg om dit niet te gebruiken.
 "Besides assigning weights to all products, you can also specify a volume of each product.","Om deze functie optimaal te gebruiken, stel je eerst het gewicht of volume in van jouw producten."
 This will be added to the regular shipping price,Dit zal bij de normale verzendkosten worden opgeteld
-Pickup at Bpost location,Ophalen bij een Bpost locatie
+Pickup at PostNL location,Ophalen bij een PostNL locatie
 List,Lijst
 Map,Kaart
-Enabled DPD delivery,DPD levering
-Enabled bpost delivery,bpost levering
-Pickup at DPD location,Afhalen bij DPD locatie
-Pickup at PostNL location,Afhalen bij PostNL locatie
-DPD settings,DPD instellingen
-bpost settings,bpost instellingen
 Pickup active,Ophalen actief
-Pickup titel,Ophalen titel
+Standard delivery Title,Standaard bezorg titel
+Signature on receipt title,Handtekening voor ontvangst titel
+Home address only title,Alleen huisadres titel
+Morning title,Ochtendlevering titel
+Evening title,Avondlevering titel
+Mailbox title,Brievenbuspakje titel
+Digital stamp title,Digitalepostzegel titel
+Pickup title,Ophalen bij locatie titel
 Pickup fee,Ophalen prijs
+Pickup list button text,Lijst ophalen knop tekst
+Pickup map button text,Kaart ophalen knop tekst
 Drop off day,Verzenddagen
 Select the days that you send the orders.,Selecteer de dagen waarop jij de orders verzend.
 Show a delivery day in the checkout.,Laat een bezorgdag zien in de checkout.
-You not have entered the correct API key. Go to the general settings in the back office of MyParcel BE to generate the API Key.,U hebt niet de juiste API-sleutel ingevoerd. Ga naar de algemene instellingen in de backoffice van MyParcel BE om de API Key te genereren.
+You not have entered the correct API key. Go to the general settings in the back office of MyParcel to generate the API Key.,U hebt niet de juiste API-sleutel ingevoerd. Ga naar de algemene instellingen in de backoffice van MyParcel om de API Key te genereren.
 Address details are not entered,Adresgegevens zijn niet ingevuld
 The times will be visible when nothing is filled in,De tijden zullen zichtbaar zijn wanneer niets is ingevuld
 "Enter an amount that is either positive or negative. For example, do you want to give a discount for using this function or do you want to charge extra for this delivery option.","Voer een bedrag in dat positief of negatief is. Wilt u bijvoorbeeld een korting geven voor het gebruik van deze functie of wilt u extra in rekening brengen voor deze leveringsoptie."
@@ -210,6 +218,11 @@ Thursday,donderdag
 Friday,vrijdag
 Saturday,zaterdag
 Sunday,zondag
-
-
-
+Enable create label concept, when invoice is printed., Maak concept labels aan, wanneer je een factuur afdrukt.
+Print return label directly,Print het retour label direct
+I use the following weight type,Ik gebruik de volgende eenheid voor gewicht
+This is the type of weight that I use with my products.,Dit is de eenheid die je gebruikt voor het gewicht van je producten.
+No,Nee
+Without options,Zonder opties
+Options equal to shipment,Opties overnemen van heenzending
+"Enabling this setting automatically creates a related return shipment for any shipment you export. When downloading the shipment labels the corresponding return shipment labels will be included.","Na het activeren van deze instelling wordt er bij het exporteren van elke zending automatisch een retour zending aangemaakt. Als je het label print wordt ook meteen het retour label geprint."

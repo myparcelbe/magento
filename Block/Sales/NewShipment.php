@@ -5,7 +5,7 @@
  * If you want to add improvements, please create a fork in our GitHub:
  * https://github.com/myparcelbe
  *
- * @author      Reindert Vetter <info@sendmyparcel.be>
+ * @author      Reindert Vetter <info@myparcel.nl>
  * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
@@ -22,6 +22,7 @@ use Magento\Framework\Registry;
 use Magento\Sales\Block\Adminhtml\Items\AbstractItems;
 use MyParcelBE\Magento\Helper\Checkout;
 use MyParcelBE\Magento\Model\Source\DefaultOptions;
+use MyParcelNL\Sdk\src\Adapter\DeliveryOptions\AbstractDeliveryOptionsAdapter;
 
 class NewShipment extends AbstractItems
 {
@@ -67,13 +68,34 @@ class NewShipment extends AbstractItems
     }
 
     /**
-     * @param $option 'signature'
+     * @param $option 'signature', 'only_recipient'
      *
      * @return bool
      */
     public function getDefaultOption($option)
     {
         return $this->defaultOptions->getDefault($option);
+    }
+    /**
+     * @param string $option 'large_format'
+     *
+     * @return bool
+     */
+    public function getDefaultLargeFormat(string $option): bool
+    {
+        return $this->defaultOptions->getDefaultLargeFormat($option);
+    }
+
+    /**
+     * Get default value of age check
+     *
+     * @param string $option
+     *
+     * @return bool
+     */
+    public function getDefaultOptionsWithoutPrice(string $option): bool
+    {
+        return $this->defaultOptions->getDefaultOptionsWithoutPrice($option);
     }
 
     /**
@@ -83,6 +105,15 @@ class NewShipment extends AbstractItems
     public function getDefaultInsurance()
     {
         return $this->defaultOptions->getDefaultInsurance();
+    }
+
+    /**
+     * Get default value of insurance based on order grand total
+     * @return int
+     */
+    public function getDigitalStampWeight()
+    {
+        return $this->defaultOptions->getDigitalStampDefaultWeight();
     }
 
     /**
@@ -109,17 +140,5 @@ class NewShipment extends AbstractItems
     public function getChosenOptions()
     {
         return json_decode($this->order->getData(Checkout::FIELD_DELIVERY_OPTIONS), true);
-    }
-
-    /**
-     * Get default value of age check
-     *
-     * @param string $option
-     *
-     * @return bool
-     */
-    public function getDefaultOptionsWithoutPrice(string $option): bool
-    {
-        return $this->defaultOptions->getDefaultOptionsWithoutPrice($option);
     }
 }

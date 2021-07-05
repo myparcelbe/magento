@@ -9,7 +9,7 @@
  * If you want to add improvements, please create a fork in our GitHub:
  * https://github.com/myparcelbe/magento
  *
- * @author      Reindert Vetter <info@sendmyparcel.be>
+ * @author      Reindert Vetter <info@myparcel.nl>
  * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
@@ -25,18 +25,16 @@ class DeliveryRepository extends Delivery
     /**
      * Get drop off day with chosen options from checkout
      *
-     * @param $jsonDeliveryOptions
-     *
+     * @param array $deliveryOptions
      * @return string
      */
-    public function getDropOffDayFromJson($jsonDeliveryOptions)
+    public function getDropOffDayFromDeliveryOptions(array $deliveryOptions): ?string
     {
-        if ($jsonDeliveryOptions === null) {
-            return null;
-        }
-
-        $deliveryOptions = json_decode($jsonDeliveryOptions, true);
         if (key_exists('date', $deliveryOptions)) {
+            if (! $deliveryOptions['date']) {
+                return date('Y-m-d', strtotime("+1 day"));
+            }
+
             $this->setDeliveryDateTime(strtotime($deliveryOptions['date']));
             $dropOffDate = $this->getDropOffDay();
 
@@ -77,21 +75,11 @@ class DeliveryRepository extends Delivery
     /**
      * Get carrier with chosen options from checkout
      *
-     * @param string|null $jsonDeliveryOptions
-     *
+     * @param array $deliveryOptions
      * @return string|null
      */
-    public function getCarrierFromJson(?string $jsonDeliveryOptions): ?string
+    public function getCarrierFromDeliveryOptions(array $deliveryOptions): ?string
     {
-        if ($jsonDeliveryOptions === null) {
-            return null;
-        }
-
-        $deliveryOptions = json_decode($jsonDeliveryOptions, true);
-        if (key_exists('carrier', $deliveryOptions)) {
-            return $deliveryOptions['carrier'];
-        }
-
-        return null;
+        return $deliveryOptions['carrier'] ?? null;
     }
 }

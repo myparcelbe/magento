@@ -13,11 +13,15 @@ class ShippingMethods implements ShippingMethodsInterface
     /**
      * @param mixed $deliveryOptions
      *
-     * @return array
+     * @return mixed[]
      * @throws Exception
      */
-    public function getFromDeliveryOptions($deliveryOptions): array
+    public function getFromDeliveryOptions($deliveryOptions)
     {
+        if (! $deliveryOptions[0]) {
+            return [];
+        }
+
         try {
             $shipping = new DeliveryOptionsToShippingMethods($deliveryOptions[0]);
 

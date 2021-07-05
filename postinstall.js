@@ -14,6 +14,10 @@ const copy = [
     `${nodeModules}/custom-event-polyfill/polyfill.js`,
     `${vendor}/polyfill-custom-event.js`,
   ],
+  [
+    `${nodeModules}/object-path/index.js`,
+    `${vendor}/object-path.js`,
+  ],
 ];
 
 /**

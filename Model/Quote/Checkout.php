@@ -4,15 +4,13 @@ namespace MyParcelBE\Magento\Model\Quote;
 
 use Magento\Checkout\Model\Cart;
 use Magento\Checkout\Model\Session;
+use Magento\Store\Model\StoreManagerInterface;
 use MyParcelBE\Magento\Helper\Data;
 use MyParcelBE\Magento\Model\Sales\Repository\PackageRepository;
-use \Magento\Store\Model\StoreManagerInterface;
 
 class Checkout
 {
-    const selectCarriersArray = 0;
-    const selectCarrierPath   = 1;
-    const platform            = 'belgie';
+    private const PLATFORM = 'belgie';
 
     /**
      * @var array
@@ -28,6 +26,7 @@ class Checkout
      * @var \Magento\Quote\Model\Quote
      */
     private $quoteId;
+
     /**
      * @var PackageRepository
      */
@@ -36,12 +35,17 @@ class Checkout
     /**
      * @var \Magento\Eav\Model\Entity\Collection\AbstractCollection[]
      */
-    private $products;
+    private $cart;
 
     /**
      * @var \Magento\Store\Model\StoreManagerInterface
      */
     private $currency;
+
+    /**
+     * @var \Magento\Store\Model\StoreManagerInterface
+     */
+    private $carrier;
 
     /**
      * Checkout constructor.
@@ -51,6 +55,7 @@ class Checkout
      * @param \MyParcelBE\Magento\Helper\Checkout        $helper
      * @param PackageRepository                          $package
      * @param \Magento\Store\Model\StoreManagerInterface $currency
+     *
      */
     public function __construct(
         Session $session,
@@ -61,7 +66,6 @@ class Checkout
     ) {
         $this->helper   = $helper;
         $this->quoteId  = $session->getQuoteId();
-        $this->products = $cart->getItems();
         $this->cart     = $cart->getQuote();
         $this->package  = $package;
         $this->currency = $currency;
@@ -79,9 +83,10 @@ class Checkout
         $this->hideDeliveryOptionsForProduct();
 
         $this->data = [
-            'methods' => explode(';', $this->getDeliveryMethods()),
+            'methods' => [$this->helper->getParentMethodNameFromQuote($this->quoteId)],
             'config'  => array_merge(
                 $this->getGeneralData(),
+                //$this->getPackageType(),
                 $this->getDeliveryData()
             ),
             'strings' => $this->getDeliveryOptionsStrings(),
@@ -104,9 +109,9 @@ class Checkout
     private function getGeneralData()
     {
         return [
-            'allowRetry'                 => false,
-            'platform'                   => self::platform,
-            'carriers'                   => array_column($this->get_carriers(), self::selectCarriersArray),
+            'allowRetry'                 => true,
+            'platform'                   => self::PLATFORM,
+            'carriers'                   => $this->getActiveCarriers(),
             'currency'                   => $this->currency->getStore()->getCurrentCurrency()->getCode(),
             'pickupLocationsDefaultView' => $this->helper->getArrayConfig(Data::XML_PATH_GENERAL, 'shipping_methods/pickup_locations_view')
         ];
@@ -119,25 +124,36 @@ class Checkout
      */
     private function getDeliveryData(): array
     {
-        $carriersPath   = $this->get_carriers();
         $myParcelConfig = [];
+        $activeCarriers = $this->getActiveCarriers();
+        $carrierPath    = data::CARRIERS_XML_PATH_MAP;
 
-        foreach ($carriersPath as $carrier) {
-            $myParcelConfig["carrierSettings"][$carrier[self::selectCarriersArray]] = [
-                'allowDeliveryOptions' => $this->package->deliveryOptionsDisabled ? false : $this->helper->getBoolConfig($carrier[self::selectCarrierPath], 'delivery/active'),
-                'allowSignature'       => $this->helper->getBoolConfig($carrier[self::selectCarrierPath], 'delivery/signature_active'),
-                'allowOnlyRecipient'   => $this->helper->getBoolConfig($carrier[self::selectCarrierPath], 'delivery/only_recipient_active'),
-                'allowPickupLocations' => $this->package->deliveryOptionsDisabled ? false : $this->helper->getBoolConfig($carrier[self::selectCarrierPath], 'pickup/active'),
+        foreach ($activeCarriers as $carrier) {
+            $basePrice        = $this->helper->getBasePrice();
+            $signatureFee     = $this->helper->getMethodPrice($carrierPath[$carrier], 'delivery/signature_fee', false);
+            $onlyRecipientFee = $this->helper->getMethodPrice($carrierPath[$carrier], 'delivery/only_recipient_fee', false);
 
-                'priceSignature'        => $this->helper->getMethodPriceFormat($carrier[self::selectCarrierPath], 'delivery/signature_fee', false),
-                'priceOnlyRecipient'    => $this->helper->getMethodPriceFormat($carrier[self::selectCarrierPath], 'delivery/only_recipient_fee', false),
-                'priceStandardDelivery' => $this->helper->getMoneyFormat($this->helper->getBasePrice()),
-                'pricePickup'           => $this->helper->getMethodPriceFormat($carrier[self::selectCarrierPath], 'pickup/fee', false),
+            $myParcelConfig["carrierSettings"][$carrier] = [
+                'allowDeliveryOptions' => $this->package->deliveryOptionsDisabled ? false : $this->helper->getBoolConfig($carrierPath[$carrier], 'delivery/active'),
+                'allowSignature'       => $this->helper->getBoolConfig($carrierPath[$carrier], 'delivery/signature_active'),
+                'allowOnlyRecipient'   => $this->helper->getBoolConfig($carrierPath[$carrier], 'delivery/only_recipient_active'),
+                'allowPickupLocations' => $this->package->deliveryOptionsDisabled ? false : $this->helper->getBoolConfig($carrierPath[$carrier], 'pickup/active'),
 
-                'cutoffTime'         => $this->helper->getTimeConfig($carrier[self::selectCarrierPath], 'general/cutoff_time'),
-                'deliveryDaysWindow' => $this->helper->getIntergerConfig($carrier[self::selectCarrierPath], 'general/deliverydays_window'),
-                'dropOffDays'        => $this->helper->getArrayConfig($carrier[self::selectCarrierPath], 'general/dropoff_days'),
-                'dropOffDelay'       => $this->helper->getIntergerConfig($carrier[self::selectCarrierPath], 'general/dropoff_delay'),
+                'priceSignature'        => $signatureFee,
+                'priceOnlyRecipient'    => $onlyRecipientFee,
+                'priceStandardDelivery' => $basePrice,
+
+                'priceSignatureAndOnlyRecipient' => ($basePrice + $signatureFee + $onlyRecipientFee),
+
+                'pricePickup'                  => $this->helper->getMethodPrice($carrierPath[$carrier], 'pickup/fee'),
+
+                //'packageType'         => $this->checkPackageType($carrier, null),
+                'cutoffTime'          => $this->helper->getTimeConfig($carrierPath[$carrier], 'general/cutoff_time'),
+                'saturdayCutoffTime'  => $this->helper->getTimeConfig($carrierPath[$carrier], 'general/saturday_cutoff_time'),
+                'deliveryDaysWindow'  => $this->helper->getIntegerConfig($carrierPath[$carrier], 'general/deliverydays_window'),
+                'allowMondayDelivery' => $this->helper->getIntegerConfig($carrierPath[$carrier], 'general/monday_delivery_active'),
+                'dropOffDays'         => $this->helper->getArrayConfig($carrierPath[$carrier], 'general/dropoff_days'),
+                'dropOffDelay'        => $this->getDropOffDelay($carrierPath[$carrier], 'general/dropoff_delay'),
             ];
         }
 
@@ -154,23 +170,18 @@ class Checkout
         return $this->helper->getArrayConfig(Data::XML_PATH_GENERAL, 'shipping_methods/methods');
     }
 
-
     /**
      * Get the array of enabled carriers by checking if they have either delivery or pickup enabled.
      *
      * @return array
      */
-    private function get_carriers(): array
+    public function getActiveCarriers(): array
     {
-        $carriersSettings = [
-            ['bpost', Data::XML_PATH_BPOST_SETTINGS],
-            ['dpd', Data::XML_PATH_DPD_SETTINGS],
-            ['postnl', Data::XML_PATH_POSTNL_SETTINGS]
-        ];
+        $carriers = [];
 
-        foreach ($carriersSettings as $carrier) {
-            if ($this->helper->getBoolConfig("{$carrier[self::selectCarrierPath]}", 'general/enabled') ||
-                $this->helper->getBoolConfig("{$carrier[self::selectCarrierPath]}", 'pickup/active')
+        foreach (Data::CARRIERS_XML_PATH_MAP as $carrier => $path) {
+            if ($this->helper->getBoolConfig($path, 'delivery/active') ||
+                $this->helper->getBoolConfig($path, 'pickup/active')
             ) {
                 $carriers[] = $carrier;
             }
@@ -187,14 +198,17 @@ class Checkout
     private function getDeliveryOptionsStrings()
     {
         return [
-
             'deliveryTitle'             => $this->helper->getGeneralConfig('delivery_titles/delivery_title'),
             'deliveryStandardTitle'     => $this->helper->getGeneralConfig('delivery_titles/standard_delivery_title'),
+            'deliveryMorningTitle'      => $this->helper->getGeneralConfig('delivery_titles/morning_title'),
+            'deliveryEveningTitle'      => $this->helper->getGeneralConfig('delivery_titles/evening_title'),
+            'packageTypeMailbox'        => $this->helper->getGeneralConfig('delivery_titles/mailbox_title'),
+            'packageTypeDigitalStamp'   => $this->helper->getGeneralConfig('delivery_titles/digital_stamp_title'),
             'pickupTitle'               => $this->helper->getGeneralConfig('delivery_titles/pickup_title'),
             'pickupLocationsListButton' => $this->helper->getGeneralConfig('delivery_titles/pickup_list_button_title'),
             'pickupLocationsMapButton'  => $this->helper->getGeneralConfig('delivery_titles/pickup_map_button_title'),
-            'onlyRecipientTitle'        => $this->helper->getGeneralConfig('delivery_titles/only_recipient_title'),
             'signatureTitle'            => $this->helper->getGeneralConfig('delivery_titles/signature_title'),
+            'onlyRecipientTitle'        => $this->helper->getGeneralConfig('delivery_titles/only_recipient_title'),
             'saturdayDeliveryTitle'     => $this->helper->getGeneralConfig('delivery_titles/saturday_title'),
 
             'wrongPostalCodeCity' => __('Postcode/city combination unknown'),
@@ -211,6 +225,44 @@ class Checkout
             'postcode'       => __('Postcode'),
             'houseNumber'    => __('House number'),
         ];
+    }
+
+    /**
+     * @param string      $carrier
+     * @param string|null $country
+     *
+     * @return string
+     */
+    public function checkPackageType(string $carrier, ?string $country): string
+    {
+        $carrierPath = data::CARRIERS_XML_PATH_MAP;
+        $products    = $this->cart->getAllItems();
+        $country     = $country ?? $this->cart->getShippingAddress()->getCountryId();
+
+        $this->package->setCurrentCountry($country);
+        $this->package->setDigitalStampActive($this->helper->getBoolConfig($carrierPath[$carrier], 'digital_stamp/active'));
+        $this->package->setMailboxActive($this->helper->getBoolConfig($carrierPath[$carrier], 'mailbox/active'));
+        $this->package->setWeightFromQuoteProducts($products);
+
+        return $this->package->selectPackageType($products);
+    }
+
+    /**
+     * @param string $carrierPath
+     * @param string $key
+     *
+     * @return int
+     */
+    public function getDropOffDelay(string $carrierPath, string $key): int
+    {
+        $products     = $this->cart->getAllItems();
+        $productDelay = $this->package->getProductDropOffDelay($products);
+
+        if (! $productDelay) {
+            $productDelay = $this->helper->getIntegerConfig($carrierPath, $key);
+        }
+
+        return (int) $productDelay;
     }
 
     /**
