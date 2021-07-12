@@ -35,6 +35,48 @@
                 <pickup_map_button_title>Map</pickup_map_button_title>
             </delivery_titles>
         </myparcelbe_magento_general>
+        <myparcelbe_magento_bpost_settings>
+            <options>
+                <signature_active>0</signature_active>
+                <signature_from_price>1</signature_from_price>
+                <insurance_500_active>0</insurance_500_active>
+                <insurance_500_from_price>1</insurance_500_from_price>
+            </options>
+            <general>
+                <deliverydays_window>1</deliverydays_window>
+                <cutoff_time>15,30,00</cutoff_time>
+                <dropoff_days>1,2,3,4,5</dropoff_days>
+                <dropoff_delay>0</dropoff_delay>
+            </general>
+            <delivery>
+                <active>1</active>
+                <signature_active>1</signature_active>
+                <signature_fee>0.36</signature_fee>
+                <saturday_active>0</saturday_active>
+                <saturday_title>Zaterdaglevering</saturday_title>
+                <saturday_fee>2</saturday_fee>
+            </delivery>
+            <pickup>
+                <active>1</active>
+                <fee>0</fee>
+            </pickup>
+        </myparcelbe_magento_bpost_settings>
+        <myparcelbe_magento_dpd_settings>
+            <general>
+                <deliverydays_window>1</deliverydays_window>
+                <cutoff_time>15,30,00</cutoff_time>
+                <dropoff_days>1,2,3,4,5</dropoff_days>
+                <dropoff_delay>0</dropoff_delay>
+            </general>
+            <delivery>
+                <active>0</active>
+            </delivery>
+            <pickup>
+                <active>1</active>
+                <title>Ophalen bij een DPD locatie</title>
+                <fee>0</fee>
+            </pickup>
+        </myparcelbe_magento_dpd_settings>
         <myparcelbe_magento_postnl_settings>
             <default_options>
                 <signature_active>0</signature_active>
@@ -71,25 +113,6 @@
                 <saturday_title>Zaterdaglevering</saturday_title>
                 <saturday_fee>2</saturday_fee>
             </delivery>
-            <digital_stamp>
-                <active>0</active>
-                <default_weight>0</default_weight>
-                <fee>0</fee>
-            </digital_stamp>
-            <mailbox>
-                <active>0</active>
-                <other_options>1</other_options>
-                <weight>2000</weight>
-                <fee>3.50</fee>
-            </mailbox>
-            <morning>
-                <active>1</active>
-                <fee>10</fee>
-            </morning>
-            <evening>
-                <active>1</active>
-                <fee>1.25</fee>
-            </evening>
             <pickup>
                 <active>1</active>
                 <fee>0</fee>

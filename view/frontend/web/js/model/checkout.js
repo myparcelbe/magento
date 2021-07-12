@@ -82,6 +82,8 @@ function(
     },
 
     onReFetchDeliveryOptionsConfig: function(response) {
+      Model.setDeliveryOptionsConfig(response[0].data);
+      return; // joeri!
       var configuration = response[0].data;
       var carrier = Object.keys(configuration.config.carrierSettings)[0];
 

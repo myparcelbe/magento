@@ -299,13 +299,6 @@
                         <field id="active">1</field>
                     </depends>
                 </field>
-                <field id="only_recipient_title" translate="label comment" type="text" sortOrder="526" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Home address only title</label>
-                    <depends>
-                        <field id="active">1</field>
-                        <field id="only_recipient_active">1</field>
-                    </depends>
-                </field>
                 <field id="only_recipient_fee" translate="label comment" type="text" sortOrder="530" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Home address only fee</label>
                     <comment>This will be added to the regular shipping price</comment>

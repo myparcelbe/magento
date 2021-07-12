@@ -65,25 +65,13 @@ define(
       methodCodeDeliveryOptionsConfigMap: {
         'myparcelbe_magento_postnl_settings/pickup': 'config.carrierSettings.postnl.pricePickup',
         'myparcelbe_magento_postnl_settings/delivery': 'config.carrierSettings.postnl.priceStandardDelivery',
-        /*'myparcelbe_magento_postnl_settings/mailbox': 'config.carrierSettings.postnl.pricePackageTypeMailbox',
-        'myparcelbe_magento_postnl_settings/digital_stamp': 'config.carrierSettings.postnl.pricePackageTypeMailbox',
-        'myparcelbe_magento_postnl_settings/morning': 'config.carrierSettings.postnl.priceMorningDelivery',
-        'myparcelbe_magento_postnl_settings/evening': 'config.carrierSettings.postnl.priceEveningDelivery',
-        'myparcelbe_magento_postnl_settings/morning/only_recipient': 'config.carrierSettings.postnl.priceMorningDelivery',
-        'myparcelbe_magento_postnl_settings/evening/only_recipient': 'config.carrierSettings.postnl.priceEveningDelivery',
-        'myparcelbe_magento_postnl_settings/morning/only_recipient/signature': 'config.carrierSettings.postnl.priceMorningSignature',
-        'myparcelbe_magento_postnl_settings/evening/only_recipient/signature': 'config.carrierSettings.postnl.priceEveningSignature',*/
         'myparcelbe_magento_postnl_settings/delivery/only_recipient': 'config.carrierSettings.postnl.priceOnlyRecipient',
         'myparcelbe_magento_postnl_settings/delivery/signature': 'config.carrierSettings.postnl.priceSignature',
         'myparcelbe_magento_postnl_settings/delivery/only_recipient/signature': 'config.carrierSettings.postnl.priceSignatureAndOnlyRecipient',
-        /* specific for belgium */
         'myparcelbe_magento_dpd_settings/pickup': 'config.carrierSettings.dpd.pricePickup',
-        //'myparcelbe_magento_dpd_settings/delivery/only_recipient': 'config.carrierSettings.dpd.priceOnlyRecipient',
         'myparcelbe_magento_dpd_settings/delivery': 'config.carrierSettings.dpd.priceStandardDelivery',
         'myparcelbe_magento_bpost_settings/pickup': 'config.carrierSettings.bpost.pricePickup',
         'myparcelbe_magento_bpost_settings/delivery': 'config.carrierSettings.bpost.priceStandardDelivery',
-        'myparcelbe_magento_bpost_settings/delivery/only_recipient': 'config.carrierSettings.bpost.priceOnlyRecipient',
-        'myparcelbe_magento_bpost_settings/delivery/only_recipient/signature': 'config.carrierSettings.bpost.priceSignatureAndOnlyRecipient',
         'myparcelbe_magento_bpost_settings/delivery/signature': 'config.carrierSettings.bpost.priceSignature',
       },
 
@@ -101,9 +89,10 @@ define(
        */
       initialize: function() {
         window.MyParcelConfig.address = deliveryOptions.getAddress(quote.shippingAddress());
+        console.error(' JOERI 1 2 3 ');
+        console.log(JSON.stringify(window.MyParcelConfig));
         deliveryOptions.render();
         deliveryOptions.addListeners();
-
         deliveryOptions.rendered.subscribe(function(bool) {
           if (bool) {
             deliveryOptions.updateAddress();
@@ -130,6 +119,7 @@ define(
         var shippingMethodDiv = document.querySelector('#checkout-shipping-method-load');
         var deliveryOptionsDiv = document.createElement('div');
         checkout.hideShippingMethods();
+
         deliveryOptions.rendered(false);
 
         /**
@@ -161,7 +151,7 @@ define(
         quote.shippingAddress.subscribe(deliveryOptions.updateAddress);
         quote.shippingMethod.subscribe(_.debounce(deliveryOptions.onShippingMethodUpdate));
 
-        document.addEventListener(
+        document.addEventListener( // JOERI: dit zorgt voor refresh zodat er altijd bpost bezorging staat bij klikken op 'volgende'
           deliveryOptions.updatedDeliveryOptionsEvent,
           deliveryOptions.onUpdatedDeliveryOptions
         );
@@ -334,6 +324,12 @@ define(
       },
 
       updatePricesInDeliveryOptions: function(selectedShippingMethod) {
+        checkout.rates().forEach(function(rate) {
+          deliveryOptions.updatePriceInDeliveryOptions(rate);
+        });
+      },
+
+      updatePriceInDeliveryOptions: function(selectedShippingMethod) {
         var isShipmentOption = deliveryOptions.methodCodeShipmentOptionsConfigMap.hasOwnProperty(selectedShippingMethod.method_code);
         var priceOption = deliveryOptions.methodCodeDeliveryOptionsConfigMap[selectedShippingMethod.method_code];
         var addBasePrice = false;

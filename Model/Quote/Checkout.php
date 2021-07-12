@@ -43,11 +43,6 @@ class Checkout
     private $currency;
 
     /**
-     * @var \Magento\Store\Model\StoreManagerInterface
-     */
-    private $carrier;
-
-    /**
      * Checkout constructor.
      *
      * @param \Magento\Checkout\Model\Session            $session
@@ -113,6 +108,7 @@ class Checkout
             'platform'                   => self::PLATFORM,
             'carriers'                   => $this->getActiveCarriers(),
             'currency'                   => $this->currency->getStore()->getCurrentCurrency()->getCode(),
+            'packageType'                => 'package', // Joeri! FOEI!
             'pickupLocationsDefaultView' => $this->helper->getArrayConfig(Data::XML_PATH_GENERAL, 'shipping_methods/pickup_locations_view')
         ];
     }
@@ -147,7 +143,6 @@ class Checkout
 
                 'pricePickup'                  => $this->helper->getMethodPrice($carrierPath[$carrier], 'pickup/fee'),
 
-                //'packageType'         => $this->checkPackageType($carrier, null),
                 'cutoffTime'          => $this->helper->getTimeConfig($carrierPath[$carrier], 'general/cutoff_time'),
                 'saturdayCutoffTime'  => $this->helper->getTimeConfig($carrierPath[$carrier], 'general/saturday_cutoff_time'),
                 'deliveryDaysWindow'  => $this->helper->getIntegerConfig($carrierPath[$carrier], 'general/deliverydays_window'),

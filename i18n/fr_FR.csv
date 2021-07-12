@@ -24,6 +24,24 @@ status_38,Inactif - Envoi retiré au point de collecte
 status_39,Inactif - Envoi retour livré
 status_40,Inactif - Envoi retour au point de collecte
 status_99,Inactif - Statut inconnu
+myparcelbe_magento_dpd_settings/delivery_title,  Livraison DPD
+myparcelbe_magento_dpd_settings/pickup_title, Lieu de ramassage DPD
+myparcelbe_magento_dpd_settings/delivery,  Livraison DPD
+myparcelbe_magento_dpd_settings/pickup, Lieu de ramassage DPD
+myparcelbe_magento_postnl_settings/pickup, Lieu de ramassage PostNL
+myparcelbe_magento_postnl_settings/pickup_title, Lieu de ramassage postnl
+myparcelbe_magento_postnl_settings/delivery, Livraison PostNL
+myparcelbe_magento_postnl_settings/delivery_title, livraison postnl
+myparcelbe_magento_postnl_settings/delivery/signature, Livraison PostNL avec signature pour réception
+myparcelbe_magento_postnl_settings/delivery/signature_title, Livraison PostNL avec signature
+myparcelbe_magento_postnl_settings/delivery/only_recipient, Livraison PostNL avec adresse accueil
+myparcelbe_magento_postnl_settings/delivery/only_recipient/signature, Livraison PostNL avec adresse accueil et signature
+myparcelbe_magento_bpost_settings/pickup, Lieu de ramassage bpost
+myparcelbe_magento_bpost_settings/pickup_title, Lieu de ramassage bpost
+myparcelbe_magento_bpost_settings/delivery, Livraison bpost
+myparcelbe_magento_bpost_settings/delivery_title, Livraison bpost
+myparcelbe_magento_bpost_settings/delivery/signature, Livraison bpost avec signature
+myparcelbe_magento_bpost_settings/delivery/signature_title, Livraison bpost avec signature pour réception
 Version and support,Version et support
 General settings,Paramètres généraux
 API settings,Paramètres API

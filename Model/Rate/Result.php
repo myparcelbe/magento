@@ -158,14 +158,20 @@ class Result extends \Magento\Shipping\Model\Rate\Result
                     return;
                 }
 
-                $fullPath = $this->getFullSettingPath(Data::CARRIERS_XML_PATH_MAP[$carrier], $settingPath);
+                $map = Data::CARRIERS_XML_PATH_MAP[$carrier];
+
+                if (! $this->isSettingActive($map, $settingPath, '/')) {
+                    continue;
+                }
+
+                $fullPath = $this->getFullSettingPath($map, $settingPath);
                 if ($fullPath) {
                     $method = $this->getShippingMethod(
                         $fullPath,
                         $parentRate
                     );
 
-                    $this->_rates[] = $method;
+                    if ($method) $this->_rates[] = $method; // JOERI
                 }
             }
         }
@@ -204,10 +210,6 @@ class Result extends \Magento\Shipping\Model\Rate\Result
         // Check if delivery is active.
         if ('delivery' === $settingPathParts[0]) {
             return $activeDelivery;
-        }
-        // Check if delivery, morning or evening delivery are active.
-        if ($activeDelivery && ('morning' === $settingPathParts[0] || 'evening' === $settingPathParts[0])) {
-            return (bool) $this->myParcelHelper->getConfigValue($map . $settingPathParts[0] . '/active');
         }
         // Check if the setting has an additional option like signature or only_recipient and see if it is active.
         if (count($settingPathParts) === 2) {
@@ -291,15 +293,17 @@ class Result extends \Magento\Shipping\Model\Rate\Result
      * @param string|null $settingPath
      * @param Method|null $parentRate
      *
-     * @return Method
+     * @return Method|null
      */
-    private function getShippingMethod(string $settingPath, Method $parentRate): Method
+    private function getShippingMethod(string $settingPath, Method $parentRate): ?Method
     {
         $method = clone $parentRate;
         $this->myParcelHelper->setBasePrice($parentRate->getData('price'));
 
         $title = $this->createTitle($settingPath);
         $price = $this->getPrice($settingPath);
+
+        if ($title . '_' === $settingPath) return null;// JOERI - non-translated methods do not exist
 
         $method->setData('cost', 0);
         // Trim the separator off the end of the settings path
