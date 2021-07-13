@@ -9,7 +9,7 @@
  * If you want to add improvements, please create a fork in our GitHub:
  * https://github.com/myparcelbe/magento
  *
- * @author      Reindert Vetter <info@sendmyparcel.be>
+ * @author      Reindert Vetter <info@myparcel.nl>
  * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
@@ -18,18 +18,24 @@
 
 namespace MyParcelBE\Magento\Model\Sales\Repository;
 
-use Magento\Catalog\Model\ResourceModel\Product;
-use Magento\Quote\Model\Quote\Item;
 use MyParcelBE\Magento\Model\Sales\Package;
+use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
 
 class PackageRepository extends Package
 {
-    const DEFAULT_WEIGHT = 2000;
+    public const DEFAULT_MAXIMUM_MAILBOX_WEIGHT = 2000;
+    public const MAXIMUM_DIGITAL_STAMP_WEIGHT   = 2000;
+    public const DEFAULT_LARGE_FORMAT_WEIGHT    = 2300;
 
     /**
      * @var bool
      */
     public $deliveryOptionsDisabled = false;
+
+    /**
+     * @var bool
+     */
+    public $isPackage = true;
 
     /**
      * Get package type
@@ -38,7 +44,7 @@ class PackageRepository extends Package
      *
      * @return int 1|3
      */
-    public function getPackageType()
+    public function getPackageType(): int
     {
         // return type if type is set
         if (parent::getPackageType() !== null) {
@@ -49,32 +55,54 @@ class PackageRepository extends Package
     }
 
     /**
-     * Set weight depend on product weight from product
+     * @param array $products
      *
-     * @param Item[] $products
-     *
-     * @return $this
+     * @return string
      */
-    public function setWeightFromQuoteProducts($products)
+    public function selectPackageType(array $products): string
     {
-        if (empty($products)) {
-            return $this;
+        $packageType = [];
+
+        if ($this->isMailboxActive() || $this->isDigitalStampActive()) {
+            foreach ($products as $product) {
+                $digitalStamp = $this->getAttributesProductsOptions($product, 'digital_stamp');
+                $mailbox      = $this->getAttributesProductsOptions($product, 'fit_in_mailbox');
+                $isPackage    = true;
+
+                if ($digitalStamp && $this->fitInDigitalStamp()) {
+                    $packageType[] = AbstractConsignment::PACKAGE_TYPE_DIGITAL_STAMP;
+                    $isPackage     = false;
+                    continue;
+                }
+
+                if (isset($mailbox) && $this->fitInMailbox($product, $mailbox)) {
+                    $packageType[] = AbstractConsignment::PACKAGE_TYPE_MAILBOX;
+                    $isPackage     = false;
+                    continue;
+                }
+
+                if ($isPackage) {
+                    $packageType[] = AbstractConsignment::PACKAGE_TYPE_PACKAGE;
+                    break;
+                }
+            }
         }
 
-        $this->setWeight(0);
-        foreach ($products as $product) {
-            $this->setWeightFromOneQuoteProduct($product);
-        }
+        // Sort an array in reverse order, so that the largest package type appears at the bottom of the array
+        rsort($packageType);
 
-        return $this;
+        $packageType      = array_pop($packageType);
+        $packageTypeNames = array_flip(AbstractConsignment::PACKAGE_TYPES_NAMES_IDS_MAP);
+
+        return $packageTypeNames[$packageType] ?? AbstractConsignment::PACKAGE_TYPE_PACKAGE_NAME;
     }
 
     /**
      * @param array $products
      *
-     * @return PackageRepository
+     * @return \MyParcelBE\Magento\Model\Sales\Repository\PackageRepository
      */
-    public function productWithoutDeliveryOptions(array $products): self
+    public function productWithoutDeliveryOptions(array $products): PackageRepository
     {
         foreach ($products as $product) {
             $this->isDeliveryOptionsDisabled($product);
@@ -84,16 +112,90 @@ class PackageRepository extends Package
     }
 
     /**
-     * @param Item $product
+     * @param object $product
+     * @param int    $mailbox
+     *
+     * @return bool
+     */
+    public function fitInMailbox($product, int $mailbox): bool
+    {
+        $mailboxPercentage    = $this->getMailboxPercentage() + $mailbox * $product->getQty();
+        $maximumMailboxWeight = $this->getWeightTypeOfOption($this->getMaxMailboxWeight());
+        $orderWeight          = $this->getWeightTypeOfOption($this->getWeight());
+        if (
+            $this->getCurrentCountry() === AbstractConsignment::CC_NL &&
+            $this->isMailboxActive() &&
+            $orderWeight &&
+            ($mailboxPercentage === 0 || $mailboxPercentage <= 100) &&
+            $orderWeight <= $maximumMailboxWeight
+        ) {
+            $this->setMailboxPercentage($mailboxPercentage);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function fitInDigitalStamp(): bool
+    {
+        $orderWeight               = $this->getWeightTypeOfOption($this->getWeight());
+        $maximumDigitalStampWeight = $this->getMaxDigitalStampWeight();
+
+        if (
+            $this->getCurrentCountry() === AbstractConsignment::CC_NL &&
+            $this->isDigitalStampActive() &&
+            $orderWeight <= $maximumDigitalStampWeight
+        ) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Set weight depend on product weight from product
+     *
+     * @param \Magento\Quote\Model\Quote\Item[] $products
      *
      * @return $this
      */
-    private function setWeightFromOneQuoteProduct($product)
+    public function setWeightFromQuoteProducts(array $products)
     {
-        if ($product->getWeight() > 0) {
-            $this->addWeight($product->getWeight() * $product->getQty());
-        } else {
-            $this->setAllProductsFit(false);
+        if (empty($products)) {
+            return $this;
+        }
+
+        foreach ($products as $product) {
+            $this->setWeightFromOneQuoteProduct($product);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Init all mailbox settings
+     *
+     * @return $this
+     */
+    public function setMailboxSettings()
+    {
+        $settings = $this->getConfigValue(self::XML_PATH_POSTNL_SETTINGS . 'mailbox');
+
+        if ($settings === null) {
+            $this->_logger->critical('Can\'t set settings with path:' . self::XML_PATH_POSTNL_SETTINGS . 'mailbox');
+        }
+
+        if (! key_exists('active', $settings)) {
+            $this->_logger->critical('Can\'t get mailbox setting active');
+        }
+
+        $this->setMailboxActive($settings['active'] === '1');
+        if ($this->isMailboxActive() === true) {
+            $weight = str_replace(',', '.', $settings['weight']);
+            $this->setMaxMailboxWeight($weight ?: self::DEFAULT_MAXIMUM_MAILBOX_WEIGHT);
         }
 
         return $this;
@@ -115,7 +217,67 @@ class PackageRepository extends Package
     }
 
     /**
-     * @param Item $product
+     * @param $products
+     *
+     * @return \MyParcelBE\Magento\Model\Sales\Repository\PackageRepository
+     */
+    public function isDeliveryOptionsDisabled($products)
+    {
+        $deliveryOptionsEnabled = $this->getAttributesProductsOptions($products, 'disable_checkout');
+
+        if ($deliveryOptionsEnabled) {
+            $this->deliveryOptionsDisabled = true;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param array $products
+     *
+     * @return int|null
+     */
+    public function getProductDropOffDelay(array $products): ?int
+    {
+        $highestDropOffDelay = null;
+
+        foreach ($products as $product) {
+            $dropOffDelay = $this->getAttributesProductsOptions($product, 'dropoff_delay');
+
+            if ($dropOffDelay > $highestDropOffDelay) {
+                $highestDropOffDelay = $dropOffDelay;
+            }
+        }
+
+        return $highestDropOffDelay > 0 ? $highestDropOffDelay : null;
+    }
+
+    /**
+     * Init all digital stamp settings
+     *
+     * @return $this
+     */
+    public function setDigitalStampSettings()
+    {
+        $settings = $this->getConfigValue(self::XML_PATH_POSTNL_SETTINGS . 'digital_stamp');
+        if ($settings === null) {
+            $this->_logger->critical('Can\'t set settings with path:' . self::XML_PATH_POSTNL_SETTINGS . 'digital stamp');
+        }
+
+        if (! key_exists('active', $settings)) {
+            $this->_logger->critical('Can\'t get digital stamp setting active');
+        }
+
+        $this->setDigitalStampActive($settings['active'] === '1');
+        if ($this->isDigitalStampActive()) {
+            $this->setMaxDigitalStampWeight(self::MAXIMUM_DIGITAL_STAMP_WEIGHT);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param \Magento\Quote\Model\Quote\Item $product
      * @param string                          $column
      *
      * @return null|int
@@ -123,12 +285,11 @@ class PackageRepository extends Package
     private function getAttributesProductsOptions($product, string $column): ?int
     {
         $attributeValue = $this->getAttributesFromProduct('catalog_product_entity_varchar', $product, $column);
-
         if (empty($attributeValue)) {
             $attributeValue = $this->getAttributesFromProduct('catalog_product_entity_int', $product, $column);
         }
 
-        if ($attributeValue) {
+        if (isset($attributeValue)) {
             return (int) $attributeValue;
         }
 
@@ -137,7 +298,7 @@ class PackageRepository extends Package
 
     /**
      * @param string                          $tableName
-     * @param Item $product
+     * @param \Magento\Quote\Model\Quote\Item $product
      * @param string                          $column
      *
      * @return null|string
@@ -145,13 +306,12 @@ class PackageRepository extends Package
     private function getAttributesFromProduct(string $tableName, $product, string $column): ?string
     {
         /**
-         * @var Product $resourceModel
+         * @var \Magento\Catalog\Model\ResourceModel\Product $resourceModel
          */
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-
-        $resource   = $objectManager->get('Magento\Framework\App\ResourceConnection');
-        $entityId   = $product->getProduct()->getEntityId();
-        $connection = $resource->getConnection();
+        $resource      = $objectManager->get('Magento\Framework\App\ResourceConnection');
+        $entityId      = $product->getProduct()->getEntityId();
+        $connection    = $resource->getConnection();
 
         $attributeId    = $this->getAttributeId($connection, $resource->getTableName('eav_attribute'), $column);
         $attributeValue = $this
@@ -177,7 +337,7 @@ class PackageRepository extends Package
         $sql = $connection
             ->select('entity_type_id')
             ->from($tableName)
-            ->where('attribute_code = ?', 'myparcelbe_' . $databaseColumn);
+            ->where('attribute_code = ?', 'myparcel_' . $databaseColumn);
 
         return $connection->fetchOne($sql);
     }
@@ -202,19 +362,18 @@ class PackageRepository extends Package
     }
 
     /**
-     * @param $products
+     * @param \Magento\Quote\Model\Quote\Item $product
      *
-     * @return PackageRepository
+     * @return $this
      */
-    public function isDeliveryOptionsDisabled($products): self
+    private function setWeightFromOneQuoteProduct($product)
     {
-        $deliveryOptionsEnabled = $this->getAttributesProductsOptions($products, 'disable_checkout');
-
-        if ($deliveryOptionsEnabled) {
-            $this->deliveryOptionsDisabled = true;
+        if ($product->getWeight() > 0) {
+            $this->addWeight($product->getWeight() * $product->getQty());
+        } else {
+            $this->setAllProductsFit(false);
         }
 
         return $this;
     }
-
 }

@@ -3,7 +3,7 @@
  * If you want to add improvements, please create a fork in our GitHub:
  * https://github.com/myparcelbe
  *
- * @author      Reindert Vetter <info@sendmyparcel.be>
+ * @author      Reindert Vetter <info@myparcel.nl>
  * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
@@ -13,7 +13,12 @@
 namespace MyParcelBE\Magento\Model\Sales;
 
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Module\Manager;
+use Magento\Framework\ObjectManagerInterface;
 use Magento\Sales\Model\Order;
+use MyParcelBE\Magento\Model\Source\ReturnInTheBox;
+use MyParcelBE\Magento\Model\Source\SourceItem;
+use MyParcelNL\Sdk\src\Helper\MyParcelCollection;
 use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
 
 /**
@@ -27,6 +32,26 @@ class MagentoOrderCollection extends MagentoCollection
      * @var \Magento\Sales\Model\ResourceModel\Order\Collection
      */
     private $orders = null;
+
+    /**
+     * @var SourceItem
+     */
+    private $sourceItem = null;
+
+    /**
+     * @var Manager
+     */
+    private $moduleManager;
+
+    public function __construct(ObjectManagerInterface $objectManager, $request = null, $areaList = null)
+    {
+        parent::__construct($objectManager, $request, $areaList);
+
+        $this->objectManager = $objectManager;
+        $this->moduleManager = $objectManager->get(Manager::class);
+
+        $this->setSourceItemWhenInventoryApiEnabled();
+    }
 
     /**
      * Get all Magento orders
@@ -64,7 +89,7 @@ class MagentoOrderCollection extends MagentoCollection
         $orders = [];
         foreach ($ids as $orderId) {
             $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-            $orders[] = $objectManager->create('\Magento\Sales\Model\Order')->load($orderId);
+            $orders[]      = $objectManager->create('\Magento\Sales\Model\Order')->load($orderId);
         }
 
         $this->setOrderCollection($orders);
@@ -106,10 +131,16 @@ class MagentoOrderCollection extends MagentoCollection
          * @var Order\Shipment $shipment
          */
         foreach ($this->getShipmentsCollection() as $shipment) {
-            if ($this->shipmentHasTrack($shipment) == false ||
+            $i = 1;
+
+            if (
+                $this->shipmentHasTrack($shipment) == false ||
                 $this->getOption('create_track_if_one_already_exist')
             ) {
-                $this->setNewMagentoTrack($shipment);
+                while ($i <= $this->getOption('label_amount')) {
+                    $this->setNewMagentoTrack($shipment);
+                    $i++;
+                }
             }
         }
 
@@ -119,34 +150,16 @@ class MagentoOrderCollection extends MagentoCollection
     }
 
     /**
-     * @return array|\Magento\Sales\Model\ResourceModel\order\shipment\Collection
-     */
-    private function getShipmentsCollection()
-    {
-        if ($this->orders == null) {
-            return [];
-        }
-
-        $shipments = [];
-        foreach ($this->getOrders() as $order) {
-            foreach ($order->getShipmentsCollection() as $shipment) {
-                $shipments[] = $shipment;
-            }
-        }
-
-        return $shipments;
-    }
-
-    /**
      * Add MyParcel Track from Magento Track
      *
      * @return $this
      * @throws \Exception
      *
-     * @todo; add filter carrier code
      */
     public function setMyParcelTrack()
     {
+        $newCollection = new MyParcelCollection();
+
         /**
          * @var Order                $order
          * @var Order\Shipment       $shipment
@@ -154,16 +167,25 @@ class MagentoOrderCollection extends MagentoCollection
          */
         foreach ($this->getOrders() as $order) {
             if ($order->getShipmentsCollection()->getSize() == 0) {
-                $this->messageManager->addError(self::ERROR_ORDER_HAS_NO_SHIPMENT);
+                $this->messageManager->addErrorMessage(self::ERROR_ORDER_HAS_NO_SHIPMENT);
             }
             foreach ($order->getShipmentsCollection() as $shipment) {
                 foreach ($shipment->getTracksCollection() as $magentoTrack) {
                     if ($magentoTrack->getCarrierCode() == TrackTraceHolder::MYPARCEL_CARRIER_CODE) {
                         $trackTraceHolder = $this->createConsignmentAndGetTrackTraceHolder($magentoTrack);
-                        $this->myParcelCollection->addConsignment($trackTraceHolder->consignment);
                     }
                 }
+                if (! empty($trackTraceHolder)) {
+                    $consignment = $trackTraceHolder->consignment->setReferenceId($shipment->getEntityId());
+                    $newCollection->addMultiCollo($consignment, $this->getOption('label_amount'));
+                }
             }
+        }
+
+        $this->myParcelCollection = $newCollection;
+
+        if ($this->options['return_in_the_box'] ?? false) {
+            $this->addreturnInTheBox($this->options['return_in_the_box']);
         }
 
         return $this;
@@ -197,6 +219,41 @@ class MagentoOrderCollection extends MagentoCollection
     }
 
     /**
+     * @param string $returnOptions
+     *
+     * @return void
+     * @throws \MyParcelNL\Sdk\src\Exception\ApiException
+     * @throws \MyParcelNL\Sdk\src\Exception\MissingFieldException
+     */
+    public function addReturnInTheBox(string $returnOptions): void
+    {
+        $this->myParcelCollection
+            ->generateReturnConsignments(
+                false,
+                function (
+                    AbstractConsignment $returnConsignment,
+                    AbstractConsignment $parent
+                ) use ($returnOptions): AbstractConsignment {
+                    $returnConsignment->setLabelDescription(
+                        'Return: ' . $parent->getLabelDescription() .
+                        ' This label is valid until: ' . date("d-m-Y", strtotime("+ 28 days"))
+                    );
+
+                    if (ReturnInTheBox::NO_OPTIONS === $returnOptions) {
+                        $returnConsignment->setOnlyRecipient(false);
+                        $returnConsignment->setSignature(false);
+                        $returnConsignment->setAgeCheck(false);
+                        $returnConsignment->setReturn(false);
+                        $returnConsignment->setLargeFormat(false);
+                        $returnConsignment->setInsurance(false);
+                    }
+
+                    return $returnConsignment;
+                }
+            );
+    }
+
+    /**
      * Create MyParcel concepts and update Magento Track
      *
      * @return $this
@@ -207,17 +264,17 @@ class MagentoOrderCollection extends MagentoCollection
     public function createMyParcelConcepts()
     {
         $this->myParcelCollection->createConcepts()->setLatestData();
-
         /**
          * @var Order                $order
          * @var Order\Shipment       $shipment
          * @var Order\Shipment\Track $mageTrack
-         * @var AbstractConsignment $consignment
          */
         foreach ($this->getShipmentsCollection() as $shipment) {
+            $consignments = $this->myParcelCollection->getConsignmentsByReferenceId($shipment->getEntityId());
             foreach ($shipment->getTracksCollection() as $mageTrack) {
-                $myParcelCollection = $this->myParcelCollection->getConsignmentsByReferenceId($shipment->getEntityId());
-                $consignment = $myParcelCollection->first();
+                if (! $consignment = $consignments->pop()) {
+                    continue;
+                }
 
                 $mageTrack
                     ->setData('myparcel_consignment_id', $consignment->getConsignmentId())
@@ -249,7 +306,7 @@ class MagentoOrderCollection extends MagentoCollection
      */
     public function sendReturnLabelMails()
     {
-        $this->myParcelCollection->sendReturnLabelMails();
+        $this->myParcelCollection->generateReturnConsignments(true);
 
         return $this;
     }
@@ -269,121 +326,32 @@ class MagentoOrderCollection extends MagentoCollection
     }
 
     /**
-     * return void
-     */
-    private function save()
-    {
-        foreach ($this->getOrders() as $order) {
-            $order->save();
-        }
-    }
-
-    /**
-     * Send shipment email with Track and trace variable
-     *
-     * @param \Magento\Sales\Model\Order $order
-     *
-     * @return $this
-     */
-    private function sendTrackEmailFromOrder(Order $order)
-    {
-        /**
-         * @var \Magento\Sales\Model\Order\Shipment $shipment
-         */
-        if ($this->trackSender->isEnabled() == false) {
-            return $this;
-        }
-
-        foreach ($order->getShipmentsCollection() as $shipment) {
-            if ($shipment->getEmailSent() == null) {
-                $this->trackSender->send($shipment);
-            }
-        }
-
-        return $this;
-    }
-
-
-    /**
-     * This create a shipment. Observer/NewShipment() create Magento and MyParcel Track
-     *
-     * @param Order $order
-     *
-     * @return void
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
-    private function createShipment(Order $order)
-    {
-        /**
-         * @var Order\Shipment                     $shipment
-         * @var \Magento\Sales\Model\Convert\Order $convertOrder
-         */
-        // Initialize the order shipment object
-        $convertOrder = $this->objectManager->create('Magento\Sales\Model\Convert\Order');
-        $shipment = $convertOrder->toShipment($order);
-
-        // Loop through order items
-        foreach ($order->getAllItems() as $orderItem) {
-            // Check if order item has qty to ship or is virtual
-            if (! $orderItem->getQtyToShip() || $orderItem->getIsVirtual()) {
-                continue;
-            }
-
-            $qtyShipped = $orderItem->getQtyToShip();
-
-            // Create shipment item with qty
-            $shipmentItem = $convertOrder->itemToShipmentItem($orderItem)->setQty($qtyShipped);
-
-            // Add shipment item to shipment
-            $shipment->addItem($shipmentItem);
-        }
-
-        // Register shipment
-        $shipment->register();
-        $shipment->getOrder()->setIsInProcess(true);
-
-        try {
-            // Save created shipment and order
-            $transaction = $this->objectManager->create('Magento\Framework\DB\Transaction');
-            $transaction->addObject($shipment)->addObject($shipment->getOrder())->save();
-
-            // Send email
-            $this->objectManager->create('Magento\Shipping\Model\ShipmentNotifier')
-                                ->notify($shipment);
-
-        } catch (\Exception $e) {
-            throw new LocalizedException(
-                __($e->getMessage())
-            );
-        }
-    }
-
-    /**
      * Update all the tracks that made created via the API
      *
      * @return $this
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function updateMagentoTrack()
+    public function updateMagentoTrack(): self
     {
-        /**
-         * @var $order        Order
-         * @var $shipment     Order\Shipment
-         * @var $magentoTrack Order\Shipment\Track
-         */
         foreach ($this->getShipmentsCollection() as $shipment) {
-
             $trackCollection = $shipment->getAllTracks();
             foreach ($trackCollection as $magentoTrack) {
                 $myParcelTrack = $this->myParcelCollection->getConsignmentByApiId(
                     $magentoTrack->getData('myparcel_consignment_id')
                 );
 
-                $magentoTrack->setData('myparcel_status', $myParcelTrack->getStatus());
+                if (! $myParcelTrack) {
+                    continue;
+                }
+
+                if ($myParcelTrack->getStatus()) {
+                    $magentoTrack->setData('myparcel_status', $myParcelTrack->getStatus());
+                }
 
                 if ($myParcelTrack->getBarcode()) {
                     $magentoTrack->setTrackNumber($myParcelTrack->getBarcode());
                 }
+
                 $magentoTrack->save();
             }
         }
@@ -399,15 +367,12 @@ class MagentoOrderCollection extends MagentoCollection
      * @return $this
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function updateGridByOrder()
+    public function updateGridByOrder(): self
     {
         if (empty($this->getOrders())) {
             throw new LocalizedException(__('MagentoOrderCollection::order array is empty'));
         }
 
-        /**
-         * @var Order $order
-         */
         foreach ($this->getOrders() as $order) {
             $aHtml = $this->getHtmlForGridColumns($order->getId());
 
@@ -429,10 +394,8 @@ class MagentoOrderCollection extends MagentoCollection
      *
      * @return bool
      */
-    public function hasShipment()
+    public function hasShipment(): bool
     {
-        /** @var $order Order */
-        /** @var Order\Shipment $shipment */
         foreach ($this->getOrders() as $order) {
             if ($order->hasShipments()) {
                 return true;
@@ -440,5 +403,150 @@ class MagentoOrderCollection extends MagentoCollection
         }
 
         return false;
+    }
+
+    /**
+     * @return array
+     */
+    private function getShipmentsCollection(): array
+    {
+        if (! isset($this->orders)) {
+            return [];
+        }
+
+        $shipments = [];
+        foreach ($this->getOrders() as $order) {
+            foreach ($order->getShipmentsCollection() as $shipment) {
+                $shipments[] = $shipment;
+            }
+        }
+
+        return $shipments;
+    }
+
+    /**
+     * return void
+     */
+    private function save(): void
+    {
+        foreach ($this->getOrders() as $order) {
+            $order->save();
+        }
+    }
+
+    /**
+     * Send shipment email with Track and trace variable
+     *
+     * @param \Magento\Sales\Model\Order $order
+     *
+     * @return $this
+     */
+    private function sendTrackEmailFromOrder(Order $order): self
+    {
+        /**
+         * @var \Magento\Sales\Model\Order\Shipment $shipment
+         */
+        if ($this->trackSender->isEnabled() == false) {
+            return $this;
+        }
+
+        foreach ($order->getShipmentsCollection() as $shipment) {
+            if ($shipment->getEmailSent() == null) {
+                $this->trackSender->send($shipment);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * This create a shipment. Observer/NewShipment() create Magento and MyParcel Track
+     *
+     * @param Order $order
+     *
+     * @return void
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    private function createShipment(Order $order)
+    {
+        /**
+         * @var Order\Shipment                     $shipment
+         * @var \Magento\Sales\Model\Convert\Order $convertOrder
+         */
+        // Initialize the order shipment object
+        $convertOrder = $this->objectManager->create('Magento\Sales\Model\Convert\Order');
+        $shipment     = $convertOrder->toShipment($order);
+
+        // Loop through order items
+        foreach ($order->getAllItems() as $orderItem) {
+            // Check if order item has qty to ship or is virtual
+            if (! $orderItem->getQtyToShip() || $orderItem->getIsVirtual()) {
+                continue;
+            }
+
+            $qtyShipped = $orderItem->getQtyToShip();
+
+            // Create shipment item with qty
+            $shipmentItem = $convertOrder->itemToShipmentItem($orderItem)->setQty($qtyShipped);
+
+            // Add shipment item to shipment
+            $shipment->addItem($shipmentItem);
+
+            if ($this->sourceItem) {
+                $source = $this->getMultiStockInventory($orderItem);
+                $shipment->getExtensionAttributes()->setSourceCode($source);
+            }
+        }
+
+        // Register shipment
+        $shipment->register();
+        $shipment->getOrder()->setIsInProcess(true);
+
+        try {
+            // Save created shipment and order
+            $transaction = $this->objectManager->create('Magento\Framework\DB\Transaction');
+            $transaction->addObject($shipment)->addObject($shipment->getOrder())->save();
+
+            // Send email
+            $this->objectManager->create('Magento\Shipping\Model\ShipmentNotifier')
+                                ->notify($shipment);
+        } catch (\Exception $e) {
+            throw new LocalizedException(
+                __($e->getMessage())
+            );
+        }
+    }
+
+    /**
+     * @param \Magento\Sales\Model\Order\Item $orderItem
+     *
+     * @return string
+     */
+    private function getMultiStockInventory(\Magento\Sales\Model\Order\Item $orderItem): string
+    {
+        $sku    = $orderItem->getSku();
+        $result = $this->sourceItem->getSourceItemDetailBySKU($sku);
+
+        foreach ($result as $item) {
+            if ($item->getSourceCode() !== 'default') {
+                return $item->getSourceCode();
+            }
+        }
+
+        return 'default';
+    }
+
+    /**
+     * Check if the module Magento_InventoryApi is activated.
+     * Some customers have removed the Magento_InventoryApi from their system.
+     * That causes problems with the Multi Stock Inventory
+     *
+     * @return void
+     */
+    private function setSourceItemWhenInventoryApiEnabled(): void
+    {
+        if ($this->moduleManager->isEnabled('Magento_InventoryApi')) {
+            $this->sourceItem = $this->objectManager->get(SourceItem::class);
+        }
     }
 }

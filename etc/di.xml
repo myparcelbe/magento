@@ -17,6 +17,9 @@
     <!-- API shipping methods -->
     <preference for="MyParcelBE\Magento\Api\ShippingMethodsInterface"
                 type="MyParcelBE\Magento\Model\Checkout\ShippingMethods" />
+    <!-- API package type -->
+    <preference for="MyParcelBE\Magento\Api\PackageTypeInterface"
+                type="MyParcelBE\Magento\Model\Checkout\PackageType" />
     <!-- Add print label button in order view -->
     <type name="Magento\Sales\Block\Adminhtml\Order\View">
         <plugin name="mypa-massaction-button" sortOrder="10" type="MyParcelBE\Magento\Plugin\Block\Adminhtml\Order\View"/>
@@ -28,6 +31,10 @@
     <!-- Avoid default email is sent. With a MyParcel shipment, the mail should be sent only after the barcode exists. -->
     <type name="Magento\Sales\Model\Order\Email\Container\ShipmentIdentity">
         <plugin name="MyParcelBE_Magento_Plugin_Magento_Sales_Model_Order_Email_Container_ShipmentIdentity" sortOrder="10" type="MyParcelBE\Magento\Plugin\Magento\Sales\Model\Order\Email\Container\ShipmentIdentity"/>
+    </type>
+    <!-- Add field delivery_options to order rest endpoint -->
+    <type name="Magento\Sales\Api\Data\OrderExtension">
+        <plugin name="MyParcelBE_Magento_Plugin_Magento_Sales_Api_Data_OrderExtension" sortOrder="11" type="MyParcelBE\Magento\Plugin\Magento\Sales\Api\Data\OrderExtension"/>
     </type>
     <!-- Save address information in checkout -->
     <type name="Magento\Checkout\Model\ShippingInformationManagement">

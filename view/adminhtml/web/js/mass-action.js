@@ -57,26 +57,26 @@ define(
                             }
                         );
                     } else {
-                    /* In order grid, button don't exist. Append a button */
-                    massSelectorLoadInterval = setInterval(
-                        function () {
-                            var actionSelector = $('.action-select-wrap .action-menu');
-                            if (actionSelector.length) {
-                                clearInterval(massSelectorLoadInterval);
-                                actionSelector.append(
-                                    '<li><span class="action-menu-item action-myparcel">Print MyParcel labels</span></li>'
-                                );
+                        /* In order grid, button don't exist. Append a button */
+                        massSelectorLoadInterval = setInterval(
+                            function () {
+                                var actionSelector = $('.action-select-wrap .action-menu');
+                                if (actionSelector.length) {
+                                    clearInterval(massSelectorLoadInterval);
+                                    actionSelector.append(
+                                        '<li><span class="action-menu-item action-myparcel">Print MyParcel labels</span></li>'
+                                    );
 
-                                $('.action-myparcel').on(
-                                    "click",
-                                    function () {
+                                    $('.action-myparcel').on(
+                                        "click",
+                                        function () {
                                             parentThis._showMyParcelModal();
-                                    }
-                                );
-                            }
-                        },
-                        1000
-                    );
+                                        }
+                                    );
+                                }
+                            },
+                            1000
+                        );
                     }
                 },
 
@@ -96,7 +96,7 @@ define(
 
                         return this;
                     }
-                     
+
                     if (('has_api_key' in this.options) && (this.options['has_api_key'] == false)) {
                         alert({title: $.mage.__('No key found. Go to Configuration and then to MyParcel to enter the key.')});
 
@@ -142,7 +142,7 @@ define(
                     $.mage.__('Print position');
                     */
 
-                    $($.parseHTML(template)).find("[trans]").each(function( index ) {
+                    $($.parseHTML(template)).find("[trans]").each(function (index) {
                         var oldElement = $(this).get(0).outerHTML;
                         var newElement = $(this).html($.mage.__($(this).attr('trans'))).get(0).outerHTML;
                         template = template.replace(oldElement, newElement);
@@ -156,7 +156,7 @@ define(
                  */
                 _setActions: function () {
                     var parentThis = this;
-                    var actionOptions = ["request_type", "package_type", "print_position"];
+                    var actionOptions = ["request_type", "package_type", "print_position", "label_amount", "label_amount"];
 
                     actionOptions.forEach(function (option) {
                         if (!(option in parentThis.options['action_options']) || (parentThis.options['action_options'][option] == false)) {
@@ -185,23 +185,7 @@ define(
                     $('#mypa_package_type-default').prop('checked', true).trigger('change');
                     $('#paper_size-' + this.options.settings['paper_type']).prop('checked', true).trigger('change');
 
-                    if (selectAmount != 0) {
-                        if (selectAmount >= 1) {
-                            $('#mypa_position-2').prop('checked', true);
-                        }
-
-                        if (selectAmount >= 2) {
-                            $('#mypa_position-4').prop('checked', true);
-                        }
-
-                        if (selectAmount >= 3) {
-                            $('#mypa_position-1').prop('checked', true);
-                        }
-
-                        if (selectAmount >= 4) {
-                            $('#mypa_position-3').prop('checked', true);
-                        }
-                    }
+                    this._getLabelPosition(selectAmount);
 
                     return this;
                 },
@@ -223,6 +207,8 @@ define(
                  * @protected
                  */
                 _setMyParcelMassActionObserver: function () {
+                    var parentThis = this;
+
                     $("input[name='mypa_paper_size']").on(
                         "change",
                         function () {
@@ -244,7 +230,49 @@ define(
                             }
                         }
                     );
+
+                    $("select[name='mypa_label_amount']").on(
+                        "change",
+                        function () {
+                            var selectAmount = parseInt($("select[name='mypa_label_amount']").val());
+                            parentThis._setLabelPosition(selectAmount);
+                        }
+                    );
+
                     return this;
+                },
+
+                /**
+                 * @protected
+                 */
+                _setLabelPosition: function (selectAmount) {
+                    var totalAmount = selectAmount * this.selectedIds.length;
+                    $("input[id^=mypa_position-]").prop('checked', false);
+
+                    this._getLabelPosition(totalAmount);
+                },
+
+                /**
+                 * @protected
+                 */
+                _getLabelPosition: function (selectAmount) {
+                    if (selectAmount != 0) {
+                        if (selectAmount >= 1) {
+                            $('#mypa_position-2').prop('checked', true);
+                        }
+
+                        if (selectAmount >= 2) {
+                            $('#mypa_position-4').prop('checked', true);
+                        }
+
+                        if (selectAmount >= 3) {
+                            $('#mypa_position-1').prop('checked', true);
+                        }
+
+                        if (selectAmount >= 4) {
+                            $('#mypa_position-3').prop('checked', true);
+                        }
+                    }
                 },
 
                 /**

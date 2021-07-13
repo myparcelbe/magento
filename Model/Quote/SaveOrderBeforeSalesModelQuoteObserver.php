@@ -11,7 +11,7 @@
  * If you want to add improvements, please create a fork in our GitHub:
  * https://github.com/myparcelbe
  *
- * @author      Reindert Vetter <info@sendmyparcel.be>
+ * @author      Reindert Vetter <info@myparcel.nl>
  * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
@@ -22,12 +22,13 @@ namespace MyParcelBE\Magento\Model\Quote;
 
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Quote\Model\Quote;
+use Magento\Sales\Model\Order;
 use MyParcelBE\Magento\Helper\Checkout;
 use MyParcelBE\Magento\Model\Checkout\Carrier;
-use MyParcelBE\Magento\Model\Checkout\DeliveryOptions;
-use MyParcelBE\Magento\Helper\Checkout as CheckoutAlias;
 use MyParcelBE\Magento\Model\Sales\Repository\DeliveryRepository;
-use MyParcelNL\Sdk\src\Helper\SplitStreet;
+use MyParcelNL\Sdk\src\Helper\ValidatePostalCode;
+use MyParcelNL\Sdk\src\Helper\ValidateStreet;
 use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
 
 class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
@@ -64,36 +65,48 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
 
     /**
      *
-     * @param \Magento\Framework\Event\Observer $observer
+     * @param Observer $observer
      *
      * @return $this
      */
     public function execute(Observer $observer)
     {
-        /* @var \Magento\Quote\Model\Quote $quote */
+        /* @var Quote $quote */
         $quote = $observer->getEvent()->getData('quote');
-        file_put_contents(time() . '_quote.json', json_encode($quote->getData()));
 
-        /* @var \Magento\Sales\Model\Order $order */
-        $order      = $observer->getEvent()->getData('order');
-        $fullStreet = implode(' ', $order->getShippingAddress()->getStreet());
+        /* @var Order $order */
+        $order = $observer->getEvent()->getData('order');
 
-        $destinationCountry = $order->getShippingAddress()->getCountryId();
-        if ($destinationCountry == AbstractConsignment::CC_BE &&
-            ! SplitStreet::isCorrectStreet($fullStreet, AbstractConsignment::CC_BE, $destinationCountry)
-        ) {
-            $order->setData(CheckoutAlias::FIELD_TRACK_STATUS, __('⚠️&#160; Please check address'));
+        if ($order->getShippingAddress() === null) {
+            return $this;
         }
-        // @todo check delivery options from quote (step 2)
-        if ($quote->hasData(Checkout::FIELD_DELIVERY_OPTIONS && $this->hasMyParcelDeliveryOptions($quote))) {
+
+        $fullStreet         = implode(' ', $order->getShippingAddress()->getStreet());
+        $postcode           = $order->getShippingAddress()->getPostcode();
+        $destinationCountry = $order->getShippingAddress()->getCountryId();
+
+        if ($destinationCountry != AbstractConsignment::CC_NL && $destinationCountry != AbstractConsignment::CC_BE) {
+            return $this;
+        }
+
+        if (! ValidateStreet::validate($fullStreet, AbstractConsignment::CC_NL, $destinationCountry)) {
+            $order->setData(Checkout::FIELD_TRACK_STATUS, __('⚠️&#160; Please check street'));
+        }
+
+        if (! ValidatePostalCode::validate($postcode, $destinationCountry)) {
+            $order->setData(Checkout::FIELD_TRACK_STATUS, __('⚠️&#160; Please check postal code'));
+        }
+
+        if ($quote->hasData(Checkout::FIELD_DELIVERY_OPTIONS) && $this->hasMyParcelDeliveryOptions($quote)) {
             $jsonDeliveryOptions = $quote->getData(Checkout::FIELD_DELIVERY_OPTIONS);
+            $deliveryOptions     = json_decode($jsonDeliveryOptions, true) ?? [];
 
             $order->setData(Checkout::FIELD_DELIVERY_OPTIONS, $jsonDeliveryOptions);
 
-            $dropOffDay = $this->delivery->getDropOffDayFromJson($jsonDeliveryOptions);
+            $dropOffDay = $this->delivery->getDropOffDayFromDeliveryOptions($deliveryOptions);
             $order->setData(Checkout::FIELD_DROP_OFF_DAY, $dropOffDay);
 
-            $selectedCarrier = $this->delivery->getCarrierFromJson($jsonDeliveryOptions);
+            $selectedCarrier = $this->delivery->getCarrierFromDeliveryOptions($deliveryOptions);
             $order->setData(Checkout::FIELD_MYPARCEL_CARRIER, $selectedCarrier);
         }
 
@@ -101,21 +114,20 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
     }
 
     /**
-     * @param \Magento\Quote\Model\Quote $quote
+     * @param Quote $quote
      *
      * @return bool
      */
     private function hasMyParcelDeliveryOptions($quote)
     {
-        file_put_contents(time() . '_hasMyParcelDeliveryOptions.json', json_encode($quote->getData()));
         $myParcelMethods = array_keys(Carrier::getMethods());
         $shippingMethod  = $quote->getShippingAddress()->getShippingMethod();
 
-        if ($this->arrayLike($shippingMethod, $myParcelMethods)) {
+        if ($this->isMyParcelRelated($shippingMethod, $myParcelMethods)) {
             return true;
         }
 
-        if ($this->arrayLike($shippingMethod, $this->parentMethods)) {
+        if ($this->isMyParcelRelated($shippingMethod, $this->parentMethods)) {
             return true;
         }
 
@@ -123,20 +135,23 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
     }
 
     /**
-     * @param $input
-     * @param $data
+     * @param string $input
+     * @param array  $data
      *
-     * @return bool
+     * @return int
      */
-    private function arrayLike($input, $data)
+    private function isMyParcelRelated(string $input, array $data)
     {
-        $result = array_filter($data, function($item) use ($input) {
-            if (stripos($input, $item) !== false) {
-                return true;
-            }
+        $result = array_filter(
+            $data,
+            function ($item) use ($input) {
+                if (stripos($input, $item) !== false) {
+                    return true;
+                }
 
-            return false;
-        });
+                return false;
+            }
+        );
 
         return count($result) > 0;
     }

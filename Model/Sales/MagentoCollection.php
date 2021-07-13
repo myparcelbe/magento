@@ -3,7 +3,7 @@
  * If you want to add improvements, please create a fork in our GitHub:
  * https://github.com/myparcelbe
  *
- * @author      Reindert Vetter <info@sendmyparcel.be>
+ * @author      Reindert Vetter <info@myparcel.nl>
  * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
@@ -14,7 +14,10 @@ namespace MyParcelBE\Magento\Model\Sales;
 
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Sales\Model\Order;
-use MyParcelBE\magento\Model\Order\Email\Sender\TrackSender;
+use MyParcelBE\Magento\Model\Order\Email\Sender\TrackSender;
+use MyParcelBE\Magento\Model\Source\ReturnInTheBox;
+use MyParcelBE\Magento\Observer\NewShipment;
+use MyParcelBE\Magento\Ui\Component\Listing\Column\TrackAndTrace;
 use MyParcelNL\Sdk\src\Helper\MyParcelCollection;
 use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
 
@@ -81,33 +84,34 @@ class MagentoCollection implements MagentoCollectionInterface
         'carrier'                           => 'bpost',
         'positions'                         => null,
         'signature'                         => null,
-        'insurance'                         => null,
         'only_recipient'                    => null,
+        'return'                            => null,
         'large_format'                      => null,
+        'insurance'                         => null,
+        'label_amount'                      => NewShipment::DEFAULT_LABEL_AMOUNT,
     ];
 
     /**
-     * CreateAndPrintMyParcelTrack constructor.
      *
-     * @param ObjectManagerInterface                  $objectManagerInterface
+     * @param ObjectManagerInterface                  $objectManager
      * @param \Magento\Framework\App\RequestInterface $request
      * @param null                                    $areaList
      */
-    public function __construct(ObjectManagerInterface $objectManagerInterface, $request = null, $areaList = null)
+    public function __construct(ObjectManagerInterface $objectManager, $request = null, $areaList = null)
     {
         // @todo; Adjust if there is a solution to the following problem: https://github.com/magento/magento2/pull/8413
         if ($areaList) {
             $this->areaList = $areaList;
         }
 
-        $this->objectManager = $objectManagerInterface;
+        $this->objectManager = $objectManager;
         $this->request       = $request;
         $this->trackSender   = $this->objectManager->get('MyParcelBE\Magento\Model\Order\Email\Sender\TrackSender');
 
-        $this->helper             = $objectManagerInterface->create(self::PATH_HELPER_DATA);
-        $this->modelTrack         = $objectManagerInterface->create(self::PATH_ORDER_TRACK);
-        $this->messageManager     = $objectManagerInterface->create(self::PATH_MANAGER_INTERFACE);
-        $this->myParcelCollection = (new MyParcelCollection())->setUserAgent('Magento2', $this->helper->getVersion());
+        $this->helper             = $objectManager->create(self::PATH_HELPER_DATA);
+        $this->modelTrack         = $objectManager->create(self::PATH_ORDER_TRACK);
+        $this->messageManager     = $objectManager->create(self::PATH_MANAGER_INTERFACE);
+        $this->myParcelCollection = (new MyParcelCollection())->setUserAgents(['Magento2'=> $this->helper->getVersion()]);
     }
 
     /**
@@ -132,6 +136,12 @@ class MagentoCollection implements MagentoCollectionInterface
             }
         }
 
+        $label_amount = $this->request->getParam('mypa_label_amount') ?? NewShipment::DEFAULT_LABEL_AMOUNT;
+
+        if ($label_amount) {
+            $this->options['label_amount'] = $label_amount;
+        }
+
         // Remove position if paper size == A6
         if ($this->request->getParam('mypa_paper_size', 'A6') != 'A4') {
             $this->options['positions'] = null;
@@ -143,6 +153,11 @@ class MagentoCollection implements MagentoCollectionInterface
 
         if ($this->request->getParam('mypa_request_type') != 'concept') {
             $this->options['create_track_if_one_already_exist'] = false;
+        }
+
+        $returnInTheBox = $this->helper->getGeneralConfig('print/return_in_the_box');
+        if (ReturnInTheBox::NO_OPTIONS === $returnInTheBox || ReturnInTheBox::EQUAL_TO_SHIPMENT === $returnInTheBox) {
+            $this->options['return_in_the_box'] = $returnInTheBox;
         }
 
         return $this;
@@ -189,7 +204,6 @@ class MagentoCollection implements MagentoCollectionInterface
     {
         return $this->helper->apiKeyIsCorrect();
     }
-
 
     /**
      * Update sales_order table
@@ -268,7 +282,7 @@ class MagentoCollection implements MagentoCollectionInterface
             ->setCarrierCode(TrackTraceHolder::MYPARCEL_CARRIER_CODE)
             ->setTitle(TrackTraceHolder::MYPARCEL_TRACK_TITLE)
             ->setQty($shipment->getTotalQty())
-            ->setTrackNumber('Concept')
+            ->setTrackNumber(TrackAndTrace::VALUE_EMPTY)
             ->save();
 
         return $track;

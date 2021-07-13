@@ -5,7 +5,7 @@
  * If you want to add improvements, please create a fork in our GitHub:
  * https://github.com/myparcelbe
  *
- * @author      Reindert Vetter <info@sendmyparcel.be>
+ * @author      Reindert Vetter <info@myparcel.nl>
  * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
@@ -96,7 +96,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
         if (version_compare($context->getVersion(), '2.1.10', '<=')) {
             $setup->getConnection()->addColumn(
                 $setup->getTable('quote'),
-                'delivery_options',
+                'myparcel_delivery_options',
                 [
                     'type'     => Table::TYPE_TEXT,
                     'nullable' => true,
@@ -106,7 +106,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
 
             $setup->getConnection()->addColumn(
                 $setup->getTable('sales_order'),
-                'delivery_options',
+                'myparcel_delivery_options',
                 [
                     'type'     => Table::TYPE_TEXT,
                     'nullable' => true,
@@ -133,7 +133,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 ]
             );
         }
-        if (version_compare($context->getVersion(), '3.0.0', '<')) {
+        if (version_compare($context->getVersion(), '4.0.0', '<=')) {
             $setup->getConnection()->addColumn(
                 $setup->getTable('sales_order'),
                 'myparcel_carrier',
@@ -153,28 +153,32 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 ]
             );
             if ($setup->getConnection()->isTableExists('quote') == true) {
-                $setup->getConnection()->changeColumn(
-                    $setup->getTable('quote'),
-                    'delivery_options',
-                    'myparcel_delivery_options',
-                    [
-                        'type' => Table::TYPE_TEXT,
-                        'nullable' => true,
-                        'comment'  => 'MyParcel delivery options',
-                    ]
-                );
+                if ($setup->getConnection()->tableColumnExists('quote', 'delivery_options') === true) {
+                    $setup->getConnection()->changeColumn(
+                        $setup->getTable('quote'),
+                        'delivery_options',
+                        'myparcel_delivery_options',
+                        [
+                            'type'     => Table::TYPE_TEXT,
+                            'nullable' => true,
+                            'comment'  => 'MyParcel delivery options',
+                        ]
+                    );
+                }
             }
             if ($setup->getConnection()->isTableExists('sales_order') == true) {
-                $setup->getConnection()->changeColumn(
-                    $setup->getTable('sales_order'),
-                    'delivery_options',
-                    'myparcel_delivery_options',
-                    [
-                        'type' => Table::TYPE_TEXT,
-                        'nullable' => true,
-                        'comment'  => 'MyParcel delivery options',
-                    ]
-                );
+                if ($setup->getConnection()->tableColumnExists('sales_order', 'delivery_options') === true) {
+                    $setup->getConnection()->changeColumn(
+                        $setup->getTable('sales_order'),
+                        'delivery_options',
+                        'myparcel_delivery_options',
+                        [
+                            'type'     => Table::TYPE_TEXT,
+                            'nullable' => true,
+                            'comment'  => 'MyParcel delivery options',
+                        ]
+                    );
+                }
             }
         }
         $setup->endSetup();
