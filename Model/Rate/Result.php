@@ -171,7 +171,9 @@ class Result extends \Magento\Shipping\Model\Rate\Result
                         $parentRate
                     );
 
-                    if ($method) $this->_rates[] = $method; // JOERI
+                    if ($method) {
+                        $this->_rates[] = $method;
+                    }
                 }
             }
         }
@@ -303,7 +305,9 @@ class Result extends \Magento\Shipping\Model\Rate\Result
         $title = $this->createTitle($settingPath);
         $price = $this->getPrice($settingPath);
 
-        if ($title . '_' === $settingPath) return null;// JOERI - non-translated methods do not exist
+        if ($title . '_' === $settingPath) {
+            return null;
+        }
 
         $method->setData('cost', 0);
         // Trim the separator off the end of the settings path

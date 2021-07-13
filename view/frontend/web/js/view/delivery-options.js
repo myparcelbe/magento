@@ -89,8 +89,6 @@ define(
        */
       initialize: function() {
         window.MyParcelConfig.address = deliveryOptions.getAddress(quote.shippingAddress());
-        console.error(' JOERI 1 2 3 ');
-        console.log(JSON.stringify(window.MyParcelConfig));
         deliveryOptions.render();
         deliveryOptions.addListeners();
         deliveryOptions.rendered.subscribe(function(bool) {
@@ -151,7 +149,7 @@ define(
         quote.shippingAddress.subscribe(deliveryOptions.updateAddress);
         quote.shippingMethod.subscribe(_.debounce(deliveryOptions.onShippingMethodUpdate));
 
-        document.addEventListener( // JOERI: dit zorgt voor refresh zodat er altijd bpost bezorging staat bij klikken op 'volgende'
+        document.addEventListener(
           deliveryOptions.updatedDeliveryOptionsEvent,
           deliveryOptions.onUpdatedDeliveryOptions
         );
@@ -187,7 +185,14 @@ define(
        * @param {Object?} address - Quote.shippingAddress from Magento.
        */
       updateAddress: function(address) {
+        var newAddress;
+
         if (!deliveryOptions.isUsingMyParcelMethod) {
+          return;
+        }
+
+        newAddress = deliveryOptions.getAddress(address || quote.shippingAddress());
+        if (JSON.stringify(newAddress) === JSON.stringify(window.MyParcelConfig.address)) {
           return;
         }
 

@@ -11,6 +11,7 @@ use MyParcelBE\Magento\Model\Sales\Repository\PackageRepository;
 class Checkout
 {
     private const PLATFORM = 'belgie';
+    private const PACKAGE  = 'package';
 
     /**
      * @var array
@@ -108,7 +109,7 @@ class Checkout
             'platform'                   => self::PLATFORM,
             'carriers'                   => $this->getActiveCarriers(),
             'currency'                   => $this->currency->getStore()->getCurrentCurrency()->getCode(),
-            'packageType'                => 'package', // Joeri! FOEI!
+            'packageType'                => self::PACKAGE,
             'pickupLocationsDefaultView' => $this->helper->getArrayConfig(Data::XML_PATH_GENERAL, 'shipping_methods/pickup_locations_view')
         ];
     }
