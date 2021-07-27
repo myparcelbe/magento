@@ -126,9 +126,10 @@ class Checkout
         $carrierPath    = data::CARRIERS_XML_PATH_MAP;
 
         foreach ($activeCarriers as $carrier) {
-            $basePrice        = $this->helper->getBasePrice();
-            $signatureFee     = $this->helper->getMethodPrice($carrierPath[$carrier], 'delivery/signature_fee', false);
-            $onlyRecipientFee = $this->helper->getMethodPrice($carrierPath[$carrier], 'delivery/only_recipient_fee', false);
+            $basePrice          = $this->helper->getBasePrice();
+            $signatureFee       = $this->helper->getMethodPrice($carrierPath[$carrier], 'delivery/signature_fee', false);
+            $onlyRecipientFee   = $this->helper->getMethodPrice($carrierPath[$carrier], 'delivery/only_recipient_fee', false);
+            $deliveryDaysWindow = $this->helper->getIntegerConfig($carrierPath[$carrier], 'general/deliverydays_window');
 
             $myParcelConfig["carrierSettings"][$carrier] = [
                 'allowDeliveryOptions' => $this->package->deliveryOptionsDisabled ? false : $this->helper->getBoolConfig($carrierPath[$carrier], 'delivery/active'),
@@ -144,12 +145,13 @@ class Checkout
 
                 'pricePickup'                  => $this->helper->getMethodPrice($carrierPath[$carrier], 'pickup/fee'),
 
-                'cutoffTime'          => $this->helper->getTimeConfig($carrierPath[$carrier], 'general/cutoff_time'),
-                'saturdayCutoffTime'  => $this->helper->getTimeConfig($carrierPath[$carrier], 'general/saturday_cutoff_time'),
-                'deliveryDaysWindow'  => $this->helper->getIntegerConfig($carrierPath[$carrier], 'general/deliverydays_window'),
-                'allowMondayDelivery' => $this->helper->getIntegerConfig($carrierPath[$carrier], 'general/monday_delivery_active'),
-                'dropOffDays'         => $this->helper->getArrayConfig($carrierPath[$carrier], 'general/dropoff_days'),
-                'dropOffDelay'        => $this->getDropOffDelay($carrierPath[$carrier], 'general/dropoff_delay'),
+                'cutoffTime'            => $this->helper->getTimeConfig($carrierPath[$carrier], 'general/cutoff_time'),
+                'saturdayCutoffTime'    => $this->helper->getTimeConfig($carrierPath[$carrier], 'general/saturday_cutoff_time'),
+                'deliveryDaysWindow'    => $deliveryDaysWindow,
+                'allowShowDeliveryDate' => (0 !== (int) $deliveryDaysWindow),
+                'allowMondayDelivery'   => $this->helper->getIntegerConfig($carrierPath[$carrier], 'general/monday_delivery_active'),
+                'dropOffDays'           => $this->helper->getArrayConfig($carrierPath[$carrier], 'general/dropoff_days'),
+                'dropOffDelay'          => $this->getDropOffDelay($carrierPath[$carrier], 'general/dropoff_delay'),
             ];
         }
 

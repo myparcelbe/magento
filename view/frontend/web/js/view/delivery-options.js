@@ -196,7 +196,7 @@ define(
           return;
         }
 
-        window.MyParcelConfig.address = deliveryOptions.getAddress(address || quote.shippingAddress());
+        window.MyParcelConfig.address = newAddress;
 
         deliveryOptions.triggerEvent(deliveryOptions.updateDeliveryOptionsEvent);
       },

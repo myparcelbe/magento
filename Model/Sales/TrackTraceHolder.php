@@ -143,12 +143,12 @@ class TrackTraceHolder
             $deliveryOptionsAdapter = DeliveryOptionsAdapterFactory::create((array) $deliveryOptions);
         } catch (\BadMethodCallException $e) {
             // create new instance from unknown json data
-            $deliveryOptions        = (new ConsignmentNormalizer((array) $deliveryOptions + $options))->normalize();
+            $deliveryOptions = (new ConsignmentNormalizer($this->helper))->normalize((array) $deliveryOptions + $options);
             $deliveryOptionsAdapter = new DeliveryOptionsFromOrderAdapter($deliveryOptions);
         }
 
         $pickupLocationAdapter  = $deliveryOptionsAdapter->getPickupLocation();
-        $shippingOptionsAdapter = $deliveryOptionsAdapter->getShipmentOptions();
+        //$shippingOptionsAdapter = $deliveryOptionsAdapter->getShipmentOptions();
 
         // get packagetype from delivery_options and use it for process directly
         $packageType = self::$defaultOptions->getPackageType();

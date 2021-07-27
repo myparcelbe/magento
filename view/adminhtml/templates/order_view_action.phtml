@@ -13,7 +13,7 @@
                 <?php if ($block->canShip()): ?>
                     "action_options": {
                         "request_type": true,
-                        "package_type": true,
+                        "package_type": false,
                         "print_position": <?= $block->isCdCountry() == true ? 'false' : 'true'; ?>,
                         "label_amount": false
                     }

@@ -14,7 +14,7 @@
                 <?php if ($block->hasTrack() == false): ?>
                     "action_options": {
                         "request_type": true,
-                        "package_type": true,
+                        "package_type": false,
                         "print_position": <?= $block->isCdCountry() == true ? 'false' : 'true'; ?>,
                         "label_amount": true
                     }

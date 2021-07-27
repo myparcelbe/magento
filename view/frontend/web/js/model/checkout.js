@@ -264,16 +264,15 @@ function(
 
     Model.allowedShippingMethods().forEach(function(methodCode) {
       var rate = Model.findRateByMethodCode(methodCode);
-      //var shippingCountry = quote.shippingAddress().countryId;
+      var shippingCountry = quote.shippingAddress().countryId;
 
       if (rate && rate.available) {
         isAllowed = true;
       }
 
-      /* Only for MyParcelNL */
-      //if (shippingCountry !== 'NL' && shippingCountry !== 'BE') {
-      //  isAllowed = false;
-      //}
+      if (shippingCountry !== 'NL' && shippingCountry !== 'BE') {
+        isAllowed = false;
+      }
     });
 
     Model.hasDeliveryOptions(isAllowed);

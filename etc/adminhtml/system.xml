@@ -24,7 +24,7 @@
                     <comment>The API Key</comment>
                 </field>
             </group>
-            <group id="print" translate="label" type="text" sortOrder="210" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="basic_settings" translate="label" type="text" sortOrder="210" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Print settings</label>
                 <field id="paper_type" translate="label comment" type="select" sortOrder="211" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Paper type</label>
@@ -267,7 +267,7 @@
                 </field>
                 <field id="dropoff_delay" translate="label comment" type="select" sortOrder="490" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Dropoff-delay</label>
-                    <comment>This options allows you to set the number of days it takes you to pick, pack and hand in your parcels at PostNL when ordered before the cutoff time.</comment>
+                    <comment>This options allows you to set the number of days it takes you to pick, pack and hand in your parcels when ordered before the cutoff time.</comment>
                     <source_model>MyParcelBE\Magento\Model\Source\DropOffDelayDays</source_model>
                 </field>
             </group>
