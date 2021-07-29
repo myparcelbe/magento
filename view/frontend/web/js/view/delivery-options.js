@@ -192,7 +192,7 @@ define(
         }
 
         newAddress = deliveryOptions.getAddress(address || quote.shippingAddress());
-        if (JSON.stringify(newAddress) === JSON.stringify(window.MyParcelConfig.address)) {
+        if (_.isEqual(newAddress, window.MyParcelConfig.address)) {
           return;
         }
 
