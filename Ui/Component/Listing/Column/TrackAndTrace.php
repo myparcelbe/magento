@@ -4,6 +4,7 @@ namespace MyParcelBE\Magento\Ui\Component\Listing\Column;
 
 use Magento\Framework\App\ObjectManager;
 use Magento\Sales\Model\Order;
+use Magento\Tests\NamingConvention\true\string;
 use Magento\Ui\Component\Listing\Columns\Column;
 use MyParcelNL\Sdk\src\Helper\TrackTraceUrl;
 use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
@@ -57,7 +58,7 @@ class TrackAndTrace extends Column
             $data        = $this->getData('name');
 
             // Render the T&T as a link and add the script to remove the click handler.
-            $trackTrace  = (new TrackTraceUrl())->create($trackNumber, $postalCode, $countryId);
+            $trackTrace  = $this->getTrackAndTraceUrl($trackNumber, $postalCode, $countryId);
             $item[$data] = "<a class=\"myparcel-barcode-link\" target=\"_blank\" href=\"$trackTrace\">$trackNumber</a>";
             $item[$data] .= self::SCRIPT_UNBIND_CLICK;
         }
@@ -76,5 +77,12 @@ class TrackAndTrace extends Column
         $countryId = $order->getShippingAddress()->getCountryId();
 
         return $countryId ?? AbstractConsignment::CC_NL;
+    }
+
+    public function getTrackAndTraceUrl(string $trackNumber, string $postalCode, ?string $countryId = null): string
+    {
+        $myparcelUrl = TrackTraceUrl::create($trackNumber, $postalCode, $countryId);
+
+        return str_replace('https://myparcel.me', 'https://sendmyparcel.me', $myparcelUrl);
     }
 }
