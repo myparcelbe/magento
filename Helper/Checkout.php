@@ -283,14 +283,14 @@ class Checkout extends Data
      * @param        $carrier
      * @param string $key
      *
-     * @return array
+     * @return string
      */
-    public function getArrayConfig($carrier, $key): array
+    public function getArrayConfig($carrier, $key): string
     {
-        return array_map(static function($val) {
-            return (is_numeric($val)) ? (int) $val : $val;
-        }, explode(',', $this->getCarrierConfig($key, $carrier)));
-        //return str_replace(',', ';', $this->getCarrierConfig($key, $carrier));
+        return str_replace(',', ';', $this->getCarrierConfig($key, $carrier));
+//        return array_map(static function($val) {
+//            return (is_numeric($val)) ? (int) $val : $val;
+//        }, explode(',', $this->getCarrierConfig($key, $carrier)));
     }
 
     /**

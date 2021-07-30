@@ -3,6 +3,7 @@ define(
     'underscore',
     'ko',
     'Magento_Checkout/js/model/shipping-rate-registry',
+    'Magento_Checkout/js/action/select-shipping-method',
     'Magento_Checkout/js/model/quote',
     'MyParcelBE_Magento/js/model/checkout',
     'MyParcelBE_Magento/js/polyfill/array_prototype_find',
@@ -16,6 +17,7 @@ define(
     _,
     ko,
     shippingRateRegistry,
+    selectShippingMethodAction,
     quote,
     checkout,
     array_prototype_find,
@@ -238,6 +240,8 @@ define(
             if (!response.length) {
               return;
             }
+
+            selectShippingMethodAction(null);
 
             quote.shippingMethod(deliveryOptions.getNewShippingMethod(response[0].element_id));
           },
