@@ -108,7 +108,7 @@ class Data extends AbstractHelper
      */
     public function getStandardConfig($code = '', $storeId = null)
     {
-        return $this->getConfigValue(self::XML_PATH_POSTNL_SETTINGS . $code, $storeId);
+        return $this->getConfigValue(self::XML_PATH_BPOST_SETTINGS . $code, $storeId);
     }
 
     /**
