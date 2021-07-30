@@ -110,7 +110,7 @@ class Checkout
             'carriers'                   => $this->getActiveCarriers(),
             'currency'                   => $this->currency->getStore()->getCurrentCurrency()->getCode(),
             'packageType'                => self::PACKAGE,
-            'pickupLocationsDefaultView' => $this->helper->getStandardConfig(Data::XML_PATH_GENERAL, 'shipping_methods/pickup_locations_view')
+            'pickupLocationsDefaultView' => $this->helper->getArrayConfig(Data::XML_PATH_GENERAL, 'shipping_methods/pickup_locations_view')
         ];
     }
 
