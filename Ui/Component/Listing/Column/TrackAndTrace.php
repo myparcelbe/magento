@@ -4,7 +4,6 @@ namespace MyParcelBE\Magento\Ui\Component\Listing\Column;
 
 use Magento\Framework\App\ObjectManager;
 use Magento\Sales\Model\Order;
-use Magento\Tests\NamingConvention\true\string;
 use Magento\Ui\Component\Listing\Columns\Column;
 use MyParcelNL\Sdk\src\Helper\TrackTraceUrl;
 use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
@@ -79,6 +78,13 @@ class TrackAndTrace extends Column
         return $countryId ?? AbstractConsignment::CC_NL;
     }
 
+    /**
+     * @param string      $trackNumber
+     * @param string      $postalCode
+     * @param string|null $countryId
+     *
+     * @return string
+     */
     public function getTrackAndTraceUrl(string $trackNumber, string $postalCode, ?string $countryId = null): string
     {
         $myparcelUrl = TrackTraceUrl::create($trackNumber, $postalCode, $countryId);
