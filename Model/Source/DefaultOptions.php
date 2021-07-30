@@ -17,6 +17,7 @@ namespace MyParcelBE\Magento\Model\Source;
 use Magento\Sales\Model\Order;
 use MyParcelBE\Magento\Helper\Checkout;
 use MyParcelBE\Magento\Helper\Data;
+use MyParcelBE\Magento\Services\Normalizer\ConsignmentNormalizer;
 use MyParcelBE\Magento\Model\Sales\Package;
 use MyParcelBE\Magento\Model\Sales\Repository\PackageRepository;
 use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
@@ -73,10 +74,14 @@ class DefaultOptions
             return true;
         }
 
-        $total    = self::$order->getGrandTotal();
-        $settings = self::$helper->getStandardConfig('default_options');
+        $carrierPath = Data::CARRIERS_XML_PATH_MAP;
+        $data        = (new ConsignmentNormalizer(self::$helper))->normalize(self::$chosenOptions);
+        $total       = self::$order->getGrandTotal();
+        $settings    = self::$helper->getCarrierConfig('default_options', $carrierPath[$data['carrier']]);
+        $settings    += self::$helper->getStandardConfig('default_options');
 
-        if ($settings[$option . '_active'] == '1' &&
+        if ('1' == $settings[$option . '_active']
+            &&
             (! $settings[$option . '_from_price'] || $total > (int) $settings[$option . '_from_price'])
         ) {
             return true;
@@ -92,8 +97,8 @@ class DefaultOptions
      */
     public function getMaxCompanyName(?string $company): ?string
     {
-        if ($company !== null && (strlen($company) >= self::COMPANY_NAME_MAX_LENGTH)) {
-            $company = substr($company, 0, 47) . '...';
+        if (null !== $company && (strlen($company) > self::COMPANY_NAME_MAX_LENGTH)) {
+            $company = substr($company, 0, self::COMPANY_NAME_MAX_LENGTH - 3) . '...';
         }
 
         return $company;
