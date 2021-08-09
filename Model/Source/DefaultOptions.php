@@ -80,6 +80,11 @@ class DefaultOptions
         $settings    = self::$helper->getCarrierConfig('default_options', $carrierPath[$data['carrier']]);
         $settings    += self::$helper->getStandardConfig('default_options');
 
+        $country = self::$order->getShippingAddress()->getCountryId();
+        if ($country != 'NL' || 'BE') {
+            return false;
+        }
+
         if ('1' == $settings[$option . '_active']
             &&
             (! $settings[$option . '_from_price'] || $total > (int) $settings[$option . '_from_price'])
