@@ -77,19 +77,19 @@ class DefaultOptions
         $carrierPath = Data::CARRIERS_XML_PATH_MAP;
         $data        = (new ConsignmentNormalizer(self::$helper))->normalize(self::$chosenOptions);
         $total       = self::$order->getGrandTotal();
-        $settings    = self::$helper->getCarrierConfig('default_options', $carrierPath[$data['carrier']]);
-        $settings    += self::$helper->getStandardConfig('default_options');
 
-        $country = self::$order->getShippingAddress()->getCountryId();
-        if ($country != 'NL' || 'BE') {
-            return false;
-        }
+        foreach ($carrierPath as $carrier => $path) {
+            $settings = self::$helper->getCarrierConfig('default_options', $path);
 
-        if ('1' == $settings[$option . '_active']
-            &&
-            (! $settings[$option . '_from_price'] || $total > (int) $settings[$option . '_from_price'])
-        ) {
-            return true;
+            if ($data['carrier'] !== $carrier || ! isset($settings[$option . '_active'])) {
+                continue;
+            }
+
+            if ('1' == $settings[$option . '_active'] &&
+                (! $settings[$option . '_from_price'] || $total > (int)$settings[$option . '_from_price'])
+            ) {
+                return true;
+            }
         }
 
         return false;
