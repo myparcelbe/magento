@@ -72,7 +72,17 @@ function(
       Model.countryId(quote.shippingAddress().countryId);
       doRequest(Model.getDeliveryOptionsConfig, {onSuccess: Model.onInitializeSuccess});
 
-      quote.shippingAddress.subscribe(function(shippingAddress) {
+      // quote.shippingAddress.subscribe(function(shippingAddress) {
+      //   if (shippingAddress.countryId !== Model.countryId()) {
+      //     doRequest(Model.getDeliveryOptionsConfig, {onSuccess: Model.onReFetchDeliveryOptionsConfig});
+      //   }
+      //
+      //   Model.countryId(shippingAddress.countryId);
+      // });
+
+      quote.billingAddress.subscribe(function() {
+        var shippingAddress = quote.shippingAddress();
+
         if (shippingAddress.countryId !== Model.countryId()) {
           doRequest(Model.getDeliveryOptionsConfig, {onSuccess: Model.onReFetchDeliveryOptionsConfig});
         }

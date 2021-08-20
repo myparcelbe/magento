@@ -288,7 +288,7 @@ define(
           return;
         }
 
-        deliveryOptions.updatePricesInDeliveryOptions(selectedShippingMethod);
+        deliveryOptions.updatePricesInDeliveryOptions();
 
         if (JSON.stringify(deliveryOptions.shippingMethod) !== JSON.stringify(newShippingMethod)) {
           deliveryOptions.shippingMethod = newShippingMethod;
@@ -332,8 +332,14 @@ define(
         }
       },
 
-      updatePricesInDeliveryOptions: function(selectedShippingMethod) {
+      updatePricesInDeliveryOptions: function() {
+        var quoteCarrierCode = quote.shippingMethod().carrier_code;
+
         checkout.rates().forEach(function(rate) {
+          if (rate.carrier_code !== quoteCarrierCode) {
+            return;
+          }
+
           deliveryOptions.updatePriceInDeliveryOptions(rate);
         });
       },
@@ -405,6 +411,7 @@ define(
       },
 
       updateConfig: function() {
+        window.MyParcelConfig.address = deliveryOptions.getAddress(quote.shippingAddress());
         deliveryOptions.triggerEvent(deliveryOptions.updateConfigEvent);
       },
     };
