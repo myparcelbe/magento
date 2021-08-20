@@ -18,18 +18,14 @@
 
 namespace MyParcelBE\Magento\Model\Sales;
 
-
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\Module\ModuleListInterface;
-use Magento\Framework\App\Helper\Context;
-use Magento\Quote\Api\Data\EstimateAddressInterfaceFactory;
 use MyParcelBE\Magento\Helper\Data;
-use MyParcelNL\Sdk\src\Services\CheckApiKeyService;
-use Psr\Log\LoggerInterface;
 
 class Package extends Data implements PackageInterface
 {
-    const PACKAGE_TYPE_NORMAL = 1;
+    const PACKAGE_TYPE_NORMAL        = 1;
+    const PACKAGE_TYPE_MAILBOX       = 2;
+    const PACKAGE_TYPE_LETTER        = 3;
+    const PACKAGE_TYPE_DIGITAL_STAMP = 4;
 
     /**
      * @var int
@@ -37,98 +33,199 @@ class Package extends Data implements PackageInterface
     private $weight = 0;
 
     /**
-     * @var bool
+     * @var float
      */
-    private $all_products_fit = true;
+    private $maxMailBoxWeight = 0;
 
     /**
-     * @var string
+     * @var float
      */
-    private $current_country = 'BE';
+    private $maxDigitalStampWeight = 0;
+
+    /**
+     * @var bool
+     */
+    private $mailboxActive = false;
+
+    /**
+     * @var bool
+     */
+    private $digitalStampActive = false;
 
     /**
      * @var int
      */
-    private $package_type = null;
+    private $mailboxPercentage = 0;
 
     /**
-     * @return int
+     * @var bool
      */
-    public function getWeight()
+    private $allProductsFit = true;
+
+    /**
+     * @var string
+     */
+    private $currentCountry = 'NL';
+
+    /**
+     * @var int
+     */
+    private $packageType = null;
+
+    /**
+     * @return float
+     */
+    public function getWeight(): float
     {
         return $this->weight;
     }
 
     /**
-     * @param $weight
+     * @param float $weight
      */
-    public function setWeight($weight)
+    public function setWeight(float $weight): void
     {
-        $this->weight = (int)$weight;
+        $this->weight = $weight;
     }
 
     /**
-     * @param int $weight
+     * @param float $weight
      */
-    public function addWeight($weight)
+    public function addWeight(float $weight): void
     {
-        $this->weight += (int)$weight;
+        $this->weight += $weight;
+    }
+
+    /**
+     * @return float
+     */
+    public function getMaxMailboxWeight(): float
+    {
+        return $this->maxMailBoxWeight;
+    }
+
+    /**
+     * @param float $max_weight
+     */
+    public function setMaxMailboxWeight(float $max_weight): void
+    {
+        $this->maxMailBoxWeight = $max_weight;
+    }
+
+    /**
+     * @return float
+     */
+    public function getMaxDigitalStampWeight(): float
+    {
+        return $this->maxDigitalStampWeight;
+    }
+
+    /**
+     * @param float $maxWeight
+     */
+    public function setMaxDigitalStampWeight(float $maxWeight): void
+    {
+        $this->maxDigitalStampWeight = $maxWeight;
     }
 
     /**
      * @return bool
      */
-    public function isAllProductsFit()
+    public function isMailboxActive(): bool
     {
-        return $this->all_products_fit;
+        return $this->mailboxActive;
     }
 
     /**
-     * @param bool $all_products_fit
+     * @param bool $mailboxActive
      */
-    public function setAllProductsFit($all_products_fit)
+    public function setMailboxActive(bool $mailboxActive): void
     {
-        if ($all_products_fit === false) {
-            $this->all_products_fit = $all_products_fit;
+        $this->mailboxActive = $mailboxActive;
+    }
+
+    /**
+     * @param float $percentage
+     */
+    public function setMailboxPercentage(float $percentage): void
+    {
+        $this->mailboxPercentage = $percentage;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getMailboxPercentage(): bool
+    {
+        return $this->mailboxPercentage;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDigitalStampActive(): bool
+    {
+        return $this->digitalStampActive;
+    }
+
+    /**
+     * @param bool $digitalStampActive
+     */
+    public function setDigitalStampActive(bool $digitalStampActive): void
+    {
+        $this->digitalStampActive = $digitalStampActive;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAllProductsFit(): bool
+    {
+        return $this->allProductsFit;
+    }
+
+
+    /**
+     * @param bool $allProductsFit
+     */
+    public function setAllProductsFit(bool $allProductsFit): void
+    {
+        if ($allProductsFit === false) {
+            $this->allProductsFit = $allProductsFit;
         }
     }
 
     /**
-     * package = 1
-     *
      * @return int
      */
-    public function getPackageType()
+    public function getPackageType(): int
     {
-        return $this->package_type;
+        return $this->packageType;
     }
 
     /**
-     * package = 1
+     * @param int $packageType
      *
-     * @param int $package_type
+     * @return int
      */
-    public function setPackageType($package_type)
+    public function setPackageType(int $packageType): int
     {
-        $this->package_type = $package_type;
+        $this->packageType = $packageType;
     }
 
     /**
      * @return string
      */
-    public function getCurrentCountry()
+    public function getCurrentCountry(): string
     {
-        return $this->current_country;
+        return $this->currentCountry;
     }
 
     /**
-     * @param string $current_country
-     * @return Package
+     * @param string|null $currentCountry
      */
-    public function setCurrentCountry($current_country)
+    public function setCurrentCountry(?string $currentCountry): void
     {
-        $this->current_country = $current_country;
-
-        return $this;
+        $this->currentCountry = $currentCountry;
     }
 }

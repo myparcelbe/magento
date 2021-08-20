@@ -69,7 +69,11 @@ class DeliveryOptionsToShippingMethods
      */
     private function createDeliveryTypeString(): string
     {
-        return $this->deliveryOptions->isPickup() ? 'pickup' : 'delivery';
+        if ($this->deliveryOptions->isPickup()) {
+            return 'pickup';
+        }
+
+        return 'delivery';
     }
 
     /**
@@ -84,7 +88,7 @@ class DeliveryOptionsToShippingMethods
         $shipmentOptions = array_filter(
             $this->deliveryOptions->getShipmentOptions()->toArray(),
             function ($option) {
-                return $option !== false && $option !== null;
+                return $option === true;
             }
         );
 

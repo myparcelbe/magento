@@ -24,7 +24,7 @@ class View
     public function beforeSetLayout(\Magento\Sales\Block\Adminhtml\Order\View $view)
     {
         $view->addButton(
-            'myparcelbe_print_label',
+            'myparcelnl_print_label',
             [
                 'label' => __('Print label'),
                 'class' => 'action-myparcel',
@@ -32,7 +32,7 @@ class View
         );
         if ($view->getOrder()->hasShipments() == true) {
             $view->addButton(
-                'myparcelbe_print_retour_label',
+                'myparcelnl_print_retour_label',
                 [
                     'label' => __('Send return label'),
                     'class' => 'action-myparcel_send_return_mail',

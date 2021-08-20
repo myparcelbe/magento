@@ -62,7 +62,7 @@ class OrdersAction extends Template
      */
     public function getOrderAjaxUrl()
     {
-        return $this->_urlBuilder->getUrl('myparcelbe/order/CreateAndPrintMyParcelTrack');
+        return $this->_urlBuilder->getUrl('myparcel/order/CreateAndPrintMyParcelTrack');
     }
 
     /**
@@ -72,7 +72,7 @@ class OrdersAction extends Template
      */
     public function getShipmentAjaxUrl()
     {
-        return $this->_urlBuilder->getUrl('myparcelbe/shipment/CreateAndPrintMyParcelTrack');
+        return $this->_urlBuilder->getUrl('myparcel/shipment/CreateAndPrintMyParcelTrack');
     }
 
     /**
@@ -82,7 +82,7 @@ class OrdersAction extends Template
      */
     public function getAjaxUrlSendReturnMail()
     {
-        return $this->_urlBuilder->getUrl('myparcelbe/order/SendMyParcelReturnMail');
+        return $this->_urlBuilder->getUrl('myparcel/order/SendMyParcelReturnMail');
     }
 
     /**

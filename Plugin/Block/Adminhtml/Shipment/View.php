@@ -24,7 +24,7 @@ class View
     public function beforeGetPrintUrl(\Magento\Shipping\Block\Adminhtml\View $view)
     {
         $view->addButton(
-            'myparcelbe_print_label',
+            'myparcelnl_print_label',
             [
                 'label' => __('Print label'),
                 'class' => 'action-myparcel',

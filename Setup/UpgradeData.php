@@ -19,11 +19,9 @@ use Magento\Catalog\Setup\CategorySetupFactory;
 use Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
 use Magento\Eav\Setup\EavSetup;
 use Magento\Eav\Setup\EavSetupFactory;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\UpgradeDataInterface;
-use Zend_Validate_Exception;
 
 /**
  * Upgrade Data script
@@ -31,6 +29,7 @@ use Zend_Validate_Exception;
  */
 class UpgradeData implements UpgradeDataInterface
 {
+
     const groupName = 'MyParcelBE Options';
 
     /**
@@ -50,10 +49,10 @@ class UpgradeData implements UpgradeDataInterface
     /**
      * Init
      *
-     * @param CategorySetupFactory $categorySetupFactory
+     * @param \Magento\Catalog\Setup\CategorySetupFactory $categorySetupFactory
      * @param EavSetupFactory                             $eavSetupFactory
      */
-    public function __construct(CategorySetupFactory $categorySetupFactory, EavSetupFactory $eavSetupFactory)
+    public function __construct(\Magento\Catalog\Setup\CategorySetupFactory $categorySetupFactory, EavSetupFactory $eavSetupFactory)
     {
         $this->categorySetupFactory = $categorySetupFactory;
         $this->eavSetupFactory      = $eavSetupFactory;
@@ -62,20 +61,149 @@ class UpgradeData implements UpgradeDataInterface
     /**
      * Upgrades data for a module
      *
-     * @param ModuleDataSetupInterface $setup
-     * @param ModuleContextInterface   $context
-     *
-     * @throws LocalizedException
-     * @throws Zend_Validate_Exception
+     * @param \Magento\Framework\Setup\ModuleDataSetupInterface $setup
+     * @param \Magento\Framework\Setup\ModuleContextInterface   $context
      */
     public function upgrade(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
-        if (version_compare($context->getVersion(), '3.0.0', '<=')) {
-            $connection = $setup->getConnection();
-            $table    = $setup->getTable('core_config_data');
 
-            /** @var EavSetup $eavSetup */
-            $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
+       $connection = $setup->getConnection();
+       $table      = $setup->getTable('core_config_data');
+
+        /** @var EavSetup $eavSetup */
+        $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
+
+        // Add the option 'HS code for products'
+        if (version_compare($context->getVersion(), '3.2.0', '<=')) {
+            $setup->startSetup();
+
+            // Add attributes to the eav/attribute
+            $eavSetup->addAttribute(
+                \Magento\Catalog\Model\Product::ENTITY,
+                'myparcelbe_classification',
+                [
+                    'group'                   => self::groupName,
+                    'note'                    => 'HS Codes are used for world shipments, you can find the appropriate code on the site of the Belgium Customs',
+                    'type'                    => 'int',
+                    'backend'                 => '',
+                    'frontend'                => '',
+                    'label'                   => 'HS code',
+                    'input'                   => 'text',
+                    'class'                   => '',
+                    'source'                  => '',
+                    'global'                  => ScopedAttributeInterface::SCOPE_GLOBAL,
+                    'visible'                 => true,
+                    'required'                => false,
+                    'user_defined'            => true,
+                    'default'                 => '0',
+                    'searchable'              => true,
+                    'filterable'              => true,
+                    'comparable'              => true,
+                    'visible_on_front'        => false,
+                    'used_in_product_listing' => true,
+                    'unique'                  => false,
+                    'apply_to'                => '',
+                ]
+            );
+
+            // Enable / Disable checkout with this product.
+            $setup->startSetup();
+
+            // Add attributes to the eav/attribute
+            $eavSetup->addAttribute(
+                \Magento\Catalog\Model\Product::ENTITY,
+                'myparcelbe_disable_checkout',
+                [
+                    'group'                   => self::groupName,
+                    'note'                    => 'With this option you can disable the delivery options for this product.',
+                    'type'                    => 'int',
+                    'backend'                 => '',
+                    'frontend'                => '',
+                    'label'                   => 'Disable checkout with this product',
+                    'input'                   => 'boolean',
+                    'class'                   => '',
+                    'source'                  => '',
+                    'global'                  => ScopedAttributeInterface::SCOPE_GLOBAL,
+                    'visible'                 => true,
+                    'required'                => false,
+                    'user_defined'            => true,
+                    'default'                 => 0,
+                    'searchable'              => true,
+                    'filterable'              => true,
+                    'comparable'              => true,
+                    'visible_on_front'        => false,
+                    'used_in_product_listing' => false,
+                    'unique'                  => false,
+                    'apply_to'                => '',
+                ]
+            );
+
+            // Set a dropoff delay for this product.
+            $setup->startSetup();
+
+            // Add attributes to the eav/attribute
+            $eavSetup->addAttribute(
+                \Magento\Catalog\Model\Product::ENTITY,
+                'myparcelbe_dropoff_delay',
+                [
+                    'group'                   => self::groupName,
+                    'note'                    => 'This option allows you to set the number of days it takes you to pick, pack and hand in your parcels when ordered before the cutoff time.',
+                    'type'                    => 'varchar',
+                    'backend'                 => '',
+                    'frontend'                => '',
+                    'label'                   => 'Dropoff-delay',
+                    'input'                   => 'select',
+                    'class'                   => '',
+                    'source'                  => 'MyParcelBE\Magento\Model\Source\DropOffDelayDays',
+                    'global'                  => ScopedAttributeInterface::SCOPE_GLOBAL,
+                    'visible'                 => true,
+                    'required'                => false,
+                    'user_defined'            => true,
+                    'default'                 => null,
+                    'searchable'              => false,
+                    'filterable'              => false,
+                    'comparable'              => false,
+                    'visible_on_front'        => false,
+                    'used_in_product_listing' => true,
+                    'unique'                  => false,
+                    'apply_to'                => '',
+                ]
+            );
+
+            // Move paper type from print to basic settings
+            $selectPaperTypeSetting = $connection->select()->from(
+                $table,
+                ['config_id', 'path', 'value']
+            )->where(
+                '`path` = "myparcelbe_magento_general/print/paper_type"'
+            );
+
+            $paperType = $connection->fetchAll($selectPaperTypeSetting) ?? [];
+
+            foreach ($paperType as $value) {
+                $fullPath = 'myparcelbe_magento_general/basic_settings/paper_type';
+                $bind     = ['path' => $fullPath, 'value' => $value['value']];
+                $where    = 'config_id = ' . $value['config_id'];
+                $connection->update($table, $bind, $where);
+            }
+        }
+
+        if (version_compare($context->getVersion(), '4.0.0', '<=')) {
+
+            $setup->startSetup();
+               /** @var EavSetup $eavSetup */
+               $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
+
+               // get entity type id so that attribute are only assigned to catalog_product
+               $entityTypeId = $eavSetup->getEntityTypeId('catalog_product');
+               // Here we have fetched all attribute set as we want attribute group to show under all attribute set
+               $attributeSetIds = $eavSetup->getAllAttributeSetIds($entityTypeId);
+
+               foreach ($attributeSetIds as $attributeSetId) {
+                   $eavSetup->addAttributeGroup($entityTypeId, $attributeSetId, self::groupName, 19);
+                   $attributeGroupId = $eavSetup->getAttributeGroupId($entityTypeId, $attributeSetId, self::groupName);
+
+               }
 
             if ($connection->isTableExists($table) == true) {
 
@@ -171,7 +299,7 @@ class UpgradeData implements UpgradeDataInterface
                 foreach ($insuranceData as $value) {
                     $path    = $value['path'];
                     $path    = explode("/", $path);
-                    $path[0] = 'myparcelbe_magento_bpost_settings';
+                    $path[0] = 'myparcelbe_magento_postnl_settings';
                     $path[1] = 'default_options';
 
                     $fullPath = implode("/", $path);
@@ -193,7 +321,7 @@ class UpgradeData implements UpgradeDataInterface
                 foreach ($signatureData as $value) {
                     $path    = $value['path'];
                     $path    = explode("/", $path);
-                    $path[0] = 'myparcelbe_magento_bpost_settings';
+                    $path[0] = 'myparcelbe_magento_postnl_settings';
                     $path[1] = 'default_options';
 
                     $fullPath = implode("/", $path);
@@ -203,7 +331,7 @@ class UpgradeData implements UpgradeDataInterface
                     $connection->update($table, $bind, $where);
                 }
 
-                // Move myparcelbe_magento_checkout to myparcelbe_magento_bpost_settings
+                // Move myparcelbe_magento_checkout to myparcelbe_magento_postnl_settings
                 $selectCheckoutSettings = $connection->select()->from(
                     $table,
                     ['config_id', 'path', 'value']
@@ -215,7 +343,7 @@ class UpgradeData implements UpgradeDataInterface
                 foreach ($checkoutData as $value) {
                     $path    = $value['path'];
                     $path    = explode("/", $path);
-                    $path[0] = 'myparcelbe_magento_bpost_settings';
+                    $path[0] = 'myparcelbe_magento_postnl_settings';
 
                     $fullPath = implode("/", $path);
 
@@ -224,103 +352,50 @@ class UpgradeData implements UpgradeDataInterface
                     $connection->update($table, $bind, $where);
                 }
 
-                // Insert bpost enabled data
-                $connection->insert(
+                // Insert postnl enabled data
+
+                $selectDeliveryActive = $connection->select()->from(
                     $table,
-                    [
-                        'scope'    => 'default',
-                        'scope_id' => 0,
-                        'path'     => 'myparcelbe_magento_bpost_settings/delivery/active',
-                        'value'    => 1
-                    ]
+                    ['config_id', 'path', 'value']
+                )->where(
+                    '`path` = "myparcelbe_magento_postnl_settings/delivery/active"'
                 );
-            }
 
-            // Set a new 'MyParcel options' group and place the option 'myparcel_fit_in_mailbox' standard on false by default
-            if (version_compare($context->getVersion(), '3.1.0', '<=')) {
-                $setup->startSetup();
+                $deliveryActive = $connection->fetchAll($selectDeliveryActive) ?? [];
 
-                // get entity type id so that attribute are only assigned to catalog_product
-                $entityTypeId = $eavSetup->getEntityTypeId('catalog_product');
-                // Here we have fetched all attribute set as we want attribute group to show under all attribute set
-                $attributeSetIds = $eavSetup->getAllAttributeSetIds($entityTypeId);
-
-                foreach ($attributeSetIds as $attributeSetId) {
-                    $eavSetup->addAttributeGroup($entityTypeId, $attributeSetId, self::groupName, 19);
-                    $attributeGroupId = $eavSetup->getAttributeGroupId($entityTypeId, $attributeSetId, self::groupName);
-
-                    // Add existing attribute to group
-                    $attributeId = $eavSetup->getAttributeId($entityTypeId, 'myparcelbe_classification');
-                    $eavSetup->addAttributeToGroup($entityTypeId, $attributeSetId, $attributeGroupId, $attributeId, null);
-                }
-
-
-                // Add the option 'HS code for products'
-                $setup->startSetup();
-
-                // Add attributes to the eav/attribute
-                $eavSetup->addAttribute(
-                    \Magento\Catalog\Model\Product::ENTITY,
-                    'myparcelbe_classification',
-                    [
-                            'group'                   => self::groupName,
-                            'note'                    => 'HS Codes are used for MyParcel world shipments, you can find the appropriate code on the site of the Belgium Customs',
-                            'type'                    => 'int',
-                            'backend'                 => '',
-                            'frontend'                => '',
-                            'label'                   => 'HS code',
-                            'input'                   => 'text',
-                            'class'                   => '',
-                            'source'                  => '',
-                            'global'                  => ScopedAttributeInterface::SCOPE_GLOBAL,
-                            'visible'                 => true,
-                            'required'                => false,
-                            'user_defined'            => true,
-                            'default'                 => '0',
-                            'searchable'              => true,
-                            'filterable'              => true,
-                            'comparable'              => true,
-                            'visible_on_front'        => false,
-                            'used_in_product_listing' => true,
-                            'unique'                  => false,
-                            'apply_to'                => '',
+                if (! $deliveryActive){
+                    $connection->insert(
+                        $table,
+                        [
+                            'scope'    => 'default',
+                            'scope_id' => 0,
+                            'path'     => 'myparcelbe_magento_postnl_settings/delivery/active',
+                            'value'    => 1
                         ]
-                );
-
-                // Enable / Disable checkout with this product.
-                $setup->startSetup();
-                /** @var EavSetup $eavSetup */
-                $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
-
-                // Add attributes to the eav/attribute
-                $eavSetup->addAttribute(
-                    \Magento\Catalog\Model\Product::ENTITY,
-                    'myparcelbe_disable_checkout',
-                    [
-                        'group'                   => self::groupName,
-                        'note'                    => 'With this option you can disable the delivery options for this product.',
-                        'type'                    => 'int',
-                        'backend'                 => '',
-                        'frontend'                => '',
-                        'label'                   => 'Disable checkout with this product',
-                        'input'                   => 'boolean',
-                        'class'                   => '',
-                        'source'                  => '',
-                        'global'                  => ScopedAttributeInterface::SCOPE_GLOBAL,
-                        'visible'                 => true,
-                        'required'                => false,
-                        'user_defined'            => true,
-                        'default'                 => 0,
-                        'searchable'              => true,
-                        'filterable'              => true,
-                        'comparable'              => true,
-                        'visible_on_front'        => false,
-                        'used_in_product_listing' => false,
-                        'unique'                  => false,
-                        'apply_to'                => '',
-                    ]
-                );
+                    );
+                }
             }
         }
+
+        if (version_compare($context->getVersion(), '4.1.0', '<=')) {
+            // Add compatibility for new weight option for large format
+            $selectLargeFormatData = $connection->select()->from($table,
+                ['config_id', 'path', 'value']
+            )->where(
+                '`path` = "myparcelbe_magento_postnl_settings/default_options/large_format_active"'
+            );
+
+            $largeFormatData = $connection->fetchAll($selectLargeFormatData);
+
+            foreach ($largeFormatData as $value) {
+                if ($value['value'] === '1') {
+                    $bind  = ['path' => $value['path'], 'value' => 'price'];
+                    $where = 'config_id = ' . $value['config_id'];
+                    $connection->update($table, $bind, $where);
+                }
+            }
+        }
+
+        $setup->endSetup();
     }
 }

@@ -82,8 +82,6 @@ class MagentoShipmentCollection extends MagentoCollection
      *
      * @return $this
      * @throws \Exception
-     *
-     * @todo; add filter carrier code
      */
     public function setMyParcelTrack()
     {
@@ -153,7 +151,7 @@ class MagentoShipmentCollection extends MagentoCollection
                     ->myParcelCollection->getConsignmentsByReferenceId($shipment->getEntityId())->first();
 
                 $track
-                    ->setData('myparcel_consignment_id', $myParcelTrack->getMyParcelConsignmentId())
+                    ->setData('myparcel_consignment_id', $myParcelTrack->getConsignmentId())
                     ->setData('myparcel_status', $myParcelTrack->getStatus())
                     ->save(); // must
             }
@@ -249,7 +247,7 @@ class MagentoShipmentCollection extends MagentoCollection
 
         /**
          * @var \Magento\Sales\Model\ResourceModel\Order\Shipment\Collection $shipment
-         * @var Order $order
+         * @var Order                                                        $order
          */
         foreach ($this->getShipments() as $shipment) {
 

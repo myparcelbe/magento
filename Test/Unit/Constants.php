@@ -16,7 +16,7 @@
  * @since       File available since Release 0.1.0
  */
 
-namespace MyParcelBE\magento\Test\Unit;
+namespace MyParcelNL\magento\Test\Unit;
 
 
 class Constants extends \PHPUnit_Framework_TestCase
@@ -142,7 +142,7 @@ class Constants extends \PHPUnit_Framework_TestCase
         $data = ["addressInformation" => [
             "shipping_address" => [
                 "email" => "info@sendmyparcel.be",
-                "countryId" => "BE",
+                "countryId" => "NL",
                 "regionId" => "0",
                 "region" => "",
                 "street" => [
@@ -156,7 +156,7 @@ class Constants extends \PHPUnit_Framework_TestCase
                 "lastname" => "yes",
             ],
             "billing_address" => [
-                "countryId" => "BE",
+                "countryId" => "NL",
                 "regionId" => "0",
                 "region" => "",
                 "street" => [
@@ -169,7 +169,7 @@ class Constants extends \PHPUnit_Framework_TestCase
                 "firstname" => "asdf",
                 "lastname" => "MyParcel- asdfsd",
                 "saveInAddressBook" => null,
-                "email" => "richard-test@sendmyparcel.be",
+                "email" => "richard-test@myparcel.nl",
             ], "shipping_method_code" => "flatrate",
             "shipping_carrier_code" => "flatrate",
         ]];
@@ -198,6 +198,6 @@ class Constants extends \PHPUnit_Framework_TestCase
      */
     protected function getCreateLabelUrl()
     {
-        return 'admin/myparcelbe/order/CreateAndPrintMyParcelTrack/';
+        return 'admin/myparcel/order/CreateAndPrintMyParcelTrack/';
     }
 }
