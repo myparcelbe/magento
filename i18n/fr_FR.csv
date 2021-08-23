@@ -1,6 +1,6 @@
 ﻿status_1,Concept
 status_2,Prénotifié
-status_3,Présenté chez bpost
+status_3,Présenté chez postnl
 status_4,Au tri
 status_5,En cours de distribution
 status_6,Envoi à la douane
@@ -11,6 +11,7 @@ status_10,Envoi retour livré
 status_11,Envoi retour au point de collecte
 status_12,Etiquette en franchise de port imprimée
 status_13,Crédité
+status_14, Imprimé - Tampon numérique
 status_30,Inactif - Concept
 status_31,Inactif - Prénotifié
 status_32,Inactif - Présenté chez MyParcel
@@ -23,10 +24,28 @@ status_38,Inactif - Envoi retiré au point de collecte
 status_39,Inactif - Envoi retour livré
 status_40,Inactif - Envoi retour au point de collecte
 status_99,Inactif - Statut inconnu
+myparcelbe_magento_dpd_settings/delivery_title,  Livraison DPD
+myparcelbe_magento_dpd_settings/pickup_title, Lieu de ramassage DPD
+myparcelbe_magento_dpd_settings/delivery,  Livraison DPD
+myparcelbe_magento_dpd_settings/pickup, Lieu de ramassage DPD
+myparcelbe_magento_postnl_settings/pickup, Lieu de ramassage PostNL
+myparcelbe_magento_postnl_settings/pickup_title, Lieu de ramassage postnl
+myparcelbe_magento_postnl_settings/delivery, Livraison PostNL
+myparcelbe_magento_postnl_settings/delivery_title, livraison postnl
+myparcelbe_magento_postnl_settings/delivery/signature, Livraison PostNL avec signature pour réception
+myparcelbe_magento_postnl_settings/delivery/signature_title, Livraison PostNL avec signature
+myparcelbe_magento_postnl_settings/delivery/only_recipient, Livraison PostNL avec adresse accueil
+myparcelbe_magento_postnl_settings/delivery/only_recipient/signature, Livraison PostNL avec adresse accueil et signature
+myparcelbe_magento_bpost_settings/pickup, Lieu de ramassage bpost
+myparcelbe_magento_bpost_settings/pickup_title, Lieu de ramassage bpost
+myparcelbe_magento_bpost_settings/delivery, Livraison bpost
+myparcelbe_magento_bpost_settings/delivery_title, Livraison bpost
+myparcelbe_magento_bpost_settings/delivery/signature, Livraison bpost avec signature
+myparcelbe_magento_bpost_settings/delivery/signature_title, Livraison bpost avec signature pour réception
 Version and support,Version et support
 General settings,Paramètres généraux
 API settings,Paramètres API
-Go to the general settings in the back office of MyParcel BE to generate the API Key.,Rendez-vous dans les paramètres généraux du backoffice MyParcel BE pour générer la clé API.
+Go to the general settings in the back office of MyParcel to generate the API Key.,Rendez-vous dans les paramètres généraux du backoffice MyParcel pour générer la clé API.
 The API Key,Introduisez ici votre clé API
 Default shipment settings,Paramètres d'expédition standards
 Print MyParcel labels directly,Imprimez directement les étiquettes MyParcel
@@ -70,7 +89,7 @@ MyParcel version,Version de MyParcel
 "To read the instructions for the Magento extension, click %1 here %2.","Cliquez %1 ici %2 pour consulter le manuel de l'extension Magento."
 When using the extension please note:,Portez attention aux points suivants lorsque vous utilisez cette extension :
 To be able to configure the extension you need to possess and use an active account.,Vous devez disposer d'une compte actif pour configurer l'extension.
-During the transition phase the old Magento MyParcel BE extension can remain active. However, you do need to turn off PakjeGemak in the old MyParcel BE extension.,Si vous utilisez l'ancienne extension MyParcel BE, celle-ci peut demeurer active durant la phase de transition. Vous devez cependant désactiver PakjeGemak dans l'ancienne extension MyParcel BE.
+During the transition phase the old Magento MyParcel extension can remain active. However, you do need to turn off PakjeGemak in the old MyParcel extension.,Si vous utilisez l'ancienne extension MyParcel, celle-ci peut demeurer active durant la phase de transition. Vous devez cependant désactiver PakjeGemak dans l'ancienne extension MyParcel.
 Magento &amp 3rd party version compatibility,Magento et compatibilité avec des extensions tierces
 We cannot guarantee perfect functionality of the extension when you intend to use the extension on a version of Magento that is not supported or when you intend to use the extension together with a 3rd part extension that is not supported. If you have any questions please contact us.,Nous ne pouvons garantir le fonctionnement sans faille de l'extension si vous souhaitez utiliser celle-ci sur une version ou une édition non supportée de Magento, ou si vous souhaitez l'utiliser avec une extension de tiers qui n'est pas compatible. En cas de question, merci de nous contacter.
 Questions and information about your account,Questions et informations relatives au compte
@@ -97,13 +116,13 @@ Saturday active,Samedi actif
 Saturday title,Samedi - titre
 Dropoff-delay,Délai
 No delay,Pas de délai
-"This options allows you to set the number of days it takes you to pick, pack and hand in your parcels at Bpost when ordered before the cutoff time.","Cette option vous permet de définir le nombre de jours dont vous avez besoin pour (recevoir,) emballer et présenter le produit à bpost, à partir du moment de la commande."
+"This options allows you to set the number of days it takes you to pick, pack and hand in your parcels when ordered before the cutoff time.","Cette option vous permet de définir le nombre de jours dont vous avez besoin pour (recevoir,) emballer et présenter le produit, à partir du moment de la commande."
 Methods,Mode d'expédition
 The extra myparcel options are added to this shipping method,Les options Myparcel complémentaires seront ajoutées à ce mode d'expédition
 Delivery title,Livraison - titre
 Deliver the package only at address of the intended recipient.,Livraison du colis à l'adresse du destinataire uniquement.
 This will be added to the regular shipping price,Ceci sera ajouté aux frais d'expédition standards
-Not possible if Pickup at Bpost location is not active,Ceci ne sera pas possible si la collecte à un point bpost n'est pas activée
+Not possible if Pickup at PostNL location is not active,Ceci ne sera pas possible si la collecte à un point postnl n'est pas activée
 Signature on receipt,Signature pour réception
 Signature on receipt title, Signature pour réception - titre
 Signature on receipt fee, Signature pour réception - prix
@@ -111,14 +130,14 @@ This will be added to the regular shipping price, Ceci sera ajouté aux frais d'
 If both have been selected this price will be added to the regular shipping price. Leave empty for not using it.,Si les deux éléments sont sélectionnés, ce prix sera ajouté aux frais d'expédition standards. Laissez vide pour ignorer cette option.
 "Besides assigning weights to all products, you can also specify a volume of each product.","Pour utiliser cette fonction de manière optimale, spécifiez d'abord le poids ou le volume de vos produits."
 This will be added to the regular shipping price,Ceci sera ajouté aux frais d'expédition standards
-Pickup at Bpost location,Collecte dans un point bpost
+Pickup at PostNL location,Collecte dans un point postnl
 Pickup active,Collecte active
 Pickup titel,Collecte - titre
 Pickup fee,Collecte - prix
 Drop off day,Jours de dépôt
 Select the days that you send the orders.,Sélectionnez les jours lors desquels vous envoyez les commandes.
 Show a delivery day in the checkout.,Afficher le jour de livraison au moment du checkout.
-You not have entered the correct API key. Go to the general settings in the back office of MyParcel BE to generate the API Key.,Vous n'avez pas introduit une clé API correcte. Rendez-vous dans les paramètres généraux du backoffice de MyParcel BE pour générer la clé API.
+You not have entered the correct API key. Go to the general settings in the back office of MyParcel to generate the API Key.,Vous n'avez pas introduit une clé API correcte. Rendez-vous dans les paramètres généraux du backoffice de MyParcel pour générer la clé API.
 Address details are not entered,Les données relatives à l'adresse ne sont pas complétées
 The times will be visible when nothing is filled in,Les temps ne seront pas visibles si aucune donnée n'est complétée
 "Enter an amount that is either positive or negative. For example, do you want to give a discount for using this function or do you want to charge extra for this delivery option.","Introduisez ici un montant positif ou négatif. Si vous souhaitez par exemple proposer une réduction pour cette fonction ou décompter des frais supplémentaires pour cette option de livraison."

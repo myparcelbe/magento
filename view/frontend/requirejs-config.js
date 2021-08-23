@@ -1,13 +1,23 @@
+/* eslint-disable max-len,no-unused-vars */
+
 /**
- * Override Magento classes
+ * Override Magento classes.
  *
- * @type {{map: {"*": {"Magento_Tax/js/view/checkout/shipping_method/price": string, "Magento_Checkout/js/model/shipping-save-processor/default": string}}}}
+ * @type {Object}
  */
 var config = {
-    map: {
-        '*': {
-            'Magento_Tax/js/view/checkout/shipping_method/price': 'MyParcelBE_Magento/js/action/price',
-            "Magento_Checkout/js/model/shipping-save-processor/default" : "MyParcelBE_Magento/js/model/shipping-save-processor-default"
-        }
-    }
+  config: {
+    mixins: {
+      'Magento_Checkout/js/view/shipping': {'MyParcelBE_Magento/js/view/shipping': true},
+    },
+  },
+  map: {
+    '*': {
+      'Magento_Checkout/js/model/shipping-save-processor/default': 'MyParcelBE_Magento/js/model/shipping-save-processor-default',
+    },
+  },
+  paths: {
+    leaflet: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet',
+    vue2leaflet: 'https://cdnjs.cloudflare.com/ajax/libs/Vue2Leaflet/1.0.2/vue2-leaflet.min',
+  },
 };

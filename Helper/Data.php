@@ -18,20 +18,36 @@ namespace MyParcelBE\Magento\Helper;
 
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Module\ModuleListInterface;
 use Magento\Store\Model\ScopeInterface;
-use MyParcelBE\Sdk\src\Services\CheckApiKeyService;
+use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
+use MyParcelNL\Sdk\src\Model\Consignment\BpostConsignment;
+use MyParcelNL\Sdk\src\Model\Consignment\DPDConsignment;
+use MyParcelNL\Sdk\src\Model\Consignment\PostNLConsignment;
+use MyParcelNL\Sdk\src\Services\CheckApiKeyService;
 
 class Data extends AbstractHelper
 {
-    const MODULE_NAME = 'MyParcelBE_Magento';
-    const XML_PATH_GENERAL = 'myparcelbe_magento_general/';
-    const XML_PATH_STANDARD = 'myparcelbe_magento_standard/';
-    const XML_PATH_CHECKOUT = 'myparcelbe_magento_checkout/';
+    public const MODULE_NAME              = 'MyParcelBE_Magento';
+    public const XML_PATH_GENERAL         = 'myparcelbe_magento_general/';
+    public const XML_PATH_BPOST_SETTINGS  = 'myparcelbe_magento_bpost_settings/';
+    public const XML_PATH_DPD_SETTINGS    = 'myparcelbe_magento_dpd_settings/';
+    public const XML_PATH_POSTNL_SETTINGS = 'myparcelbe_magento_postnl_settings/';
+    public const DEFAULT_WEIGHT           = 1000;
 
-    /**
-     * @var ModuleListInterface
-     */
+    public const CARRIERS = [
+        BpostConsignment::CARRIER_NAME,
+        DPDConsignment::CARRIER_NAME,
+        PostNLConsignment::CARRIER_NAME
+    ];
+
+    public const CARRIERS_XML_PATH_MAP = [
+        BpostConsignment::CARRIER_NAME  => Data::XML_PATH_BPOST_SETTINGS,
+        DPDConsignment::CARRIER_NAME    => Data::XML_PATH_DPD_SETTINGS,
+        PostNLConsignment::CARRIER_NAME => Data::XML_PATH_POSTNL_SETTINGS,
+    ];
+
     private $moduleList;
 
     /**
@@ -42,18 +58,17 @@ class Data extends AbstractHelper
     /**
      * Get settings by field
      *
-     * @param Context $context
+     * @param Context             $context
      * @param ModuleListInterface $moduleList
-     * @param CheckApiKeyService $checkApiKeyService
+     * @param CheckApiKeyService  $checkApiKeyService
      */
     public function __construct(
         Context $context,
         ModuleListInterface $moduleList,
         CheckApiKeyService $checkApiKeyService
-    )
-    {
+    ) {
         parent::__construct($context);
-        $this->moduleList = $moduleList;
+        $this->moduleList         = $moduleList;
         $this->checkApiKeyService = $checkApiKeyService;
     }
 
@@ -93,38 +108,30 @@ class Data extends AbstractHelper
      */
     public function getStandardConfig($code = '', $storeId = null)
     {
-        return $this->getConfigValue(self::XML_PATH_STANDARD . $code, $storeId);
+        return $this->getConfigValue(self::XML_PATH_BPOST_SETTINGS . $code, $storeId);
     }
 
     /**
-     * Get checkout setting
+     * Get carrier setting
      *
      * @param string $code
-     * @param null   $storeId
+     * @param        $carrier
      *
      * @return mixed
      */
-    public function getCheckoutConfig($code, $storeId = null)
+    public function getCarrierConfig($code, $carrier)
     {
-        $settings = $this->getTmpScope();
+        $settings = $this->getConfigValue($carrier . $code);
         if ($settings == null) {
-            $value = $this->getConfigValue(self::XML_PATH_CHECKOUT . $code);
+            $value = $this->getConfigValue($carrier . $code);
             if ($value != null) {
                 return $value;
             } else {
-                $this->_logger->critical('Can\'t get setting with path:' . self::XML_PATH_CHECKOUT . $code);
+                $this->_logger->critical('Can\'t get setting with path:' . $carrier . $code);
             }
         }
 
-        if (!is_array($settings)) {
-            $this->_logger->critical('No data in settings array');
-        }
-
-        if (!key_exists($code, $settings)) {
-            $this->_logger->critical('Can\'t get setting ' . $code);
-        }
-
-        return $settings[$code];
+        return $settings;
     }
 
     /**
@@ -137,7 +144,7 @@ class Data extends AbstractHelper
         $moduleCode = self::MODULE_NAME;
         $moduleInfo = $this->moduleList->getOne($moduleCode);
 
-        return (string)$moduleInfo['setup_version'];
+        return (string) $moduleInfo['setup_version'];
     }
 
     /**
@@ -146,8 +153,79 @@ class Data extends AbstractHelper
     public function apiKeyIsCorrect()
     {
         $defaultApiKey = $this->getGeneralConfig('api/key');
-        $keyIsCorrect = $this->checkApiKeyService->setApiKey($defaultApiKey)->apiKeyIsCorrect();
+        $keyIsCorrect  = $this->checkApiKeyService->setApiKey($defaultApiKey)->apiKeyIsCorrect();
 
         return $keyIsCorrect;
+    }
+
+    /**
+     * Get date in YYYY-MM-DD HH:MM:SS format
+     *
+     * @param string|null $date
+     *
+     * @return string|null
+     */
+    public function convertDeliveryDate(?string $date): ?string
+    {
+        if (! $date) {
+            return null;
+        }
+
+        $date          = strtotime($date);
+        $delivery_date = date('Y-m-d H:i:s', $date);
+        $todayDate     = strtotime('now');
+
+        if ($date <= $todayDate) {
+            return date('Y-m-d H:i:s', strtotime('now +1 day'));
+        }
+
+        return $delivery_date;
+    }
+
+    /**
+     * Get delivery type and when it is null use 'standard'
+     *
+     * @param int|null $deliveryType
+     *
+     * @return int
+     */
+    public function checkDeliveryType(?int $deliveryType): int
+    {
+        if (! $deliveryType) {
+            return AbstractConsignment::DELIVERY_TYPE_STANDARD;
+        }
+
+        return $deliveryType;
+    }
+
+    /**
+     * @param int    $order_id
+     * @param string $status
+     */
+    public function setOrderStatus(int $order_id, string $status): void
+    {
+        $order = ObjectManager::getInstance()->create('\Magento\Sales\Model\Order')->load($order_id);
+        $order->setState($status)->setStatus($status);
+        $order->save();
+
+        return;
+    }
+
+    /**
+     * Get the correct weight type
+     *
+     * @param string|null $weight
+     *
+     * @return int
+     */
+    public function getWeightTypeOfOption(?string $weight): int
+    {
+        $weightType = $this->getGeneralConfig('print/weight_indication');
+
+        if ('kilo' === $weightType) {
+            return (int) ($weight * 1000);
+        }
+
+        return (int) $weight ?: self::DEFAULT_WEIGHT;
     }
 }

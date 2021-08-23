@@ -6,7 +6,7 @@
  * https://github.com/myparcelbe
  *
  * @author      Reindert Vetter <info@sendmyparcel.be>
- * @copyright   2010-2017 MyParcel
+ * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
  * @since       File available since Release v0.1.0
@@ -15,6 +15,9 @@
 namespace MyParcelBE\Magento\Block\Sales;
 
 use Magento\Backend\Block\Template\Context;
+use Magento\Framework\Registry;
+use Magento\Sales\Model\Order\Shipment;
+use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
 
 class ShipmentAction extends OrdersAction
 {
@@ -27,22 +30,22 @@ class ShipmentAction extends OrdersAction
      */
     private $shipment;
     /**
-     * @var \MyParcelBE\Sdk\src\Model\Repository\MyParcelConsignmentRepository
+     * @var \MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment
      */
-    private $consignmentRepository;
+    private $consignment;
 
     /**
      * @param Context $context
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Sales\Model\Order\Shipment $shipment
-     * @param \MyParcelBE\Sdk\src\Model\Repository\MyParcelConsignmentRepository $consignmentRepository
+     * @param \MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment $consignment
      * @param array $data
      */
     public function __construct(
         Context $context,
-        \Magento\Framework\Registry $registry,
-        \Magento\Sales\Model\Order\Shipment $shipment,
-        \MyParcelBE\Sdk\src\Model\Repository\MyParcelConsignmentRepository $consignmentRepository,
+        Registry $registry,
+        Shipment $shipment,
+        AbstractConsignment $consignment,
         array $data = []
     ) {
         // Set shipment and order
@@ -51,7 +54,7 @@ class ShipmentAction extends OrdersAction
 
         $this->order = $this->shipment->getOrder();
         parent::__construct($context, $data);
-        $this->consignmentRepository = $consignmentRepository;
+        $this->consignment = $consignment;
     }
 
     public function getEntityId()
@@ -83,7 +86,6 @@ class ShipmentAction extends OrdersAction
 
     /**
      * @return string
-     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function getCountry()
     {
@@ -96,6 +98,6 @@ class ShipmentAction extends OrdersAction
      */
     public function isCdCountry()
     {
-        return $this->consignmentRepository->isCdCountry();
+        return $this->consignment->isCdCountry();
     }
 }

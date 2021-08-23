@@ -6,7 +6,7 @@
  * https://github.com/myparcelbe
  *
  * @author      Reindert Vetter <info@sendmyparcel.be>
- * @copyright   2010-2017 MyParcel
+ * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
  * @since       File available since Release v0.1.0
@@ -62,7 +62,7 @@ class ShipmentsAction extends Template
      */
     public function getOrderAjaxUrl()
     {
-        return $this->_urlBuilder->getUrl('myparcelbe/order/CreateAndPrintMyParcelTrack');
+        return $this->_urlBuilder->getUrl('myparcel/order/CreateAndPrintMyParcelTrack');
     }
 
     /**
@@ -72,7 +72,7 @@ class ShipmentsAction extends Template
      */
     public function getShipmentAjaxUrl()
     {
-        return $this->_urlBuilder->getUrl('myparcelbe/shipment/CreateAndPrintMyParcelTrack');
+        return $this->_urlBuilder->getUrl('myparcel/shipment/CreateAndPrintMyParcelTrack');
     }
 
     /**
@@ -82,7 +82,7 @@ class ShipmentsAction extends Template
      */
     public function getAjaxUrlSendReturnMail()
     {
-        return $this->_urlBuilder->getUrl('myparcelbe/order/SendMyParcelReturnMail');
+        return $this->_urlBuilder->getUrl('myparcel/order/SendMyParcelReturnMail');
     }
 
     /**

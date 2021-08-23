@@ -10,14 +10,13 @@
  * https://github.com/myparcelbe/magento
  *
  * @author      Reindert Vetter <info@sendmyparcel.be>
- * @copyright   2010-2017 MyParcel
+ * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
  * @since       File available since Release 2.0.0
  */
 
 namespace MyParcelBE\Magento\Model\Sales\Repository;
-
 
 use MyParcelBE\Magento\Model\Sales\Delivery;
 
@@ -26,17 +25,17 @@ class DeliveryRepository extends Delivery
     /**
      * Get drop off day with chosen options from checkout
      *
-     * @param $jsonDeliveryOptions
+     * @param array $deliveryOptions
      * @return string
      */
-    public function getDropOffDayFromJson($jsonDeliveryOptions) {
-        if ($jsonDeliveryOptions === null) {
-            return null;
-        }
-
-        $deliveryOptions = json_decode($jsonDeliveryOptions, true);
+    public function getDropOffDayFromDeliveryOptions(array $deliveryOptions): ?string
+    {
         if (key_exists('date', $deliveryOptions)) {
-            $this->setDeliveryDateTime(strtotime($deliveryOptions['date'] . ' 00:00:00'));
+            if (! $deliveryOptions['date']) {
+                return date('Y-m-d', strtotime("+1 day"));
+            }
+
+            $this->setDeliveryDateTime(strtotime($deliveryOptions['date']));
             $dropOffDate = $this->getDropOffDay();
 
             return date("Y-m-d", $dropOffDate);
@@ -44,7 +43,6 @@ class DeliveryRepository extends Delivery
 
         return null;
     }
-
 
     /**
      * Get drop off day
@@ -71,5 +69,17 @@ class DeliveryRepository extends Delivery
         }
 
         return $dropOff;
+    }
+
+
+    /**
+     * Get carrier with chosen options from checkout
+     *
+     * @param array $deliveryOptions
+     * @return string|null
+     */
+    public function getCarrierFromDeliveryOptions(array $deliveryOptions): ?string
+    {
+        return $deliveryOptions['carrier'] ?? null;
     }
 }

@@ -2,12 +2,16 @@
 
 namespace MyParcelBE\Magento\Controller\Adminhtml\Order;
 
+use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\App\ResponseInterface;
-use Magento\Backend\App\Action\Context;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Sales\Model\Order;
 use MyParcelBE\Magento\Model\Sales\MagentoOrderCollection;
+use MyParcelNL\Sdk\src\Exception\ApiException;
+use MyParcelNL\Sdk\src\Exception\MissingFieldException;
+use MyParcelNL\Sdk\src\Helper\ValidatePostalCode;
+use MyParcelNL\Sdk\src\Helper\ValidateStreet;
+use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
 
 /**
  * Action to create and print MyParcel Track
@@ -16,14 +20,14 @@ use MyParcelBE\Magento\Model\Sales\MagentoOrderCollection;
  * https://github.com/myparcelbe
  *
  * @author      Reindert Vetter <info@sendmyparcel.be>
- * @copyright   2010-2017 MyParcel
+ * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
  * @since       File available since Release v0.1.0
  */
 class CreateAndPrintMyParcelTrack extends \Magento\Framework\App\Action\Action
 {
-    const PATH_MODEL_ORDER = 'Magento\Sales\Model\Order';
+    const PATH_MODEL_ORDER     = 'Magento\Sales\Model\Order';
     const PATH_URI_ORDER_INDEX = 'sales/order/index';
 
     /**
@@ -41,7 +45,7 @@ class CreateAndPrintMyParcelTrack extends \Magento\Framework\App\Action\Action
         parent::__construct($context);
 
         $this->resultRedirectFactory = $context->getResultRedirectFactory();
-        $this->orderCollection = new MagentoOrderCollection(
+        $this->orderCollection       = new MagentoOrderCollection(
             $context->getObjectManager(),
             $this->getRequest(),
             null
@@ -52,11 +56,15 @@ class CreateAndPrintMyParcelTrack extends \Magento\Framework\App\Action\Action
      * Dispatch request
      *
      * @return \Magento\Framework\Controller\ResultInterface|ResponseInterface
-     * @throws \Magento\Framework\Exception\NotFoundException
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function execute()
     {
-        $this->massAction();
+        try {
+            $this->massAction();
+        } catch (ApiException | MissingFieldException $e) {
+            $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
+        }
 
         return $this->resultRedirectFactory->create()->setPath(self::PATH_URI_ORDER_INDEX);
     }
@@ -65,12 +73,15 @@ class CreateAndPrintMyParcelTrack extends \Magento\Framework\App\Action\Action
      * Get selected items and process them
      *
      * @return $this
-     * @throws LocalizedException
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \MyParcelNL\Sdk\src\Exception\ApiException
+     * @throws \MyParcelNL\Sdk\src\Exception\MissingFieldException
+     * @throws \Exception
      */
     private function massAction()
     {
         if ($this->orderCollection->apiKeyIsCorrect() !== true) {
-            $message = 'You not have entered the correct API key. Go to the general settings in the back office of MyParcel BE to generate the API Key.';
+            $message = 'You not have entered the correct API key. To get your personal API credentials you should contact MyParcel.';
             $this->messageManager->addErrorMessage(__($message));
             $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($message);
 
@@ -89,14 +100,18 @@ class CreateAndPrintMyParcelTrack extends \Magento\Framework\App\Action\Action
 
         $this->getRequest()->setParams(['myparcel_track_email' => true]);
 
+        $orderIds = $this->filterCorrectAddress($orderIds);
         $this->addOrdersToCollection($orderIds);
 
         $this->orderCollection
             ->setOptionsFromParameters()
             ->setNewMagentoShipment();
 
-        if (!$this->orderCollection->hasShipment()) {
+        $this->orderCollection->reload();
+
+        if (! $this->orderCollection->hasShipment()) {
             $this->messageManager->addErrorMessage(__(MagentoOrderCollection::ERROR_ORDER_HAS_NO_SHIPMENT));
+
             return $this;
         }
 
@@ -106,7 +121,10 @@ class CreateAndPrintMyParcelTrack extends \Magento\Framework\App\Action\Action
             ->createMyParcelConcepts()
             ->updateGridByOrder();
 
-        if ($this->orderCollection->getOption('request_type') == 'concept') {
+        if (
+            $this->orderCollection->getOption('request_type') == 'concept' ||
+            $this->orderCollection->myParcelCollection->isEmpty()
+        ) {
             return $this;
         }
 
@@ -130,5 +148,41 @@ class CreateAndPrintMyParcelTrack extends \Magento\Framework\App\Action\Action
         $collection = $this->_objectManager->get(MagentoOrderCollection::PATH_MODEL_ORDER);
         $collection->addAttributeToFilter('entity_id', ['in' => $orderIds]);
         $this->orderCollection->setOrderCollection($collection);
+    }
+
+    /**
+     * @param array $orderIds
+     *
+     * @return array
+     */
+    private function filterCorrectAddress(array $orderIds): array
+    {
+        $objectManager = ObjectManager::getInstance();
+        $order         = $objectManager->get('\Magento\Sales\Model\Order');
+        // Go through the selected orders and check if the address details are correct
+        foreach ($orderIds as $orderId) {
+            $orderData          = $order->load($orderId);
+            $fullStreet         = implode(" ", $order->getShippingAddress()->getStreet());
+            $postcode           = preg_replace('/\s+/', '', $order->getShippingAddress()->getPostcode());
+            $destinationCountry = $order->getShippingAddress()->getCountryId();
+            $keyOrderId         = array_search($orderId, $orderIds);
+
+            // Validate the street and house number. If the address is wrong then get the orderId from the array and delete it.
+            if (! ValidateStreet::validate($fullStreet, AbstractConsignment::CC_NL, $destinationCountry)) {
+                $errorHuman = 'An error has occurred while validating the order number ' . $order->getIncrementId() . '. Check street.';
+                $this->messageManager->addErrorMessage($errorHuman);
+
+                unset($orderIds[$keyOrderId]);
+            }
+            // Validate the postcode. If the postcode is wrong then get the orderId from the array and delete it.
+            if (! ValidatePostalCode::validate($postcode, $destinationCountry)) {
+                $errorHuman = 'An error has occurred while validating the order number ' . $order->getIncrementId() . '. Check postcode.';
+                $this->messageManager->addErrorMessage($errorHuman);
+
+                unset($orderIds[$keyOrderId]);
+            }
+        }
+
+        return $orderIds;
     }
 }

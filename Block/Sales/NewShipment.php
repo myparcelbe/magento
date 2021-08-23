@@ -6,7 +6,7 @@
  * https://github.com/myparcelbe
  *
  * @author      Reindert Vetter <info@sendmyparcel.be>
- * @copyright   2010-2017 MyParcel
+ * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
  * @since       File available since Release v0.1.0
@@ -14,9 +14,15 @@
 
 namespace MyParcelBE\Magento\Block\Sales;
 
+use Magento\Backend\Block\Template\Context;
+use Magento\CatalogInventory\Api\StockConfigurationInterface;
+use Magento\CatalogInventory\Api\StockRegistryInterface;
+use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\Registry;
 use Magento\Sales\Block\Adminhtml\Items\AbstractItems;
+use MyParcelBE\Magento\Helper\Checkout;
 use MyParcelBE\Magento\Model\Source\DefaultOptions;
-use Magento\Framework\App\ObjectManager;
+use MyParcelNL\Sdk\src\Adapter\DeliveryOptions\AbstractDeliveryOptionsAdapter;
 
 class NewShipment extends AbstractItems
 {
@@ -43,11 +49,11 @@ class NewShipment extends AbstractItems
      * @param \Magento\Framework\ObjectManagerInterface                 $objectManager
      */
     public function __construct(
-        \Magento\Backend\Block\Template\Context $context,
-        \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
-        \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration,
-        \Magento\Framework\Registry $registry,
-        \Magento\Framework\ObjectManagerInterface $objectManager
+        Context $context,
+        StockRegistryInterface $stockRegistry,
+        StockConfigurationInterface $stockConfiguration,
+        Registry $registry,
+        ObjectManagerInterface $objectManager
     ) {
         // Set order
         $this->order = $registry->registry('current_shipment')->getOrder();
@@ -62,13 +68,34 @@ class NewShipment extends AbstractItems
     }
 
     /**
-     * @param $option 'signature'
+     * @param $option 'signature', 'only_recipient'
      *
      * @return bool
      */
     public function getDefaultOption($option)
     {
         return $this->defaultOptions->getDefault($option);
+    }
+    /**
+     * @param string $option 'large_format'
+     *
+     * @return bool
+     */
+    public function getDefaultLargeFormat(string $option): bool
+    {
+        return $this->defaultOptions->getDefaultLargeFormat($option);
+    }
+
+    /**
+     * Get default value of age check
+     *
+     * @param string $option
+     *
+     * @return bool
+     */
+    public function getDefaultOptionsWithoutPrice(string $option): bool
+    {
+        return $this->defaultOptions->getDefaultOptionsWithoutPrice($option);
     }
 
     /**
@@ -81,6 +108,15 @@ class NewShipment extends AbstractItems
     }
 
     /**
+     * Get default value of insurance based on order grand total
+     * @return int
+     */
+    public function getDigitalStampWeight()
+    {
+        return $this->defaultOptions->getDigitalStampDefaultWeight();
+    }
+
+    /**
      * Get package type
      */
     public function getPackageType()
@@ -90,7 +126,6 @@ class NewShipment extends AbstractItems
 
     /**
      * @return string
-     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function getCountry()
     {
@@ -104,6 +139,6 @@ class NewShipment extends AbstractItems
      */
     public function getChosenOptions()
     {
-        return json_decode($this->order->getData('delivery_options'), true);
+        return json_decode($this->order->getData(Checkout::FIELD_DELIVERY_OPTIONS), true);
     }
 }

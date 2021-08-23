@@ -15,7 +15,7 @@
             <block class="MyParcelBE\Magento\Block\Sales\View" name="order_shipping_view" template="order_view.phtml"/>
         </referenceBlock>
         <referenceContainer name="content">
-            <block class="MyParcelBE\Magento\Block\Sales\OrderAction" name="myparcelbe.order" template="order_view_action.phtml" after="-" />
+            <block class="MyParcelBE\Magento\Block\Sales\OrderAction" name="myparcel.order" template="order_view_action.phtml" after="-" />
         </referenceContainer>
    </body>
 </page>

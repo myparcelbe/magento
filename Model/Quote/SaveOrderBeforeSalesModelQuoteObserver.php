@@ -12,7 +12,7 @@
  * https://github.com/myparcelbe
  *
  * @author      Reindert Vetter <info@sendmyparcel.be>
- * @copyright   2010-2017 MyParcel
+ * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelbe/magento
  * @since       File available since Release 0.1.0
@@ -20,26 +20,27 @@
 
 namespace MyParcelBE\Magento\Model\Quote;
 
-
+use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Quote\Model\Quote;
+use Magento\Sales\Model\Order;
 use MyParcelBE\Magento\Helper\Checkout;
 use MyParcelBE\Magento\Model\Checkout\Carrier;
 use MyParcelBE\Magento\Model\Sales\Repository\DeliveryRepository;
-use MyParcelBE\Sdk\src\Model\Repository\MyParcelConsignmentRepository;
+use MyParcelNL\Sdk\src\Helper\ValidatePostalCode;
+use MyParcelNL\Sdk\src\Helper\ValidateStreet;
+use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
 
 class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
 {
-    const FIELD_DELIVERY_OPTIONS = 'delivery_options';
-    const FIELD_DROP_OFF_DAY = 'drop_off_day';
-    const FIELD_TRACK_STATUS = 'track_status';
     /**
      * @var DeliveryRepository
      */
     private $delivery;
     /**
-     * @var MyParcelConsignmentRepository
+     * @var AbstractConsignment
      */
-    private $consignmentRepository;
+    private $consignment;
     /**
      * @var array
      */
@@ -48,83 +49,109 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
     /**
      * SaveOrderBeforeSalesModelQuoteObserver constructor.
      *
-     * @param DeliveryRepository $delivery
-     * @param MyParcelConsignmentRepository $consignmentRepository
-     * @param Checkout $checkoutHelper
+     * @param DeliveryRepository  $delivery
+     * @param AbstractConsignment $consignment
+     * @param Checkout            $checkoutHelper
      */
     public function __construct(
         DeliveryRepository $delivery,
-        MyParcelConsignmentRepository $consignmentRepository,
+        AbstractConsignment $consignment,
         Checkout $checkoutHelper
     ) {
-        $this->delivery = $delivery;
-        $this->consignmentRepository = $consignmentRepository;
-
-        $this->parentMethods = explode(',', $checkoutHelper->getCheckoutConfig('general/shipping_methods'));
-
+        $this->delivery      = $delivery;
+        $this->consignment   = $consignment;
+        $this->parentMethods = explode(',', $checkoutHelper->getGeneralConfig('shipping_methods/methods'));
     }
 
     /**
      *
-     * @param \Magento\Framework\Event\Observer $observer
+     * @param Observer $observer
+     *
      * @return $this
      */
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    public function execute(Observer $observer)
     {
-        /* @var \Magento\Quote\Model\Quote $quote */
+        /* @var Quote $quote */
         $quote = $observer->getEvent()->getData('quote');
-        /* @var \Magento\Sales\Model\Order $order */
-        $order = $observer->getEvent()->getData('order');
-        $fullStreet = implode(' ', $order->getShippingAddress()->getStreet());
 
-        if ($order->getShippingAddress()->getCountryId() == 'BE' && $this->consignmentRepository->isCorrectAddress($fullStreet) == false) {
-            $order->setData(self::FIELD_TRACK_STATUS, __('⚠️&#160; Please check address'));
+        /* @var Order $order */
+        $order = $observer->getEvent()->getData('order');
+
+        if ($order->getShippingAddress() === null) {
+            return $this;
         }
 
-        if ($quote->hasData(self::FIELD_DELIVERY_OPTIONS) && $this->isMyParcelMethod($quote)) {
-            $jsonDeliveryOptions = $quote->getData(self::FIELD_DELIVERY_OPTIONS);
-            $order->setData(self::FIELD_DELIVERY_OPTIONS, $jsonDeliveryOptions);
+        $fullStreet         = implode(' ', $order->getShippingAddress()->getStreet());
+        $postcode           = $order->getShippingAddress()->getPostcode();
+        $destinationCountry = $order->getShippingAddress()->getCountryId();
 
-            $dropOffDay = $this->delivery->getDropOffDayFromJson($jsonDeliveryOptions);
-            $order->setData(self::FIELD_DROP_OFF_DAY, $dropOffDay);
+        if ($destinationCountry != AbstractConsignment::CC_NL && $destinationCountry != AbstractConsignment::CC_BE) {
+            return $this;
+        }
+
+        if (! ValidateStreet::validate($fullStreet, AbstractConsignment::CC_NL, $destinationCountry)) {
+            $order->setData(Checkout::FIELD_TRACK_STATUS, __('⚠️&#160; Please check street'));
+        }
+
+        if (! ValidatePostalCode::validate($postcode, $destinationCountry)) {
+            $order->setData(Checkout::FIELD_TRACK_STATUS, __('⚠️&#160; Please check postal code'));
+        }
+
+        if ($quote->hasData(Checkout::FIELD_DELIVERY_OPTIONS) && $this->hasMyParcelDeliveryOptions($quote)) {
+            $jsonDeliveryOptions = $quote->getData(Checkout::FIELD_DELIVERY_OPTIONS);
+            $deliveryOptions     = json_decode($jsonDeliveryOptions, true) ?? [];
+
+            $order->setData(Checkout::FIELD_DELIVERY_OPTIONS, $jsonDeliveryOptions);
+
+            $dropOffDay = $this->delivery->getDropOffDayFromDeliveryOptions($deliveryOptions);
+            $order->setData(Checkout::FIELD_DROP_OFF_DAY, $dropOffDay);
+
+            $selectedCarrier = $this->delivery->getCarrierFromDeliveryOptions($deliveryOptions);
+            $order->setData(Checkout::FIELD_MYPARCEL_CARRIER, $selectedCarrier);
         }
 
         return $this;
     }
 
     /**
-     * @param $quote
+     * @param Quote $quote
      *
      * @return bool
      */
-    private function isMyParcelMethod($quote) {
+    private function hasMyParcelDeliveryOptions($quote)
+    {
         $myParcelMethods = array_keys(Carrier::getMethods());
         $shippingMethod  = $quote->getShippingAddress()->getShippingMethod();
-      
-        if ($this->arrayLike($shippingMethod, $myParcelMethods)) {
+
+        if ($this->isMyParcelRelated($shippingMethod, $myParcelMethods)) {
             return true;
         }
 
-        if ($this->arrayLike($shippingMethod, $this->parentMethods)) {
+        if ($this->isMyParcelRelated($shippingMethod, $this->parentMethods)) {
             return true;
         }
 
-        return false;
+        return array_key_exists('myparcel_delivery_options', $quote->getData());
     }
 
     /**
-     * @param $input
-     * @param $data
+     * @param string $input
+     * @param array  $data
      *
-     * @return bool
+     * @return int
      */
-    private function arrayLike($input, $data) {
-        $result = array_filter($data, function ($item) use ($input) {
-            if (stripos($input, $item) !== false) {
-                return true;
+    private function isMyParcelRelated(string $input, array $data)
+    {
+        $result = array_filter(
+            $data,
+            function ($item) use ($input) {
+                if (stripos($input, $item) !== false) {
+                    return true;
+                }
+
+                return false;
             }
-            return false;
-        });
+        );
 
         return count($result) > 0;
     }
