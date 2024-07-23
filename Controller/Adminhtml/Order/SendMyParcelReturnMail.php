@@ -11,12 +11,12 @@ use MyParcelBE\Magento\Model\Sales\MagentoOrderCollection;
  * Action to send mails with a return label
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelbe
+ * https://github.com/myparcelnl
  *
- * @author      Reindert Vetter <info@sendmyparcel.be>
+ * @author      Reindert Vetter <info@myparcel.nl>
  * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelbe/magento
+ * @link        https://github.com/myparcelnl/magento
  * @since       File available since Release v0.1.0
  */
 class SendMyParcelReturnMail extends \Magento\Framework\App\Action\Action
@@ -96,7 +96,8 @@ class SendMyParcelReturnMail extends \Magento\Framework\App\Action\Action
 
         try {
             $this->orderCollection
-                ->setMyParcelTrack()
+                ->syncMagentoToMyparcel()
+                ->setNewMyParcelTracks()
                 ->setLatestData()
                 ->sendReturnLabelMails();
         } catch (\Exception $e) {
@@ -108,7 +109,7 @@ class SendMyParcelReturnMail extends \Magento\Framework\App\Action\Action
             return $this;
         }
 
-        $message = 'Return label mail is sent to customer.';
+        $message = 'Return label mail is send to customer.';
         $this->messageManager->addSuccessMessage(__($message));
 
         return $this;

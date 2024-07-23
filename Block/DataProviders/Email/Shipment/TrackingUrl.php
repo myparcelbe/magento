@@ -5,7 +5,6 @@ namespace MyParcelBE\Magento\Block\DataProviders\Email\Shipment;
 use Magento\Framework\App\ObjectManager;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Shipment\Track;
-use MyParcelBE\Magento\Ui\Component\Listing\Column\TrackAndTrace;
 use MyParcelNL\Sdk\src\Helper\TrackTraceUrl;
 
 // For Magento version < 2.3.2 the TrackingUrl is not exist. Therefore, it must be checked if the class exists and so that the class can be extended.
@@ -30,13 +29,15 @@ if (class_exists('\Magento\Sales\Block\DataProviders\Email\Shipment\TrackingUrl'
              */
             $order = (ObjectManager::getInstance())->create(Order::class)->load($track->getOrderId());
 
-            $myparcelUrl = TrackTraceUrl::create(
+            // Generate the original Track & Trace URL
+            $originalUrl = (new TrackTraceUrl())->create(
                 $track->getNumber(),
                 $order->getShippingAddress()->getPostcode(),
                 $order->getShippingAddress()->getCountryId()
             );
 
-            return str_replace('https://myparcel.me', 'https://sendmyparcel.me', $myparcelUrl);
+            // Replace the domain with the custom one
+            return str_replace('https://myparcel.me', 'https://sendmyparcel.me', $originalUrl);
         }
     }
 
@@ -61,13 +62,14 @@ if (class_exists('\Magento\Sales\Block\DataProviders\Email\Shipment\TrackingUrl'
              */
             $order = (ObjectManager::getInstance())->create(Order::class)->load($track->getOrderId());
 
-            $myparcelUrl = TrackTraceUrl::create(
+            // Generate the original Track & Trace URL
+            $originalUrl = (new TrackTraceUrl())->create(
                 $track->getNumber(),
                 $order->getShippingAddress()->getPostcode(),
                 $order->getShippingAddress()->getCountryId()
             );
 
-            return str_replace('https://myparcel.me', 'https://sendmyparcel.me', $myparcelUrl);
+            return str_replace('https://myparcel.me', 'https://sendmyparcel.me', $originalUrl);
         }
     }
 }

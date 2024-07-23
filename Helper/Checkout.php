@@ -1,16 +1,18 @@
 <?php
+
+declare(strict_types=1);
 /**
  * LICENSE: This source file is subject to the Creative Commons License.
  * It is available through the world-wide-web at this URL:
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelbe
+ * https://github.com/myparcelnl
  *
- * @author      Reindert Vetter <info@sendmyparcel.be>
+ * @author      Reindert Vetter <info@myparcel.nl>
  * @copyright   2010-2016 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelbe/magento
+ * @link        https://github.com/myparcelnl/magento
  * @since       File available since Release v0.1.0
  */
 
@@ -22,6 +24,7 @@ use Magento\Framework\Module\ModuleListInterface;
 use Magento\Quote\Api\Data\EstimateAddressInterfaceFactory;
 use Magento\Quote\Model\ShippingMethodManagement;
 use MyParcelBE\Magento\Model\Rate\Result;
+use MyParcelBE\Magento\Model\Source\PriceDeliveryOptionsView;
 use MyParcelNL\Sdk\src\Services\CheckApiKeyService;
 
 class Checkout extends Data
@@ -32,6 +35,9 @@ class Checkout extends Data
     public const FIELD_TRACK_STATUS     = 'track_status';
     public const DEFAULT_COUNTRY_CODE   = 'BE';
 
+    /**
+     * @var int
+     */
     private $base_price = 0;
 
     /**
@@ -82,6 +88,16 @@ class Checkout extends Data
     }
 
     /**
+     * @param  string $message
+     *
+     * @return void
+     */
+    public function log(string $message): void
+    {
+        $this->_logger->critical($message);
+    }
+
+    /**
      * @param float $base_price
      */
     public function setBasePrice($base_price)
@@ -122,65 +138,31 @@ class Checkout extends Data
     /**
      * @param \Magento\Quote\Model\Quote $quoteId
      *
-     * @return string
+     * @return \Magento\Quote\Model\Cart\ShippingMethod|null
      */
-    public function getParentMethodNameFromQuote($quoteId)
+    public function getParentRateFromQuote($quoteId, array $forAddress = [])
     {
-        $method = $this->getParentRateFromQuote($quoteId);
-        if ($method === null) {
+        if (null === $quoteId) {
             return null;
         }
 
-        return $method->getMethodCode();
-    }
+        $parentCarriers   = explode(',', $this->getGeneralConfig('shipping_methods/methods') ?? '');
 
-    /**
-     * @param \Magento\Quote\Model\Quote $quoteId
-     *
-     * @return string
-     */
-    public function getParentCarrierNameFromQuote($quoteId)
-    {
-        $method = $this->getParentRateFromQuote($quoteId);
-        if ($method === null) {
-            return null;
-        }
-
-        return $method->getCarrierCode();
-    }
-
-    /**
-     * @param \Magento\Quote\Model\Quote $quoteId
-     *
-     * @return \Magento\Quote\Model\Cart\ShippingMethod $methods
-     */
-    public function getParentRateFromQuote($quoteId)
-    {
-        if ($quoteId == null) {
-            return null;
-        }
-        $parentCarriers   = explode(',', $this->getGeneralConfig('shipping_methods/methods'));
-        $addressFromQuote = $this->quote->getShippingAddress();
         /**
          * @var \Magento\Quote\Api\Data\EstimateAddressInterface $estimatedAddress
          * @var \Magento\Quote\Model\Cart\ShippingMethod[]       $methods
          */
-        $estimatedAddress = $this->estimatedAddressFactory->create();
-        $estimatedAddress->setCountryId($addressFromQuote->getCountryId() ?? self::DEFAULT_COUNTRY_CODE);
-        $estimatedAddress->setPostcode($addressFromQuote->getPostcode() ?? '');
-        $estimatedAddress->setRegion($addressFromQuote->getRegion() ?? '');
-        $estimatedAddress->setRegionId($addressFromQuote->getRegionId() ?? '');
+        $estimatedAddress = $this->getEstimatedAddress($forAddress, $this->quote->getShippingAddress());
         $magentoMethods  = $this->shippingMethodManagement->estimateByAddress($quoteId, $estimatedAddress);
         $myParcelMethods = array_keys(Result::getMethods());
 
         foreach ($magentoMethods as $method) {
-
-            $methodCode       = explode("/", $method->getMethodCode());
+            $methodCode       = explode('/', $method->getMethodCode() ?? '');
             $latestMethodCode = array_pop($methodCode);
 
             if (
-                in_array($method->getCarrierCode(), $parentCarriers) &&
-                ! in_array($latestMethodCode, $myParcelMethods)
+                ! in_array($latestMethodCode, $myParcelMethods, true)
+                && in_array($method->getCarrierCode(), $parentCarriers, true)
             ) {
                 return $method;
             }
@@ -190,21 +172,48 @@ class Checkout extends Data
     }
 
     /**
-     * Get MyParcel method/option price.
+     * @param array                              $fromClient
+     * @param \Magento\Quote\Model\Quote\Address $fromQuote
      *
+     * @return \Magento\Quote\Api\Data\EstimateAddressInterface
+     */
+    private function getEstimatedAddress(
+        array $fromClient,
+        \Magento\Quote\Model\Quote\Address $fromQuote
+    ): \Magento\Quote\Api\Data\EstimateAddressInterface
+    {
+        $address = $this->estimatedAddressFactory->create();
+
+        if (isset($fromClient['countryId'])) {
+            $address->setCountryId($fromClient['countryId'] ?? self::DEFAULT_COUNTRY_CODE);
+            $address->setPostcode($fromClient['postcode'] ??  '');
+            $address->setRegion($fromClient['region'] ??  '');
+        } else {
+            $address->setCountryId($fromQuote->getCountryId() ?? self::DEFAULT_COUNTRY_CODE);
+            $address->setPostcode($fromQuote->getPostcode() ?? '');
+            $address->setRegion($fromQuote->getRegion() ?? '');
+            $address->setRegionId($fromQuote->getRegionId() ?? 0);
+        }
+
+        return $address;
+    }
+
+    /**
+     * Get MyParcel method/option price.
      * Check if total shipping price is not below 0 euro
      *
-     * @param        $carrier
-     * @param string $key
-     * @param bool   $addBasePrice
+     * @param  string $carrier
+     * @param  string $key
+     * @param  bool   $addBasePrice
      *
      * @return float
      */
-    public function getMethodPrice($carrier, $key, $addBasePrice = true)
+    public function getMethodPrice(string $carrier, string $key, bool $addBasePrice = true): float
     {
         $value = $this->getCarrierConfig($key, $carrier);
+        $showTotalPrice   = $this->getCarrierConfig('shipping_methods/delivery_options_prices', Data::XML_PATH_GENERAL) === PriceDeliveryOptionsView::TOTAL;
 
-        if ($addBasePrice) {
+        if ($showTotalPrice && $addBasePrice) {
             // Calculate value
             $value = $this->getBasePrice() + $value;
         }
@@ -229,49 +238,50 @@ class Checkout extends Data
     /**
      * Get checkout setting
      *
-     * @param string $carrier
-     * @param string $code
-     * @param bool   $canBeNull
+     * @param  string $carrier
+     * @param  string $code
      *
      * @return mixed
      */
-    public function getCarrierConfig($code, $carrier = null, $canBeNull = false)
+    public function getCarrierConfig(string $code, string $carrier)
     {
         $value = $this->getConfigValue($carrier . $code);
-        if (null != $value || $canBeNull) {
-            return $value;
+        if (null === $value) {
+            $this->_logger->critical('Can\'t get setting with path:' . $carrier . $code);
+            return 0;
         }
 
-        $this->_logger->critical('Can\'t get setting with path:' . $carrier . $code);
+        return $value;
     }
 
     /**
      * Get bool of setting
      *
-     * @param string $carrier
-     * @param string $key
+     * @param  string $carrier
+     * @param  string $key
      *
      * @return bool
      */
-    public function getBoolConfig($carrier, $key)
+    public function getBoolConfig(string $carrier, string $key): bool
     {
-        return $this->getCarrierConfig($key, $carrier) == "1" ? true : false;
+        return '1' === $this->getCarrierConfig($key, $carrier);
     }
 
     /**
      * Get time for delivery endpoint
      *
-     * @param        $carrier
+     * @param string $carrier
      * @param string $key
      *
      * @return string
      */
-    public function getTimeConfig($carrier, $key)
+    public function getTimeConfig(string $carrier, string $key): string
     {
-        $timeAsString   = str_replace(',', ':', $this->getCarrierConfig($key, $carrier));
-        $timeComponents = explode(':', $timeAsString);
-        if (count($timeComponents) > 2) {
-            $timeAsString = $timeComponents[0] . ':' . $timeComponents[1];
+        $timeAsString   = str_replace(',', ':', (string) $this->getCarrierConfig($key, $carrier));
+        $timeComponents = explode(':', $timeAsString ?? '');
+        if (count($timeComponents) >= 3) {
+            [$hours, $minutes] = $timeComponents;
+            $timeAsString = $hours . ':' . $minutes;
         }
 
         return $timeAsString;
@@ -280,17 +290,16 @@ class Checkout extends Data
     /**
      * Get array for delivery endpoint
      *
-     * @param        $carrier
+     * @param string $carrier
      * @param string $key
      *
-     * @return string
+     * @return array
      */
-    public function getArrayConfig($carrier, $key): string
+    public function getArrayConfig(string $carrier, string $key): array
     {
-        return str_replace(',', ';', $this->getCarrierConfig($key, $carrier));
-//        return array_map(static function($val) {
-//            return (is_numeric($val)) ? (int) $val : $val;
-//        }, explode(',', $this->getCarrierConfig($key, $carrier)));
+        return array_map(static function($val) {
+            return is_numeric($val) ? (int) $val : $val;
+        }, explode(',', (string) ($this->getCarrierConfig($key, $carrier) ?? '')));
     }
 
     /**

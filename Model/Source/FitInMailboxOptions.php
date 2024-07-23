@@ -7,12 +7,12 @@
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelbe
+ * https://github.com/myparcelnl
  *
- * @author      Reindert Vetter <info@sendmyparcel.be>
+ * @author      Reindert Vetter <reindert@myparcel.nl>
  * @copyright   2010-2017 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelbe/magento
+ * @link        https://github.com/myparcelnl/magento
  * @since       File available since Release 0.1.0
  */
 
@@ -27,7 +27,7 @@ class FitInMailboxOptions extends AbstractSource
      *
      * @return array
      */
-    public function getOptionArray()
+    public function getOptionArray(): array
     {
         return [
             ['value' => '0', 'label'=>__('Look to weight')],
@@ -36,6 +36,11 @@ class FitInMailboxOptions extends AbstractSource
             ['value' => '50', 'label'=>__('2 products (50%)')],
             ['value' => '33', 'label'=>__('3 products (33%)')],
             ['value' => '25', 'label'=>__('4 products (25%)')],
+            ['value' => '20', 'label'=>__('5 products (20%)')],
+            ['value' => '16', 'label'=>__('6 products (16%)')],
+            ['value' => '14', 'label'=>__('7 products (14%)')],
+            ['value' => '12', 'label'=>__('8 products (12%)')],
+            ['value' => '11', 'label'=>__('9 products (11%)')],
             ['value' => '10', 'label'=>__('10 products (10%)')],
             ['value' => '5', 'label'=>__('20 products (5%)')],
         ];

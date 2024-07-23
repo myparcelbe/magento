@@ -3,19 +3,19 @@
  * Block for order actions (multiple orders action and one order action)
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelbe
+ * https://github.com/myparcelnl
  *
- * @author      Reindert Vetter <info@sendmyparcel.be>
+ * @author      Reindert Vetter <info@myparcel.nl>
  * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelbe/magento
+ * @link        https://github.com/myparcelnl/magento
  * @since       File available since Release v0.1.0
  */
 
 namespace MyParcelBE\Magento\Block\Sales;
 
 use Magento\Backend\Block\Template\Context;
-use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
+use MyParcelNL\Sdk\src\Model\Consignment\BaseConsignment;
 use \Magento\Framework\Registry;
 
 class OrderAction extends OrdersAction
@@ -25,20 +25,20 @@ class OrderAction extends OrdersAction
      */
     private $order;
     /**
-     * @var \MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment
+     * @var \MyParcelNL\Sdk\src\Model\Consignment\BaseConsignment
      */
     private $consignment;
 
     /**
      * @param Context $context
      * @param \Magento\Framework\Registry $registry
-     * @param \MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment $consignment
+     * @param \MyParcelNL\Sdk\src\Model\Consignment\BaseConsignment $consignment
      * @param array $data
      */
     public function __construct(
         Context $context,
         Registry $registry,
-        AbstractConsignment $consignment,
+        BaseConsignment $consignment,
         array $data = []
     ) {
         // Set order

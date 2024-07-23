@@ -7,25 +7,31 @@
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelbe/magento
+ * https://github.com/myparcelnl/magento
  *
- * @author      Reindert Vetter <info@sendmyparcel.be>
+ * @author      Reindert Vetter <info@myparcel.nl>
  * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelbe/magento
+ * @link        https://github.com/myparcelnl/magento
  * @since       File available since Release 2.0.0
  */
 
 namespace MyParcelBE\Magento\Model\Sales\Repository;
 
 use MyParcelBE\Magento\Model\Sales\Package;
+use MyParcelBE\Magento\Model\Settings\AccountSettings;
+use MyParcelNL\Sdk\src\Model\Carrier\AbstractCarrier;
+use MyParcelNL\Sdk\src\Model\Carrier\CarrierFactory;
+use MyParcelNL\Sdk\src\Model\Carrier\CarrierPostNL;
 use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
 
 class PackageRepository extends Package
 {
     public const DEFAULT_MAXIMUM_MAILBOX_WEIGHT = 2000;
     public const MAXIMUM_DIGITAL_STAMP_WEIGHT   = 2000;
-    public const DEFAULT_LARGE_FORMAT_WEIGHT    = 2300;
+    public const MAXIMUM_PACKAGE_SMALL_WEIGHT   = 2000;
+    public const DEFAULT_LARGE_FORMAT_WEIGHT    = 23000;
+    public const CARRIER_TYPE_CUSTOM            = 'custom';
 
     /**
      * @var bool
@@ -33,68 +39,68 @@ class PackageRepository extends Package
     public $deliveryOptionsDisabled = false;
 
     /**
-     * @var bool
-     */
-    public $isPackage = true;
-
-    /**
-     * Get package type
-     *
-     * If package type is not set, calculate package type
-     *
-     * @return int 1|3
-     */
-    public function getPackageType(): int
-    {
-        // return type if type is set
-        if (parent::getPackageType() !== null) {
-            return parent::getPackageType();
-        }
-
-        return parent::getPackageType();
-    }
-
-    /**
-     * @param array $products
+     * @param array  $products
+     * @param string $carrierPath
      *
      * @return string
      */
-    public function selectPackageType(array $products): string
+    public function selectPackageType(array $products, string $carrierPath): string
     {
-        $packageType = [];
+        $this->setMailboxPercentage(0);
+        $weight       = 0;
+        $digitalStamp = true;
+        foreach ($products as $product) {
+            $productQty    = $product->getQty();
+            $productWeight = (float) $product->getWeight();
 
-        if ($this->isMailboxActive() || $this->isDigitalStampActive()) {
-            foreach ($products as $product) {
-                $digitalStamp = $this->getAttributesProductsOptions($product, 'digital_stamp');
-                $mailbox      = $this->getAttributesProductsOptions($product, 'fit_in_mailbox');
-                $isPackage    = true;
+            if ($productQty < 1) {
+                continue;
+            }
 
-                if ($digitalStamp && $this->fitInDigitalStamp()) {
-                    $packageType[] = AbstractConsignment::PACKAGE_TYPE_DIGITAL_STAMP;
-                    $isPackage     = false;
-                    continue;
-                }
+            if ($productWeight > 0) {
+                $weight += $productWeight * $productQty;
+            }
 
-                if (isset($mailbox) && $this->fitInMailbox($product, $mailbox)) {
-                    $packageType[] = AbstractConsignment::PACKAGE_TYPE_MAILBOX;
-                    $isPackage     = false;
-                    continue;
-                }
+            if ($digitalStamp && ! $this->getAttributesProductsOptions($product, 'digital_stamp')) {
+                $digitalStamp = false;
+            }
 
-                if ($isPackage) {
-                    $packageType[] = AbstractConsignment::PACKAGE_TYPE_PACKAGE;
-                    break;
-                }
+            if (100 < $this->getMailboxPercentage()) {
+                continue;
+            }
+
+            $mailboxQty = $this->getAttributesProductsOptions($product, 'fit_in_mailbox');
+
+            if (-1 === $mailboxQty) {
+                $this->setMailboxPercentage(101);
+                continue;
+            }
+
+            if (0 === $mailboxQty && 0.0 !== $productWeight) {
+                $mailboxQty = (int) ($this->getMaxMailboxWeight() / $productWeight);
+            }
+
+            if (0 !== $mailboxQty) {
+                $productPercentage = $productQty * 100 / $mailboxQty;
+                $mailboxPercentage = $this->getMailboxPercentage() + $productPercentage;
+                $this->setMailboxPercentage($mailboxPercentage);
             }
         }
+        $this->setWeight($weight);
 
-        // Sort an array in reverse order, so that the largest package type appears at the bottom of the array
-        rsort($packageType);
+        if ($digitalStamp && $this->fitInDigitalStamp()) {
+            return AbstractConsignment::PACKAGE_TYPE_DIGITAL_STAMP_NAME;
+        }
 
-        $packageType      = array_pop($packageType);
-        $packageTypeNames = array_flip(AbstractConsignment::PACKAGE_TYPES_NAMES_IDS_MAP);
+        if ($this->fitInMailbox()) {
+            return AbstractConsignment::PACKAGE_TYPE_MAILBOX_NAME;
+        }
 
-        return $packageTypeNames[$packageType] ?? AbstractConsignment::PACKAGE_TYPE_PACKAGE_NAME;
+        if ($this->fitInPackageSmall()) {
+            return AbstractConsignment::PACKAGE_TYPE_PACKAGE_SMALL_NAME;
+        }
+
+        return AbstractConsignment::PACKAGE_TYPE_PACKAGE_NAME;
     }
 
     /**
@@ -112,29 +118,31 @@ class PackageRepository extends Package
     }
 
     /**
-     * @param object $product
-     * @param int    $mailbox
+     * Returns true when mailbox is active, the order fits in the mailbox and one of the following is true:
+     * - it is a domestic shipment
+     * - there is a PostNL carrier with contract (they can deliver mailbox packages internationally)
      *
      * @return bool
      */
-    public function fitInMailbox($product, int $mailbox): bool
+    public function fitInMailbox(): bool
     {
-        $mailboxPercentage    = $this->getMailboxPercentage() + $mailbox * $product->getQty();
-        $maximumMailboxWeight = $this->getWeightTypeOfOption($this->getMaxMailboxWeight());
-        $orderWeight          = $this->getWeightTypeOfOption($this->getWeight());
-        if (
-            $this->getCurrentCountry() === AbstractConsignment::CC_NL &&
-            $this->isMailboxActive() &&
-            $orderWeight &&
-            ($mailboxPercentage === 0 || $mailboxPercentage <= 100) &&
-            $orderWeight <= $maximumMailboxWeight
-        ) {
-            $this->setMailboxPercentage($mailboxPercentage);
-
-            return true;
+        $mailboxOk = $this->getCurrentCountry() === AbstractConsignment::CC_NL;
+        if (!$mailboxOk) {
+            $config = AccountSettings::getInstance()->getCarrierOptions()->filter(
+                static function ($carrierOptions) {
+                    return self::CARRIER_TYPE_CUSTOM === $carrierOptions->getType()
+                        && $carrierOptions->getCarrier() instanceof CarrierPostNL;
+                }
+            )->first();
+            if (null !== $config) {
+                $mailboxOk = true;
+            }
         }
 
-        return false;
+        return $mailboxOk
+            && $this->isMailboxActive()
+            && $this->getWeight() <= $this->getMaxMailboxWeight()
+            && $this->getMailboxPercentage() <= 100;
     }
 
     /**
@@ -142,78 +150,52 @@ class PackageRepository extends Package
      */
     public function fitInDigitalStamp(): bool
     {
-        $orderWeight               = $this->getWeightTypeOfOption($this->getWeight());
+        $orderWeight               = $this->convertToGrams($this->getWeight());
         $maximumDigitalStampWeight = $this->getMaxDigitalStampWeight();
 
-        if (
-            $this->getCurrentCountry() === AbstractConsignment::CC_NL &&
-            $this->isDigitalStampActive() &&
-            $orderWeight <= $maximumDigitalStampWeight
-        ) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Set weight depend on product weight from product
-     *
-     * @param \Magento\Quote\Model\Quote\Item[] $products
-     *
-     * @return $this
-     */
-    public function setWeightFromQuoteProducts(array $products)
-    {
-        if (empty($products)) {
-            return $this;
-        }
-
-        foreach ($products as $product) {
-            $this->setWeightFromOneQuoteProduct($product);
-        }
-
-        return $this;
+        return $this->getCurrentCountry() === AbstractConsignment::CC_NL
+            && $this->isDigitalStampActive()
+            && $orderWeight <= $maximumDigitalStampWeight;
     }
 
     /**
      * Init all mailbox settings
      *
+     * @param string $carrierPath
+     *
+     * @return $this
      * @return $this
      */
-    public function setMailboxSettings()
+    public function setMailboxSettings(string $carrierPath = self::XML_PATH_POSTNL_SETTINGS): PackageRepository
     {
-        $settings = $this->getConfigValue(self::XML_PATH_POSTNL_SETTINGS . 'mailbox');
+        $settings = $this->getConfigValue("{$carrierPath}mailbox");
 
-        if ($settings === null) {
-            $this->_logger->critical('Can\'t set settings with path:' . self::XML_PATH_POSTNL_SETTINGS . 'mailbox');
+        if (null === $settings || ! array_key_exists('active', $settings)) {
+            $this->_logger->critical("Can't set settings with path: {$carrierPath}mailbox");
         }
 
-        if (! key_exists('active', $settings)) {
-            $this->_logger->critical('Can\'t get mailbox setting active');
-        }
+        $this->setMailboxActive('1' === $settings['active']);
+        if (true === $this->isMailboxActive()) {
+            $weight = abs((float) str_replace(',', '.', $settings['weight'] ?? ''));
+            $unit   = $this->getGeneralConfig('print/weight_indication');
 
-        $this->setMailboxActive($settings['active'] === '1');
-        if ($this->isMailboxActive() === true) {
-            $weight = str_replace(',', '.', $settings['weight']);
-            $this->setMaxMailboxWeight($weight ?: self::DEFAULT_MAXIMUM_MAILBOX_WEIGHT);
+            if ('kilo' === $unit) {
+                $epsilon = 0.00001;
+                $default = self::DEFAULT_MAXIMUM_MAILBOX_WEIGHT / 1000.0;
+                if ($weight < $epsilon) {
+                    $weight = $default;
+                }
+                $this->setMaxMailboxWeight($weight);
+            } else {
+                $weight = (int)$weight;
+                $this->setMaxMailboxWeight($weight ?: self::DEFAULT_MAXIMUM_MAILBOX_WEIGHT);
+            }
+
+            $pickupMailbox = (bool) $this->getConfigValue("{$carrierPath}mailbox/pickup_mailbox");
+            $this->setPickupMailboxActive($pickupMailbox);
         }
 
         return $this;
-    }
-
-    /**
-     * @param $products
-     *
-     * @return float
-     */
-    public function getProductsWeight(array $products): float
-    {
-        $weight = 0;
-        foreach ($products as $item) {
-            $weight += ($item->getWeight() * $item->getQty());
-        }
-
-        return $weight;
     }
 
     /**
@@ -253,27 +235,96 @@ class PackageRepository extends Package
     }
 
     /**
+     * @param array  $products
+     * @param string $carrierPath
+     *
+     * @return bool
+     */
+    public function getAgeCheck(array $products, string $carrierPath): bool
+    {
+        foreach ($products as $product) {
+            $productAgeCheck  = (bool) $this->getAttributesProductsOptions($product, 'age_check');
+
+            if ($productAgeCheck) {
+                return true;
+            }
+        }
+
+        return (bool) $this->getConfigValue($carrierPath . 'default_options/age_check_active');
+    }
+
+    /**
      * Init all digital stamp settings
+     *
+     * @param  string $carrierPath
      *
      * @return $this
      */
-    public function setDigitalStampSettings()
+    public function setDigitalStampSettings(string $carrierPath = self::XML_PATH_POSTNL_SETTINGS): PackageRepository
     {
-        $settings = $this->getConfigValue(self::XML_PATH_POSTNL_SETTINGS . 'digital_stamp');
-        if ($settings === null) {
-            $this->_logger->critical('Can\'t set settings with path:' . self::XML_PATH_POSTNL_SETTINGS . 'digital stamp');
+        $settings = $this->getConfigValue("{$carrierPath}digital_stamp");
+
+        if (null === $settings || ! array_key_exists('active', $settings)) {
+            $this->_logger->critical("Can't set settings with path: {$carrierPath}digital_stamp");
+
+            return $this;
         }
 
-        if (! key_exists('active', $settings)) {
-            $this->_logger->critical('Can\'t get digital stamp setting active');
-        }
+        $this->setDigitalStampActive('1' === $settings['active']);
 
-        $this->setDigitalStampActive($settings['active'] === '1');
         if ($this->isDigitalStampActive()) {
             $this->setMaxDigitalStampWeight(self::MAXIMUM_DIGITAL_STAMP_WEIGHT);
         }
 
         return $this;
+    }
+
+    /**
+     * Init all package small settings
+     *
+     * @param  string $carrierPath
+     *
+     * @return $this
+     */
+    public function setPackageSmallSettings(string $carrierPath = self::XML_PATH_POSTNL_SETTINGS): PackageRepository
+    {
+        $settings = $this->getConfigValue("{$carrierPath}package_small");
+
+        if (null === $settings || ! array_key_exists('active', $settings)) {
+            $this->_logger->critical("Can't set settings with path: {$carrierPath}digital_stamp");
+
+            return $this;
+        }
+
+        $this->setPackageSmallActive('1' === $settings['active']);
+        if ($this->isPackageSmallActive()) {
+            $weight = abs((float) str_replace(',', '.', $settings['weight'] ?? ''));
+            $unit   = $this->getGeneralConfig('print/weight_indication');
+
+            if ('kilo' === $unit) {
+                $epsilon = 0.00001;
+                $default = self::MAXIMUM_PACKAGE_SMALL_WEIGHT / 1000.0;
+                if ($weight < $epsilon) {
+                    $weight = $default;
+                }
+                $this->setMaxPackageSmallWeight($weight);
+            } else {
+                $weight = (int)$weight;
+                $this->setMaxPackageSmallWeight($weight ?: self::MAXIMUM_PACKAGE_SMALL_WEIGHT);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    private function fitInPackageSmall(): bool
+    {
+        return AbstractConsignment::CC_BE !== $this->getCurrentCountry()
+            && $this->isPackageSmallActive()
+            && $this->getWeight() <= $this->getMaxPackageSmallWeight();
     }
 
     /**
@@ -359,21 +410,5 @@ class PackageRepository extends Package
             ->where('entity_id = ?', $entityId);
 
         return $connection->fetchOne($sql);
-    }
-
-    /**
-     * @param \Magento\Quote\Model\Quote\Item $product
-     *
-     * @return $this
-     */
-    private function setWeightFromOneQuoteProduct($product)
-    {
-        if ($product->getWeight() > 0) {
-            $this->addWeight($product->getWeight() * $product->getQty());
-        } else {
-            $this->setAllProductsFit(false);
-        }
-
-        return $this;
     }
 }

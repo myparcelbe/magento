@@ -11,17 +11,25 @@ use MyParcelBE\Magento\Api\ShippingMethodsInterface;
  */
 class ShippingMethods implements ShippingMethodsInterface
 {
+    /**
+     * @var \Magento\Checkout\Model\Session
+     */
     private $session;
 
+    /**
+     * ShippingMethods constructor.
+     *
+     * @param \Magento\Checkout\Model\Session $session
+     */
     public function __construct(Session $session)
     {
-        $this->session = $session;
+        $this->session       = $session;
     }
 
     /**
-     * @param mixed $deliveryOptions
+     * @param mixed $deliveryOptions indexed array holding 1 deliveryOptions object
      *
-     * @return mixed[]
+     * @return array[]
      * @throws Exception
      */
     public function getFromDeliveryOptions($deliveryOptions): array
@@ -45,14 +53,27 @@ class ShippingMethods implements ShippingMethodsInterface
             ];
         }
 
-        $quote = $this->session->getQuote();
-        $quote->addData(['myparcel_delivery_options'=> json_encode($deliveryOptions[0])]);
-        $quote->save();
-        $response[] = [
-            'delivery_options'=>$deliveryOptions[0],
-            'message'=>'shipping method persisted in quote ' . $quote->getId()
-        ];
+        $response[] = $this->persistDeliveryOptions($deliveryOptions[0]);
 
         return $response;
+    }
+
+    /**
+     * @param array $deliveryOptions
+     *
+     * @return array
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function persistDeliveryOptions(array $deliveryOptions): array
+    {
+        $quote = $this->session->getQuote();
+        $quote->addData(['myparcel_delivery_options' => json_encode($deliveryOptions)]);
+        $quote->save();
+
+        return [
+            'delivery_options' => $deliveryOptions,
+            'message'          => 'Delivery options persisted in quote ' . $quote->getId(),
+        ];
     }
 }

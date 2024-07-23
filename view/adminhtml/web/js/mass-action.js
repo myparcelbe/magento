@@ -97,7 +97,7 @@ define(
                         return this;
                     }
 
-                    if (('has_api_key' in this.options) && (this.options['has_api_key'] == false)) {
+                    if (('has_api_key' in this.options) && (false === this.options['has_api_key'])) {
                         alert({title: $.mage.__('No key found. Go to Configuration and then to MyParcel to enter the key.')});
 
                         return this;
@@ -124,6 +124,12 @@ define(
                             }
                         }
                     );
+
+                    if (parentThis._usePPSExportMode()) {
+                      $('#mypa_container-request_type').hide();
+                      $('#mypa_container-label_amount').hide();
+                      $('#mypa_container-print_position').hide();
+                    }
                 },
 
                 /**
@@ -156,7 +162,7 @@ define(
                  */
                 _setActions: function () {
                     var parentThis = this;
-                    var actionOptions = ["request_type", "package_type", "print_position", "label_amount", "label_amount"];
+                    var actionOptions = ['request_type', 'package_type', 'print_position', 'label_amount', 'carrier'];
 
                     actionOptions.forEach(function (option) {
                         if (!(option in parentThis.options['action_options']) || (parentThis.options['action_options'][option] == false)) {
@@ -166,6 +172,8 @@ define(
 
                     return this;
                 },
+
+
 
                 /**
                  * Set default settings
@@ -183,6 +191,7 @@ define(
 
                     $('#mypa_request_type-download').prop('checked', true).trigger('change');
                     $('#mypa_package_type-default').prop('checked', true).trigger('change');
+                    $('#mypa_carrier_default').prop('checked', true).trigger('change');
                     $('#paper_size-' + this.options.settings['paper_type']).prop('checked', true).trigger('change');
 
                     this._getLabelPosition(selectAmount);
@@ -231,6 +240,19 @@ define(
                         }
                     );
 
+                  $("input[name='mypa_carrier']").on(
+                    'change',
+                    function() {
+                      if ($('#mypa_carrier_postnl').prop('checked')) {
+                        $('#mypa_container-package_type-digital_stamp').show();
+                        $('#mypa_container-package_type-letter').show();
+                      } else {
+                        $('#mypa_container-package_type-digital_stamp').hide();
+                        $('#mypa_container-package_type-letter').hide();
+                      }
+                    }
+                  );
+
                     $("select[name='mypa_label_amount']").on(
                         "change",
                         function () {
@@ -273,6 +295,15 @@ define(
                             $('#mypa_position-3').prop('checked', true);
                         }
                     }
+                },
+
+                /**
+                 * @protected
+                 */
+                _usePPSExportMode: function () {
+                  var exportMode = this.options.settings['export_mode'];
+
+                  return exportMode === 'pps';
                 },
 
                 /**

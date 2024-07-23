@@ -7,11 +7,10 @@ define(
     'Magento_Checkout/js/model/quote',
     'MyParcelBE_Magento/js/model/checkout',
     'MyParcelBE_Magento/js/polyfill/array_prototype_find',
-    'MyParcelBE_Magento/js/vendor/myparcel',
-    'MyParcelBE_Magento/js/vendor/polyfill-custom-event',
     'MyParcelBE_Magento/js/vendor/object-path',
+    'myparcelDeliveryOptions',
     'leaflet',
-    'vue2leaflet',
+    'jquery'
   ],
   function(
     _,
@@ -21,21 +20,19 @@ define(
     quote,
     checkout,
     array_prototype_find,
-    myparcel,
-    CustomEvent,
     objectPath,
+    myparcel,
     leaflet,
-    vue2leaflet
+    $
   ) {
     'use strict';
 
-    // HACK: without this the pickup locations map doesn't work as RequireJS messes with any global variables.
-    window.Vue2Leaflet = vue2leaflet;
+    var deliveryOptions;
 
-    var deliveryOptions = {
+    deliveryOptions = {
       rendered: ko.observable(false),
 
-      splitStreetRegex: /(.*?)\s?(\d{1,4})[/\s-]{0,2}([A-z]\d{1,3}|-\d{1,4}|\d{2}\w{1,2}|[A-z][A-z\s]{0,3})?$/,
+      splitStreetRegex: /(.*?)\s?(\d{1,5})[/\s-]{0,2}([A-z]\d{1,3}|-\d{1,4}|\d{2}\w{1,2}|[A-z][A-z\s]{0,3})?$/,
 
       disableDeliveryOptionsEvent: 'myparcel_disable_delivery_options',
       hideDeliveryOptionsEvent: 'myparcel_hide_delivery_options',
@@ -51,30 +48,44 @@ define(
       disablePickup: 'myparcel-delivery-options__delivery--pickup',
 
       isUsingMyParcelMethod: true,
+      deliveryOptionsAreVisible: false,
 
       /**
        * The selector of the field we use to get the delivery options data into the order.
        *
-       * @type {String}
+       * @type {string}
        */
       hiddenDataInput: '[name="myparcel_delivery_options"]',
 
-      methodCodeStandardDelivery: 'myparcelbe_magento_bpost_settings/delivery',
+      methodCodeStandardDelivery: 'myparcelbe_magento_postnl_settings/delivery',
 
       /**
        * Maps shipping method codes to prices in the delivery options config.
        */
       methodCodeDeliveryOptionsConfigMap: {
-        'myparcelbe_magento_postnl_settings/pickup': 'config.carrierSettings.postnl.pricePickup',
         'myparcelbe_magento_postnl_settings/delivery': 'config.carrierSettings.postnl.priceStandardDelivery',
-        'myparcelbe_magento_postnl_settings/delivery/only_recipient': 'config.carrierSettings.postnl.priceOnlyRecipient',
-        'myparcelbe_magento_postnl_settings/delivery/signature': 'config.carrierSettings.postnl.priceSignature',
+        'myparcelbe_magento_postnl_settings/mailbox': 'config.carrierSettings.postnl.pricePackageTypeMailbox',
+        'myparcelbe_magento_postnl_settings/package_small': 'config.carrierSettings.postnl.pricePackageTypePackageSmall',
+        'myparcelbe_magento_postnl_settings/digital_stamp': 'config.carrierSettings.postnl.pricePackageTypeDigitalStamp',
+        'myparcelbe_magento_postnl_settings/morning': 'config.carrierSettings.postnl.priceMorningDelivery',
+        'myparcelbe_magento_postnl_settings/evening': 'config.carrierSettings.postnl.priceEveningDelivery',
+        'myparcelbe_magento_postnl_settings/morning/only_recipient': 'config.carrierSettings.postnl.priceMorningDelivery',
+        'myparcelbe_magento_postnl_settings/evening/only_recipient': 'config.carrierSettings.postnl.priceEveningDelivery',
+        'myparcelbe_magento_postnl_settings/pickup': 'config.carrierSettings.postnl.pricePickup',
+        'myparcelbe_magento_postnl_settings/morning/only_recipient/signature': 'config.carrierSettings.postnl.priceMorningSignature',
+        'myparcelbe_magento_postnl_settings/evening/only_recipient/signature': 'config.carrierSettings.postnl.priceEveningSignature',
         'myparcelbe_magento_postnl_settings/delivery/only_recipient/signature': 'config.carrierSettings.postnl.priceSignatureAndOnlyRecipient',
-        'myparcelbe_magento_dpd_settings/pickup': 'config.carrierSettings.dpd.pricePickup',
+        'myparcelbe_magento_dhlforyou_settings/delivery': 'config.carrierSettings.dhlforyou.priceStandardDelivery',
+        'myparcelbe_magento_dhlforyou_settings/mailbox': 'config.carrierSettings.dhlforyou.pricePackageTypeMailbox',
+        'myparcelbe_magento_dhlforyou_settings/pickup': 'config.carrierSettings.dhlforyou.pricePickup',
+        'myparcelbe_magento_dhlforyou_settings/delivery/same_day_delivery': 'config.carrierSettings.dhlforyou.priceSameDayDelivery',
+        'myparcelbe_magento_dhlforyou_settings/delivery/only_recipient/same_day_delivery': 'config.carrierSettings.dhlforyou.priceSameDayDeliveryAndOnlyRecipient',
+        'myparcelbe_magento_dhleuroplus_settings/delivery': 'config.carrierSettings.dhleuroplus.priceStandardDelivery',
+        'myparcelbe_magento_dhlparcelconnect_settings/delivery': 'config.carrierSettings.dhlparcelconnect.priceStandardDelivery',
+        'myparcelbe_magento_ups_settings/delivery': 'config.carrierSettings.ups.priceStandardDelivery',
         'myparcelbe_magento_dpd_settings/delivery': 'config.carrierSettings.dpd.priceStandardDelivery',
-        'myparcelbe_magento_bpost_settings/pickup': 'config.carrierSettings.bpost.pricePickup',
-        'myparcelbe_magento_bpost_settings/delivery': 'config.carrierSettings.bpost.priceStandardDelivery',
-        'myparcelbe_magento_bpost_settings/delivery/signature': 'config.carrierSettings.bpost.priceSignature',
+        'myparcelbe_magento_dpd_settings/pickup': 'config.carrierSettings.dpd.pricePickup',
+        'myparcelbe_magento_dpd_settings/mailbox': 'config.carrierSettings.dpd.pricePackageTypeMailbox',
       },
 
       /**
@@ -83,7 +94,9 @@ define(
       methodCodeShipmentOptionsConfigMap: {
         'myparcelbe_magento_postnl_settings/delivery/signature': 'config.carrierSettings.postnl.priceSignature',
         'myparcelbe_magento_postnl_settings/delivery/only_recipient': 'config.carrierSettings.postnl.priceOnlyRecipient',
-        'myparcelbe_magento_bpost_settings/delivery/signature': 'config.carrierSettings.bpost.priceSignature',
+        'myparcelbe_magento_dhlforyou_settings/delivery/only_recipient': 'config.carrierSettings.dhlforyou.priceOnlyRecipient',
+        'myparcelbe_magento_dhlforyou_settings/delivery/same_day_delivery': 'config.carrierSettings.dhlforyou.priceSameDayDelivery',
+        'myparcelbe_magento_dhlforyou_settings/delivery/only_recipient/same_day_delivery': 'config.carrierSettings.dhlforyou.priceSameDayDeliveryAndOnlyRecipient',
       },
 
       /**
@@ -91,8 +104,9 @@ define(
        */
       initialize: function() {
         window.MyParcelConfig.address = deliveryOptions.getAddress(quote.shippingAddress());
-        deliveryOptions.render();
+        deliveryOptions.setToRenderWhenVisible();
         deliveryOptions.addListeners();
+
         deliveryOptions.rendered.subscribe(function(bool) {
           if (bool) {
             deliveryOptions.updateAddress();
@@ -100,14 +114,45 @@ define(
         });
       },
 
-      destroy: function() {
-        deliveryOptions.triggerEvent(deliveryOptions.hideDeliveryOptionsEvent);
-        document.querySelector(deliveryOptions.hiddenDataInput).value = '';
+      setToRenderWhenVisible: function() {
+        var shippingMethodDiv = document.getElementById('checkout-shipping-method-load');
+        /**
+         * Sometimes the shipping method div doesn't exist yet. Retry in 100ms if it happens.
+         */
+        if (!shippingMethodDiv) {
+          setTimeout(function() {
+            deliveryOptions.setToRenderWhenVisible();
+          }, 100);
+          return;
+        }
 
-        document.removeEventListener(
-          deliveryOptions.updatedDeliveryOptionsEvent,
-          deliveryOptions.onUpdatedDeliveryOptions
-        );
+        if (!('IntersectionObserver' in window) ||
+          !('IntersectionObserverEntry' in window) ||
+          !('intersectionRatio' in window.IntersectionObserverEntry.prototype)
+        ) {
+          deliveryOptions.render();
+          return;
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.intersectionRatio === 0 || deliveryOptions.deliveryOptions || this.deliveryOptionsAreVisible) {
+              return;
+            }
+            deliveryOptions.render();
+            this.deliveryOptionsAreVisible = true;
+          }, {
+            root: null,
+            rootMargin: '0px',
+            threshold: .1
+          });
+        });
+        observer.observe(shippingMethodDiv);
+      },
+
+      destroy: function() {
+        document.querySelector(deliveryOptions.hiddenDataInput).value = '';
+        deliveryOptions.triggerEvent(deliveryOptions.hideDeliveryOptionsEvent);
       },
 
       /**
@@ -116,21 +161,11 @@ define(
       render: function() {
         var hasUnrenderedDiv = document.querySelector('#myparcel-delivery-options');
         var hasRenderedDeliveryOptions = document.querySelector('.myparcel-delivery-options__table');
-        var shippingMethodDiv = document.querySelector('#checkout-shipping-method-load');
+        var shippingMethodDiv = document.getElementById('checkout-shipping-method-load');
         var deliveryOptionsDiv = document.createElement('div');
+
         checkout.hideShippingMethods();
-
         deliveryOptions.rendered(false);
-
-        /**
-         * Sometimes the shipping method div doesn't exist yet. Retry in 100ms if it happens.
-         */
-        if (!shippingMethodDiv) {
-          setTimeout(function() {
-            deliveryOptions.render();
-          }, 100);
-          return;
-        }
 
         if (hasUnrenderedDiv || hasRenderedDeliveryOptions) {
           deliveryOptions.triggerEvent(deliveryOptions.updateDeliveryOptionsEvent);
@@ -160,20 +195,20 @@ define(
       /**
        * Run the split street regex on the given full address to extract the house number and return it.
        *
-       * @param {String} address - Full address.
+       * @param {string} address - Full address.
        *
-       * @returns {String|undefined} - The house number, if found. Otherwise null.
+       * @returns {integer|null} - The house number, if found. Otherwise null.
        */
       getHouseNumber: function(address) {
         var result = deliveryOptions.splitStreetRegex.exec(address);
         var numberIndex = 2;
-        return result ? result[numberIndex] : null;
+        return result ? parseInt(result[numberIndex]) : null;
       },
 
       /**
        * Trigger an event on the document body.
        *
-       * @param {String} identifier - Name of the event.
+       * @param {string} identifier - Name of the event.
        */
       triggerEvent: function(identifier) {
         var event = document.createEvent('HTMLEvents');
@@ -187,19 +222,18 @@ define(
        * @param {Object?} address - Quote.shippingAddress from Magento.
        */
       updateAddress: function(address) {
-        var newAddress;
-
         if (!deliveryOptions.isUsingMyParcelMethod) {
           return;
         }
 
-        newAddress = deliveryOptions.getAddress(address || quote.shippingAddress());
+        const newAddress = deliveryOptions.getAddress(address || quote.shippingAddress());
         if (_.isEqual(newAddress, window.MyParcelConfig.address)) {
           return;
         }
 
         window.MyParcelConfig.address = newAddress;
 
+        deliveryOptions.triggerEvent(deliveryOptions.showDeliveryOptionsEvent);
         deliveryOptions.triggerEvent(deliveryOptions.updateDeliveryOptionsEvent);
       },
 
@@ -215,16 +249,24 @@ define(
           cc: address.countryId || '',
           postalCode: address.postcode || '',
           city: address.city || '',
+          street: address.street ? [address.street[0], address.street[1]].join(' ').trim() : ''
         };
       },
 
       /**
        * Triggered when the delivery options have been updated. Put the received data in the created data input. Then
-       *  do the request that tells us which shipping method needs to be selected.
+       * do the request that tells us which shipping method needs to be selected.
        *
        * @param {CustomEvent} event - The event that was sent.
        */
       onUpdatedDeliveryOptions: function(event) {
+        var element = document.getElementsByClassName('checkout-shipping-method').item(0);
+        var displayStyle = window.getComputedStyle(element, null).display;
+
+        if ('none' === displayStyle) {
+          return;
+        }
+
         deliveryOptions.deliveryOptions = event.detail;
         document.querySelector(deliveryOptions.hiddenDataInput).value = JSON.stringify(event.detail);
 
@@ -235,19 +277,41 @@ define(
           return;
         }
 
-        checkout.convertDeliveryOptionsToShippingMethod(event.detail, {
+        deliveryOptions.setShippingMethod(event.detail);
+        deliveryOptions.disabledDeliveryPickupRadio();
+      },
+
+      /**
+       * @param options
+       */
+      setShippingMethod: function(options) {
+        $('body').trigger('processStart');
+        if (options) {
+          options.packageType = checkout.bestPackageType;
+        }
+        checkout.convertDeliveryOptionsToShippingMethod(options, {
           onSuccess: function(response) {
+            $('body').trigger('processStop');
             if (!response.length) {
               return;
             }
 
+            /**
+             * For the cart summary to display the correct shipping method name on the
+             * second page of the standard checkout, we need to update the storage.
+             */
+            var cacheObject = JSON.parse(localStorage.getItem('mage-cache-storage'));
+            if (cacheObject.hasOwnProperty('checkout-data')) {
+              cacheObject['checkout-data']['selectedShippingRate'] = response[0].element_id;
+              localStorage.setItem('mage-cache-storage', JSON.stringify(cacheObject));
+            }
+            /**
+             * Set the method to null first, for the price of options to update in the cart summary.
+             */
             selectShippingMethodAction(null);
-
-            quote.shippingMethod(deliveryOptions.getNewShippingMethod(response[0].element_id));
+            selectShippingMethodAction(deliveryOptions.getNewShippingMethod(response[0].element_id));
           },
         });
-
-        deliveryOptions.disabledDeliveryPickupRadio();
       },
 
       /**
@@ -275,37 +339,28 @@ define(
       onShippingMethodUpdate: function(selectedShippingMethod) {
         var newShippingMethod = selectedShippingMethod || {};
         var available = newShippingMethod.available || false;
-        var methodEnabled = checkout.allowedShippingMethods().indexOf(newShippingMethod.method_code) > -1;
         var isMyParcelMethod = deliveryOptions.isMyParcelShippingMethod(newShippingMethod);
 
         checkout.hideShippingMethods();
 
-        if (!checkout.hasDeliveryOptions()) {
+        if (!checkout.hasDeliveryOptions() || !available) {
           return;
         }
 
-        if (!available) {
-          return;
-        }
-
-        deliveryOptions.updatePricesInDeliveryOptions();
-
-        if (JSON.stringify(deliveryOptions.shippingMethod) !== JSON.stringify(newShippingMethod)) {
-          deliveryOptions.shippingMethod = newShippingMethod;
-
-          if (!isMyParcelMethod && !methodEnabled) {
+        if (!isMyParcelMethod) {
             deliveryOptions.triggerEvent(deliveryOptions.disableDeliveryOptionsEvent);
             deliveryOptions.isUsingMyParcelMethod = false;
-          } else {
-            deliveryOptions.isUsingMyParcelMethod = true;
-          }
+            return;
         }
+
+        deliveryOptions.shippingMethod = newShippingMethod;
+        deliveryOptions.isUsingMyParcelMethod = true;
       },
 
       /**
        * Get the new shipping method that should be saved.
        *
-       * @param {String} methodCode - Method code to use to find a method.
+       * @param {string} methodCode - Method code to use to find a method.
        *
        * @returns {Object}
        */
@@ -320,11 +375,11 @@ define(
            * If the method doesn't exist, loop through the allowed shipping methods and return the first one that
            *  matches.
            */
-          window.MyParcelConfig.methods.forEach(function(method) {
-            var foundMethod = checkout.findRateByMethodCode(method);
+          checkout.allowedShippingMethods().forEach(function(carrierCode) {
+            var foundRate = checkout.findOriginalRateByCarrierCode(carrierCode);
 
-            if (foundMethod) {
-              newShippingMethod.push(foundMethod);
+            if (foundRate) {
+              newShippingMethod.push(foundRate);
             }
           });
 
@@ -332,65 +387,9 @@ define(
         }
       },
 
-      updatePricesInDeliveryOptions: function() {
-        var quoteCarrierCode = quote.shippingMethod().carrier_code;
-
-        checkout.rates().forEach(function(rate) {
-          if (rate.carrier_code !== quoteCarrierCode) {
-            return;
-          }
-
-          deliveryOptions.updatePriceInDeliveryOptions(rate);
-        });
-      },
-
-      updatePriceInDeliveryOptions: function(selectedShippingMethod) {
-        var isShipmentOption = deliveryOptions.methodCodeShipmentOptionsConfigMap.hasOwnProperty(selectedShippingMethod.method_code);
-        var priceOption = deliveryOptions.methodCodeDeliveryOptionsConfigMap[selectedShippingMethod.method_code];
-        var addBasePrice = false;
-
-        if (isShipmentOption) {
-          priceOption = deliveryOptions.methodCodeShipmentOptionsConfigMap[selectedShippingMethod.method_code];
-          addBasePrice = true;
-        }
-
-        deliveryOptions.priceDeliveryOptions(selectedShippingMethod, priceOption, addBasePrice);
-      },
-
       /**
        * @param {Object} shippingMethod
-       * @param {String} priceOption
-       * @param {Boolean} addBasePrice
-       */
-      priceDeliveryOptions: function(shippingMethod, priceOption, addBasePrice) {
-        var hasKey = objectPath.has(window.MyParcelConfig, priceOption);
-
-        if (!hasKey) {
-          // eslint-disable-next-line no-console
-          console.error('key does not exist');
-          return;
-        }
-
-        var existingPrice = objectPath.get(window.MyParcelConfig, priceOption, null);
-        var shippingMethodPrice = shippingMethod.price_incl_tax;
-        var isMyParcelMethod = deliveryOptions.isMyParcelShippingMethod(shippingMethod);
-
-        if (addBasePrice) {
-          var baseShippingMethod = checkout.findRateByMethodCode(deliveryOptions.methodCodeStandardDelivery);
-          shippingMethodPrice -= baseShippingMethod.price_incl_tax;
-          shippingMethodPrice = deliveryOptions.roundNumber(shippingMethodPrice, 2);
-        }
-
-        if (existingPrice && existingPrice !== shippingMethodPrice && isMyParcelMethod) {
-          objectPath.set(window.MyParcelConfig, priceOption, shippingMethodPrice);
-
-          deliveryOptions.triggerEvent(deliveryOptions.updateConfigEvent);
-        }
-      },
-
-      /**
-       * @param {Object} shippingMethod
-       * @returns {Boolean}
+       * @returns {boolean}
        */
       isMyParcelShippingMethod: function(shippingMethod) {
         return shippingMethod.available && shippingMethod.method_code.indexOf('myparcel') !== -1;
@@ -399,9 +398,9 @@ define(
       /**
        * For use when magic decimals appear...
        *
-       * @param {Number} number
-       * @param {Number} decimals
-       * @returns {Number}
+       * @param {number} number
+       * @param {number} decimals
+       * @returns {number}
        *
        * @see https://stackoverflow.com/a/10474209
        */
@@ -411,7 +410,9 @@ define(
       },
 
       updateConfig: function() {
-        window.MyParcelConfig.address = deliveryOptions.getAddress(quote.shippingAddress());
+        if (!window.MyParcelConfig.hasOwnProperty('address')) {
+          window.MyParcelConfig.address = deliveryOptions.getAddress(quote.shippingAddress());
+        }
         deliveryOptions.triggerEvent(deliveryOptions.updateConfigEvent);
       },
     };

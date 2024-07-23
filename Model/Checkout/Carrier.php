@@ -7,12 +7,12 @@
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelbe
+ * https://github.com/myparcelnl
  *
- * @author      Reindert Vetter <info@sendmyparcel.be>
+ * @author      Reindert Vetter <info@myparcel.nl>
  * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelbe/magento
+ * @link        https://github.com/myparcelnl/magento
  * @since       File available since Release 0.1.0
  */
 
@@ -157,7 +157,13 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
     {
         $methods = [
             'signature_only_recip' => 'delivery/signature_and_only_recipient_',
+            'morning'              => 'morning/',
+            'morning_signature'    => 'morning_signature/',
+            'evening'              => 'evening/',
+            'evening_signature'    => 'evening_signature/',
             'pickup'               => 'pickup/',
+            'mailbox'              => 'mailbox/',
+            'digital_stamp'        => 'digital_stamp/',
         ];
 
         return $methods;
@@ -196,16 +202,15 @@ class Carrier extends AbstractCarrierOnline implements CarrierInterface
 
     /**
      * @param $alias
-     * @param string $settingPath
+     * @param  string $settingPath
      *
      * @return \Magento\Quote\Model\Quote\Address\RateResult\Method
      */
-    private function getShippingMethod($alias, $settingPath)
+    private function getShippingMethod($alias, string $settingPath)
     {
         $title = $this->createTitle($settingPath);
         $price = $this->createPrice($alias, $settingPath);
 
-        /** @var \Magento\Quote\Model\Quote\Address\RateResult\Method $method */
         $method = $this->_rateMethodFactory->create();
         $method->setCarrier($this->_code);
         $method->setCarrierTitle($alias);

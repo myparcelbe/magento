@@ -1,6 +1,35 @@
-var STATUS_SUCCESS = 200;
-var STATUS_ERROR = 400;
-
+const STATUS_SUCCESS = 200;
+const STATUS_ERROR = 400;
+const EU_COUNTRIES = [
+  'AT',
+  'BE',
+  'BG',
+  'CY',
+  'CZ',
+  'DE',
+  'DK',
+  'EE',
+  'ES',
+  'FI',
+  'FR',
+  'GB',
+  'GR',
+  'HR',
+  'HU',
+  'IE',
+  'IT',
+  'LT',
+  'LU',
+  'LV',
+  'MT',
+  'NL',
+  'PL',
+  'PT',
+  'RO',
+  'SE',
+  'SI',
+  'SK',
+];
 define([
   'underscore',
   'ko',
@@ -72,15 +101,7 @@ function(
       Model.countryId(quote.shippingAddress().countryId);
       doRequest(Model.getDeliveryOptionsConfig, {onSuccess: Model.onInitializeSuccess});
 
-      // quote.shippingAddress.subscribe(function(shippingAddress) {
-      //   if (shippingAddress.countryId !== Model.countryId()) {
-      //     doRequest(Model.getDeliveryOptionsConfig, {onSuccess: Model.onReFetchDeliveryOptionsConfig});
-      //   }
-      //
-      //   Model.countryId(shippingAddress.countryId);
-      // });
-
-      quote.billingAddress.subscribe(function() {
+      function reloadConfig() {
         var shippingAddress = quote.shippingAddress();
 
         if (shippingAddress.countryId !== Model.countryId()) {
@@ -88,25 +109,15 @@ function(
         }
 
         Model.countryId(shippingAddress.countryId);
-      });
+      }
+      quote.billingAddress.subscribe(reloadConfig);
+      quote.shippingAddress.subscribe(reloadConfig);
     },
 
     onReFetchDeliveryOptionsConfig: function(response) {
-      Model.setDeliveryOptionsConfig(response[0].data);
-/*
       var configuration = response[0].data;
-      var carrier = Object.keys(configuration.config.carrierSettings)[0];
-
-      doRequest(function() {
-        return Model.calculatePackageType(carrier);
-      },
-      {
-        onSuccess: function(response) {
-          Model.bestPackageType = response;
-          Model.setDeliveryOptionsConfig(configuration);
-        },
-      });
-*/
+      Model.bestPackageType = configuration.config.packageType;
+      Model.setDeliveryOptionsConfig(configuration);
     },
 
     /**
@@ -122,13 +133,28 @@ function(
     /**
      * Search the rates for the given method code.
      *
-     * @param {String} methodCode - Method code to search for.
+     * @param {string} methodCode - Method code to search for.
      *
      * @returns {Object} - The found rate, if any.
      */
     findRateByMethodCode: function(methodCode) {
       return Model.rates().find(function(rate) {
         return rate.method_code === methodCode;
+      });
+    },
+
+      /**
+       * Search the rates for the given carrier code.
+       *
+       * @param {string} carrierCode - Carrier code to search for.
+       *
+       * @returns {Object} - The found rate, if any.
+       */
+    findOriginalRateByCarrierCode: function(carrierCode) {
+      return Model.rates().find(function(rate) {
+          if (-1 === rate.method_code.indexOf('myparcel')) {
+              return rate.carrier_code === carrierCode;
+          }
       });
     },
 
@@ -139,56 +165,29 @@ function(
       var rowsToHide = [];
 
       Model.rates().forEach(function(rate) {
-        var rows = Model.getShippingMethodRows(rate.method_code);
+        const hasDeliveryOptions = Model.hasDeliveryOptions();
+        const myParcelMethods = hasDeliveryOptions ? Model.configuration().methods || [] : [];
+        const cell = document.getElementById('label_method_' + rate.method_code + '_' + rate.carrier_code) || null;
 
-        if (!rate.available) {
+        if (!rate.available || !cell) {
           return;
         }
 
-        if (rate.method_code.indexOf('myparcel') > -1 && rows.length) {
-          Model.getShippingMethodRows(rate.method_code).forEach(function(row) {
-            rowsToHide.push(row);
-          });
+        const row = cell.parentElement;
+
+        /**
+         * Hide MyParcel-specific methods, and the parent methods delivery options are bound to
+         */
+        if (rate.method_code.indexOf('myparcel') !== -1) {
+          rowsToHide.push(row);
+        } else if (myParcelMethods.includes(rate.carrier_code)) {
+          rowsToHide.push(row);
         }
       });
 
-      /**
-       * Only hide the allowed shipping method if the delivery options are present.
-       */
-      if (Model.hasDeliveryOptions()) {
-        Model.allowedShippingMethods().forEach(function(shippingMethod) {
-          Model.getShippingMethodRows(shippingMethod).forEach(function(row) {
-            rowsToHide.push(row);
-          });
-        });
-      }
-
-      if (quote.shippingAddress().countryId === 'NL' || quote.shippingAddress().countryId === 'BE') {
-        rowsToHide.forEach(function(row) {
-          row.style.display = 'none';
-        });
-      }
-    },
-
-    /**
-     * Get shipping method rows by finding the columns with a matching method_code and grabbing their parent.
-     *
-     * @param {String} shippingMethod - Shipping method to get the row(s) of.
-     *
-     * @returns {Element[]}
-     */
-    getShippingMethodRows: function(shippingMethod) {
-      var classSelector = '[id^="label_method_' + shippingMethod + '"]';
-      var columns = document.querySelectorAll(classSelector);
-      var elements = [];
-
-      columns.forEach(function(column) {
-        if (column) {
-          elements.push(column.parentElement);
-        }
+      rowsToHide.forEach(function(row) {
+        row.style.display = 'none';
       });
-
-      return elements;
     },
 
     /**
@@ -197,20 +196,32 @@ function(
      * @returns {XMLHttpRequest}
      */
     getDeliveryOptionsConfig: function() {
-      return sendRequest('rest/V1/delivery_options/get');
+      return sendRequest(
+        'rest/V1/delivery_options/config',
+        'POST',
+        JSON.stringify({shippingAddress: [quote.shippingAddress()]})
+      );
     },
 
     /**
+     * This method reads the countryId from the checkout form select list country_id, this is Magento standard.
+     * There may be checkout plugins without country_id, which we do not support fully
+     *
      * @param {String} carrier
      * @returns {XMLHttpRequest}
      */
     calculatePackageType: function(carrier) {
+      var list = document.querySelector('[name="country_id"]');
+      function isVisible(el) {
+        return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
+      }
+      var countryId = (list && isVisible(list)) ? list.options[list.selectedIndex].value : Model.countryId();
       return sendRequest(
         'rest/V1/package_type',
         'GET',
         {
           carrier: carrier,
-          countryCode: Model.countryId(),
+          countryCode: countryId,
         }
       );
     },
@@ -264,24 +275,19 @@ function(
      * Filter the allowed shipping methods by checking if they are actually present in the checkout. If not they will
      *  be left out.
      */
-    Model.allowedShippingMethods(Model.configuration().methods.filter(function(rate) {
-      return !!Model.findRateByMethodCode(rate);
+    Model.allowedShippingMethods(Model.configuration().methods.filter(function(carrierCode) {
+      return !!Model.findOriginalRateByCarrierCode(carrierCode);
     }));
   }
 
   function updateHasDeliveryOptions() {
-    var isAllowed = false;
+    let isAllowed = false;
+    const shippingCountry = quote.shippingAddress().countryId;
 
-    Model.allowedShippingMethods().forEach(function(methodCode) {
-      var rate = Model.findRateByMethodCode(methodCode);
-      var shippingCountry = quote.shippingAddress().countryId;
-
+    Model.allowedShippingMethods().forEach(function(carrierCode) {
+      const rate = Model.findOriginalRateByCarrierCode(carrierCode);
       if (rate && rate.available) {
         isAllowed = true;
-      }
-
-      if (shippingCountry !== 'NL' && shippingCountry !== 'BE') {
-        isAllowed = false;
       }
     });
 
