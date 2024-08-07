@@ -4,7 +4,7 @@
  * If you want to add improvements, please create a fork in our GitHub:
  * https://github.com/myparcelnl
  *
- * @author      Reindert Vetter <info@myparcel.nl>
+ * @author      Reindert Vetter <info@sendmyparcel.be>
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelnl/magento
  * @copyright   2010-2019 MyParcel
@@ -117,7 +117,7 @@ class DefaultOptions
     public function getMaxCompanyName(?string $company): ?string
     {
         if ($company !== null && (strlen($company) >= self::COMPANY_NAME_MAX_LENGTH)) {
-            $company = substr($company, 0, 47) . '...';
+            $company = Str::limit($company, self::COMPANY_NAME_MAX_LENGTH, '...');
         }
 
         return $company;

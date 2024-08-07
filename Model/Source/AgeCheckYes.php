@@ -49,7 +49,7 @@ class AgeCheckYes implements OptionSourceInterface
      */
     public function hasDefault($option): bool
     {
-        $settings = self::$helper->getStandardConfig(CarrierPostNL::NAME, 'default_options');
+        $settings = self::$helper->getStandardConfig(CarrierBpost::NAME, 'default_options');
 
         return (bool) $settings[$option . '_active'];
     }

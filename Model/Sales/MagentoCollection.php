@@ -5,7 +5,7 @@ declare(strict_types=1);
  * If you want to add improvements, please create a fork in our GitHub:
  * https://github.com/myparcelnl
  *
- * @author      Reindert Vetter <info@myparcel.nl>
+ * @author      Reindert Vetter <info@sendmyparcel.be>
  * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
  * @link        https://github.com/myparcelnl/magento
@@ -103,7 +103,7 @@ abstract class MagentoCollection implements MagentoCollectionInterface
         'create_track_if_one_already_exist' => true,
         'request_type'                      => 'download',
         'package_type'                      => 'default',
-        'carrier'                           => 'postnl',
+        'carrier'                           => 'bpost',
         'positions'                         => null,
         'signature'                         => null,
         'only_recipient'                    => null,
