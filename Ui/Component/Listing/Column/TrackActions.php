@@ -101,42 +101,42 @@ class TrackActions extends Column
                         'label'  => __('Download package label'),
                         'hidden' => $orderManagementActivated,
                     ];
-                    $item[$this->getData('name')]['action-download_digital_stamp_label'] = [
-                        'href'   => $this->urlBuilder->getUrl(
-                            'myparcel/order/CreateAndPrintMyParcelTrack',
-                            [
-                                'selected_ids'      => $item['entity_id'],
-                                'mypa_package_type' => 4,
-                                'mypa_request_type' => 'download',
-                            ]
-                        ),
-                        'label'  => __('Download digital stamp label'),
-                        'hidden' => $orderManagementActivated,
-                    ];
-                    $item[$this->getData('name')]['action-download_mailbox_label']       = [
-                        'href'   => $this->urlBuilder->getUrl(
-                            'myparcel/order/CreateAndPrintMyParcelTrack',
-                            [
-                                'selected_ids'      => $item['entity_id'],
-                                'mypa_package_type' => 2,
-                                'mypa_request_type' => 'download',
-                            ]
-                        ),
-                        'label'  => __('Download mailbox label'),
-                        'hidden' => $orderManagementActivated,
-                    ];
-                    $item[$this->getData('name')]['action-download_letter_label']        = [
-                        'href'   => $this->urlBuilder->getUrl(
-                            'myparcel/order/CreateAndPrintMyParcelTrack',
-                            [
-                                'selected_ids'      => $item['entity_id'],
-                                'mypa_package_type' => 3,
-                                'mypa_request_type' => 'download',
-                            ]
-                        ),
-                        'label'  => __('Download letter label'),
-                        'hidden' => $orderManagementActivated,
-                    ];
+//                    $item[$this->getData('name')]['action-download_digital_stamp_label'] = [
+//                        'href'   => $this->urlBuilder->getUrl(
+//                            'myparcel/order/CreateAndPrintMyParcelTrack',
+//                            [
+//                                'selected_ids'      => $item['entity_id'],
+//                                'mypa_package_type' => 4,
+//                                'mypa_request_type' => 'download',
+//                            ]
+//                        ),
+//                        'label'  => __('Download digital stamp label'),
+//                        'hidden' => $orderManagementActivated,
+//                    ];
+//                    $item[$this->getData('name')]['action-download_mailbox_label']       = [
+//                        'href'   => $this->urlBuilder->getUrl(
+//                            'myparcel/order/CreateAndPrintMyParcelTrack',
+//                            [
+//                                'selected_ids'      => $item['entity_id'],
+//                                'mypa_package_type' => 2,
+//                                'mypa_request_type' => 'download',
+//                            ]
+//                        ),
+//                        'label'  => __('Download mailbox label'),
+//                        'hidden' => $orderManagementActivated,
+//                    ];
+//                    $item[$this->getData('name')]['action-download_letter_label']        = [
+//                        'href'   => $this->urlBuilder->getUrl(
+//                            'myparcel/order/CreateAndPrintMyParcelTrack',
+//                            [
+//                                'selected_ids'      => $item['entity_id'],
+//                                'mypa_package_type' => 3,
+//                                'mypa_request_type' => 'download',
+//                            ]
+//                        ),
+//                        'label'  => __('Download letter label'),
+//                        'hidden' => $orderManagementActivated,
+//                    ];
                     $item[$this->getData('name')]['action-create_concept']               = [
                         'href'   => $this->urlBuilder->getUrl(
                             'myparcel/order/CreateAndPrintMyParcelTrack',

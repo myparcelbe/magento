@@ -182,22 +182,22 @@
                     <label>Delivery enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="monday_active" translate="label comment" type="select" sortOrder="306" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Monday delivery</label>
-                    <tooltip>Delivery on Monday may require special conditions compared to other (week)days including but not limited to fee and cutoff time.</tooltip>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <depends>
-                        <field id="active">1</field>
-                    </depends>
-                </field>
-                <field id="monday_fee" translate="label comment" type="text" sortOrder="307" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Monday delivery fee</label>
-                    <tooltip>This will be added to the regular shipping price</tooltip>
-                    <depends>
-                        <field id="monday_active">1</field>
-                        <field id="active">1</field>
-                    </depends>
-                </field>
+<!--                <field id="monday_active" translate="label comment" type="select" sortOrder="306" showInDefault="1" showInWebsite="1" showInStore="1">-->
+<!--                    <label>Monday delivery</label>-->
+<!--                    <tooltip>Delivery on Monday may require special conditions compared to other (week)days including but not limited to fee and cutoff time.</tooltip>-->
+<!--                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>-->
+<!--                    <depends>-->
+<!--                        <field id="active">1</field>-->
+<!--                    </depends>-->
+<!--                </field>-->
+<!--                <field id="monday_fee" translate="label comment" type="text" sortOrder="307" showInDefault="1" showInWebsite="1" showInStore="1">-->
+<!--                    <label>Monday delivery fee</label>-->
+<!--                    <tooltip>This will be added to the regular shipping price</tooltip>-->
+<!--                    <depends>-->
+<!--                        <field id="monday_active">1</field>-->
+<!--                        <field id="active">1</field>-->
+<!--                    </depends>-->
+<!--                </field>-->
                 <field id="signature_active" translate="label comment" type="select" sortOrder="310" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Signature on receipt</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
@@ -336,30 +336,30 @@
 <!--                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>-->
 <!--                    <tooltip>The age check is intended for parcel shipments for which the recipient must show 18+ by means of a proof of identity. With this shipping option Signature on receipt and Home address only are included. The age 18+ is further excluded from the delivery options morning and evening delivery.</tooltip>-->
 <!--                </field>-->
-                <field id="insurance_100_active" translate="label" type="select" sortOrder="240" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Automate 'Insurance € 100'</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
-                <field id="insurance_100_from_price" translate="label comment" type="text" sortOrder="241" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>From price</label>
-                    <validate>validate-number validate-zero-or-greater</validate>
-                    <tooltip>'Insurance € 100' operates above a certain order total amount. Only for Dutch shipments.</tooltip>
-                    <depends>
-                        <field id="insurance_100_active">1</field>
-                    </depends>
-                </field>
-                <field id="insurance_250_active" translate="label" type="select" sortOrder="250" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Automate 'Insurance € 250'</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
-                <field id="insurance_250_from_price" translate="label comment" type="text" sortOrder="251" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>From price</label>
-                    <validate>validate-number validate-zero-or-greater</validate>
-                    <tooltip>'Insurance € 250' operates above a certain order total amount. Only for Dutch shipments, shipments outside of the EU are insured up to € 200 by default.</tooltip>
-                    <depends>
-                        <field id="insurance_250_active">1</field>
-                    </depends>
-                </field>
+<!--                <field id="insurance_100_active" translate="label" type="select" sortOrder="240" showInDefault="1" showInWebsite="1" showInStore="1">-->
+<!--                    <label>Automate 'Insurance € 100'</label>-->
+<!--                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>-->
+<!--                </field>-->
+<!--                <field id="insurance_100_from_price" translate="label comment" type="text" sortOrder="241" showInDefault="1" showInWebsite="1" showInStore="1">-->
+<!--                    <label>From price</label>-->
+<!--                    <validate>validate-number validate-zero-or-greater</validate>-->
+<!--                    <tooltip>'Insurance € 100' operates above a certain order total amount. Only for Dutch shipments.</tooltip>-->
+<!--                    <depends>-->
+<!--                        <field id="insurance_100_active">1</field>-->
+<!--                    </depends>-->
+<!--                </field>-->
+<!--                <field id="insurance_250_active" translate="label" type="select" sortOrder="250" showInDefault="1" showInWebsite="1" showInStore="1">-->
+<!--                    <label>Automate 'Insurance € 250'</label>-->
+<!--                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>-->
+<!--                </field>-->
+<!--                <field id="insurance_250_from_price" translate="label comment" type="text" sortOrder="251" showInDefault="1" showInWebsite="1" showInStore="1">-->
+<!--                    <label>From price</label>-->
+<!--                    <validate>validate-number validate-zero-or-greater</validate>-->
+<!--                    <tooltip>'Insurance € 250' operates above a certain order total amount. Only for Dutch shipments, shipments outside of the EU are insured up to € 200 by default.</tooltip>-->
+<!--                    <depends>-->
+<!--                        <field id="insurance_250_active">1</field>-->
+<!--                    </depends>-->
+<!--                </field>-->
                 <field id="insurance_500_active" translate="label" type="select" sortOrder="252" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Automate 'Insurance € 500'</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
@@ -488,22 +488,22 @@
                     <label>Delivery enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="monday_active" translate="label comment" type="select" sortOrder="306" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Monday delivery</label>
-                    <tooltip>Delivery on monday may require special conditions compared to other (week)days including but not limited to fee and cutoff time.</tooltip>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <depends>
-                        <field id="active">1</field>
-                    </depends>
-                </field>
-                <field id="monday_fee" translate="label comment" type="text" sortOrder="307" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Monday delivery fee</label>
-                    <tooltip>This will be added to the regular shipping price</tooltip>
-                    <depends>
-                        <field id="monday_active">1</field>
-                        <field id="active">1</field>
-                    </depends>
-                </field>
+<!--                <field id="monday_active" translate="label comment" type="select" sortOrder="306" showInDefault="1" showInWebsite="1" showInStore="1">-->
+<!--                    <label>Monday delivery</label>-->
+<!--                    <tooltip>Delivery on monday may require special conditions compared to other (week)days including but not limited to fee and cutoff time.</tooltip>-->
+<!--                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>-->
+<!--                    <depends>-->
+<!--                        <field id="active">1</field>-->
+<!--                    </depends>-->
+<!--                </field>-->
+<!--                <field id="monday_fee" translate="label comment" type="text" sortOrder="307" showInDefault="1" showInWebsite="1" showInStore="1">-->
+<!--                    <label>Monday delivery fee</label>-->
+<!--                    <tooltip>This will be added to the regular shipping price</tooltip>-->
+<!--                    <depends>-->
+<!--                        <field id="monday_active">1</field>-->
+<!--                        <field id="active">1</field>-->
+<!--                    </depends>-->
+<!--                </field>-->
                 <field id="signature_active" translate="label comment" type="select" sortOrder="310" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Signature on receipt</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
@@ -676,30 +676,30 @@
                         <field id="large_format_active">price</field>
                     </depends>
                 </field>
-                <field id="insurance_100_active" translate="label" type="select" sortOrder="240" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Automate 'Insurance € 100'</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
-                <field id="insurance_100_from_price" translate="label comment" type="text" sortOrder="241" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>From price</label>
-                    <validate>validate-number validate-zero-or-greater</validate>
-                    <tooltip>'Insurance € 100' operates above a certain order total amount. Only for dutch shipments.</tooltip>
-                    <depends>
-                        <field id="insurance_100_active">1</field>
-                    </depends>
-                </field>
-                <field id="insurance_250_active" translate="label" type="select" sortOrder="250" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Automate 'Insurance € 250'</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
-                <field id="insurance_250_from_price" translate="label comment" type="text" sortOrder="251" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>From price</label>
-                    <validate>validate-number validate-zero-or-greater</validate>
-                    <tooltip>'Insurance € 250' operates above a certain order total amount. Only for Dutch shipments, shipments outside of the EU are insured up to € 200 by default.</tooltip>
-                    <depends>
-                        <field id="insurance_250_active">1</field>
-                    </depends>
-                </field>
+<!--                <field id="insurance_100_active" translate="label" type="select" sortOrder="240" showInDefault="1" showInWebsite="1" showInStore="1">-->
+<!--                    <label>Automate 'Insurance € 100'</label>-->
+<!--                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>-->
+<!--                </field>-->
+<!--                <field id="insurance_100_from_price" translate="label comment" type="text" sortOrder="241" showInDefault="1" showInWebsite="1" showInStore="1">-->
+<!--                    <label>From price</label>-->
+<!--                    <validate>validate-number validate-zero-or-greater</validate>-->
+<!--                    <tooltip>'Insurance € 100' operates above a certain order total amount. Only for dutch shipments.</tooltip>-->
+<!--                    <depends>-->
+<!--                        <field id="insurance_100_active">1</field>-->
+<!--                    </depends>-->
+<!--                </field>-->
+<!--                <field id="insurance_250_active" translate="label" type="select" sortOrder="250" showInDefault="1" showInWebsite="1" showInStore="1">-->
+<!--                    <label>Automate 'Insurance € 250'</label>-->
+<!--                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>-->
+<!--                </field>-->
+<!--                <field id="insurance_250_from_price" translate="label comment" type="text" sortOrder="251" showInDefault="1" showInWebsite="1" showInStore="1">-->
+<!--                    <label>From price</label>-->
+<!--                    <validate>validate-number validate-zero-or-greater</validate>-->
+<!--                    <tooltip>'Insurance € 250' operates above a certain order total amount. Only for Dutch shipments, shipments outside of the EU are insured up to € 200 by default.</tooltip>-->
+<!--                    <depends>-->
+<!--                        <field id="insurance_250_active">1</field>-->
+<!--                    </depends>-->
+<!--                </field>-->
                 <field id="insurance_500_active" translate="label" type="select" sortOrder="252" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Automate 'Insurance € 500'</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
