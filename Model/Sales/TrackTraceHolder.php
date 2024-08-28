@@ -144,8 +144,8 @@ class TrackTraceHolder
             ?? DefaultOptions::getDefaultCarrier()
                 ->getName();
 
-        $totalWeight = $options['digital_stamp_weight'] !== null ? (int) $options['digital_stamp_weight']
-            : (int) self::$defaultOptions->getDigitalStampDefaultWeight();
+//        $totalWeight = $options['digital_stamp_weight'] !== null ? (int) $options['digital_stamp_weight']
+//            : (int) self::$defaultOptions->getDigitalStampDefaultWeight();
 
         try {
             // create new instance from known json
@@ -251,8 +251,8 @@ class TrackTraceHolder
         }
 
         try {
-            $this->convertDataForCdCountry($magentoTrack)
-                ->calculateTotalWeight($magentoTrack, $totalWeight);
+            $this->convertDataForCdCountry($magentoTrack);
+//                ->calculateTotalWeight($magentoTrack, $totalWeight);
         } catch (Exception $e) {
             $this->messageManager->addErrorMessage($e->getMessage());
             return $this;

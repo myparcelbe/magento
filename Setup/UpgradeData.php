@@ -613,9 +613,9 @@ class UpgradeData implements UpgradeDataInterface
                 $bind  = ['path' => $allowShowDeliveryDatePath, 'value' => $allowValue];
                 $connection->insert($table, $bind);
             }
-            $insuranceBelgium = 'myparcelbe_magento_postnl_settings/default_options/insurance_belgium_active';
-            $connection->delete($table, ['path = ?' => $insuranceBelgium]);
-            $connection->insert($table, ['path' => $insuranceBelgium, 'value' => 1]);
+            $insuranceNetherlands = 'myparcelbe_magento_postnl_settings/default_options/insurance_netherlands_active';
+            $connection->delete($table, ['path = ?' => $insuranceNetherlands]);
+            $connection->insert($table, ['path' => $insuranceNetherlands, 'value' => 1]);
         }
 
         if (version_compare($context->getVersion(), '4.4.0', '<=')) {

@@ -36,10 +36,10 @@
                 <standard_delivery_title>Standaardlevering</standard_delivery_title>
                 <signature_title>Handtekening voor ontvangst</signature_title>
                 <only_recipient_title>Niet bij de buren bezorgen</only_recipient_title>
-                <morning_title>Ochtendlevering</morning_title>
-                <evening_title>Avondlevering</evening_title>
-                <mailbox_title>Brievenbuspakje</mailbox_title>
-                <digital_stamp_title>Digitale postzegel</digital_stamp_title>
+<!--                <morning_title>Ochtendlevering</morning_title>-->
+<!--                <evening_title>Avondlevering</evening_title>-->
+<!--                <mailbox_title>Brievenbuspakje</mailbox_title>-->
+<!--                <digital_stamp_title>Digitale postzegel</digital_stamp_title>-->
                 <pickup_title>Ophalen bij een PostNL locatie</pickup_title>
                 <pickup_list_button_title>List</pickup_list_button_title>
                 <pickup_map_button_title>Map</pickup_map_button_title>
@@ -48,6 +48,10 @@
 
         <myparcelbe_magento_bpost_settings>
             <default_options>
+                <insurance_500_active>0</insurance_500_active>
+                <insurance_500_from_price>1</insurance_500_from_price>
+                <insurance_1000_active>0</insurance_1000_active>
+                <insurance_1000_from_price>1</insurance_1000_from_price>
             </default_options>
             <general>
                 <deliverydays_window>14</deliverydays_window>
@@ -67,26 +71,26 @@
                 <saturday_title>Zaterdaglevering</saturday_title>
                 <saturday_fee>2</saturday_fee>
             </delivery>
-            <digital_stamp>
-                <active>0</active>
-                <default_weight>0</default_weight>
-                <fee>0</fee>
-            </digital_stamp>
-            <mailbox>
-                <active>0</active>
-                <other_options>1</other_options>
-                <weight>2000</weight>
-                <fee>3.50</fee>
-                <pickup_mailbox>1</pickup_mailbox>
-            </mailbox>
-            <morning>
-                <active>1</active>
-                <fee>10</fee>
-            </morning>
-            <evening>
-                <active>1</active>
-                <fee>1.25</fee>
-            </evening>
+<!--            <digital_stamp>-->
+<!--                <active>0</active>-->
+<!--                <default_weight>0</default_weight>-->
+<!--                <fee>0</fee>-->
+<!--            </digital_stamp>-->
+<!--            <mailbox>-->
+<!--                <active>0</active>-->
+<!--                <other_options>1</other_options>-->
+<!--                <weight>2000</weight>-->
+<!--                <fee>3.50</fee>-->
+<!--                <pickup_mailbox>1</pickup_mailbox>-->
+<!--            </mailbox>-->
+<!--            <morning>-->
+<!--                <active>1</active>-->
+<!--                <fee>10</fee>-->
+<!--            </morning>-->
+<!--            <evening>-->
+<!--                <active>1</active>-->
+<!--                <fee>1.25</fee>-->
+<!--            </evening>-->
             <pickup>
                 <active>1</active>
                 <fee>0</fee>
@@ -115,9 +119,9 @@
                 <insurance_custom_active>0</insurance_custom_active>
                 <insurance_custom_amount>1000</insurance_custom_amount>
                 <insurance_custom_from_price>1</insurance_custom_from_price>
-                <insurance_belgium_custom_active>0</insurance_belgium_custom_active>
-                <insurance_belgium_custom_amount>0</insurance_belgium_custom_amount>
-                <insurance_belgium_custom_from_price>1</insurance_belgium_custom_from_price>
+                <insurance_netherlands_custom_active>0</insurance_netherlands_custom_active>
+                <insurance_netherlands_custom_amount>0</insurance_netherlands_custom_amount>
+                <insurance_netherlands_custom_from_price>1</insurance_netherlands_custom_from_price>
             </default_options>
             <general>
                 <deliverydays_window>14</deliverydays_window>
@@ -137,26 +141,26 @@
                 <saturday_title>Zaterdaglevering</saturday_title>
                 <saturday_fee>2</saturday_fee>
             </delivery>
-            <digital_stamp>
-                <active>0</active>
-                <default_weight>0</default_weight>
-                <fee>0</fee>
-            </digital_stamp>
-            <mailbox>
-                <active>0</active>
-                <other_options>1</other_options>
-                <weight>2000</weight>
-                <fee>3.50</fee>
-                <pickup_mailbox>1</pickup_mailbox>
-            </mailbox>
-            <morning>
-                <active>1</active>
-                <fee>10</fee>
-            </morning>
-            <evening>
-                <active>1</active>
-                <fee>1.25</fee>
-            </evening>
+<!--            <digital_stamp>-->
+<!--                <active>0</active>-->
+<!--                <default_weight>0</default_weight>-->
+<!--                <fee>0</fee>-->
+<!--            </digital_stamp>-->
+<!--            <mailbox>-->
+<!--                <active>0</active>-->
+<!--                <other_options>1</other_options>-->
+<!--                <weight>2000</weight>-->
+<!--                <fee>3.50</fee>-->
+<!--                <pickup_mailbox>1</pickup_mailbox>-->
+<!--            </mailbox>-->
+<!--            <morning>-->
+<!--                <active>1</active>-->
+<!--                <fee>10</fee>-->
+<!--            </morning>-->
+<!--            <evening>-->
+<!--                <active>1</active>-->
+<!--                <fee>1.25</fee>-->
+<!--            </evening>-->
             <pickup>
                 <active>1</active>
                 <fee>0</fee>
@@ -197,13 +201,13 @@
                 <active>1</active>
                 <fee>0</fee>
             </pickup>
-            <mailbox>
-                <active>0</active>
-                <other_options>1</other_options>
-                <weight>2000</weight>
-                <fee>3.50</fee>
-                <pickup_mailbox>1</pickup_mailbox>
-            </mailbox>
+<!--            <mailbox>-->
+<!--                <active>0</active>-->
+<!--                <other_options>1</other_options>-->
+<!--                <weight>2000</weight>-->
+<!--                <fee>3.50</fee>-->
+<!--                <pickup_mailbox>1</pickup_mailbox>-->
+<!--            </mailbox>-->
         </myparcelbe_magento_dpd_settings>
 
         <sales_email>

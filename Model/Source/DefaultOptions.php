@@ -29,8 +29,8 @@ class DefaultOptions
 {
     // Maximum characters length of company name.
     private const COMPANY_NAME_MAX_LENGTH    = 50;
-    private const INSURANCE_BELGIUM          = 'insurance_belgium_custom';
-    private const INSURANCE_BELGIUM_AMOUNT   = 500;
+    private const INSURANCE_NETHERLANDS         = 'insurance_netherlands_custom';
+    private const INSURANCE_NETHERLANDS_AMOUNT   = 500;
     private const INSURANCE_EU_AMOUNT_50     = 'insurance_eu_50';
     private const INSURANCE_EU_AMOUNT_500    = 'insurance_eu_500';
     private const INSURANCE_AMOUNT_100       = 'insurance_100';
@@ -181,12 +181,12 @@ class DefaultOptions
         $shippingAddress = self::$order->getShippingAddress();
         $shippingCountry = $shippingAddress ? $shippingAddress->getCountryId() : AbstractConsignment::CC_NL;
 
-        if (AbstractConsignment::CC_NL === $shippingCountry) {
+        if (AbstractConsignment::CC_BE === $shippingCountry) {
             return $this->getDefaultLocalInsurance($carrier);
         }
 
-        if (AbstractConsignment::CC_BE === $shippingCountry) {
-            return $this->getDefaultBeInsurance($carrier);
+        if (AbstractConsignment::CC_NL === $shippingCountry) {
+            return $this->getDefaultNLInsurance($carrier);
         }
 
         return $this->getDefaultEuInsurance($carrier);
@@ -215,14 +215,14 @@ class DefaultOptions
      *
      * @return int
      */
-    private function getDefaultBeInsurance(string $carrier): int
+    private function getDefaultNLInsurance(string $carrier): int
     {
-        if ($this->hasDefault(self::INSURANCE_BELGIUM, $carrier)) {
-            return self::$helper->getConfigValue(Data::CARRIERS_XML_PATH_MAP[$carrier] . 'default_options/insurance_belgium_custom_amount');
+        if ($this->hasDefault(self::INSURANCE_NETHERLANDS, $carrier)) {
+            return self::$helper->getConfigValue(Data::CARRIERS_XML_PATH_MAP[$carrier] . 'default_options/insurance_netherlands_custom_amount');
         }
 
-        return $this->hasDefault(self::INSURANCE_BELGIUM, $carrier) ? self::$helper->getConfigValue(
-            Data::CARRIERS_XML_PATH_MAP[$carrier] . 'default_options/insurance_belgium_custom_amount'
+        return $this->hasDefault(self::INSURANCE_NETHERLANDS, $carrier) ? self::$helper->getConfigValue(
+            Data::CARRIERS_XML_PATH_MAP[$carrier] . 'default_options/insurance_netherlands_custom_amount'
         ) : 0;
     }
 
@@ -257,10 +257,10 @@ class DefaultOptions
      *
      * @return string
      */
-    public function getDigitalStampDefaultWeight(): string
-    {
-        return self::$helper->getCarrierConfig('digital_stamp/default_weight', 'myparcelbe_magento_postnl_settings/');
-    }
+//    public function getDigitalStampDefaultWeight(): string
+//    {
+//        return self::$helper->getCarrierConfig('digital_stamp/default_weight', 'myparcelbe_magento_postnl_settings/');
+//    }
 
     /**
      * Get package type ID as an int by default

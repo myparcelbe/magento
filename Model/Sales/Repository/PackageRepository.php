@@ -174,7 +174,7 @@ class PackageRepository extends Package
             $this->_logger->critical("Can't set settings with path: {$carrierPath}mailbox");
         }
 
-        $this->setMailboxActive('1' === $settings['active']);
+//        $this->setMailboxActive('1' === $settings['active']);
         if (true === $this->isMailboxActive()) {
             $weight = abs((float) str_replace(',', '.', $settings['weight'] ?? ''));
             $unit   = $this->getGeneralConfig('print/weight_indication');
