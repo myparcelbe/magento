@@ -86,6 +86,7 @@ define(
         'myparcelbe_magento_dpd_settings/delivery': 'config.carrierSettings.dpd.priceStandardDelivery',
         'myparcelbe_magento_dpd_settings/pickup': 'config.carrierSettings.dpd.pricePickup',
         'myparcelbe_magento_dpd_settings/mailbox': 'config.carrierSettings.dpd.pricePackageTypeMailbox',
+          'myparcelbe_magento_bpost_settings/package': 'config.carrierSettings.bpost.pricePackageTypePackage',
       },
 
       /**
