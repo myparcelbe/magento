@@ -1,42 +1,59 @@
 {
-    "name": "myparcelbe/magento",
-    "description": "A Magento 2 module that creates MyParcel Belgium labels",
-    "type": "magento2-module",
-    "version": "4.1.8",
-    "homepage": "https://www.sendmyparcel.be",
-    "keywords": ["MyParcel BE", "My Parcel BE", "Bpost", "bpost", "Magento 2"],
-    "license": "GPL-3.0-or-later",
-    "authors": [
-        {
-            "name": "Reindert Vetter",
-            "email": "info@sendmyparcel.be",
-            "homepage": "https://www.sendmyparcel.be",
-            "role": "Developer"
-        },
-        {
-            "name": "Richard Perdaan",
-            "email": "info@sendmyparcel.be",
-            "homepage": "https://www.sendmyparcel.be",
-            "role": "Developer"
-        }
+  "name": "myparcelbe/magento",
+  "version": "4.15.0",
+  "description": "A Magento 2 module that creates MyParcel labels",
+  "keywords": [
+    "myparcel",
+    "postnl",
+    "magento2"
+  ],
+  "homepage": "https://sendmyparcel.be/",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Edie Lemoine",
+      "email": "support@myparcel.nl"
+    },
+    {
+      "name": "Joeri van Veen",
+      "email": "support@myparcel.nl"
+    },
+    {
+      "name": "Mark Ernst",
+      "email": "support@myparcel.nl"
+    },
+    {
+      "name": "Richard Perdaan",
+      "email": "support@myparcel.nl"
+    },
+      {
+          "name": "Jochem Gravendeel",
+          "email": "support@myparcel.nl"
+      }
+  ],
+  "type": "magento2-module",
+  "require": {
+    "php": "^7.2 || ^8.0",
+    "myparcelnl/sdk": "~v7.13.1",
+    "magento/framework": ">=101.0.8 <102 || >=102.0.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^4.8"
+  },
+  "autoload": {
+    "files": [
+      "registration.php"
     ],
-    "require": {
-        "php": "~5.6.5 || ^7.0",
-        "myparcelnl/sdk": "~5.2.1",
-        "magento/product-community-edition": "~2.3.6 || ~2.4.0"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^4.8"
-    },
-    "autoload": {
-        "files": [ "registration.php" ],
-        "psr-4" : {
-            "MyParcelNL\\Magento\\" : ""
-        }
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "2.1-dev"
-        }
+    "psr-4": {
+      "MyParcelBE\\Magento\\": ""
     }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "2.1-dev"
+    }
+  },
+  "scripts": {
+    "pre-package-uninstall": "MyParcelBE\\Magento\\Setup\\Uninstall::uninstall"
+  }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MyParcelBE\Magento\Model\Checkout;
 
 use Exception;
@@ -73,7 +75,21 @@ class DeliveryOptionsToShippingMethods
             return 'pickup';
         }
 
-        return 'delivery';
+        switch ($this->deliveryOptions->getPackageType()) {
+            case 'mailbox':
+                return 'mailbox';
+            case 'digital_stamp':
+                return 'digital_stamp';
+        }
+
+        switch ($this->deliveryOptions->getDeliveryType()) {
+            case 'morning':
+                return 'morning';
+            case 'evening':
+                return 'evening';
+            default:
+                return 'delivery';
+        }
     }
 
     /**
@@ -87,8 +103,8 @@ class DeliveryOptionsToShippingMethods
         // Filter out options that are not enabled.
         $shipmentOptions = array_filter(
             $this->deliveryOptions->getShipmentOptions()->toArray(),
-            function ($option) {
-                return $option === true;
+            static function ($option) {
+                return true === $option;
             }
         );
 
@@ -96,7 +112,7 @@ class DeliveryOptionsToShippingMethods
         ksort($shipmentOptions);
 
         if (count($shipmentOptions)) {
-            $shipmentOptionsString = '/' . implode('/', array_keys($shipmentOptions));
+            $shipmentOptionsString = '/' . implode('/', array_keys($shipmentOptions) ?? []);
         }
 
         return $shipmentOptionsString ?? '';

@@ -3,12 +3,12 @@
  * Set MyParcel options to new track
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelbe
+ *
  *
  * @author      Reindert Vetter <info@sendmyparcel.be>
  * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelbe/magento
+ * @link        /magento
  * @since       File available since Release v0.1.0
  */
 
@@ -24,10 +24,21 @@ use MyParcelBE\Magento\Model\Sales\TrackTraceHolder;
 class NewShipment implements ObserverInterface
 {
     const DEFAULT_LABEL_AMOUNT = 1;
+
+    /**
+     * @var Magento\Framework\Message\Manager
+     */
+    private $messageManager;
+
     /**
      * @var \Magento\Framework\App\ObjectManager
      */
     private $objectManager;
+
+    /**
+     * @var \Magento\Backend\Model\View\Result\RedirectFactory
+     */
+    private $redirectFactory;
 
     /**
      * @var \Magento\Framework\App\RequestInterface
@@ -58,6 +69,8 @@ class NewShipment implements ObserverInterface
     {
         $this->objectManager   = ObjectManager::getInstance();
         $this->request         = $this->objectManager->get('Magento\Framework\App\RequestInterface');
+        $this->redirectFactory = $this->objectManager->get('Magento\Framework\Controller\Result\RedirectFactory');
+        $this->messageManager  = $this->objectManager->get('Magento\Framework\Message\Manager');
         $this->orderCollection = $orderCollection ?? new MagentoOrderCollection($this->objectManager, $this->request);
         $this->helper          = $this->objectManager->get('MyParcelBE\Magento\Helper\Data');
         $this->modelTrack      = $this->objectManager->create('Magento\Sales\Model\Order\Shipment\Track');
@@ -76,7 +89,16 @@ class NewShipment implements ObserverInterface
         if ($this->request->getParam('mypa_create_from_observer')) {
             $this->request->setParams(['myparcel_track_email' => true]);
             $shipment = $observer->getEvent()->getShipment();
-            $this->setMagentoAndMyParcelTrack($shipment);
+
+            try {
+                $this->setMagentoAndMyParcelTrack($shipment);
+            } catch (\Exception $e) {
+                $this->messageManager->addErrorMessage($e->getMessage());
+            }
+
+            if ($this->messageManager->hasMessages()) {
+                $this->redirectFactory->create()->setPath('*/*/');
+            }
         }
     }
 
@@ -87,36 +109,56 @@ class NewShipment implements ObserverInterface
      *
      * @throws \Exception
      */
-    private function setMagentoAndMyParcelTrack(Shipment $shipment)
+    private function setMagentoAndMyParcelTrack(Shipment $shipment): void
     {
-        $options = $this->orderCollection->setOptionsFromParameters()->getOptions();
-
-        // The reason that $amount is hard coded is because this is part of multicollo, this is not possible in the Belguim plugin. However, a preparation has been made for this.
-        $amount = $options['label_amount'];
-        /** @var \MyParcelBE\Magento\Model\Sales\TrackTraceHolder[] $trackTraceHolders */
-        $trackTraceHolders = [];
-        $i                 = 1;
+        $options = $this->orderCollection->setOptionsFromParameters()
+            ->getOptions();
 
         if (isset($options['carrier']) && false === $options['carrier']) {
             unset($options['carrier']);
         }
 
-        while ($i <= $amount) {
+        $amount = $options['label_amount'] ?? self::DEFAULT_LABEL_AMOUNT;
 
+        /** @var \MyParcelBE\Magento\Model\Sales\TrackTraceHolder[] $trackTraceHolders */
+        $trackTraceHolders = [];
+        $i                 = 1;
+        $useMultiCollo     = false;
+
+        while ($i <= $amount) {
             // Set MyParcel options
             $trackTraceHolder = (new TrackTraceHolder($this->objectManager, $this->helper, $shipment->getOrder()))
                 ->createTrackTraceFromShipment($shipment);
             $trackTraceHolder->convertDataFromMagentoToApi($trackTraceHolder->mageTrack, $options);
 
-            $trackTraceHolders[] = $trackTraceHolder;
+            if (1 === $i && $this->orderCollection->canUseMultiCollo($trackTraceHolder->consignment)) {
+                $useMultiCollo = true;
+            }
 
+            if (! $useMultiCollo) {
+                $this->orderCollection->myParcelCollection->addConsignment($trackTraceHolder->consignment);
+            }
+
+            $trackTraceHolders[] = $trackTraceHolder;
             $i++;
         }
 
-        // All multicollo holders are the same, so use the first for the SDK
-        $firstTrackTraceHolder = $trackTraceHolders[0];
+        if ($useMultiCollo) {
+            $firstTrackTraceHolder = $trackTraceHolders[0];
+            $this->orderCollection->myParcelCollection->addMultiCollo(
+                $firstTrackTraceHolder->consignment,
+                $amount
+            );
+        }
+
+        if (TrackTraceHolder::EXPORT_MODE_PPS === $this->orderCollection->getExportMode()) {
+            $this->exportEntireOrder($shipment);
+            $this->updateTrackGrid($shipment, true);
+
+            return;
+        }
+
         $this->orderCollection->myParcelCollection
-            ->addMultiCollo($firstTrackTraceHolder->consignment, $amount ?? self::DEFAULT_LABEL_AMOUNT)
             ->createConcepts()
             ->setLatestData();
 
@@ -128,7 +170,26 @@ class NewShipment implements ObserverInterface
             $shipment->addTrack($trackTraceHolder->mageTrack);
         }
 
-        $this->updateTrackGrid($shipment);
+        $this->updateTrackGrid($shipment, false);
+    }
+
+    /**
+     * @param $shipment
+     *
+     * @return void
+     * @throws \Exception
+     */
+    private function exportEntireOrder($shipment): void
+    {
+        $orderId = $shipment->getOrderId();
+
+        /**
+         * @var \Magento\Sales\Model\ResourceModel\Order\Collection $collection
+         */
+        $collection = $this->objectManager->get(MagentoOrderCollection::PATH_MODEL_ORDER);
+        $collection->addAttributeToFilter('entity_id', ['in' => $orderId]);
+        $this->orderCollection->setOrderCollection($collection);
+        $this->orderCollection->setFulfilment();
     }
 
     /**
@@ -140,12 +201,17 @@ class NewShipment implements ObserverInterface
      *
      * @throws \Exception
      */
-    private function updateTrackGrid($shipment)
+    private function updateTrackGrid($shipment, $entireOrder): void
     {
-        $aHtml = $this->orderCollection->getHtmlForGridColumns($shipment->getOrder()->getId());
+        $aHtml = $this->orderCollection->getHtmlForGridColumnsByTracks($shipment->getTracksCollection());
+
+        if ($entireOrder) {
+            $aHtml['track_status'] = 'Exported';
+        }
+
         $shipment->getOrder()
-                 ->setData('track_status', $aHtml['track_status'])
-                 ->setData('track_number', $aHtml['track_number'])
-                 ->save();
+            ->setData('track_status', $aHtml['track_status'])
+            ->setData('track_number', $aHtml['track_number'])
+            ->save();
     }
 }

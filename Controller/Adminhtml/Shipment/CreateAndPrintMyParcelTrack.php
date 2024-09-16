@@ -12,12 +12,12 @@ use MyParcelBE\Magento\Model\Sales\MagentoShipmentCollection;
  * Action to create and print MyParcel Track
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelbe
+ *
  *
  * @author      Reindert Vetter <info@sendmyparcel.be>
  * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelbe/magento
+ * @link        /magento
  * @since       File available since Release v0.1.0
  */
 class CreateAndPrintMyParcelTrack extends \Magento\Framework\App\Action\Action
@@ -73,7 +73,7 @@ class CreateAndPrintMyParcelTrack extends \Magento\Framework\App\Action\Action
      */
     private function massAction()
     {
-        if ($this->shipmentCollection->apiKeyIsCorrect() !== true) {
+        if (! $this->shipmentCollection->apiKeyIsCorrect()) {
             $message = 'You not have entered the correct API key. Go to the general settings in the back office of MyParcel to generate the API Key.';
             $this->messageManager->addErrorMessage(__($message));
             $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($message);
@@ -99,15 +99,18 @@ class CreateAndPrintMyParcelTrack extends \Magento\Framework\App\Action\Action
             ->setOptionsFromParameters();
 
         $this->shipmentCollection
+            ->syncMagentoToMyparcel()
             ->setMagentoTrack()
-            ->setMyParcelTrack()
-            ->createMyParcelConcepts();
+            ->setNewMyParcelTracks()
+            ->createMyParcelConcepts()
+            ->updateMagentoTrack();
 
-        if ($this->shipmentCollection->getOption('request_type') == 'concept') {
+        if ('concept' === $this->shipmentCollection->getOption('request_type')) {
             return $this;
         }
 
         $this->shipmentCollection
+            ->addReturnShipments()
             ->setPdfOfLabels()
             ->updateMagentoTrack()
             ->downloadPdfOfLabels();
@@ -116,7 +119,7 @@ class CreateAndPrintMyParcelTrack extends \Magento\Framework\App\Action\Action
     }
 
     /**
-     * @param $shipmentIds int[]
+     * @param int[] $shipmentIds
      */
     private function addShipmentsToCollection($shipmentIds)
     {

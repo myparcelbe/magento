@@ -7,12 +7,12 @@
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelbe/magento
+ * https://github.com/myparcelnl/magento
  *
  * @author      Reindert Vetter <info@sendmyparcel.be>
  * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelbe/magento
+ * @link        https://github.com/myparcelnl/magento
  * @since       File available since Release 2.0.0
  */
 
@@ -43,6 +43,11 @@ class Package extends Data implements PackageInterface
     private $maxDigitalStampWeight = 0;
 
     /**
+     * @var float
+     */
+    private $maxPackageSmallWeight = 0;
+
+    /**
      * @var bool
      */
     private $mailboxActive = false;
@@ -50,12 +55,22 @@ class Package extends Data implements PackageInterface
     /**
      * @var bool
      */
+    private $packageSmallActive = false;
+
+    /**
+     * @var bool
+     */
+    private $pickupMailboxActive = false;
+
+    /**
+     * @var bool
+     */
     private $digitalStampActive = false;
 
     /**
-     * @var int
+     * @var float
      */
-    private $mailboxPercentage = 0;
+    private $mailboxPercentage = 0.0;
 
     /**
      * @var bool
@@ -145,7 +160,45 @@ class Package extends Data implements PackageInterface
     }
 
     /**
-     * @param float $percentage
+     * @return bool
+     */
+    public function isPackageSmallActive(): bool
+    {
+        return $this->packageSmallActive;
+    }
+
+    /**
+     * @param  bool $packageSmallActive
+     *
+     * @return void
+     */
+    public function setPackageSmallActive(bool $packageSmallActive): void
+    {
+        $this->packageSmallActive = $packageSmallActive;
+    }
+
+    /**
+     * @param  bool $isActive
+     *
+     * @return void
+     */
+    public function setPickupMailboxActive(bool $isActive): void
+    {
+        $this->pickupMailboxActive = $isActive;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPickupMailboxActive(): bool
+    {
+        return $this->pickupMailboxActive;
+    }
+
+    /**
+     * @param  float $percentage
+     *
+     * @return void
      */
     public function setMailboxPercentage(float $percentage): void
     {
@@ -153,9 +206,9 @@ class Package extends Data implements PackageInterface
     }
 
     /**
-     * @return bool
+     * @return float
      */
-    public function getMailboxPercentage(): bool
+    public function getMailboxPercentage(): float
     {
         return $this->mailboxPercentage;
     }
@@ -176,17 +229,24 @@ class Package extends Data implements PackageInterface
         $this->digitalStampActive = $digitalStampActive;
     }
 
-    /**
-     * @return bool
-     */
-    public function isAllProductsFit(): bool
+    public function getMaxPackageSmallWeight(): float
     {
-        return $this->allProductsFit;
+        return $this->maxPackageSmallWeight;
     }
 
+    /**
+     * @param  float $maxWeight
+     *
+     * @return void
+     */
+    protected function setMaxPackageSmallWeight(float $maxWeight): void
+    {
+        $this->maxPackageSmallWeight = $maxWeight;
+    }
 
     /**
      * @param bool $allProductsFit
+     * @deprecated fit in what? use PackageRepository->selectPackageType() to get the relevant package type
      */
     public function setAllProductsFit(bool $allProductsFit): void
     {
@@ -200,15 +260,16 @@ class Package extends Data implements PackageInterface
      */
     public function getPackageType(): int
     {
+        if (! isset($this->packageType)) {
+            throw new \RuntimeException('Use setPackageType() before you can getPackageType()');
+        }
         return $this->packageType;
     }
 
     /**
      * @param int $packageType
-     *
-     * @return int
      */
-    public function setPackageType(int $packageType): int
+    public function setPackageType(int $packageType): void
     {
         $this->packageType = $packageType;
     }
@@ -226,6 +287,10 @@ class Package extends Data implements PackageInterface
      */
     public function setCurrentCountry(?string $currentCountry): void
     {
+        if ($currentCountry === null) {
+            return;
+        }
+
         $this->currentCountry = $currentCountry;
     }
 }

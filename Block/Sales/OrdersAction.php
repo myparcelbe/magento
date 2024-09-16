@@ -3,12 +3,12 @@
  * Block for order actions (multiple orders action and one order action)
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelbe
+ * https://github.com/myparcelnl
  *
  * @author      Reindert Vetter <info@sendmyparcel.be>
  * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelbe/magento
+ * @link        https://github.com/myparcelnl/magento
  * @since       File available since Release v0.1.0
  */
 
@@ -17,6 +17,7 @@ namespace MyParcelBE\Magento\Block\Sales;
 use Magento\Backend\Block\Template;
 use Magento\Backend\Block\Template\Context;
 use Magento\Framework\App\ObjectManager;
+use MyParcelBE\Magento\Helper\Data;
 
 class OrdersAction extends Template
 {
@@ -39,7 +40,7 @@ class OrdersAction extends Template
         array $data = []
     ) {
         $this->objectManager = ObjectManager::getInstance();
-        $this->helper = $this->objectManager->get('\MyParcelBE\Magento\Helper\Data');
+        $this->helper        = $this->objectManager->get(Data::class);
         parent::__construct($context, $data);
     }
 
@@ -48,11 +49,9 @@ class OrdersAction extends Template
      *
      * @return bool
      */
-    public function hasApiKey()
+    public function hasApiKey(): bool
     {
-        $apiKey = $this->helper->getGeneralConfig('api/key');
-
-        return $apiKey == '' ? 'false' : 'true';
+        return $this->helper->hasApiKey();
     }
 
     /**
@@ -60,7 +59,7 @@ class OrdersAction extends Template
      *
      * @return string
      */
-    public function getOrderAjaxUrl()
+    public function getOrderAjaxUrl(): string
     {
         return $this->_urlBuilder->getUrl('myparcel/order/CreateAndPrintMyParcelTrack');
     }
@@ -70,7 +69,7 @@ class OrdersAction extends Template
      *
      * @return string
      */
-    public function getShipmentAjaxUrl()
+    public function getShipmentAjaxUrl(): string
     {
         return $this->_urlBuilder->getUrl('myparcel/shipment/CreateAndPrintMyParcelTrack');
     }
@@ -80,7 +79,7 @@ class OrdersAction extends Template
      *
      * @return string
      */
-    public function getAjaxUrlSendReturnMail()
+    public function getAjaxUrlSendReturnMail(): string
     {
         return $this->_urlBuilder->getUrl('myparcel/order/SendMyParcelReturnMail');
     }

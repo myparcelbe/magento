@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Created by PhpStorm.
  * User: richardperdaan
@@ -55,12 +57,12 @@ class OrderExtension
         $connection  = $resource->getConnection();
         $tableName   = $resource->getTableName('sales_order'); // Gives table name with prefix
         $path        = $this->request->getPathInfo();
-        $explodePath = explode('/', $path);
+        $explodePath = explode('/', $path ?? '');
 
         if (! is_numeric(end($explodePath))) {
             [$searchColumn, $searchValue] = $this->useIncrementId();
         } else {
-            [$searchColumn, $searchValue] = $this->useEntityId(end($explodePath));
+            [$searchColumn, $searchValue] = $this->useEntityId((int) end($explodePath));
         }
 
         if (empty($searchValue)) {
@@ -71,7 +73,7 @@ class OrderExtension
         $sql = $connection
             ->select('myparcel_delivery_options')
             ->from($tableName)
-            ->where($searchColumn . ' = ' . (int) $searchValue);
+            ->where($searchColumn . ' = ?', $searchValue);
 
         $result = $connection->fetchAll($sql); // Gives associated array, table fields as key in array.
 

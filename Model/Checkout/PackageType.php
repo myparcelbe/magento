@@ -4,7 +4,6 @@ namespace MyParcelBE\Magento\Model\Checkout;
 
 use MyParcelBE\Magento\Api\PackageTypeInterface;
 use MyParcelBE\Magento\Model\Quote\Checkout;
-use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
 
 /**
  * @since 3.0.0

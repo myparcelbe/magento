@@ -3,12 +3,12 @@
  * Set MyParcel options to new track
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelbe
  *
- * @author      Adem Demir <support@sendmyparcel.be>
- * @copyright   2010-2020 MyParcel
+ *
+ * @author      Reindert Vetter <info@sendmyparcel.be>
+ * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelbe/magento
+ * @link        /magento
  * @since       File available since Release v0.1.0
  */
 namespace MyParcelBE\Magento\Observer;
@@ -20,11 +20,13 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Message\ManagerInterface;
+use Magento\Framework\Model\AbstractModel;
 use Magento\Sales\Model\Order\Shipment\Track;
 use Magento\Sales\Model\ResourceModel\Order\Collection;
 use MyParcelBE\Magento\Helper\Data;
 use MyParcelBE\Magento\Model\Sales\MagentoOrderCollection;
 use MyParcelBE\Magento\Model\Sales\MagentoShipmentCollection;
+use MyParcelBE\Magento\Model\Sales\TrackTraceHolder;
 use MyParcelNL\Sdk\src\Exception\ApiException;
 use MyParcelNL\Sdk\src\Exception\MissingFieldException;
 
@@ -92,16 +94,20 @@ class CreateConceptAfterInvoice implements ObserverInterface
      * @return CreateConceptAfterInvoice
      * @throws Exception
      */
-    public function execute(Observer $observer)
+    public function execute(Observer $observer): self
     {
-        if ($this->helper->getGeneralConfig('basic_settings/create_concept_after_invoice')) {
-            $order   = $observer->getEvent()->getOrder();
-            $orderid = $order->getId();
+        if ($this->helper->getGeneralConfig('print/create_concept_after_invoice')) {
+            $order = $observer
+                ->getEvent()
+                ->getInvoice()
+                ->getOrder();
 
-            if ($order instanceof \Magento\Framework\Model\AbstractModel) {
-                if ($order->getState() == 'pending' || $order->getState() == 'processing') {
-                    $this->setMagentoAndMyParcelTrack($orderid);
-                }
+            if (($order instanceof AbstractModel)
+                && in_array(
+                    $order->getState(),
+                    ['pending', 'processing', 'new']
+                )) {
+                $this->exportAccordingToMode($order->getId());
             }
         }
 
@@ -119,7 +125,7 @@ class CreateConceptAfterInvoice implements ObserverInterface
      * @throws MissingFieldException
      * @throws Exception
      */
-    private function setMagentoAndMyParcelTrack($orderIds)
+    private function exportAccordingToMode($orderIds)
     {
         $this->addOrdersToCollection($orderIds);
 
@@ -127,20 +133,16 @@ class CreateConceptAfterInvoice implements ObserverInterface
             ->setOptionsFromParameters()
             ->setNewMagentoShipment();
 
-        $this->orderCollection
-            ->setMagentoTrack()
-            ->setMyParcelTrack()
-            ->createMyParcelConcepts()
-            ->updateGridByOrder();
+        if (TrackTraceHolder::EXPORT_MODE_PPS === $this->orderCollection->getExportMode()) {
+            $this->orderCollection->setFulfilment();
 
-        if (
-            $this->orderCollection->getOption('request_type') == 'concept' ||
-            $this->orderCollection->myParcelCollection->isEmpty()
-        ) {
             return $this;
         }
 
         $this->orderCollection
+            ->setMagentoTrack()
+            ->setNewMyParcelTracks()
+            ->createMyParcelConcepts()
             ->updateMagentoTrack();
 
         return $this;

@@ -11,7 +11,8 @@ status_10,Envoi retour livré
 status_11,Envoi retour au point de collecte
 status_12,Etiquette en franchise de port imprimée
 status_13,Crédité
-status_14, Imprimé - Tampon numérique
+status_14,Imprimé - Tampon numérique
+status_17,Annulé
 status_30,Inactif - Concept
 status_31,Inactif - Prénotifié
 status_32,Inactif - Présenté chez MyParcel
@@ -24,24 +25,42 @@ status_38,Inactif - Envoi retiré au point de collecte
 status_39,Inactif - Envoi retour livré
 status_40,Inactif - Envoi retour au point de collecte
 status_99,Inactif - Statut inconnu
-myparcelbe_magento_dpd_settings/delivery_title,  Livraison DPD
-myparcelbe_magento_dpd_settings/pickup_title, Lieu de ramassage DPD
-myparcelbe_magento_dpd_settings/delivery,  Livraison DPD
-myparcelbe_magento_dpd_settings/pickup, Lieu de ramassage DPD
-myparcelbe_magento_postnl_settings/pickup, Lieu de ramassage PostNL
-myparcelbe_magento_postnl_settings/pickup_title, Lieu de ramassage postnl
+myparcelbe_magento_postnl_settings/delivery_title, Livraison PostNL
+myparcelbe_magento_postnl_settings/pickup_title, Collecte PostNL
+myparcelbe_magento_postnl_settings/delivery/signature_title, Livraison avec signature PostNL
+myparcelbe_magento_dpd_settings/delivery_title, Livraison DPD
+myparcelbe_magento_dpd_settings/pickup_title, Collecte DPD
+myparcelbe_magento_postnl_settings/pickup, Collecte PostNL
 myparcelbe_magento_postnl_settings/delivery, Livraison PostNL
-myparcelbe_magento_postnl_settings/delivery_title, livraison postnl
-myparcelbe_magento_postnl_settings/delivery/signature, Livraison PostNL avec signature pour réception
-myparcelbe_magento_postnl_settings/delivery/signature_title, Livraison PostNL avec signature
-myparcelbe_magento_postnl_settings/delivery/only_recipient, Livraison PostNL avec adresse accueil
-myparcelbe_magento_postnl_settings/delivery/only_recipient/signature, Livraison PostNL avec adresse accueil et signature
-myparcelbe_magento_bpost_settings/pickup, Lieu de ramassage bpost
-myparcelbe_magento_bpost_settings/pickup_title, Lieu de ramassage bpost
-myparcelbe_magento_bpost_settings/delivery, Livraison bpost
-myparcelbe_magento_bpost_settings/delivery_title, Livraison bpost
-myparcelbe_magento_bpost_settings/delivery/signature, Livraison bpost avec signature
-myparcelbe_magento_bpost_settings/delivery/signature_title, Livraison bpost avec signature pour réception
+myparcelbe_magento_postnl_settings/delivery/signature, Livraison avec signature PostNL
+myparcelbe_magento_postnl_settings/delivery/only_recipient, Livraison uniquement au destinataire PostNL
+myparcelbe_magento_postnl_settings/delivery/only_recipient/signature, Livraison uniquement au destinataire avec signature PostNL
+myparcelbe_magento_postnl_settings/morning, Livraison le matin PostNL
+myparcelbe_magento_postnl_settings/morning/only_recipient, Livraison le matin uniquement au destinataire PostNL
+myparcelbe_magento_postnl_settings/morning/only_recipient/signature, Livraison le matin uniquement au destinataire avec signature PostNL
+myparcelbe_magento_postnl_settings/evening, Livraison le soir PostNL
+myparcelbe_magento_postnl_settings/evening/only_recipient, Livraison le soir uniquement au destinataire PostNL
+myparcelbe_magento_postnl_settings/evening/only_recipient/signature, Livraison le soir uniquement au destinataire avec signature PostNL
+myparcelbe_magento_postnl_settings/mailbox, Boîte aux lettres PostNL
+myparcelbe_magento_postnl_settings/digital_stamp, Timbre numérique PostNL
+myparcelbe_magento_dhlforyou_settings/delivery, Livraison DHL For You
+myparcelbe_magento_dhlforyou_settings/delivery/signature, Livraison avec signature DHL For You
+myparcelbe_magento_dhlforyou_settings/delivery/only_recipient, Livraison uniquement au destinataire DHL For You
+myparcelbe_magento_dhlforyou_settings/delivery/only_recipient/signature, Livraison uniquement au destinataire avec signature DHL For You
+myparcelbe_magento_dhlforyou_settings/pickup, Collecte DHL For You
+myparcelbe_magento_dhleuroplus_settings/delivery, Livraison DHL Europlus
+myparcelbe_magento_dhlparcelconnect_settings/delivery, Livraison DHL Parcel Connect
+myparcelbe_magento_dhlparcelconnect_settings/pickup, Collecte DHL Parcel Connect
+myparcelbe_magento_ups_settings/delivery, Livraison UPS
+myparcelbe_magento_dpd_settings/delivery, Livraison DPD
+myparcelbe_magento_dpd_settings/mailbox, Boîte aux lettres DPD
+myparcelbe_magento_error_no_shipments_to_process, Non-pas d' envois MyParcel à traiter.
+package_small,Petit paquet
+Packet,Petit paquet
+Pacet title,Titre petit paquet
+Parcel locker,Casier de colis
+show_total_price,Afficher le prix total
+show_surcharge_price,Afficher le prix supplémentaire
 Version and support,Version et support
 General settings,Paramètres généraux
 API settings,Paramètres API
@@ -51,7 +70,7 @@ Default shipment settings,Paramètres d'expédition standards
 Print MyParcel labels directly,Imprimez directement les étiquettes MyParcel
 Print settings,Paramètres d'impression
 Paper type,Orientation de l'impression
-Select a standard orientation for printing labels.,Sélectionnez une orientation standard pour l'impression des étiquettes.ntatie voor het printen van labels.
+Select a standard orientation for printing labels.,Sélectionnez une orientation standard pour l'impression des étiquettes.
 Default shipping options,Options d'expédition standards
 "Fill in your preferences for a shipment. These settings will only apply for the mass actions in the order grid. When creating a single shipment, these settings can be changed manually. These settings will activate based on the order total amount.","Indiquez ici vos préférences standards quant aux options d'expédition. S'ils sont d'application, ces paramètres seront utilisés par défaut pour tous vos envois. Ces options peuvent bien sûr toujours être modifiées lors du traitement."
 Automate 'Signature on receipt',Automatisation de la 'Signature pour réception'
@@ -65,6 +84,8 @@ Track action,Action de suivi
 MyParcel options,Options MyParcel
 Package,Colis
 Signature on receipt,Signature pour réception
+Home address only,Livraison à domicile uniquement
+Hide sender title,Titre de masquer l'expéditeur
 Insured up to:,Assuré jusqu'à :
 Download package label,Télécharger l'étiquette du colis
 Create new concept,Créer une nouveau concept
@@ -112,11 +133,21 @@ Hide days,Masquer les jours
 Cut-off time,Heure limite de commande
 "If a request is made for the delivery options between Friday after, and Monday before, cut-off time then Tuesday will be shown as the next possible delivery date.","Lorsqu'une commande est passée après la dernière heure de commande le vendredi et avant celle-ci le lundi, c'est donc le mardi qui sera affiché comme premier jour de livraison."
 Drop-off days,Jours de dépôt
+Monday delivery,Livraison le lundi
+Same day delivery,Livraison le jour même
+Same day title,Titre le jour même
+"Delivery on monday may require special conditions compared to other (week)days including but not limited to fee and cutoff time.","La livraison le lundi peut nécessiter des conditions spéciales par rapport aux autres jours de la semaine, y compris mais sans s'y limiter, des frais et heure limite de commande."
+Number of days,Nombre de jours
+Delivery enabled,Livraison active
+"Whether you drop off packages on this day.","Si vous déposez des colis ce jour-là."
+"For orders before this time, the drop-off is considered done on this day.","Pour les commandes passées avant cette heure, le dépôt est considéré comme effectué ce jour-là."
+"Specify the days you hand in your parcels for this carrier. Specify the latest time a customer can order for you to deliver the package in time for shipment that day.","Indiquez les jours où vous déposez vos colis pour ce transporteur. Indiquez l'heure limite pour que le client puisse commander et que vous puissiez livrer le colis ce jour-là."
 Saturday active,Samedi actif
 Saturday title,Samedi - titre
-Dropoff-delay,Délai
+Drop-off delay,Délai
 No delay,Pas de délai
-"This options allows you to set the number of days it takes you to pick, pack and hand in your parcels when ordered before the cutoff time.","Cette option vous permet de définir le nombre de jours dont vous avez besoin pour (recevoir,) emballer et présenter le produit, à partir du moment de la commande."
+"This option allows you to set the number of days it takes you to pick, pack and hand in your parcels when ordered before the cutoff time.","Cette option vous permet de définir le nombre de jours dont vous avez besoin pour (recevoir,) emballer et présenter le produit, à partir du moment de la commande."
+The age check is intended for parcel shipments for which the recipient must show 18+ by means of a proof of identity. This option can't be combined with morning or evening delivery., Le contrôle d'âge est destiné aux envois de colis pour lesquels le destinataire doit montrer qu'ils ont plus de 18 ans au moyen d'une preuve d'identité. Cette option ne peut pas être combinée avec la livraison le matin ou le soir.
 Methods,Mode d'expédition
 The extra myparcel options are added to this shipping method,Les options Myparcel complémentaires seront ajoutées à ce mode d'expédition
 Delivery title,Livraison - titre
@@ -124,11 +155,12 @@ Deliver the package only at address of the intended recipient.,Livraison du coli
 This will be added to the regular shipping price,Ceci sera ajouté aux frais d'expédition standards
 Not possible if Pickup at PostNL location is not active,Ceci ne sera pas possible si la collecte à un point postnl n'est pas activée
 Signature on receipt,Signature pour réception
-Signature on receipt title, Signature pour réception - titre
-Signature on receipt fee, Signature pour réception - prix
+Signature on receipt title,Signature pour réception - titre
+Signature on receipt fee,Signature pour réception - prix
+Hide sender,Masquer l'expéditeur
 This will be added to the regular shipping price, Ceci sera ajouté aux frais d'expédition standards
 If both have been selected this price will be added to the regular shipping price. Leave empty for not using it.,Si les deux éléments sont sélectionnés, ce prix sera ajouté aux frais d'expédition standards. Laissez vide pour ignorer cette option.
-"Besides assigning weights to all products, you can also specify a volume of each product.","Pour utiliser cette fonction de manière optimale, spécifiez d'abord le poids ou le volume de vos produits."
+"To use this optimally, set a weight or 'Fit in mailbox' volume of each product. Regardless, shipments heavier than the weight specified here will not be mailbox.","Pour utiliser cette fonction de manière optimale, spécifiez d'abord le poids ou le volume de vos produits. Les envois plus lourds que le poids spécifié ici ne seront pas considérés comme des envois pour Boîte aux lettres."
 This will be added to the regular shipping price,Ceci sera ajouté aux frais d'expédition standards
 Pickup at PostNL location,Collecte dans un point postnl
 Pickup active,Collecte active
@@ -141,19 +173,51 @@ You not have entered the correct API key. Go to the general settings in the back
 Address details are not entered,Les données relatives à l'adresse ne sont pas complétées
 The times will be visible when nothing is filled in,Les temps ne seront pas visibles si aucune donnée n'est complétée
 "Enter an amount that is either positive or negative. For example, do you want to give a discount for using this function or do you want to charge extra for this delivery option.","Introduisez ici un montant positif ou négatif. Si vous souhaitez par exemple proposer une réduction pour cette fonction ou décompter des frais supplémentaires pour cette option de livraison."
+Discount,Rabais
+Most sustainable,Le plus durable
+Free,Gratuit
+From,Depuis
 Pick up from,Retrait à partir de
+Pick up at a pick-up point,Retrait au point de ramassage
 Opening hours,Heures d'ouverture
+Show more opening hours,Montrer plus d'heures d'ouverture
+Show more locations,Montrer plus d'emplacements
 Closed,Fermé
-Postcode,Code postal
+Postal code,Code postal
 House number,Numéro de rue
 City,Ville
+Country,Pays
+Street,Rue
 Again,A nouveau
 Postcode/city combination unknown,Combinaison inconnue du code postal et de la ville
 Deliver as quickly as possible,Livraison le plus vite possible
-Monday,lundi
-Tuesday,mardi
-Wednesday,mercredi
-Thursday,jeudi
-Friday,vendredi
-Saturday,samedi
-Sunday,dimanche
+Date settings,Paramètres de date
+Monday,Lundi
+Tuesday,Mardi
+Wednesday,Mercredi
+Thursday,Jeudi
+Friday,Vendredi
+Saturday,Samedi
+Sunday,Dimanche
+Automate 'Large format',Automatiser "Plus grand que 100 x 70 x 58 cm ou plus lourd que 23 kg"
+Large package,Plus grand que 100 x 70 x 58 cm ou plus lourd que 23 kg
+
+{field} is required.,{field} est requis.
+Address not found.,Adresse introuvable.
+Postal code is invalid for the current country.,Le code postal n’est pas valide pour le pays actuel.
+
+delivery_title, Options de livraison
+standard_title, Livraison standard
+morning_title, Livraison du lundi
+evening_title, Livraison en soirée
+pickup_title, Points de collecte
+same_day_title, Livraison le jour même
+hide_sender_title, Masquer l'expéditeur
+list_title, Liste
+map_title, Carte
+mailbox_title, Colis boîte aux lettres
+digital_stamp_title, Timbre digital
+packet_title, Colis
+signature_title, Signature à réception
+only_recipient_title, Adresse de résidence uniquement
+saturday_delivery, Livraison le samedi

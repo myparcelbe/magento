@@ -12,6 +12,7 @@ status_11,Delivered - Return shipment pickup location
 status_12,Unrelated label printed
 status_13,Credited
 status_14,Printed - Digital Stamp
+status_17,Cancelled
 status_30,Inactive - Concept
 status_31,Inactive - Registered
 status_32,Inactive - Enroute - Handed to carrier
@@ -25,22 +26,51 @@ status_39,Inactive - Return shipment delivered
 status_40,Inactive - Return shipment pickup location
 status_99,Inactive - Unknown
 myparcelbe_magento_postnl_settings/pickup, PostNL pickup location
-myparcelbe_magento_postnl_settings/pickup_title, PostNL pickup location
 myparcelbe_magento_postnl_settings/delivery, PostNL delivery
-myparcelbe_magento_postnl_settings/delivery_title, PostNL delivery
 myparcelbe_magento_postnl_settings/delivery/signature, PostNL delivery with signature
-myparcelbe_magento_postnl_settings/delivery/signature_title, PostNL delivery with signature
 myparcelbe_magento_postnl_settings/delivery/only_recipient, PostNL delivery with only recipient
-myparcelbe_magento_postnl_settings/delivery/only_recipient_title, PostNL delivery with only recipient
 myparcelbe_magento_postnl_settings/delivery/only_recipient/signature, PostNL delivery with only recipient and signature
-myparcelbe_magento_postnl_settings/delivery/signature_title, PostNL delivery with signature
-myparcelbe_magento_bpost_settings/delivery, bpost delivery
-myparcelbe_magento_bpost_settings/delivery_title, bpost delivery
-myparcelbe_magento_bpost_settings/pickup, bpost pickup location
-myparcelbe_magento_bpost_settings/pickup_title, bpost pickup location
-myparcelbe_magento_bpost_settings/delivery/signature, bpost delivery with signature
-myparcelbe_magento_bpost_settings/delivery/signature_title, bpost delivery with signature
-myparcelbe_magento_dpd_settings/delivery,  DPD delivery
-myparcelbe_magento_dpd_settings/delivery_title,  DPD delivery
+myparcelbe_magento_postnl_settings/morning, PostNL morning delivery
+myparcelbe_magento_postnl_settings/morning/only_recipient, PostNL morning delivery with only recipient
+myparcelbe_magento_postnl_settings/morning/only_recipient/signature, PostNL morning delivery with only recipient and signature
+myparcelbe_magento_postnl_settings/evening, PostNL evening delivery
+myparcelbe_magento_postnl_settings/evening/only_recipient, PostNL evening delivery with only recipient
+myparcelbe_magento_postnl_settings/evening/only_recipient/signature, PostNL evening delivery with only recipient and signature
+myparcelbe_magento_postnl_settings/mailbox, PostNL mailbox
+myparcelbe_magento_postnl_settings/digital_stamp, PostNL digital stamp
+myparcelbe_magento_dhlforyou_settings/delivery, DHL For You delivery
+myparcelbe_magento_dhlforyou_settings/delivery/signature, DHL For You delivery with signature
+myparcelbe_magento_dhlforyou_settings/delivery/only_recipient, DHL For You delivery with only recipient
+myparcelbe_magento_dhlforyou_settings/delivery/only_recipient/signature, DHL For You delivery with only recipient and signature
+myparcelbe_magento_dhlforyou_settings/pickup, DHL For You pickup location
+myparcelbe_magento_dhleuroplus_settings/delivery, DHL Europlus delivery
+myparcelbe_magento_dhlparcelconnect_settings/delivery, DHL Parcel Connect delivery
+myparcelbe_magento_dhlparcelconnect_settings/pickup, DHL Parcel Connect pickup
+myparcelbe_magento_ups_settings/delivery, UPS delivery
+myparcelbe_magento_dpd_settings/delivery, DPD delivery
 myparcelbe_magento_dpd_settings/pickup, DPD pickup location
-myparcelbe_magento_dpd_settings/pickup_title, DPD pickup location
+myparcelbe_magento_dpd_settings/mailbox, DPD mailbox
+myparcelbe_magento_error_no_shipments_to_process, No MyParcel shipments to process.
+no_account_settings, No account settings found. Press the import button in general configuration to fetch account settings.
+manage_drop_off_point, Manage your default drop-off point in the
+location_page, location manager
+package_small, Small package
+show_total_price, Show total price
+show_surcharge_price, Show surcharge
+Automate 'Large format',Automate 'Larger than 100 x 70 x 58 cm or heavier than 23 kg'
+Large package,Larger than 100 x 70 x 58 cm or heavier than 23 kg
+delivery_title, Delivery Options
+standard_title, Standard Delivery
+morning_title, Morning Delivery
+evening_title, Evening Delivery
+pickup_title, Pickup locations
+same_day_title, Same day Delivery
+hide_sender_title, Hide Sender
+list_title, List
+map_title, Map
+mailbox_title, Mailbox
+digital_stamp_title, Digital Stamp
+packet_title, Packet
+signature_title, Signature
+only_recipient_title, Only Recipient
+saturday_delivery, Saturday Delivery

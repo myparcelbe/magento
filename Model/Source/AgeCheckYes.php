@@ -4,26 +4,27 @@
  * This option is used with settings that are not possible because an parent option is turned off.
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelbe
+ * https://github.com/myparcelnl
  *
- * @author      Richard Perdaan <support@sendmyparcel.be>
+ * @author      Richard Perdaan <support@myparcel.nl>
  * @copyright   2010-2017 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelbe/magento
+ * @link        https://github.com/myparcelnl/magento
  * @since       File available since Release v0.1.0
  */
 
 namespace MyParcelBE\Magento\Model\Source;
 
-use Magento\Framework\Option\ArrayInterface;
+use Magento\Framework\Data\OptionSourceInterface;
 use Magento\Sales\Model\Order;
 use MyParcelBE\Magento\Helper\Data;
+use MyParcelNL\Sdk\src\Model\Carrier\CarrierPostNL;
 
 /**
  * @api
  * @since 100.0.2
  */
-class AgeCheckYes implements ArrayInterface
+class AgeCheckYes implements OptionSourceInterface
 {
     /**
      * @var Data
@@ -46,15 +47,11 @@ class AgeCheckYes implements ArrayInterface
      *
      * @return bool
      */
-    public function getDefault($option)
+    public function hasDefault($option): bool
     {
-        $settings = self::$helper->getStandardConfig('default_options');
+        $settings = self::$helper->getStandardConfig(CarrierBpost::NAME, 'default_options');
 
-        if ($settings[$option . '_active'] == '1') {
-            return true;
-        }
-
-        return false;
+        return (bool) $settings[$option . '_active'];
     }
 
     /**
@@ -62,9 +59,9 @@ class AgeCheckYes implements ArrayInterface
      *
      * @return array
      */
-    public function toOptionArray()
+    public function toOptionArray(): array
     {
-        if ($this->getDefault('age_check')) {
+        if ($this->hasDefault('age_check')) {
             return [['value' => 1, 'label' => __('Yes')]];
         }
 

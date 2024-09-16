@@ -9,12 +9,12 @@
  * http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US
  *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelbe
+ * https://github.com/myparcelnl
  *
  * @author      Reindert Vetter <info@sendmyparcel.be>
  * @copyright   2010-2019 MyParcel
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelbe/magento
+ * @link        https://github.com/myparcelnl/magento
  * @since       File available since Release 0.1.0
  */
 
@@ -37,10 +37,7 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
      * @var DeliveryRepository
      */
     private $delivery;
-    /**
-     * @var AbstractConsignment
-     */
-    private $consignment;
+
     /**
      * @var array
      */
@@ -50,17 +47,14 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
      * SaveOrderBeforeSalesModelQuoteObserver constructor.
      *
      * @param DeliveryRepository  $delivery
-     * @param AbstractConsignment $consignment
      * @param Checkout            $checkoutHelper
      */
     public function __construct(
         DeliveryRepository $delivery,
-        AbstractConsignment $consignment,
         Checkout $checkoutHelper
     ) {
         $this->delivery      = $delivery;
-        $this->consignment   = $consignment;
-        $this->parentMethods = explode(',', $checkoutHelper->getGeneralConfig('shipping_methods/methods'));
+        $this->parentMethods = explode(',', $checkoutHelper->getGeneralConfig('shipping_methods/methods') ?? '');
     }
 
     /**
@@ -81,13 +75,9 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
             return $this;
         }
 
-        $fullStreet         = implode(' ', $order->getShippingAddress()->getStreet());
+        $fullStreet         = implode(' ', $order->getShippingAddress()->getStreet() ?? []);
         $postcode           = $order->getShippingAddress()->getPostcode();
         $destinationCountry = $order->getShippingAddress()->getCountryId();
-
-        if ($destinationCountry != AbstractConsignment::CC_NL && $destinationCountry != AbstractConsignment::CC_BE) {
-            return $this;
-        }
 
         if (! ValidateStreet::validate($fullStreet, AbstractConsignment::CC_NL, $destinationCountry)) {
             $order->setData(Checkout::FIELD_TRACK_STATUS, __('⚠️&#160; Please check street'));
@@ -98,7 +88,7 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
         }
 
         if ($quote->hasData(Checkout::FIELD_DELIVERY_OPTIONS) && $this->hasMyParcelDeliveryOptions($quote)) {
-            $jsonDeliveryOptions = $quote->getData(Checkout::FIELD_DELIVERY_OPTIONS);
+            $jsonDeliveryOptions = $quote->getData(Checkout::FIELD_DELIVERY_OPTIONS) ?? '';
             $deliveryOptions     = json_decode($jsonDeliveryOptions, true) ?? [];
 
             $order->setData(Checkout::FIELD_DELIVERY_OPTIONS, $jsonDeliveryOptions);
@@ -114,11 +104,11 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
     }
 
     /**
-     * @param Quote $quote
+     * @param  Quote $quote
      *
      * @return bool
      */
-    private function hasMyParcelDeliveryOptions($quote)
+    private function hasMyParcelDeliveryOptions(Quote $quote): bool
     {
         $myParcelMethods = array_keys(Carrier::getMethods());
         $shippingMethod  = $quote->getShippingAddress()->getShippingMethod();
@@ -138,18 +128,14 @@ class SaveOrderBeforeSalesModelQuoteObserver implements ObserverInterface
      * @param string $input
      * @param array  $data
      *
-     * @return int
+     * @return bool
      */
-    private function isMyParcelRelated(string $input, array $data)
+    private function isMyParcelRelated(string $input, array $data): bool
     {
         $result = array_filter(
             $data,
-            function ($item) use ($input) {
-                if (stripos($input, $item) !== false) {
-                    return true;
-                }
-
-                return false;
+            static function ($item) use ($input) {
+                return stripos($input, $item) !== false;
             }
         );
 

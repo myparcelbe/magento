@@ -1,38 +1,44 @@
 <?php
 /**
  * An object with the track and trace data
- *
  * If you want to add improvements, please create a fork in our GitHub:
- * https://github.com/myparcelbe
+ * https://github.com/myparcelnl
  *
- * @author      Reindert Vetter <info@sendmyparcel.be>
- * @copyright   2010-2019 MyParcel
+ * @author      Reindert Vetter <reindert@myparcel.nl>
  * @license     http://creativecommons.org/licenses/by-nc-nd/3.0/nl/deed.en_US  CC BY-NC-ND 3.0 NL
- * @link        https://github.com/myparcelbe/magento
+ * @link        https://github.com/myparcelnl/magento
+ * @copyright   2010-2019 MyParcel
  * @since       File available since Release v0.1.0
  */
 
 namespace MyParcelBE\Magento\Model\Sales;
 
+use BadMethodCallException;
 use Exception;
 use Magento\Framework\App\ObjectManager;
+use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Order\Shipment;
+use Magento\Sales\Model\Order\Shipment\Track;
 use MyParcelBE\Magento\Adapter\DeliveryOptionsFromOrderAdapter;
 use MyParcelBE\Magento\Helper\Data;
+use MyParcelBE\Magento\Helper\ShipmentOptions;
 use MyParcelBE\Magento\Model\Source\DefaultOptions;
 use MyParcelBE\Magento\Services\Normalizer\ConsignmentNormalizer;
 use MyParcelBE\Magento\Ui\Component\Listing\Column\TrackAndTrace;
-use MyParcelNL\Sdk\src\Adapter\DeliveryOptions\AbstractShipmentOptionsAdapter;
 use MyParcelNL\Sdk\src\Exception\MissingFieldException;
 use MyParcelNL\Sdk\src\Factory\ConsignmentFactory;
 use MyParcelNL\Sdk\src\Factory\DeliveryOptionsAdapterFactory;
+use MyParcelNL\Sdk\src\Model\Carrier\CarrierFactory;
 use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
 use MyParcelNL\Sdk\src\Model\MyParcelCustomsItem;
+use RuntimeException;
 
 /**
  * Class TrackTraceHolder
+ *
  * @package MyParcelBE\Magento\Model\Sales
  */
 class TrackTraceHolder
@@ -40,23 +46,10 @@ class TrackTraceHolder
     /**
      * Track title showing in Magento
      */
-    const MYPARCEL_TRACK_TITLE  = 'MyParcel';
-    const MYPARCEL_CARRIER_CODE = 'myparcel';
-    const ORDER_NUMBER          = '%order_nr%';
-    const DELIVERY_DATE         = '%delivery_date%';
-    const PRODUCT_ID            = '%product_id%';
-    const PRODUCT_NAME          = '%product_name%';
-    const PRODUCT_QTY           = '%product_qty%';
-
-    /**
-     * @var ObjectManagerInterface
-     */
-    private $objectManager;
-
-    /**
-     * @var \Magento\Framework\Message\ManagerInterface
-     */
-    protected $messageManager;
+    public const MYPARCEL_TRACK_TITLE  = 'MyParcel';
+    public const MYPARCEL_CARRIER_CODE = 'myparcel';
+    public const EXPORT_MODE_PPS       = 'pps';
+    public const EXPORT_MODE_SHIPMENTS = 'shipments';
 
     /**
      * @var \MyParcelBE\Magento\Model\Source\DefaultOptions
@@ -64,9 +57,9 @@ class TrackTraceHolder
     private static $defaultOptions;
 
     /**
-     * @var Data
+     * @var \MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment|null
      */
-    private $helper;
+    public $consignment;
 
     /**
      * @var Order\Shipment\Track
@@ -74,143 +67,173 @@ class TrackTraceHolder
     public $mageTrack;
 
     /**
-     * @var \MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment|null
+     * @var \Magento\Framework\Message\ManagerInterface
      */
-    public $consignment;
+    protected $messageManager;
+
+    /**
+     * @var string|null
+     */
+    private $carrier;
+
+    /**
+     * @var \MyParcelBE\Magento\Helper\Data
+     */
+    private $dataHelper;
+
+    /**
+     * @var ObjectManagerInterface
+     */
+    private $objectManager;
+
+    /**
+     * @var \MyParcelBE\Magento\Helper\ShipmentOptions
+     */
+    private $shipmentOptionsHelper;
 
     /**
      * TrackTraceHolder constructor.
      *
-     * @param ObjectManagerInterface     $objectManager
-     * @param Data                       $helper
-     * @param \Magento\Sales\Model\Order $order
+     * @param  ObjectManagerInterface     $objectManager
+     * @param  Data                       $helper
+     * @param  \Magento\Sales\Model\Order $order
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
-        Data $helper,
-        Order $order
+        Data                   $helper,
+        Order                  $order
     ) {
         $this->objectManager  = $objectManager;
-        $this->helper         = $helper;
+        $this->dataHelper     = $helper;
         $this->messageManager = $this->objectManager->create('Magento\Framework\Message\ManagerInterface');
         self::$defaultOptions = new DefaultOptions(
             $order,
-            $this->helper
+            $this->dataHelper
         );
     }
 
     /**
-     * Create Magento Track from Magento shipment
+     * @param  float $price
      *
-     * @param Order\Shipment $shipment
-     *
-     * @return $this
+     * @return int
      */
-    public function createTrackTraceFromShipment(Order\Shipment &$shipment)
+    public static function getCentsByPrice(float $price): int
     {
-        $this->mageTrack = $this->objectManager->create('Magento\Sales\Model\Order\Shipment\Track');
-        $this->mageTrack
-            ->setOrderId($shipment->getOrderId())
-            ->setShipment($shipment)
-            ->setCarrierCode(self::MYPARCEL_CARRIER_CODE)
-            ->setTitle(self::MYPARCEL_TRACK_TITLE)
-            ->setQty($shipment->getTotalQty())
-            ->setTrackNumber(TrackAndTrace::VALUE_EMPTY);
-
-        return $this;
+        return (int) $price * 100;
     }
 
     /**
      * Set all data to MyParcel object
      *
-     * @param Order\Shipment\Track $magentoTrack
-     * @param array                $options
+     * @param  Order\Shipment\Track $magentoTrack
+     * @param  array                $options
      *
      * @return $this
      * @throws \Exception
      * @throws LocalizedException
      */
-    public function convertDataFromMagentoToApi($magentoTrack, $options)
+    public function convertDataFromMagentoToApi(Track $magentoTrack, array $options): self
     {
-        $shipment        = $magentoTrack->getShipment();
-        $address         = $shipment->getShippingAddress();
-        $checkoutData    = $shipment->getOrder()->getData('myparcel_delivery_options');
-        $deliveryOptions = json_decode($checkoutData, true);
-        $totalWeight     = 0;
+        $shipment                       = $magentoTrack->getShipment();
+        $address                        = $shipment->getShippingAddress();
+        $order                          = $shipment->getOrder();
+        $checkoutData                   = $order->getData('myparcel_delivery_options') ?? '';
+        $deliveryOptions                = json_decode($checkoutData, true) ?? [];
+        $deliveryOptions['carrier']     = $this->getCarrierFromOptions($options)
+            ?? $deliveryOptions['carrier']
+            ?? DefaultOptions::getDefaultCarrier()
+                ->getName();
+
+//        $totalWeight = $options['digital_stamp_weight'] !== null ? (int) $options['digital_stamp_weight']
+//            : (int) self::$defaultOptions->getDigitalStampDefaultWeight();
 
         try {
             // create new instance from known json
             $deliveryOptionsAdapter = DeliveryOptionsAdapterFactory::create((array) $deliveryOptions);
-        } catch (\BadMethodCallException $e) {
+        } catch (BadMethodCallException $e) {
             // create new instance from unknown json data
-            $deliveryOptions = (new ConsignmentNormalizer($this->helper))->normalize((array) $deliveryOptions + $options);
+            $deliveryOptions        = (new ConsignmentNormalizer((array) $deliveryOptions + $options))->normalize();
             $deliveryOptionsAdapter = new DeliveryOptionsFromOrderAdapter($deliveryOptions);
         }
 
-        $pickupLocationAdapter  = $deliveryOptionsAdapter->getPickupLocation();
-        //$shippingOptionsAdapter = $deliveryOptionsAdapter->getShipmentOptions();
-
-        // get packagetype from delivery_options and use it for process directly
-        $packageType = self::$defaultOptions->getPackageType();
-        // get packagetype from selected radio buttons and check if package type is set
-        if ($options['package_type'] && $options['package_type'] != 'default') {
-            $packageType = $options['package_type'] ? $options['package_type'] : AbstractConsignment::PACKAGE_TYPE_PACKAGE;
-        }
-
-        if (!is_numeric($packageType)) {
-            $packageType = AbstractConsignment::PACKAGE_TYPES_NAMES_IDS_MAP[$packageType];
-        }
-
-        $apiKey = $this->helper->getGeneralConfig(
+        $pickupLocationAdapter = $deliveryOptionsAdapter->getPickupLocation();
+        $apiKey                = $this->dataHelper->getGeneralConfig(
             'api/key',
-            $shipment->getOrder()->getStoreId()
+            $order->getStoreId()
         );
 
         $this->validateApiKey($apiKey);
+        $this->carrier               = $deliveryOptionsAdapter->getCarrier();
+        $this->shipmentOptionsHelper = new ShipmentOptions(
+            self::$defaultOptions,
+            $this->dataHelper,
+            $order,
+            $this->objectManager,
+            $this->carrier,
+            $options
+        );
 
         $this->consignment = (ConsignmentFactory::createByCarrierName($deliveryOptionsAdapter->getCarrier()))
             ->setApiKey($apiKey)
-            ->setReferenceId($shipment->getEntityId())
+            ->setReferenceIdentifier($shipment->getEntityId())
             ->setConsignmentId($magentoTrack->getData('myparcel_consignment_id'))
             ->setCountry($address->getCountryId())
             ->setCompany(self::$defaultOptions->getMaxCompanyName($address->getCompany()))
             ->setPerson($address->getName());
 
         try {
-            $this->consignment->setFullStreet($address->getData('street'));
-        } catch (\Exception $e) {
-            $errorHuman = 'An error has occurred while validating order number ' . $shipment->getOrder()->getIncrementId() . '. Check address.';
+            $this->consignment
+                ->setFullStreet($address->getData('street'))
+                ->setPostalCode(preg_replace('/\s+/', '', $address->getPostcode()));
+        } catch (Exception $e) {
+            $errorHuman =
+                sprintf(
+                    'An error has occurred while validating order number %s. Check address.',
+                    $order->getIncrementId()
+                );
             $this->messageManager->addErrorMessage($errorHuman . ' View log file for more information.');
-            $this->objectManager->get('Psr\Log\LoggerInterface')->critical($errorHuman . '-' . $e);
+            $this->objectManager->get('Psr\Log\LoggerInterface')
+                ->critical($errorHuman . '-' . $e);
 
-            $this->helper->setOrderStatus($magentoTrack->getOrderId(), Order::STATE_NEW);
+            $this->dataHelper->setOrderStatus($magentoTrack->getOrderId(), Order::STATE_NEW);
         }
 
-        if (null === $address->getPostcode() && 'BE' === $address->getCountryId()) {
-            $errorHuman = 'An error has occurred while validating the order number ' . $magentoTrack->getOrderId() . '. Postcode is required.';
-            $this->messageManager->addErrorMessage($errorHuman . ' View log file for more information.');
-            $this->objectManager->get('Psr\Log\LoggerInterface')->critical($errorHuman);
+        if (isset($deliveryOptions['packageType'])) {
+            $options['package_type'] = $deliveryOptions['packageType'];
         }
+        $packageType  = $this->getPackageType($options, $magentoTrack, $address);
+        $dropOffPoint = $this->dataHelper->getDropOffPoint(
+            CarrierFactory::createFromName($deliveryOptionsAdapter->getCarrier())
+        );
+
+        $regionCode = $address->getRegionCode();
+        $state = $regionCode && strlen($regionCode) === 2 ? $regionCode : null;
 
         $this->consignment
-            ->setPostalCode($address->getPostcode())
             ->setCity($address->getCity())
+            ->setState($state)
             ->setPhone($address->getTelephone())
             ->setEmail($address->getEmail())
-            ->setLabelDescription($this->getLabelDescription($magentoTrack, $checkoutData))
-            ->setDeliveryDate($this->helper->convertDeliveryDate($deliveryOptionsAdapter->getDate()))
-            ->setDeliveryType($this->helper->checkDeliveryType($deliveryOptionsAdapter->getDeliveryTypeId()))
+            ->setLabelDescription($this->shipmentOptionsHelper->getLabelDescription())
+            ->setDeliveryDate($this->dataHelper->convertDeliveryDate($deliveryOptionsAdapter->getDate()))
+            ->setDeliveryType($this->dataHelper->checkDeliveryType($deliveryOptionsAdapter->getDeliveryTypeId()))
             ->setPackageType($packageType)
-            ->setOnlyRecipient($this->getValueOfOption($options, 'only_recipient'))
-            ->setSignature($this->getValueOfOption($options, 'signature'))
-            ->setReturn($this->getValueOfOption($options, 'return'))
-            ->setLargeFormat($this->checkLargeFormat())
-            ->setInsurance(
-                $options['insurance'] !== null ? $options['insurance'] : self::$defaultOptions->getDefaultInsurance()
+            ->setDropOffPoint($dropOffPoint)
+            ->setOnlyRecipient($this->shipmentOptionsHelper->hasOnlyRecipient())
+            ->setSignature($this->shipmentOptionsHelper->hasSignature())
+            ->setReturn($this->shipmentOptionsHelper->hasReturn())
+            ->setSameDayDelivery($this->shipmentOptionsHelper->hasSameDayDelivery())
+            ->setLargeFormat($this->shipmentOptionsHelper->hasLargeFormat())
+            ->setAgeCheck($this->shipmentOptionsHelper->hasAgeCheck())
+            ->setInsurance($this->shipmentOptionsHelper->getInsurance())
+            ->setInvoice(
+                $shipment
+                    ->getOrder()
+                    ->getIncrementId()
             )
-            ->setInvoice($magentoTrack->getShipment()->getOrder()->getIncrementId());
+            ->setSaveRecipientAddress(false);
 
-        if ($deliveryOptionsAdapter->isPickup()) {
+        if ($deliveryOptionsAdapter->isPickup() && $pickupLocationAdapter) {
             $this->consignment
                 ->setPickupPostalCode($pickupLocationAdapter->getPostalCode())
                 ->setPickupStreet($pickupLocationAdapter->getStreet())
@@ -218,145 +241,43 @@ class TrackTraceHolder
                 ->setPickupNumber($pickupLocationAdapter->getNumber())
                 ->setPickupCountry($pickupLocationAdapter->getCountry())
                 ->setPickupLocationName($pickupLocationAdapter->getLocationName())
-                ->setPickupLocationCode($pickupLocationAdapter->getLocationCode());
+                ->setPickupLocationCode($pickupLocationAdapter->getLocationCode())
+                ->setPickupNetworkId($pickupLocationAdapter->getPickupNetworkId())
+                ->setReturn(false);
 
             if ($pickupLocationAdapter->getRetailNetworkId()) {
                 $this->consignment->setRetailNetworkId($pickupLocationAdapter->getRetailNetworkId());
             }
         }
 
-        $this->convertDataForCdCountry($magentoTrack);
-
-        return $this;
-    }
-
-    /**
-     *
-     * @return bool
-     */
-    private function checkLargeFormat(): bool
-    {
-        return self::$defaultOptions->getDefaultLargeFormat('large_format');
-    }
-
-    /**
-     * Override to check if key isset
-     *
-     * @param string $apiKey
-     *
-     * @return $this
-     * @throws LocalizedException
-     */
-    public function validateApiKey($apiKey)
-    {
-        if ($apiKey == null) {
-            throw new LocalizedException(__('API key is not known. Go to the settings in the backoffice to create an API key. Fill the API key in the settings.'));
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param Order\Shipment\Track $magentoTrack
-     * @param string|null          $checkoutData
-     *
-     * @return string
-     * @throws LocalizedException
-     */
-    public function getLabelDescription($magentoTrack, ?string $checkoutData): string
-    {
-        $order = $magentoTrack->getShipment()->getOrder();
-
-        $labelDescription = $this->helper->getGeneralConfig(
-            'print/label_description',
-            $order->getStoreId()
-        );
-
-        if (! $labelDescription) {
-            return '';
-        }
-
-        $productInfo      = $this->getItemsCollectionByShipmentId($magentoTrack->getShipment()->getId());
-        $deliveryDate     = date('d-m-Y', strtotime($this->helper->convertDeliveryDate($checkoutData)));
-        $labelDescription = str_replace(
-            [
-                self::ORDER_NUMBER,
-                self::DELIVERY_DATE,
-                self::PRODUCT_ID,
-                self::PRODUCT_NAME,
-                self::PRODUCT_QTY
-            ],
-            [
-                $order->getIncrementId(),
-                $this->helper->convertDeliveryDate($checkoutData) ? $deliveryDate : '',
-                $this->getProductInfo($productInfo, 'product_id'),
-                $this->getProductInfo($productInfo, 'name'),
-                round($this->getProductInfo($productInfo, 'qty'), 0),
-            ],
-            $labelDescription
-        );
-
-        return (string) $labelDescription;
-    }
-
-    /**
-     * @param $productInfo
-     * @param $field
-     *
-     * @return string|null
-     */
-    private function getProductInfo(array $productInfo, string $field): ?string
-    {
-        if ($productInfo) {
-            return $productInfo[0][$field];
-        }
-
-        return null;
-    }
-
-    /**
-     * @param Order\Shipment\Track $magentoTrack
-     *
-     * @return $this
-     *
-     * @throws LocalizedException
-     * @throws MissingFieldException
-     * @throws \Exception
-     */
-    private function convertDataForCdCountry($magentoTrack)
-    {
-        if (! $this->consignment->isCdCountry()) {
+        try {
+            $this->convertDataForCdCountry($magentoTrack);
+//                ->calculateTotalWeight($magentoTrack, $totalWeight);
+        } catch (Exception $e) {
+            $this->messageManager->addErrorMessage($e->getMessage());
             return $this;
         }
 
-        if ($products = $magentoTrack->getShipment()->getData('items')) {
-            foreach ($products as $product) {
-                $myParcelProduct = (new MyParcelCustomsItem())
-                    ->setDescription($product->getName())
-                    ->setAmount($product->getQty())
-                    ->setWeight($this->helper->getWeightTypeOfOption($product->getWeight()) ?: 1)
-                    ->setItemValue($this->getCentsByPrice($product->getPrice()))
-                    ->setClassification(
-                        (int) $this->getAttributeValue('catalog_product_entity_int', $product['product_id'], 'classification')
-                    )
-                    ->setCountry($this->getCountryOfOrigin($product['product_id']));
-                $this->consignment->addItem($myParcelProduct);
-            }
-        }
+        return $this;
+    }
 
-        $products = $this->getItemsCollectionByShipmentId($magentoTrack->getShipment()->getId());
-
-        foreach ($magentoTrack->getShipment()->getItems() as $item) {
-            $myParcelProduct = (new MyParcelCustomsItem())
-                ->setDescription($item->getName())
-                ->setAmount($item->getQty())
-                ->setWeight($this->helper->getWeightTypeOfOption($item->getWeight() * $item->getQty()))
-                ->setItemValue($item->getPrice() * 100)
-                ->setClassification((int) $this->getAttributeValue('catalog_product_entity_int', $item->getProductId(), 'classification'))
-                ->setCountry($this->getCountryOfOrigin($item->getProductId()));
-
-            $this->consignment->addItem($myParcelProduct);
-        }
+    /**
+     * Create Magento Track from Magento shipment
+     *
+     * @param  \Magento\Sales\Model\Order\Shipment $shipment
+     *
+     * @return $this
+     */
+    public function createTrackTraceFromShipment(Shipment $shipment)
+    {
+        $this->mageTrack = $this->objectManager->create(Track::class);
+        $this->mageTrack
+            ->setOrderId($shipment->getOrderId())
+            ->setShipment($shipment)
+            ->setCarrierCode(self::MYPARCEL_CARRIER_CODE)
+            ->setTitle(self::MYPARCEL_TRACK_TITLE)
+            ->setQty($shipment->getTotalQty())
+            ->setTrackNumber(TrackAndTrace::VALUE_EMPTY);
 
         return $this;
     }
@@ -370,157 +291,48 @@ class TrackTraceHolder
      */
     public function getCountryOfOrigin(int $product_id): string
     {
-        $product                     = $this->objectManager->get('Magento\Catalog\Api\ProductRepositoryInterface')->getById($product_id);
+        $product                     =
+            $this->objectManager->get('Magento\Catalog\Api\ProductRepositoryInterface')
+                ->getById($product_id);
         $productCountryOfManufacture = $product->getCountryOfManufacture();
 
         if ($productCountryOfManufacture) {
             return $productCountryOfManufacture;
         }
 
-        return $this->helper->getGeneralConfig('print/country_of_origin');
+        return $this->dataHelper->getGeneralConfig('print/country_of_origin');
     }
 
     /**
-     * @param string $tableName
-     * @param string $entityId
-     * @param string $column
+     * Override to check if key isset
      *
-     * @return string|null
+     * @param  null|string $apiKey
+     *
+     * @return $this
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
-    private function getAttributeValue(string $tableName, string $entityId, string $column): ?string
+    public function validateApiKey(?string $apiKey): self
     {
-        $objectManager = ObjectManager::getInstance();
-        $resource      = $objectManager->get('Magento\Framework\App\ResourceConnection');
-        $connection    = $resource->getConnection();
-        $attributeId   = $this->getAttributeId(
-            $connection,
-            $resource->getTableName('eav_attribute'),
-            $column
-        );
-
-        $attributeValue = $this
-            ->getValueFromAttribute(
-                $connection,
-                $resource->getTableName($tableName),
-                $attributeId,
-                $entityId
+        if (null === $apiKey) {
+            throw new LocalizedException(
+                __(
+                    'API key is not known. Go to the settings in the backoffice to create an API key. Fill the API key in the settings.'
+                )
             );
-
-        return $attributeValue;
-    }
-
-    /**
-     * @param object $connection
-     * @param string $tableName
-     * @param string $databaseColumn
-     *
-     * @return mixed
-     */
-    private function getAttributeId($connection, string $tableName, string $databaseColumn): string
-    {
-        $sql = $connection
-            ->select('entity_type_id')
-            ->from($tableName)
-            ->where('attribute_code = ?', 'myparcelbe_' . $databaseColumn);
-
-        return $connection->fetchOne($sql);
-    }
-
-    /**
-     * @param object $connection
-     * @param string $tableName
-     *
-     * @param string $attributeId
-     * @param string $entityId
-     *
-     * @return string|null
-     */
-    private function getValueFromAttribute($connection, string $tableName, string $attributeId, string $entityId): ?string
-    {
-        $sql = $connection
-            ->select()
-            ->from($tableName, ['value'])
-            ->where('attribute_id = ?', $attributeId)
-            ->where('entity_id = ?', $entityId);
-
-        return $connection->fetchOne($sql);
-    }
-
-    /**
-     * Get default value if option === null
-     *
-     * @param      $options []
-     * @param      $optionKey
-     *
-     * @return bool
-     * @internal param $option
-     */
-    private function getValueOfOption($options, $optionKey)
-    {
-        if ($options[$optionKey] === null) {
-            return (bool) self::$defaultOptions->getDefault($optionKey);
         }
 
-        return (bool) $options[$optionKey];
+        return $this;
     }
 
     /**
-     * @param $shipmentId
-     *
-     * @return array
-     */
-    private function getItemsCollectionByShipmentId($shipmentId)
-    {
-        /** @var \Magento\Framework\App\ResourceConnection $connection */
-        $connection = $this->objectManager->create('\Magento\Framework\App\ResourceConnection');
-        $conn       = $connection->getConnection();
-        $select     = $conn->select()
-                           ->from(
-                               ['main_table' => $connection->getTableName('sales_shipment_item')]
-                           )
-                           ->where('main_table.parent_id=?', $shipmentId);
-        $items      = $conn->fetchAll($select);
-
-        return $items;
-    }
-
-    /**
-     * @param bool|null $signature
-     *
-     * @return bool
-     */
-    protected function isSignature(?bool $signature): bool
-    {
-        if ($signature !== null) {
-            return (bool) $signature;
-        }
-
-        return (bool) self::$defaultOptions->getDefault('signature');
-    }
-
-    /**
-     * @param \MyParcelNL\Sdk\src\Adapter\DeliveryOptions\AbstractShipmentOptionsAdapter|null $shippingOptionsAdapter
-     *
-     * @return int|null
-     */
-    protected function hasInsurance(?AbstractShipmentOptionsAdapter $shippingOptionsAdapter)
-    {
-        if ($shippingOptionsAdapter->getInsurance() !== null) {
-            return $shippingOptionsAdapter->getInsurance();
-        }
-
-        return self::$defaultOptions->getDefaultInsurance();
-    }
-
-    /**
-     * @param Order\Shipment\Track $magentoTrack
-     * @param int                  $totalWeight
+     * @param  Order\Shipment\Track $magentoTrack
+     * @param  int                  $totalWeight
      *
      * @return TrackTraceHolder
      * @throws LocalizedException
      * @throws \Exception
      */
-    private function calculateTotalWeight($magentoTrack, int $totalWeight = 0): self
+    private function calculateTotalWeight(Track $magentoTrack, int $totalWeight = 0): self
     {
         if ($this->consignment->getPackageType() !== AbstractConsignment::PACKAGE_TYPE_DIGITAL_STAMP) {
             return $this;
@@ -539,36 +351,181 @@ class TrackTraceHolder
             return $this;
         }
 
-        if ($products = $magentoTrack->getShipment()->getData('items')) {
-            foreach ($products as $product) {
-                $totalWeight += $product->consignment->getWeight();
-            }
+        $shipmentItems =
+            $magentoTrack->getShipment()
+                ->getItems();
+
+        foreach ($shipmentItems as $shipmentItem) {
+            $totalWeight += $shipmentItem['weight'] * $shipmentItem['qty'];
         }
 
-        $products = $this->getItemsCollectionByShipmentId($magentoTrack->getShipment()->getId());
+        $totalWeight = $this->dataHelper->convertToGrams($totalWeight);
 
-        foreach ($products as $product) {
-            $totalWeight += $product['weight'];
-        }
-
-        if ($totalWeight == 0) {
-            throw new Exception('The order with digital stamp can not be exported, no weights have been entered');
+        if (0 === $totalWeight) {
+            throw new RuntimeException(
+                sprintf(
+                    'Order %s can not be exported as digital stamp, no weights have been entered.',
+                    $magentoTrack->getShipment()
+                        ->getOrder()
+                        ->getIncrementId()
+                )
+            );
         }
 
         $this->consignment->setPhysicalProperties([
-            "weight" => $totalWeight
+            'weight' => $totalWeight,
         ]);
 
         return $this;
     }
 
     /**
-     * @param float $price
+     * @param  Order\Shipment\Track $magentoTrack
+     *
+     * @return $this
+     * @throws LocalizedException
+     * @throws MissingFieldException
+     * @throws \Exception
+     */
+    private function convertDataForCdCountry(Track $magentoTrack)
+    {
+        if (! $this->consignment->isCdCountry()) {
+            return $this;
+        }
+
+        if ($products =
+            $magentoTrack->getShipment()
+                ->getData('items')) {
+            foreach ($products as $product) {
+                $myParcelProduct = (new MyParcelCustomsItem())
+                    ->setDescription($product->getName())
+                    ->setAmount($product->getQty())
+                    ->setWeight($this->dataHelper->convertToGrams($product->getWeight()) ?: 1)
+                    ->setItemValue($this->getCentsByPrice($product->getPrice()))
+                    ->setClassification(
+                        (int) $this->getAttributeValue(
+                            'catalog_product_entity_int',
+                            $product['product_id'],
+                            'classification'
+                        )
+                    )
+                    ->setCountry($this->getCountryOfOrigin($product['product_id']));
+                $this->consignment->addItem($myParcelProduct);
+            }
+        }
+
+        foreach ($magentoTrack->getShipment()
+                     ->getItems() as $item) {
+            $myParcelProduct = (new MyParcelCustomsItem())
+                ->setDescription($item->getName())
+                ->setAmount($item->getQty())
+                ->setWeight($this->dataHelper->convertToGrams($item->getWeight() * $item->getQty()))
+                ->setItemValue($item->getPrice() * 100)
+                ->setClassification(
+                    (int) $this->getAttributeValue(
+                        'catalog_product_entity_int',
+                        $item->getProductId(),
+                        'classification'
+                    )
+                )
+                ->setCountry($this->getCountryOfOrigin($item->getProductId()));
+
+            $this->consignment->addItem($myParcelProduct);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param  Order\Shipment\Track $magentoTrack
+     * @param  object               $address
+     * @param  array                $options
+     *
+     * @return bool
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    private function getAgeCheck(Track $magentoTrack, $address, array $options = []): bool
+    {
+        if ($address->getCountryId() !== AbstractConsignment::CC_NL) {
+            return false;
+        }
+
+        $ageCheckFromOptions  = ShipmentOptions::getValueOfOptionWhenSet('age_check', $options);
+        $ageCheckOfProduct    = ShipmentOptions::getAgeCheckFromProduct($magentoTrack);
+        $ageCheckFromSettings = self::$defaultOptions->hasDefaultOptionsWithoutPrice($this->carrier, 'age_check');
+
+        return $ageCheckFromOptions ?? $ageCheckOfProduct ?? $ageCheckFromSettings;
+    }
+
+    /**
+     * @param  string $tableName
+     * @param  string $entityId
+     * @param  string $column
+     *
+     * @return string|null
+     */
+    private function getAttributeValue(string $tableName, string $entityId, string $column): ?string
+    {
+        $objectManager = ObjectManager::getInstance();
+        $resource      = $objectManager->get(ResourceConnection::class);
+        $connection    = $resource->getConnection();
+        $attributeId   = ShipmentOptions::getAttributeId(
+            $connection,
+            $resource->getTableName('eav_attribute'),
+            $column
+        );
+
+        return ShipmentOptions::getValueFromAttribute(
+            $connection,
+            $resource->getTableName($tableName),
+            $attributeId,
+            $entityId
+        );
+    }
+
+    /**
+     * @param  array $options
+     *
+     * @return null|string
+     */
+    private function getCarrierFromOptions(array $options): ?string
+    {
+        $carrier = null;
+
+        if (array_key_exists('carrier', $options) && $options['carrier']) {
+            $carrier =
+                DefaultOptions::DEFAULT_OPTION_VALUE === $options['carrier'] ? self::$defaultOptions->getCarrier()
+                    : $options['carrier'];
+        }
+
+        return $carrier;
+    }
+
+    /**
+     * @param  array                $options
+     * @param  string               $packageType
+     * @param  Order\Shipment\Track $magentoTrack
+     * @param  object               $address
      *
      * @return int
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
-    private function getCentsByPrice(float $price): int
+    private function getPackageType(array $options, Track $magentoTrack, $address): int
     {
-        return (int) $price * 100;
+        if ($this->getAgeCheck($magentoTrack, $address, $options)) {
+            return AbstractConsignment::PACKAGE_TYPE_PACKAGE;
+        }
+
+        // get package type from selected radio buttons and check if package type is set
+        $packageType = $options['package_type'] ?? 'default';
+        if ('default' === $packageType) {
+            $packageType = self::$defaultOptions->getPackageType();
+        }
+
+        if (! is_numeric($packageType)) {
+            $packageType = AbstractConsignment::PACKAGE_TYPES_NAMES_IDS_MAP[$packageType] ?? self::$defaultOptions->getPackageType();
+        }
+
+        return $packageType;
     }
 }

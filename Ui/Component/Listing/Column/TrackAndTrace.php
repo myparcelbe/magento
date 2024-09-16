@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MyParcelBE\Magento\Ui\Component\Listing\Column;
 
 use Magento\Framework\App\ObjectManager;
@@ -10,9 +12,11 @@ use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
 
 class TrackAndTrace extends Column
 {
-    public const NAME          = 'track_number';
-    public const VALUE_EMPTY   = '–';
-    private const KEY_POSTCODE = 0;
+    public const  NAME          = 'track_number';
+    public const  VALUE_EMPTY   = '–';
+    public const  VALUE_PRINTED = 'printed';
+    public const  VALUE_CONCEPT = 'concept';
+    private const KEY_POSTCODE  = 0;
 
     /**
      * Script tag to unbind the click event from the td wrapping the barcode link.
@@ -39,7 +43,7 @@ class TrackAndTrace extends Column
          * @var Order\Shipment\Track[] $tracks
          */
         foreach ($dataSource['data']['items'] as & $item) {
-            $addressParts = explode(",", $item['shipping_address']);
+            $addressParts = explode(',', $item['shipping_address'] ?? '');
 
             if (count($addressParts) < 3) {
                 continue;
@@ -48,47 +52,78 @@ class TrackAndTrace extends Column
             $postalCode = array_slice($addressParts, -1)[self::KEY_POSTCODE];
 
             // Stop if either the barcode or postal code is missing.
-            if (! $item['track_number'] || $item['track_number'] === self::VALUE_EMPTY || ! $postalCode) {
+            if (! $item['track_number'] || ! $postalCode) {
                 continue;
             }
 
-            $trackNumber = $item['track_number'];
-            $countryId   = $this->getCountryWithEntityId($item);
-            $data        = $this->getData('name');
+            $order = $this->getOrderByEntityId((int) $item['entity_id']);
+            $name  = $this->getData('name');
 
             // Render the T&T as a link and add the script to remove the click handler.
-            $trackTrace  = $this->getTrackAndTraceUrl($trackNumber, $postalCode, $countryId);
-            $item[$data] = "<a class=\"myparcel-barcode-link\" target=\"_blank\" href=\"$trackTrace\">$trackNumber</a>";
-            $item[$data] .= self::SCRIPT_UNBIND_CLICK;
+            $item[$name] = self::getTrackAndTraceLinksAsHtml($order);
+            $item[$name] .= self::SCRIPT_UNBIND_CLICK;
         }
 
         return $dataSource;
     }
 
     /**
-     * @param array $orderData
+     * @param int $entityId
      *
-     * @return string
+     * @return \Magento\Sales\Model\Order
      */
-    public function getCountryWithEntityId(array $orderData): string
+    public function getOrderByEntityId(int $entityId): Order
     {
-        $order     = (ObjectManager::getInstance())->create(Order::class)->load($orderData['entity_id']);
-        $countryId = $order->getShippingAddress()->getCountryId();
-
-        return $countryId ?? AbstractConsignment::CC_NL;
+        return (ObjectManager::getInstance())->create(Order::class)->load($entityId);
     }
 
     /**
-     * @param string      $trackNumber
-     * @param string      $postalCode
-     * @param string|null $countryId
+     * @param \Magento\Sales\Model\Order $order
      *
      * @return string
      */
-    public function getTrackAndTraceUrl(string $trackNumber, string $postalCode, ?string $countryId = null): string
+    public static function getTrackAndTraceLinksAsHtml(Order $order): string
     {
-        $myparcelUrl = TrackTraceUrl::create($trackNumber, $postalCode, $countryId);
+        $html            = '';
+        $shippingAddress = $order->getShippingAddress();
+        if (! $shippingAddress) {
+            return $html;
+        }
 
-        return str_replace('https://myparcel.me', 'https://sendmyparcel.me', $myparcelUrl);
+        $countryId = $shippingAddress->getCountryId() ?? AbstractConsignment::CC_NL;
+        $postCode  = $shippingAddress->getPostcode();
+        if (! $postCode) {
+            return $html;
+        }
+
+        $trackData    = $order->getData('track_number') ?? '';
+        $trackNumbers = json_decode($trackData, true) ?? $trackData;
+
+        // older shipments are stored with '<br>' as separator between trackNumbers
+        if (! is_array($trackNumbers)) {
+            $trackNumbers = explode('<br>', $trackNumbers ?? '');
+        }
+
+        foreach ($trackNumbers as $trackNumber) {
+            switch ($trackNumber) {
+                case null:
+                case self::VALUE_EMPTY:
+                    $html .= '-<br/>';
+                    break;
+                case self::VALUE_PRINTED:
+                    $html .= $trackNumber . '<br/>';
+                    break;
+                default:
+                    $trackTrace = TrackTraceUrl::create($trackNumber, $postCode, $countryId);
+
+                    $html .= sprintf(
+                        '<a class="myparcel-barcode-link" target="_blank" href="%1$s">%2$s</a><br/>',
+                        $trackTrace,
+                        $trackNumber
+                    );
+            }
+        }
+
+        return $html;
     }
 }
