@@ -108,35 +108,22 @@ class Checkout extends Data
     /**
      * Set shipping base price
      *
-     * @param \Magento\Quote\Model\Quote $quoteId
-     *
+     * @param int $quoteId
+     * @param array $forAddress
      * @return Checkout
      */
-    public function setBasePriceFromQuote($quoteId)
+    public function setBasePriceFromQuote(int $quoteId, array $forAddress = []): Checkout
     {
-        $price = $this->getParentRatePriceFromQuote($quoteId);
+        $method = $this->getParentRateFromQuote($quoteId, $forAddress);
+        $price  = ($method) ? $method->getPriceInclTax() : 0;
+
         $this->setBasePrice((double) $price);
 
         return $this;
     }
 
     /**
-     * @param \Magento\Quote\Model\Quote $quoteId
-     *
-     * @return string
-     */
-    public function getParentRatePriceFromQuote($quoteId)
-    {
-        $method = $this->getParentRateFromQuote($quoteId);
-        if ($method === null) {
-            return null;
-        }
-
-        return $method->getPriceInclTax();
-    }
-
-    /**
-     * @param \Magento\Quote\Model\Quote $quoteId
+     * @param \Magento\Quote\Model\Quote|int $quoteId
      *
      * @return \Magento\Quote\Model\Cart\ShippingMethod|null
      */
