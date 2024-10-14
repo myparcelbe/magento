@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.15.1 (2024-10-14)
+
+### :bug: Bug Fixes
+
+* **checkout:** set shipping price based on current address
+
+
 ## [4.15.0](https://github.com/myparcelnl/magento/compare/v4.14.4...v4.15.0) (2024-06-10)
 
 
