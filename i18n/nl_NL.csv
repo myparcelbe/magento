@@ -36,15 +36,15 @@ myparcelbe_magento_postnl_settings/delivery/signature, PostNL bezorging met hand
 myparcelbe_magento_postnl_settings/delivery/signature_title, postnl bezorging met handtekening
 myparcelbe_magento_postnl_settings/delivery/only_recipient, PostNL bezorging met alleen huisadres
 myparcelbe_magento_postnl_settings/delivery/only_recipient/signature, PostNL bezorging met alleen huisadres en handtekening
-myparcelbe_magento_bpost_settings/delivery","Bpost bezorging
-myparcelbe_magento_bpost_settings/delivery/only_recipient","Bpost bezorging met alleen huisadres
-myparcelbe_magento_bpost_settings/delivery/only_recipient/signature","Bpost bezorging met alleen huisadres en handtekening
-myparcelbe_magento_bpost_settings/delivery/signature","Bpost bezorging met handtekening voor ontvangst
-myparcelbe_magento_bpost_settings/pickup","Bpost ophaallocatie
-myparcelbe_magento_bpost_settings/pickup, bpost ophaal locatie
-myparcelbe_magento_bpost_settings/pickup_title, bpost ophaal locatie
-myparcelbe_magento_bpost_settings/delivery, bpost bezorging
-myparcelbe_magento_bpost_settings/delivery_title, bpost bezorging
+myparcelbe_magento_bpost_settings/delivery", Bpost bezorging
+myparcelbe_magento_bpost_settings/delivery/only_recipient", Bpost bezorging met alleen huisadres
+myparcelbe_magento_bpost_settings/delivery/only_recipient/signature", Bpost bezorging met alleen huisadres en handtekening
+myparcelbe_magento_bpost_settings/delivery/signature", Bpost bezorging met handtekening voor ontvangst
+myparcelbe_magento_bpost_settings/pickup", Bpost ophaallocatie
+myparcelbe_magento_bpost_settings/pickup, Bpost ophaal locatie
+myparcelbe_magento_bpost_settings/pickup_title, Bpost ophaal locatie
+myparcelbe_magento_bpost_settings/delivery, Bpost bezorging
+myparcelbe_magento_bpost_settings/delivery_title, Bpost bezorging
 myparcelbe_magento_bpost_settings/delivery/signature, Bpost bezorging met handtekening voor ontvangst
 myparcelbe_magento_bpost_settings/delivery/signature_title, Bpost bezorging met handtekening voor ontvangst
 Version and support,Versie en support

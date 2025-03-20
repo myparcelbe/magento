@@ -38,7 +38,7 @@ myparcelbe_magento_bpost_settings/delivery","Bpost delivery
 myparcelbe_magento_bpost_settings/delivery/only_recipient","Bpost delivery to home address only
 myparcelbe_magento_bpost_settings/delivery/only_recipient/signature","Bpost delivery to home address only with signature
 myparcelbe_magento_bpost_settings/delivery/signature","Bpost delivery with signature upon receipt
-myparcelbe_magento_bpost_settings/pickup","Bpost pickup location
+myparcelbe_magento_bpost_settings/pickup", Bpost pickup location
 myparcelbe_magento_bpost_settings/delivery, bpost delivery
 myparcelbe_magento_bpost_settings/delivery_title, bpost delivery
 myparcelbe_magento_bpost_settings/pickup, bpost pickup location
