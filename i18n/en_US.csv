@@ -30,6 +30,20 @@ myparcelbe_magento_postnl_settings/delivery, PostNL delivery
 myparcelbe_magento_postnl_settings/delivery/signature, PostNL delivery with signature
 myparcelbe_magento_postnl_settings/delivery/only_recipient, PostNL delivery with only recipient
 myparcelbe_magento_postnl_settings/delivery/only_recipient/signature, PostNL delivery with only recipient and signature
+myparcelbe_magento_postnl_settings/delivery/signature_title, PostNL delivery with signature
+myparcelbe_magento_bpost_settings/delivery, Bpost delivery
+myparcelbe_magento_bpost_settings/delivery/only_recipient, Bpost delivery to home address only
+myparcelbe_magento_bpost_settings/delivery/only_recipient/signature, Bpost delivery to home address only with signature
+myparcelbe_magento_bpost_settings/delivery/signature, Bpost delivery with signature upon receipt
+myparcelbe_magento_bpost_settings/pickup, Bpost pickup location
+myparcelbe_magento_bpost_settings/delivery, bpost delivery
+myparcelbe_magento_bpost_settings/delivery_title, bpost delivery
+myparcelbe_magento_bpost_settings/pickup, bpost pickup location
+myparcelbe_magento_bpost_settings/pickup_title, bpost pickup location
+myparcelbe_magento_bpost_settings/delivery/signature, bpost delivery with signature
+myparcelbe_magento_bpost_settings/delivery/signature_title, bpost delivery with signature
+myparcelbe_magento_dpd_settings/delivery,  DPD delivery
+myparcelbe_magento_dpd_settings/delivery_title,  DPD delivery
 myparcelbe_magento_postnl_settings/morning, PostNL morning delivery
 myparcelbe_magento_postnl_settings/morning/only_recipient, PostNL morning delivery with only recipient
 myparcelbe_magento_postnl_settings/morning/only_recipient/signature, PostNL morning delivery with only recipient and signature

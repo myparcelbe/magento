@@ -33,6 +33,17 @@ myparcelbe_magento_postnl_settings/delivery, PostNL bezorging
 myparcelbe_magento_postnl_settings/delivery/signature, PostNL bezorging met handtekening voor ontvangst
 myparcelbe_magento_postnl_settings/delivery/only_recipient, PostNL bezorging met alleen huisadres
 myparcelbe_magento_postnl_settings/delivery/only_recipient/signature, PostNL bezorging met alleen huisadres en handtekening
+myparcelbe_magento_bpost_settings/delivery, Bpost bezorging
+myparcelbe_magento_bpost_settings/delivery/only_recipient, Bpost bezorging met alleen huisadres
+myparcelbe_magento_bpost_settings/delivery/only_recipient/signature, Bpost bezorging met alleen huisadres en handtekening
+myparcelbe_magento_bpost_settings/delivery/signature, Bpost bezorging met handtekening voor ontvangst
+myparcelbe_magento_bpost_settings/pickup, Bpost ophaallocatie
+myparcelbe_magento_bpost_settings/pickup, Bpost ophaal locatie
+myparcelbe_magento_bpost_settings/pickup_title, Bpost ophaal locatie
+myparcelbe_magento_bpost_settings/delivery, Bpost bezorging
+myparcelbe_magento_bpost_settings/delivery_title, Bpost bezorging
+myparcelbe_magento_bpost_settings/delivery/signature, Bpost bezorging met handtekening voor ontvangst
+myparcelbe_magento_bpost_settings/delivery/signature_title, Bpost bezorging met handtekening voor ontvangst
 myparcelbe_magento_postnl_settings/morning, PostNL ochtend levering
 myparcelbe_magento_postnl_settings/morning/only_recipient, PostNL ochtend levering met alleen huisadres
 myparcelbe_magento_postnl_settings/morning/only_recipient/signature, PostNL ochtend levering met alleen huisadres en handtekening

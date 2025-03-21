@@ -32,6 +32,22 @@ myparcelbe_magento_dpd_settings/delivery_title, Livraison DPD
 myparcelbe_magento_dpd_settings/pickup_title, Collecte DPD
 myparcelbe_magento_postnl_settings/pickup, Collecte PostNL
 myparcelbe_magento_postnl_settings/delivery, Livraison PostNL
+myparcelbe_magento_postnl_settings/delivery_title, livraison postnl
+myparcelbe_magento_postnl_settings/delivery/signature, Livraison PostNL avec signature pour réception
+myparcelbe_magento_postnl_settings/delivery/signature_title, Livraison PostNL avec signature
+myparcelbe_magento_postnl_settings/delivery/only_recipient, Livraison PostNL avec adresse accueil
+myparcelbe_magento_postnl_settings/delivery/only_recipient/signature, Livraison PostNL avec adresse accueil et signature
+myparcelbe_magento_bpost_settings/delivery, Livraison Bpost
+myparcelbe_magento_bpost_settings/delivery/only_recipient, Livraison Bpost à l'adresse du domicile uniquement
+myparcelbe_magento_bpost_settings/delivery/only_recipient/signature, Livraison Bpost à l'adresse du domicile uniquement avec signature
+myparcelbe_magento_bpost_settings/delivery/signature, Livraison Bpost avec signature à la réception
+myparcelbe_magento_bpost_settings/pickup, Point d'enlèvement Bpost
+myparcelbe_magento_bpost_settings/pickup, Lieu de ramassage bpost
+myparcelbe_magento_bpost_settings/pickup_title, Lieu de ramassage bpost
+myparcelbe_magento_bpost_settings/delivery, Livraison bpost
+myparcelbe_magento_bpost_settings/delivery_title, Livraison bpost
+myparcelbe_magento_bpost_settings/delivery/signature, Livraison bpost avec signature
+myparcelbe_magento_bpost_settings/delivery/signature_title, Livraison bpost avec signature pour réception
 myparcelbe_magento_postnl_settings/delivery/signature, Livraison avec signature PostNL
 myparcelbe_magento_postnl_settings/delivery/only_recipient, Livraison uniquement au destinataire PostNL
 myparcelbe_magento_postnl_settings/delivery/only_recipient/signature, Livraison uniquement au destinataire avec signature PostNL
