@@ -179,8 +179,48 @@ $carrierHuman = $carrier->getHuman();
 
         if ($abstractConsignment->canHaveShipmentOption(AbstractConsignment::SHIPMENT_OPTION_INSURANCE)) {
         ?>
-        <div
-            class="field choice admin__field admin__field-option field-mypa_insurance mypa_package-toggle mypa-option-toggle"
+            <div class="field choice admin__field admin__field-option field-mypa_insurance mypa_package-toggle mypa-option-toggle"
             data-for_mypa_package_type="<?= $packageTypeName ?>"
             style="padding-left:30px;">
-            <label class="admin__field-label" for="mypa_insurance" style="display: block
+            <label class="admin__field-label" for="mypa_insurance" style="display: block">
+                <span><?= __('Insured up to:') ?></span>
+            </label>
+            <?php $defaultInsurance = $block->getDefaultInsurance($carrierName); ?>
+            <select
+                    name="mypa_insurance"
+                    id="mypa_insurance"
+                    class="required product-custom-option admin__control-select"
+                    title="">
+                <option value="0"><?= __('No insurance') ?></option>
+                <?php
+                foreach ($abstractConsignment->getInsurancePossibilities($block->getCountry()) as $insuranceAmount) {
+                    printf(
+                        '<option value="%1$s" %2$s>€ %1$s</option>',
+                        $insuranceAmount,
+                        $insuranceAmount === $defaultInsurance
+                            ? 'selected="selected"'
+                            : ''
+                    );
+                }
+                ?>
+            </select>
+        </div>
+
+            <?php
+        } // end can have insurance
+        } // end foreach packageType
+        ?>
+    </div>
+</div>
+    <?php
+} // end foreach carrier
+?>
+<script type="text/x-magento-init">
+    {
+        ".page-footer": {
+            "myparcelbe_newshipment": {
+                "carrier": "<?= $block->getCarrier() ?>",
+            "packageType":"<?= array_flip(AbstractConsignment::PACKAGE_TYPES_NAMES_IDS_MAP)[$block->getPackageType()] ?>"}
+    }
+}
+</script>
