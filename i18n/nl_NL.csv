@@ -25,14 +25,6 @@ status_38,Inactief - Zending afgehaald op afhaallocatie
 status_39,Inactief - Retourzending afgeleverd
 status_40,Inactief - Retourzending op afhaallocactie
 status_99,Inactief - Onbekende status
-myparcelbe_magento_postnl_settings/delivery_title, postnl bezorging
-myparcelbe_magento_postnl_settings/pickup_title, postnl ophaallocatie
-myparcelbe_magento_postnl_settings/delivery/signature_title, postnl bezorging met handtekening
-myparcelbe_magento_postnl_settings/pickup, PostNL ophaallocatie
-myparcelbe_magento_postnl_settings/delivery, PostNL bezorging
-myparcelbe_magento_postnl_settings/delivery/signature, PostNL bezorging met handtekening voor ontvangst
-myparcelbe_magento_postnl_settings/delivery/only_recipient, PostNL bezorging met alleen huisadres
-myparcelbe_magento_postnl_settings/delivery/only_recipient/signature, PostNL bezorging met alleen huisadres en handtekening
 myparcelbe_magento_bpost_settings/delivery, Bpost bezorging
 myparcelbe_magento_bpost_settings/delivery/only_recipient, Bpost bezorging met alleen huisadres
 myparcelbe_magento_bpost_settings/delivery/only_recipient/signature, Bpost bezorging met alleen huisadres en handtekening
@@ -40,10 +32,15 @@ myparcelbe_magento_bpost_settings/delivery/signature, Bpost bezorging met handte
 myparcelbe_magento_bpost_settings/pickup, Bpost ophaallocatie
 myparcelbe_magento_bpost_settings/pickup, Bpost ophaal locatie
 myparcelbe_magento_bpost_settings/pickup_title, Bpost ophaal locatie
-myparcelbe_magento_bpost_settings/delivery, Bpost bezorging
-myparcelbe_magento_bpost_settings/delivery_title, Bpost bezorging
-myparcelbe_magento_bpost_settings/delivery/signature, Bpost bezorging met handtekening voor ontvangst
 myparcelbe_magento_bpost_settings/delivery/signature_title, Bpost bezorging met handtekening voor ontvangst
+myparcelbe_magento_postnl_settings/pickup, PostNL ophaallocatie
+myparcelbe_magento_postnl_settings/pickup_title, postnl ophaallocatie
+myparcelbe_magento_postnl_settings/delivery, PostNL bezorging
+myparcelbe_magento_postnl_settings/delivery_title, postnl bezorging
+myparcelbe_magento_postnl_settings/delivery/signature, PostNL bezorging met handtekening voor ontvangst
+myparcelbe_magento_postnl_settings/delivery/signature_title, postnl bezorging met handtekening
+myparcelbe_magento_postnl_settings/delivery/only_recipient, PostNL bezorging met alleen huisadres
+myparcelbe_magento_postnl_settings/delivery/only_recipient/signature, PostNL bezorging met alleen huisadres en handtekening
 myparcelbe_magento_postnl_settings/morning, PostNL ochtend levering
 myparcelbe_magento_postnl_settings/morning/only_recipient, PostNL ochtend levering met alleen huisadres
 myparcelbe_magento_postnl_settings/morning/only_recipient/signature, PostNL ochtend levering met alleen huisadres en handtekening
@@ -61,10 +58,10 @@ myparcelbe_magento_dhleuroplus_settings/delivery, DHL Europlus bezorging
 myparcelbe_magento_dhlparcelconnect_settings/delivery, DHL Parcel Connect bezorging
 myparcelbe_magento_dhlparcelconnect_settings/pickup, DHL Parcel Connect afhaallocatie
 myparcelbe_magento_ups_settings/delivery, UPS bezorging
-myparcelbe_magento_dpd_settings/delivery_title,  DPD bezorging
-myparcelbe_magento_dpd_settings/pickup_title, DPD ophaallocatie
 myparcelbe_magento_dpd_settings/delivery, DPD bezorging
+myparcelbe_magento_dpd_settings/delivery_title, DPD bezorging
 myparcelbe_magento_dpd_settings/pickup, DPD ophaallocatie
+myparcelbe_magento_dpd_settings/pickup_title, DPD ophaallocatie
 myparcelbe_magento_dpd_settings/mailbox, DPD brievenbuspakje
 myparcelbe_magento_error_no_shipments_to_process, Geen MyParcel zendingen om te verwerken.
 package_small,Klein pakket

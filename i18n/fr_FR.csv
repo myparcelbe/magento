@@ -25,30 +25,22 @@ status_38,Inactif - Envoi retiré au point de collecte
 status_39,Inactif - Envoi retour livré
 status_40,Inactif - Envoi retour au point de collecte
 status_99,Inactif - Statut inconnu
-myparcelbe_magento_postnl_settings/delivery_title, Livraison PostNL
-myparcelbe_magento_postnl_settings/pickup_title, Collecte PostNL
-myparcelbe_magento_postnl_settings/delivery/signature_title, Livraison avec signature PostNL
-myparcelbe_magento_dpd_settings/delivery_title, Livraison DPD
-myparcelbe_magento_dpd_settings/pickup_title, Collecte DPD
-myparcelbe_magento_postnl_settings/pickup, Collecte PostNL
-myparcelbe_magento_postnl_settings/delivery, Livraison PostNL
-myparcelbe_magento_postnl_settings/delivery_title, livraison postnl
-myparcelbe_magento_postnl_settings/delivery/signature, Livraison PostNL avec signature pour réception
-myparcelbe_magento_postnl_settings/delivery/signature_title, Livraison PostNL avec signature
-myparcelbe_magento_postnl_settings/delivery/only_recipient, Livraison PostNL avec adresse accueil
-myparcelbe_magento_postnl_settings/delivery/only_recipient/signature, Livraison PostNL avec adresse accueil et signature
 myparcelbe_magento_bpost_settings/delivery, Livraison Bpost
 myparcelbe_magento_bpost_settings/delivery/only_recipient, Livraison Bpost à l'adresse du domicile uniquement
 myparcelbe_magento_bpost_settings/delivery/only_recipient/signature, Livraison Bpost à l'adresse du domicile uniquement avec signature
 myparcelbe_magento_bpost_settings/delivery/signature, Livraison Bpost avec signature à la réception
 myparcelbe_magento_bpost_settings/pickup, Point d'enlèvement Bpost
-myparcelbe_magento_bpost_settings/pickup, Lieu de ramassage bpost
 myparcelbe_magento_bpost_settings/pickup_title, Lieu de ramassage bpost
 myparcelbe_magento_bpost_settings/delivery, Livraison bpost
 myparcelbe_magento_bpost_settings/delivery_title, Livraison bpost
 myparcelbe_magento_bpost_settings/delivery/signature, Livraison bpost avec signature
 myparcelbe_magento_bpost_settings/delivery/signature_title, Livraison bpost avec signature pour réception
+myparcelbe_magento_postnl_settings/pickup, Collecte PostNL
+myparcelbe_magento_postnl_settings/pickup_title, Collecte PostNL
+myparcelbe_magento_postnl_settings/delivery, Livraison PostNL
+myparcelbe_magento_postnl_settings/delivery_title, Livraison PostNL
 myparcelbe_magento_postnl_settings/delivery/signature, Livraison avec signature PostNL
+myparcelbe_magento_postnl_settings/delivery/signature_title, Livraison avec signature PostNL
 myparcelbe_magento_postnl_settings/delivery/only_recipient, Livraison uniquement au destinataire PostNL
 myparcelbe_magento_postnl_settings/delivery/only_recipient/signature, Livraison uniquement au destinataire avec signature PostNL
 myparcelbe_magento_postnl_settings/morning, Livraison le matin PostNL
@@ -68,9 +60,11 @@ myparcelbe_magento_dhleuroplus_settings/delivery, Livraison DHL Europlus
 myparcelbe_magento_dhlparcelconnect_settings/delivery, Livraison DHL Parcel Connect
 myparcelbe_magento_dhlparcelconnect_settings/pickup, Collecte DHL Parcel Connect
 myparcelbe_magento_ups_settings/delivery, Livraison UPS
+myparcelbe_magento_dpd_settings/delivery_title, Livraison DPD
+myparcelbe_magento_dpd_settings/pickup_title, Collecte DPD
 myparcelbe_magento_dpd_settings/delivery, Livraison DPD
 myparcelbe_magento_dpd_settings/mailbox, Boîte aux lettres DPD
-myparcelbe_magento_error_no_shipments_to_process, Non-pas d' envois MyParcel à traiter.
+myparcelbe_magento_error_no_shipments_to_process, Non-pas d'envois MyParcel à traiter.
 package_small,Petit paquet
 Packet,Petit paquet
 Pacet title,Titre petit paquet

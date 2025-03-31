@@ -1,6 +1,6 @@
 {
   "name": "myparcelbe/magento",
-  "version": "4.15.1",
+  "version": "4.15.2",
   "description": "A Magento 2 module that creates MyParcel labels",
   "keywords": [
     "myparcel",
@@ -11,30 +11,22 @@
   "license": "MIT",
   "authors": [
     {
-      "name": "Edie Lemoine",
-      "email": "support@myparcel.nl"
-    },
-    {
       "name": "Joeri van Veen",
-      "email": "support@myparcel.nl"
-    },
-    {
-      "name": "Mark Ernst",
       "email": "support@myparcel.nl"
     },
     {
       "name": "Richard Perdaan",
       "email": "support@myparcel.nl"
     },
-      {
-          "name": "Jochem Gravendeel",
-          "email": "support@myparcel.nl"
-      }
+    {
+      "name": "Jochem Gravendeel",
+      "email": "support@myparcel.nl"
+    }
   ],
   "type": "magento2-module",
   "require": {
     "php": "^7.2 || ^8.0",
-    "myparcelnl/sdk": "~v7.13.1",
+    "myparcelnl/sdk": "^v7.13.1",
     "magento/framework": ">=101.0.8 <102 || >=102.0.1"
   },
   "require-dev": {
