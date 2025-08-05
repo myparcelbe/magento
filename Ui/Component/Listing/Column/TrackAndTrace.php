@@ -97,7 +97,8 @@ class TrackAndTrace extends Column
         }
 
         $trackData    = $order->getData('track_number') ?? '';
-        $trackNumbers = json_decode($trackData, true) ?? $trackData;
+        // add JSON_BIGINT_AS_STRING as flag, so that big numbers don't get converted to floats, which both breaks the explode function and misrepresent the number completely with its scientific notation
+        $trackNumbers = json_decode($trackData, true, 512, JSON_BIGINT_AS_STRING) ?? $trackData;
 
         // older shipments are stored with '<br>' as separator between trackNumbers
         if (! is_array($trackNumbers)) {
