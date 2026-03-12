@@ -68,6 +68,10 @@ class Result extends \Magento\Shipping\Model\Rate\Result
      * @var \Magento\Backend\Model\Session\Quote
      */
     private $quote;
+    /**
+     * @var \Magento\Framework\App\State
+     */
+    private $appState;
 
     /**
      * Result constructor.
@@ -87,10 +91,11 @@ class Result extends \Magento\Shipping\Model\Rate\Result
         \Magento\Backend\Model\Session\Quote       $quote,
         Session                                    $session,
         Checkout                                   $myParcelHelper,
-        PackageRepository                          $package
-    ) {
+        PackageRepository                          $package,
+        \Magento\Framework\App\State               $appState
+        ) {
         parent::__construct($storeManager);
-
+        $this->appState       = $appState;
         $this->myParcelHelper = $myParcelHelper;
         $this->session        = $session;
         $this->quote          = $quote;
@@ -114,6 +119,13 @@ class Result extends \Magento\Shipping\Model\Rate\Result
      */
     public function append($result)
     {
+        /**
+         * In the backend the MyParcel rates don’t work, default to the parent method.
+         */
+        if ($this->appState->getAreaCode() == \Magento\Backend\App\Area\FrontNameResolver::AREA_CODE) {
+            return parent::append($result);
+        }
+
         if ($result instanceof \Magento\Quote\Model\Quote\Address\RateResult\Error) {
             $this->setError(true);
         }
