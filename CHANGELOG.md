@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.15.4 (2026-03-13)
+
+### Bug Fixes
+
+* remove non-functional myparcel shipping rates from admin pages
+
+
 ## 4.15.3 (2025-08-05)
 
 ### Bug Fixes
