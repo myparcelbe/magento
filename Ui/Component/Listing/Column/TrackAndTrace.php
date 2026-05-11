@@ -7,7 +7,7 @@ namespace MyParcelBE\Magento\Ui\Component\Listing\Column;
 use Magento\Framework\App\ObjectManager;
 use Magento\Sales\Model\Order;
 use Magento\Ui\Component\Listing\Columns\Column;
-use MyParcelNL\Sdk\src\Helper\TrackTraceUrl;
+use MyParcelBE\Magento\Helper\TrackTraceUrl;
 use MyParcelNL\Sdk\src\Model\Consignment\AbstractConsignment;
 
 class TrackAndTrace extends Column
