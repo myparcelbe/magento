@@ -7,6 +7,7 @@ const { gitPluginDefaults } = require('@myparcel/semantic-release-config/src/plu
 module.exports = {
   ...mainConfig,
   extends: '@myparcel/semantic-release-config',
+  tagFormat: '${version}',
   plugins: [
     ...mainConfig.plugins,
     addGitHubPlugin(),

@@ -1,0 +1,38 @@
+name: '🚀 Release'
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: '${{ github.workflow }}-${{ github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  test:
+    uses: ./.github/workflows/test.yml
+    secrets: inherit
+
+  release:
+    needs:
+      - test
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    outputs:
+      released: ${{ steps.release.outputs.released }}
+      version: ${{ steps.release.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: myparcelnl/actions/yarn-install@v5
+        with:
+          node-version: 24
+
+      - uses: myparcelnl/actions/semantic-release@v5
+        id: release
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
