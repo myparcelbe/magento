@@ -23,6 +23,12 @@
       "email": "support@myparcel.nl"
     }
   ],
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://mirror.mage-os.org/"
+    }
+  ],
   "type": "magento2-module",
   "require": {
     "php": "^7.2 || ^8.0",
