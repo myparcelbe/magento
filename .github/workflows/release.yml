@@ -28,11 +28,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: myparcelnl/actions/yarn-install@v5
+      - uses: pnpm/setup@v3
         with:
-          node-version: 24
+          cache: true
+          require-lockfile: true
 
-      - uses: myparcelnl/actions/semantic-release@v5
+      - uses: myparcelnl/actions/semantic-release@v6
         id: release
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
