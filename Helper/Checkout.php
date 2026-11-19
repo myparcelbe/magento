@@ -117,7 +117,7 @@ class Checkout extends Data
         $method = $this->getParentRateFromQuote($quoteId, $forAddress);
         $price  = ($method) ? $method->getPriceInclTax() : 0;
 
-        $this->setBasePrice((double) $price);
+        $this->setBasePrice((float) $price);
 
         return $this;
     }
